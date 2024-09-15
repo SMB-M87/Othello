@@ -64,15 +64,13 @@ namespace Backend.Controllers
                 return null;
         }
 
-        [HttpPost("{token}/join")]
-        public ActionResult<HttpResponseMessage> Join([FromRoute] string token, [FromBody] GameEntrant entry)
+        [HttpPost("join")]
+        public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entry)
         {
-            var game = iRepository.GetGame(token);
+            var game = iRepository.GetGame(entry.Token);
 
             if (game is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-            else
-                entry.Token = token;
 
             if (entry.Player.InGame == true || game.Status == Status.Playing)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);

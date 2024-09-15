@@ -113,9 +113,9 @@ namespace BackendTest
         [Test]
         public void Join_OK()
         {
-            GameEntrant entry = new("join", new("player"));
+            GameEntrant entry = new("two", new("player"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join("two", entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -129,7 +129,7 @@ namespace BackendTest
         {
             GameEntrant entry = new("join", new("player"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join("three", entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -141,9 +141,9 @@ namespace BackendTest
         [Test]
         public void Join_FORBIDDEN()
         {
-            GameEntrant entry = new("join", new("player"));
+            GameEntrant entry = new("zero", new("player") { InGame = true });
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join("one", entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
