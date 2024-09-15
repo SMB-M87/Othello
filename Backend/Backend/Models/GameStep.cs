@@ -36,7 +36,7 @@
             }
         }
 
-        public GameStep(GameParticipant participant, int x, int y)
+        public GameStep(GameParticipant participant, int x = 2, int y = 3)
         {
             Participant = participant;
             this.X = x;

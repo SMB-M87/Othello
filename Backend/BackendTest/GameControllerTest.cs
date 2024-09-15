@@ -3,8 +3,6 @@ using Backend.Data;
 using Backend.Models;
 using Backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using static System.Collections.Specialized.BitVector32;
 
 namespace BackendTest
 {
@@ -87,15 +85,8 @@ namespace BackendTest
         [Test]
         public void Create_OK()
         {
-            GameCreation create = new()
-            {
-                Player = new("player")
-                {
-                    Token = "test"
-                }
-            };
+            GameCreation create = new(new("player"));
 
-            _controller.Create(create);
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
 
@@ -108,14 +99,7 @@ namespace BackendTest
         [Test]
         public void Create_FORBIDDEN()
         {
-            GameCreation create = new()
-            {
-                Player = new("player")
-                {
-                    Token = "test",
-                    InGame = true
-                }
-            };
+            GameCreation create = new(new("player") { InGame = true });
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -129,7 +113,7 @@ namespace BackendTest
         [Test]
         public void Join_OK()
         {
-            GameEntrant entry = new() { Token = "join", Player = new("player") { Token = "sec" } };
+            GameEntrant entry = new("join", new("player"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Join("two", entry);
             HttpResponseMessage? respons = result?.Value;
@@ -143,7 +127,7 @@ namespace BackendTest
         [Test]
         public void Join_NOTFOUND()
         {
-            GameEntrant entry = new() { Token = "join", Player = new("player") { Token = "sec" } };
+            GameEntrant entry = new("join", new("player"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Join("three", entry);
             HttpResponseMessage? respons = result?.Value;
@@ -157,7 +141,7 @@ namespace BackendTest
         [Test]
         public void Join_FORBIDDEN()
         {
-            GameEntrant entry = new() { Token = "join", Player = new("player") { Token = "sec" } };
+            GameEntrant entry = new("join", new("player"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Join("one", entry);
             HttpResponseMessage? respons = result?.Value;
@@ -267,12 +251,7 @@ namespace BackendTest
         [Test]
         public void Move_OK()
         {
-            GameStep action = new()
-            {
-                X = 2,
-                Y = 3,
-                Participant = _repository.Games[1].First
-            };
+            GameStep action = new(_repository.Games[1].First);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -286,12 +265,7 @@ namespace BackendTest
         [Test]
         public void Move_FORBIDDEN_NoSecondPlayer()
         {
-            GameStep action = new()
-            {
-                X = 2,
-                Y = 3,
-                Participant = _repository.Games[2].First
-            };
+            GameStep action = new(_repository.Games[2].First);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -305,12 +279,7 @@ namespace BackendTest
         [Test]
         public void Move_FORBIDDEN_IncorrectPlayer()
         {
-            GameStep action = new()
-            {
-                X = 2,
-                Y = 3,
-                Participant = _repository.Games[0].First
-            };
+            GameStep action = new(_repository.Games[0].First);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -324,12 +293,7 @@ namespace BackendTest
         [Test]
         public void Move_FORBIDDEN_IncorrectPlayerTurn()
         {
-            GameStep action = new()
-            {
-                X = 2,
-                Y = 3,
-                Participant = _repository.Games[1].Second
-            };
+            GameStep action = new(_repository.Games[1].Second);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
