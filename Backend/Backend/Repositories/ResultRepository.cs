@@ -15,6 +15,11 @@ namespace Backend.Repositories
         public void Create(GameResult result)
         {
             _repository.Results().Add(result);
+
+            var game = _repository.GameRepository.GetGame(result.Token);
+
+            if (game is not null)
+                _repository.Games().Remove(game);
         }
 
         public (int Wins, int Losses, int Draws) GetPlayerStats(string token)

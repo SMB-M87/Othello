@@ -26,8 +26,7 @@ namespace Backend.Controllers
             if (game.Status != Status.Finished || game.PlayersTurn != Color.None)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
-            _repository.Results().Add(result);
-            _repository.Games().Remove(game);
+            _repository.ResultRepository.Create(result);
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 

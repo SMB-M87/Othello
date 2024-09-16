@@ -654,6 +654,7 @@ namespace BackendTest
             game.Board[7, 5] = Color.White;
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
+            _repository.GameRepository.UpdateGame(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Pass(game.First);
             HttpResponseMessage? respons = result?.Value;
@@ -736,6 +737,7 @@ namespace BackendTest
             game.Board[7, 5] = Color.White;
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
+            _repository.GameRepository.UpdateGame(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Pass(game.Second);
             HttpResponseMessage? respons = result?.Value;
@@ -785,7 +787,197 @@ namespace BackendTest
         [Test]
         public void Pass_PlayersturnIncorrect_FORBIDDEN()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("first"));
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third") { Color = Color.White });
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_FirstPlayerNonExistant_FORBIDDEN()
+        {
+            Game game = _repository.Games()[1];
+            game.First.Token = "nonexistant";
+            game.Second = new("third") { Color = Color.White };
+            game.PlayersTurn = Color.White;
+            game.Status = Status.Playing;
+            game.Board[0, 0] = Color.White;
+            game.Board[0, 1] = Color.White;
+            game.Board[0, 2] = Color.White;
+            game.Board[0, 3] = Color.White;
+            game.Board[0, 4] = Color.White;
+            game.Board[0, 5] = Color.White;
+            game.Board[0, 6] = Color.White;
+            game.Board[0, 7] = Color.White;
+            game.Board[1, 0] = Color.White;
+            game.Board[1, 1] = Color.White;
+            game.Board[1, 2] = Color.White;
+            game.Board[1, 3] = Color.White;
+            game.Board[1, 4] = Color.White;
+            game.Board[1, 5] = Color.White;
+            game.Board[1, 6] = Color.White;
+            game.Board[1, 7] = Color.White;
+            game.Board[2, 0] = Color.White;
+            game.Board[2, 1] = Color.White;
+            game.Board[2, 2] = Color.White;
+            game.Board[2, 3] = Color.White;
+            game.Board[2, 4] = Color.White;
+            game.Board[2, 5] = Color.White;
+            game.Board[2, 6] = Color.White;
+            game.Board[2, 7] = Color.White;
+            game.Board[3, 0] = Color.White;
+            game.Board[3, 1] = Color.White;
+            game.Board[3, 2] = Color.White;
+            game.Board[3, 3] = Color.White;
+            game.Board[3, 4] = Color.White;
+            game.Board[3, 5] = Color.White;
+            game.Board[3, 6] = Color.White;
+            game.Board[3, 7] = Color.None;
+            game.Board[4, 0] = Color.White;
+            game.Board[4, 1] = Color.White;
+            game.Board[4, 2] = Color.White;
+            game.Board[4, 3] = Color.White;
+            game.Board[4, 4] = Color.White;
+            game.Board[4, 5] = Color.White;
+            game.Board[4, 6] = Color.None;
+            game.Board[4, 7] = Color.None;
+            game.Board[5, 0] = Color.White;
+            game.Board[5, 1] = Color.White;
+            game.Board[5, 2] = Color.White;
+            game.Board[5, 3] = Color.White;
+            game.Board[5, 4] = Color.White;
+            game.Board[5, 5] = Color.White;
+            game.Board[5, 6] = Color.None;
+            game.Board[5, 7] = Color.Black;
+            game.Board[6, 0] = Color.White;
+            game.Board[6, 1] = Color.White;
+            game.Board[6, 2] = Color.White;
+            game.Board[6, 3] = Color.White;
+            game.Board[6, 4] = Color.White;
+            game.Board[6, 5] = Color.White;
+            game.Board[6, 6] = Color.White;
+            game.Board[6, 7] = Color.None;
+            game.Board[7, 0] = Color.White;
+            game.Board[7, 1] = Color.White;
+            game.Board[7, 2] = Color.White;
+            game.Board[7, 3] = Color.White;
+            game.Board[7, 4] = Color.White;
+            game.Board[7, 5] = Color.White;
+            game.Board[7, 6] = Color.White;
+            game.Board[7, 7] = Color.White;
+            _repository.GameRepository.UpdateGame(game);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third") { Color = Color.White });
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_SecondPlayerNonExistant_FORBIDDEN()
+        {
+            Game game = _repository.Games()[1];
+            game.Second.Token = "nonexistant";
+            game.First = new("second") { Color = Color.Black };
+            game.PlayersTurn = Color.Black;
+            game.Status = Status.Playing;
+            game.Board[0, 0] = Color.White;
+            game.Board[0, 1] = Color.White;
+            game.Board[0, 2] = Color.White;
+            game.Board[0, 3] = Color.White;
+            game.Board[0, 4] = Color.White;
+            game.Board[0, 5] = Color.White;
+            game.Board[0, 6] = Color.White;
+            game.Board[0, 7] = Color.White;
+            game.Board[1, 0] = Color.White;
+            game.Board[1, 1] = Color.White;
+            game.Board[1, 2] = Color.White;
+            game.Board[1, 3] = Color.White;
+            game.Board[1, 4] = Color.White;
+            game.Board[1, 5] = Color.White;
+            game.Board[1, 6] = Color.White;
+            game.Board[1, 7] = Color.White;
+            game.Board[2, 0] = Color.White;
+            game.Board[2, 1] = Color.White;
+            game.Board[2, 2] = Color.White;
+            game.Board[2, 3] = Color.White;
+            game.Board[2, 4] = Color.White;
+            game.Board[2, 5] = Color.White;
+            game.Board[2, 6] = Color.White;
+            game.Board[2, 7] = Color.White;
+            game.Board[3, 0] = Color.White;
+            game.Board[3, 1] = Color.White;
+            game.Board[3, 2] = Color.White;
+            game.Board[3, 3] = Color.White;
+            game.Board[3, 4] = Color.White;
+            game.Board[3, 5] = Color.White;
+            game.Board[3, 6] = Color.White;
+            game.Board[3, 7] = Color.None;
+            game.Board[4, 0] = Color.White;
+            game.Board[4, 1] = Color.White;
+            game.Board[4, 2] = Color.White;
+            game.Board[4, 3] = Color.White;
+            game.Board[4, 4] = Color.White;
+            game.Board[4, 5] = Color.White;
+            game.Board[4, 6] = Color.None;
+            game.Board[4, 7] = Color.None;
+            game.Board[5, 0] = Color.White;
+            game.Board[5, 1] = Color.White;
+            game.Board[5, 2] = Color.White;
+            game.Board[5, 3] = Color.White;
+            game.Board[5, 4] = Color.White;
+            game.Board[5, 5] = Color.White;
+            game.Board[5, 6] = Color.None;
+            game.Board[5, 7] = Color.Black;
+            game.Board[6, 0] = Color.White;
+            game.Board[6, 1] = Color.White;
+            game.Board[6, 2] = Color.White;
+            game.Board[6, 3] = Color.White;
+            game.Board[6, 4] = Color.White;
+            game.Board[6, 5] = Color.White;
+            game.Board[6, 6] = Color.White;
+            game.Board[6, 7] = Color.None;
+            game.Board[7, 0] = Color.White;
+            game.Board[7, 1] = Color.White;
+            game.Board[7, 2] = Color.White;
+            game.Board[7, 3] = Color.White;
+            game.Board[7, 4] = Color.White;
+            game.Board[7, 5] = Color.White;
+            game.Board[7, 6] = Color.White;
+            game.Board[7, 7] = Color.White;
+            _repository.GameRepository.UpdateGame(game);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second") { Color = Color.Black });
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_FirstPlayerIsCheating_FORBIDDEN()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second") { Color = Color.White });
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_SecondPlayerIsCheating_FORBIDDEN()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third") { Color = Color.Black });
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
