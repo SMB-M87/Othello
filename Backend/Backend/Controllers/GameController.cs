@@ -21,7 +21,7 @@ namespace Backend.Controllers
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] GameCreation builder)
         {
-            var player = _repository.PlayerRepository.GetPlayer(builder.Player.Token);
+            var player = _repository.PlayerRepository.Get(builder.Player.Token);
 
             if (player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -32,8 +32,8 @@ namespace Backend.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             Game game = new(builder.Player, builder.Description);
-            _repository.GameRepository.AddGame(game);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            _repository.GameRepository.Create(game);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -44,20 +44,20 @@ namespace Backend.Controllers
         [HttpPost("join")]
         public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entry)
         {
-            var game = _repository.GameRepository.GetGame(entry.Token);
-            var player = _repository.PlayerRepository.GetPlayer(entry.Player.Token);
+            var game = _repository.GameRepository.Get(entry.Token);
+            var player = _repository.PlayerRepository.Get(entry.Player.Token);
 
             if (game is null || player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
             var inGame = _repository.GameRepository.GetPlayersGame(entry.Player.Token);
-            var challenger = _repository.PlayerRepository.GetPlayer(game.First.Token);
+            var challenger = _repository.PlayerRepository.Get(game.First.Token);
 
             if (inGame is not null || game.Status is not Status.Pending || game.First.Token == entry.Player.Token || challenger is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
-            _repository.GameRepository.JoinGame(entry);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            _repository.GameRepository.Join(entry);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is not null && respons.Status is Status.Playing && respons.Second.Token == entry.Player.Token)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -69,8 +69,8 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> JoinPlayer([FromBody] GameEntrant entry)
         {
             var game = _repository.GameRepository.GetPlayersGame(entry.Token);
-            var player = _repository.PlayerRepository.GetPlayer(entry.Token);
-            var entrant = _repository.PlayerRepository.GetPlayer(entry.Player.Token);
+            var player = _repository.PlayerRepository.Get(entry.Token);
+            var entrant = _repository.PlayerRepository.Get(entry.Player.Token);
 
             if (game is null || player is null || entrant is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -81,7 +81,7 @@ namespace Backend.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             _repository.GameRepository.JoinPlayer(entry);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is not null && respons.Status is Status.Playing && respons.Second.Token == entry.Player.Token)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -93,7 +93,7 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Delete([FromBody] GameParticipant player)
         {
             var game = _repository.GameRepository.GetPlayersGame(player.Token);
-            var participant = _repository.PlayerRepository.GetPlayer(player.Token);
+            var participant = _repository.PlayerRepository.Get(player.Token);
 
             if (game is null || participant is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -101,8 +101,8 @@ namespace Backend.Controllers
             if (game.Status != Status.Pending || game.First.Token != player.Token)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
-            _repository.GameRepository.DeleteGame(game);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            _repository.GameRepository.Delete(game);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -124,7 +124,7 @@ namespace Backend.Controllers
         [HttpGet("{token}")]
         public ActionResult<Game>? GameByToken(string token)
         {
-            var game = _repository.GameRepository.GetGame(token);
+            var game = _repository.GameRepository.Get(token);
 
             if (game is not null)
                 return game;
@@ -146,7 +146,7 @@ namespace Backend.Controllers
         [HttpGet("{token}/turn")]
         public ActionResult<Color>? TurnByToken(string token)
         {
-            var game = _repository.GameRepository.GetGame(token);
+            var game = _repository.GameRepository.Get(token);
 
             if (game is not null)
                 return game.PlayersTurn;
@@ -158,12 +158,12 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
             var game = _repository.GameRepository.GetPlayersGame(action.Participant.Token);
-            var player = _repository.PlayerRepository.GetPlayer(action.Participant.Token);
+            var player = _repository.PlayerRepository.Get(action.Participant.Token);
 
             if (game is null || player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            var challenger = _repository.PlayerRepository.GetPlayer(game.First.Token == action.Participant.Token ? game.Second.Token : game.First.Token);
+            var challenger = _repository.PlayerRepository.Get(game.First.Token == action.Participant.Token ? game.Second.Token : game.First.Token);
 
             if (game.Status != Status.Playing || game.PlayersTurn != action.Participant.Color || challenger is null ||
                (game.First.Token == action.Participant.Token && game.First.Color != action.Participant.Color) ||
@@ -173,7 +173,7 @@ namespace Backend.Controllers
             if (game.Finished())
             {
                 game.Status = Status.Finished;
-                _repository.GameRepository.UpdateGame(game);
+                _repository.GameRepository.Update(game);
 
                 Color win = game.WinningColor();
                 string winner = win == Color.None ? "" : win == game.First.Color ? game.First.Token : game.Second.Token;
@@ -182,7 +182,7 @@ namespace Backend.Controllers
                 GameResult result = new(game.Token, winner, loser, draw);
                 _repository.ResultRepository.Create(result);
 
-                var res = _repository.GameRepository.GetGame(game.Token);
+                var res = _repository.GameRepository.Get(game.Token);
 
                 if (res is null)
                     return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -194,8 +194,8 @@ namespace Backend.Controllers
                  return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
 
             game.MakeMove(action.Y, action.X);
-            _repository.GameRepository.UpdateGame(game);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            _repository.GameRepository.Update(game);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is not null && respons.PlayersTurn != action.Participant.Color)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -207,12 +207,12 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Pass([FromBody] GameParticipant player)
         {
             var game = _repository.GameRepository.GetPlayersGame(player.Token);
-            var participant = _repository.PlayerRepository.GetPlayer(player.Token);
+            var participant = _repository.PlayerRepository.Get(player.Token);
 
             if (game is null || participant is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            var challenger = _repository.PlayerRepository.GetPlayer(game.First.Token == participant.Token ? game.Second.Token : game.First.Token);
+            var challenger = _repository.PlayerRepository.Get(game.First.Token == participant.Token ? game.Second.Token : game.First.Token);
 
             if (game.Status != Status.Playing || game.PlayersTurn != player.Color || challenger is null ||
                (game.First.Token == player.Token && game.First.Color != player.Color) ||
@@ -231,8 +231,8 @@ namespace Backend.Controllers
                 };
             }
 
-            _repository.GameRepository.UpdateGame(game);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            _repository.GameRepository.Update(game);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is not null && respons.PlayersTurn != player.Color)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -267,10 +267,10 @@ namespace Backend.Controllers
             }
             game.Status = Status.Finished;
             game.PlayersTurn = Color.None;
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
             GameResult result = new(game.Token, winner, loser);
             _repository.ResultRepository.Create(result);
-            var respons = _repository.GameRepository.GetGame(game.Token);
+            var respons = _repository.GameRepository.Get(game.Token);
 
             if (respons is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);

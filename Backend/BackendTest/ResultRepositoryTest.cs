@@ -18,10 +18,10 @@ namespace ResultTest
             Player three = new("three") { Token = "third" };
             Player four = new("four") { Token = "fourth" };
 
-            _repository.PlayerRepository.AddPlayer(one);
-            _repository.PlayerRepository.AddPlayer(two);
-            _repository.PlayerRepository.AddPlayer(three);
-            _repository.PlayerRepository.AddPlayer(four);
+            _repository.PlayerRepository.Create(one);
+            _repository.PlayerRepository.Create(two);
+            _repository.PlayerRepository.Create(three);
+            _repository.PlayerRepository.Create(four);
 
             Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
@@ -46,9 +46,9 @@ namespace ResultTest
             };
             game2.First.Color = Color.Black;
 
-            _repository.GameRepository.AddGame(game0);
-            _repository.GameRepository.AddGame(game1);
-            _repository.GameRepository.AddGame(game2);
+            _repository.GameRepository.Create(game0);
+            _repository.GameRepository.Create(game1);
+            _repository.GameRepository.Create(game2);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");

@@ -4,12 +4,12 @@ namespace Backend.Repositories
 {
     public interface IPlayerRepository
     {
-        void AddPlayer(Player player);
-        void UpdatePlayer(Player player);
-        void DeletePlayer(Player player);
-        Player? GetPlayer(string token);
-        Player? GetPlayerByUsername(string username);
-        string GetPlayersName(string token);
+        void Create(Player player);
+        void Update(Player player);
+        void Delete(Player player);
+        Player? Get(string token);
+        Player? GetByUsername(string username);
+        string GetName(string token);
         void SendFriendInvite(string username, string sender);
         void AcceptFriendInvite(string username, string sender);
         void DeclineFriendInvite(string username, string sender);

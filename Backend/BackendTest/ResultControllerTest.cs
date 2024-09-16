@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Backend.Models;
+﻿using Backend.Models;
 using Backend.Controllers;
 using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +23,12 @@ namespace ResultTest
             Player five = new("five") { Token = "fifth" };
             Player six = new("six") { Token = "sixth" };
 
-            _repository.PlayerRepository.AddPlayer(one);
-            _repository.PlayerRepository.AddPlayer(two);
-            _repository.PlayerRepository.AddPlayer(three);
-            _repository.PlayerRepository.AddPlayer(four);
-            _repository.PlayerRepository.AddPlayer(five);
-            _repository.PlayerRepository.AddPlayer(six);
+            _repository.PlayerRepository.Create(one);
+            _repository.PlayerRepository.Create(two);
+            _repository.PlayerRepository.Create(three);
+            _repository.PlayerRepository.Create(four);
+            _repository.PlayerRepository.Create(five);
+            _repository.PlayerRepository.Create(six);
 
             Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
@@ -54,9 +53,9 @@ namespace ResultTest
             };
             game2.First.Color = Color.Black;
 
-            _repository.GameRepository.AddGame(game0);
-            _repository.GameRepository.AddGame(game1);
-            _repository.GameRepository.AddGame(game2);
+            _repository.GameRepository.Create(game0);
+            _repository.GameRepository.Create(game1);
+            _repository.GameRepository.Create(game2);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -69,15 +68,38 @@ namespace ResultTest
         }
 
         [Test]
-        public void Create_OK()
+        public void MatchHistory_Correct()
         {
-            GameResult create = new("2", "", "", "second third");
-
-            ActionResult<HttpResponseMessage>? result = _controller.Create(create);
-            HttpResponseMessage? respons = result?.Value;
+            ActionResult<List<GameResult>>? result = _controller.MatchHistory("second");
+            List<GameResult>? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons[0], Is.EqualTo(expected: _repository.Results()[0]));
+                    Assert.That(actual: respons[1], Is.EqualTo(expected: _repository.Results()[1]));
+                    Assert.That(actual: respons[2], Is.EqualTo(expected: _repository.Results()[2]));
+                });
+            }
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void PlayerStats_Correct()
+        {
+            ActionResult<(int, int, int)>? result = _controller.PlayerStats("second");
+
+            if (result?.Value is (int wins, int losses, int draws))
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: wins, Is.EqualTo(expected: 2));
+                    Assert.That(actual: losses, Is.EqualTo(expected: 1));
+                    Assert.That(actual: draws, Is.EqualTo(expected: 0));
+                });
+            }
             else
                 Assert.Fail("Respons is null.");
         }

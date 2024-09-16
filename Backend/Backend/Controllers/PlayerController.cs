@@ -1,7 +1,6 @@
 ﻿using Backend.Models;
 using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 
 namespace Backend.Controllers
 {
@@ -19,14 +18,14 @@ namespace Backend.Controllers
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] string username)
         {
-            var name = _repository.PlayerRepository.GetPlayerByUsername(username);
+            var name = _repository.PlayerRepository.GetByUsername(username);
 
             if (name is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             Player player = new(username);
-            _repository.PlayerRepository.AddPlayer(player);
-            var respons = _repository.PlayerRepository.GetPlayer(player.Token);
+            _repository.PlayerRepository.Create(player);
+            var respons = _repository.PlayerRepository.Get(player.Token);
 
             if (respons is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -37,13 +36,13 @@ namespace Backend.Controllers
         [HttpPost("delete")]
         public ActionResult<HttpResponseMessage> Delete([FromBody] string token)
         {
-            var player = _repository.PlayerRepository.GetPlayer(token);
+            var player = _repository.PlayerRepository.Get(token);
 
             if (player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            _repository.PlayerRepository.DeletePlayer(player);
-            var respons = _repository.PlayerRepository.GetPlayer(token);
+            _repository.PlayerRepository.Delete(player);
+            var respons = _repository.PlayerRepository.Get(token);
 
             if (respons is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -54,7 +53,7 @@ namespace Backend.Controllers
         [HttpGet("{token}")]
         public ActionResult<Player>? PlayerByToken(string token)
         {
-            var player = _repository.PlayerRepository.GetPlayer(token);
+            var player = _repository.PlayerRepository.Get(token);
 
             if (player is not null)
                 return player;
@@ -65,7 +64,7 @@ namespace Backend.Controllers
         [HttpGet("{username}/username")]
         public ActionResult<Player>? PlayerByUsername(string username)
         {
-            var player = _repository.PlayerRepository.GetPlayerByUsername(username);
+            var player = _repository.PlayerRepository.GetByUsername(username);
 
             if (player is not null)
                 return player;
@@ -76,7 +75,7 @@ namespace Backend.Controllers
         [HttpGet("{token}/name")]
         public ActionResult<string>? PlayersName(string token)
         {
-            var player = _repository.PlayerRepository.GetPlayer(token);
+            var player = _repository.PlayerRepository.Get(token);
 
             if (player is not null)
                 return player.Username;

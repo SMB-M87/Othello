@@ -18,10 +18,10 @@ namespace GameTest
             Player three = new("three") { Token = "third" };
             Player four = new("four") { Token = "fourth" };
 
-            _repository.PlayerRepository.AddPlayer(one);
-            _repository.PlayerRepository.AddPlayer(two);
-            _repository.PlayerRepository.AddPlayer(three);
-            _repository.PlayerRepository.AddPlayer(four);
+            _repository.PlayerRepository.Create(one);
+            _repository.PlayerRepository.Create(two);
+            _repository.PlayerRepository.Create(three);
+            _repository.PlayerRepository.Create(four);
 
             Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
@@ -46,9 +46,9 @@ namespace GameTest
             };
             game2.First.Color = Color.Black;
 
-            _repository.GameRepository.AddGame(game0);
-            _repository.GameRepository.AddGame(game1);
-            _repository.GameRepository.AddGame(game2);
+            _repository.GameRepository.Create(game0);
+            _repository.GameRepository.Create(game1);
+            _repository.GameRepository.Create(game2);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -60,7 +60,7 @@ namespace GameTest
         }
 
         [Test]
-        public void AddGame_Correct()
+        public void Create_Correct()
         {
             int size = _repository.Games().Count;
             Player five = new("five") { Token = "fifth" };
@@ -70,7 +70,7 @@ namespace GameTest
             };
             game.First.Color = Color.Black;
 
-            _repository.GameRepository.AddGame(game);
+            _repository.GameRepository.Create(game);
 
             Assert.Multiple(() =>
             {
@@ -80,11 +80,11 @@ namespace GameTest
         }
 
         [Test]
-        public void JoinGame_Correct()
+        public void Join_Correct()
         {
              GameEntrant entry = new("two", new("five") { Token = "fifth" });
 
-            _repository.GameRepository.JoinGame(entry);
+            _repository.GameRepository.Join(entry);
 
             Assert.Multiple(() =>
             {
@@ -112,7 +112,7 @@ namespace GameTest
         }
 
         [Test]
-        public void UpdateGame_Correct()
+        public void Update_Correct()
         {
             Game game = new(new("five") { Token = "five" })
             {
@@ -122,7 +122,7 @@ namespace GameTest
                 PlayersTurn = Color.None
             };
 
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
 
             Assert.Multiple(() =>
             {
@@ -135,12 +135,12 @@ namespace GameTest
         }
 
         [Test]
-        public void DeleteGame_Correct()
+        public void Delete_Correct()
         {
             int size = _repository.Games().Count;
             Game game = _repository.Games()[2];
 
-            _repository.GameRepository.DeleteGame(game);
+            _repository.GameRepository.Delete(game);
 
             Assert.Multiple(() =>
             {
@@ -151,13 +151,13 @@ namespace GameTest
         }
 
         [Test]
-        public void GetGame_Correct()
+        public void Get_Correct()
         {
             string token = "ValidTest";
             Player five = new("five") { Token = "fifth" };
             _repository.Games().Add(new Game(five, "I wanna play a game and don't have any requirements!") { Token = token });
 
-            var respons = _repository.GameRepository.GetGame(token);
+            var respons = _repository.GameRepository.Get(token);
 
             if (respons is not null)
                 Assert.That(actual: respons.First.Token, Is.EqualTo(expected: "fifth"));
@@ -166,11 +166,11 @@ namespace GameTest
         }
 
         [Test]
-        public void GetGame_Incorrect()
+        public void Get_Incorrect()
         {
             string token = "BlaBlaInvalidTestT123";
 
-            var respons = _repository.GameRepository.GetGame(token);
+            var respons = _repository.GameRepository.Get(token);
 
             Assert.That(respons, Is.Null);
         }

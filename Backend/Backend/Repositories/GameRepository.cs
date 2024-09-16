@@ -11,12 +11,12 @@ namespace Backend.Repositories
             _repository = repository;
         }
 
-        public void AddGame(Game game)
+        public void Create(Game game)
         {
             _repository.Games().Add(game);
         }
 
-        public void JoinGame(GameEntrant entry)
+        public void Join(GameEntrant entry)
         {
             int index = _repository.Games().FindIndex(s => s.Token.Equals(entry.Token));
 
@@ -38,7 +38,7 @@ namespace Backend.Repositories
             }
         }
 
-        public void UpdateGame(Game game)
+        public void Update(Game game)
         {
             int index = _repository.Games().FindIndex(s => s.Token.Equals(game.Token));
 
@@ -46,12 +46,12 @@ namespace Backend.Repositories
                 _repository.Games()[index] = game;
         }
 
-        public void DeleteGame(Game game)
+        public void Delete(Game game)
         {
             _repository.Games().Remove(game);
         }
 
-        public Game? GetGame(string token)
+        public Game? Get(string token)
         {
             return _repository.Games().Find(s => s.Token.Equals(token, StringComparison.Ordinal));
         }

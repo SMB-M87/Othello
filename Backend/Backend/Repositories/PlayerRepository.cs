@@ -11,12 +11,12 @@ namespace Backend.Repositories
             _repository = repository;
         }
 
-        public void AddPlayer(Player player)
+        public void Create(Player player)
         {
             _repository.Players().Add(player);
         }
 
-        public void UpdatePlayer(Player player)
+        public void Update(Player player)
         {
             int index = _repository.Players().FindIndex(s => s.Token.Equals(player.Token));
 
@@ -24,22 +24,22 @@ namespace Backend.Repositories
                 _repository.Players()[index] = player;
         }
 
-        public void DeletePlayer(Player player)
+        public void Delete(Player player)
         {
             _repository.Players().Remove(player);
         }
 
-        public Player? GetPlayer(string token)
+        public Player? Get(string token)
         {
             return _repository.Players().Find(s => s.Token.Equals(token, StringComparison.Ordinal));
         }
 
-        public Player? GetPlayerByUsername(string username)
+        public Player? GetByUsername(string username)
         {
             return _repository.Players().Find(s => s.Username.Equals(username, StringComparison.Ordinal));
         }
 
-        public string GetPlayersName(string token)
+        public string GetName(string token)
         {
             Player? player = _repository.Players().Find(s => s.Token.Equals(token, StringComparison.Ordinal));
 

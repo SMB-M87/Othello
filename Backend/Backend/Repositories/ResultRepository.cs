@@ -16,7 +16,7 @@ namespace Backend.Repositories
         {
             _repository.Results().Add(result);
 
-            var game = _repository.GameRepository.GetGame(result.Token);
+            var game = _repository.GameRepository.Get(result.Token);
 
             if (game is not null)
                 _repository.Games().Remove(game);

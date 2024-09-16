@@ -24,12 +24,12 @@ namespace GameTest
             Player five = new("five") { Token = "fifth" };
             Player six = new("six") { Token = "sixth" };
 
-            _repository.PlayerRepository.AddPlayer(one);
-            _repository.PlayerRepository.AddPlayer(two);
-            _repository.PlayerRepository.AddPlayer(three);
-            _repository.PlayerRepository.AddPlayer(four);
-            _repository.PlayerRepository.AddPlayer(five);
-            _repository.PlayerRepository.AddPlayer(six);
+            _repository.PlayerRepository.Create(one);
+            _repository.PlayerRepository.Create(two);
+            _repository.PlayerRepository.Create(three);
+            _repository.PlayerRepository.Create(four);
+            _repository.PlayerRepository.Create(five);
+            _repository.PlayerRepository.Create(six);
 
             Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
@@ -54,9 +54,9 @@ namespace GameTest
             };
             game2.First.Color = Color.Black;
 
-            _repository.GameRepository.AddGame(game0);
-            _repository.GameRepository.AddGame(game1);
-            _repository.GameRepository.AddGame(game2);
+            _repository.GameRepository.Create(game0);
+            _repository.GameRepository.Create(game1);
+            _repository.GameRepository.Create(game2);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -199,7 +199,7 @@ namespace GameTest
         {
             Game game = _repository.Games()[0];
             game.First.Token = "nonexistant";
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
             GameEntrant entry = new("zero", _repository.Players()[5]);
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
@@ -348,7 +348,7 @@ namespace GameTest
         {
             Game game = _repository.Games()[0];
             game.Second.Token = "fifth";
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[0].Second);
             HttpResponseMessage? respons = result?.Value;
@@ -748,7 +748,7 @@ namespace GameTest
             game.Board[7, 5] = Color.White;
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Pass(game.First);
             HttpResponseMessage? respons = result?.Value;
@@ -831,7 +831,7 @@ namespace GameTest
             game.Board[7, 5] = Color.White;
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Pass(game.Second);
             HttpResponseMessage? respons = result?.Value;
@@ -962,7 +962,7 @@ namespace GameTest
             game.Board[7, 5] = Color.White;
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third") { Color = Color.White });
             HttpResponseMessage? respons = result?.Value;
@@ -1045,7 +1045,7 @@ namespace GameTest
             game.Board[7, 5] = Color.White;
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
-            _repository.GameRepository.UpdateGame(game);
+            _repository.GameRepository.Update(game);
 
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second") { Color = Color.Black });
             HttpResponseMessage? respons = result?.Value;

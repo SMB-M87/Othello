@@ -15,25 +15,10 @@ namespace Backend.Controllers
             _repository = repository;
         }
 
-        [HttpPost("create")]
-        public ActionResult<HttpResponseMessage> Create([FromBody] GameResult result)
-        {
-            var game = _repository.GameRepository.GetGame(result.Token);
-
-            if (game is null)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-
-            if (game.Status != Status.Finished || game.PlayersTurn != Color.None)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-
-            _repository.ResultRepository.Create(result);
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-        }
-
         [HttpGet("{token}")]
-        public ActionResult<List<GameResult>>? MatchHistory([FromBody] string token)
+        public ActionResult<List<GameResult>>? MatchHistory(string token)
         {
-            var player = _repository.PlayerRepository.GetPlayer(token);
+            var player = _repository.PlayerRepository.Get(token);
 
             if (player is not null)
                 return _repository.ResultRepository.GetPlayersMatchHistory(token);
@@ -42,9 +27,9 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{token}/stats")]
-        public ActionResult<(int Wins, int Losses, int Draws)>? GameByPlayerToken([FromBody] string token)
+        public ActionResult<(int Wins, int Losses, int Draws)>? PlayerStats(string token)
         {
-            var player = _repository.PlayerRepository.GetPlayer(token);
+            var player = _repository.PlayerRepository.Get(token);
 
             if (player is not null)
                 return _repository.ResultRepository.GetPlayerStats(token);

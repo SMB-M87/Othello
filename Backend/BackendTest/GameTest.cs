@@ -93,7 +93,7 @@ namespace GameTest
             // 7   0 0 0 0 0 0 0 0
             //                     1 <
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.PossibleMove(8, 8); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.PossibleMove(8, 8); });
 
             Assert.That(ex.Message, Is.EqualTo("Move (8,8) is outside the board!"));
         }
@@ -824,7 +824,7 @@ namespace GameTest
             // 7   0 0 0 0 0 0 0 0
             //                     1 <
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(8, 8); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(8, 8); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (8,8) is outside the board!"));
@@ -899,7 +899,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(2, 3); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(2, 3); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (2,3) is not possible!"));
@@ -983,7 +983,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(0, 3); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(0, 3); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (0,3) is not possible!"));
@@ -1080,7 +1080,7 @@ namespace GameTest
             // 6   0 0 0 1 0 0 0 0
             // 7   0 0 0 1 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(0, 3); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(0, 3); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (0,3) is not possible!"));
@@ -1164,7 +1164,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(4, 7); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(4, 7); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (4,7) is not possible!"));
@@ -1262,7 +1262,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(4, 7); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(4, 7); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (4,7) is not possible!"));
@@ -1316,7 +1316,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(2, 2); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(2, 2); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (2,2) is not possible!"));
@@ -1354,7 +1354,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(2, 2); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(2, 2); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (2,2) is not possible!"));
@@ -1438,7 +1438,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(0, 7); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(0, 7); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (0,7) is not possible!"));
@@ -1526,7 +1526,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 1 0
             // 7   0 0 0 0 0 0 0 1 <
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(7, 7); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(7, 7); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (7,7) is not possible!"));
@@ -1614,7 +1614,7 @@ namespace GameTest
             // 6   0 0 0 0 0 0 0 0
             // 7   0 0 0 0 0 0 0 0
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(0, 0); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(0, 0); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (0,0) is not possible!"));
@@ -1702,7 +1702,7 @@ namespace GameTest
             // 6   0 2 0 0 0 0 0 0
             // 7   2 0 0 0 0 0 0 0 <
 
-            Exception ex = Assert.Throws<Exception>(delegate { game.MakeMove(7, 0); });
+            InvalidGameOperationException ex = Assert.Throws<InvalidGameOperationException>(delegate { game.MakeMove(7, 0); });
             Assert.Multiple(() =>
             {
                 Assert.That(ex.Message, Is.EqualTo("Move (7,0) is not possible!"));
