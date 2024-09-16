@@ -1,72 +1,152 @@
-﻿using Backend.Data;
-using Backend.Models;
+﻿using Backend.Models;
+using Backend.Repositories;
 
 namespace BackendTest
 {
     [TestFixture]
     public class GameRepositoryTest
     {
-        private GameRepository _repository;
-        private Player one;
-        private Player two;
-        private Player three;
-        private Player four;
-
-        private Game game0;
-        private Game game1;
-        private Game game2;
+        private IRepository _repository;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new GameRepository();
+            _repository = new Repository();
 
-            one = new("one") { Token = "first" };
-            two = new("two") { Token = "second" };
-            three = new("three") { Token = "third" };
-            four = new("four") { Token = "fourth" };
+            Player one = new("one") { Token = "first" };
+            Player two = new("two") { Token = "second" };
+            Player three = new("three") { Token = "third" };
+            Player four = new("four") { Token = "fourth" };
 
-            game0 = new(one, "I wanna play a game and don't have any requirements.")
+            _repository.PlayerRepository.AddPlayer(one);
+            _repository.PlayerRepository.AddPlayer(two);
+            _repository.PlayerRepository.AddPlayer(three);
+            _repository.PlayerRepository.AddPlayer(four);
+
+            Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
                 Token = "zero"
             };
             game0.First.Color = Color.Black;
-            one.InGame = true;
 
-            game1 = new(two, "I search an advanced player!")
+            Game game1 = new(two, "I search an advanced player!")
             {
                 Token = "one"
             };
             game1.First.Color = Color.Black;
-            two.InGame = true;
             game1.Second = new(three.Token)
             {
                 Color = Color.White
             };
-            three.InGame = true;
             game1.Status = Status.Playing;
 
-            game2 = new(four, "I want to player more than one game against the same adversary.")
+            Game game2 = new(four, "I want to player more than one game against the same adversary.")
             {
                 Token = "two"
             };
             game2.First.Color = Color.Black;
-            four.InGame = true;
 
-            _repository.Games = new List<Game> { game0, game1, game2 };
-            _repository.Players = new List<Player> { one, two, three, four };
+            _repository.GameRepository.AddGame(game0);
+            _repository.GameRepository.AddGame(game1);
+            _repository.GameRepository.AddGame(game2);
+
+            GameResult result0 = new("-3", "second", "third");
+            GameResult result1 = new("-2", "third", "second");
+            GameResult result2 = new("-1", "second", "third");
+
+            _repository.ResultRepository.Create(result0);
+            _repository.ResultRepository.Create(result1);
+            _repository.ResultRepository.Create(result2);
         }
 
         [Test]
-        public void GetGames_Correct()
+        public void AddGame_Correct()
         {
-            var respons = _repository.GetGames();
+            int size = _repository.Games().Count;
+            Player five = new("five") { Token = "fifth" };
+            Game game = new(five, "I search an advanced player!")
+            {
+                Token = "three"
+            };
+            game.First.Color = Color.Black;
+
+            _repository.GameRepository.AddGame(game);
+
             Assert.Multiple(() =>
             {
-                Assert.That(respons, Is.Not.Null);
-                Assert.That(actual: _repository.Games[0].Description, Is.EqualTo(respons[0].Description));
-                Assert.That(actual: _repository.Games[1].First.Token, Is.EqualTo(respons[1].First.Token));
-                Assert.That(actual: _repository.Games[2].First.Token, Is.EqualTo(respons[2].First.Token));
+                Assert.That(actual: _repository.Games(), Has.Count.Not.EqualTo(expected: size));
+                Assert.That(actual: _repository.Games(), Has.Count.EqualTo(expected: size + 1));
+            });
+        }
+
+        [Test]
+        public void JoinGame_Correct()
+        {
+             GameEntrant entry = new("two", new("five") { Token = "fifth" });
+
+            _repository.GameRepository.JoinGame(entry);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: _repository.Games()[2].Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: _repository.Games()[2].Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: _repository.Games()[2].First.Token, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: _repository.Games()[2].Second.Token, Is.EqualTo(expected: "fifth"));
+            });
+        }
+
+        [Test]
+        public void JoinPlayer_Correct()
+        {
+            GameEntrant entry = new("fourth", new("five") { Token = "fifth" });
+
+            _repository.GameRepository.JoinPlayer(entry);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: _repository.Games()[2].Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: _repository.Games()[2].Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: _repository.Games()[2].First.Token, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: _repository.Games()[2].Second.Token, Is.EqualTo(expected: "fifth"));
+            });
+        }
+
+        [Test]
+        public void UpdateGame_Correct()
+        {
+            Game game = new(new("five") { Token = "five" })
+            {
+                Token = "zero",
+                Status = Status.Finished,
+                Second = new("six") { Token = "six" },
+                PlayersTurn = Color.None
+            };
+
+            _repository.GameRepository.UpdateGame(game);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: _repository.Games()[0].Token, Is.EqualTo(expected: "zero"));
+                Assert.That(actual: _repository.Games()[0].Status, Is.EqualTo(expected: Status.Finished));
+                Assert.That(actual: _repository.Games()[0].First.Token, Is.EqualTo(expected: "five"));
+                Assert.That(actual: _repository.Games()[0].Second.Token, Is.EqualTo(expected: "six"));
+                Assert.That(actual: _repository.Games()[0].PlayersTurn, Is.EqualTo(expected: Color.None));
+            });
+        }
+
+        [Test]
+        public void DeleteGame_Correct()
+        {
+            int size = _repository.Games().Count;
+            Game game = _repository.Games()[2];
+
+            _repository.GameRepository.DeleteGame(game);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: _repository.Games(), Has.Count.Not.EqualTo(size));
+                Assert.That(actual: size, Is.EqualTo(3));
+                Assert.That(actual: _repository.Games(), Has.Count.EqualTo(expected: size - 1));
             });
         }
 
@@ -75,9 +155,9 @@ namespace BackendTest
         {
             string token = "ValidTest";
             Player five = new("five") { Token = "fifth" };
-            _repository.Games.Add(new Game(five, "I wanna play a game and don't have any requirements!") { Token = token });
+            _repository.Games().Add(new Game(five, "I wanna play a game and don't have any requirements!") { Token = token });
 
-            var respons = _repository.GetGame(token);
+            var respons = _repository.GameRepository.GetGame(token);
 
             if (respons is not null)
                 Assert.That(actual: respons.First.Token, Is.EqualTo(expected: "fifth"));
@@ -90,7 +170,7 @@ namespace BackendTest
         {
             string token = "BlaBlaInvalidTestT123";
 
-            var respons = _repository.GetGame(token);
+            var respons = _repository.GameRepository.GetGame(token);
 
             Assert.That(respons, Is.Null);
         }
@@ -105,16 +185,14 @@ namespace BackendTest
                 Token = "three"
             };
             game.First.Color = Color.Black;
-            five.InGame = true;
             game.Second = new(six.Token)
             {
                 Color = Color.White
             };
-            six.InGame = true;
             game.Status = Status.Playing;
-            _repository.Games.Add(game);
+            _repository.Games().Add(game);
 
-            var respons = _repository.GetPlayersGame("fifth");
+            var respons = _repository.GameRepository.GetPlayersGame("fifth");
 
             if (respons is not null)
                 Assert.That(actual: respons.Token, Is.EqualTo(expected: game.Token));
@@ -133,16 +211,14 @@ namespace BackendTest
                 Token = "three"
             };
             game.First.Color = Color.Black;
-            five.InGame = true;
             game.Second = new(six.Token)
             {
                 Color = Color.White
             };
-            six.InGame = true;
             game.Status = Status.Playing;
-            _repository.Games.Add(game);
+            _repository.Games().Add(game);
 
-            var respons = _repository.GetPlayersGame("sixth");
+            var respons = _repository.GameRepository.GetPlayersGame("sixth");
 
             if (respons is not null)
                 Assert.That(actual: respons.Token, Is.EqualTo(expected: game.Token));
@@ -155,95 +231,27 @@ namespace BackendTest
         {
             string playerToken = "first123456";
 
-            var respons = _repository.GetPlayersGame(playerToken);
+            var respons = _repository.GameRepository.GetPlayersGame(playerToken);
 
             Assert.That(respons, Is.Null);
         }
 
         [Test]
-        public void AddGame_Correct()
+        public void GetGames_Correct()
         {
-            int size = _repository.Games.Count;
-            Player five = new("five") { Token = "fifth" };
-            Game game = new(five, "I search an advanced player!")
+            var respons = _repository.GameRepository.GetGames();
+
+            if (respons is not null)
             {
-                Token = "three"
-            };
-            game.First.Color = Color.Black;
-            five.InGame = true;
-
-            _repository.AddGame(game);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _repository.Games, Has.Count.Not.EqualTo(size));
-                Assert.That(actual: size + 1, Is.EqualTo(_repository.Games.Count));
-            });
-        }
-
-        [Test]
-        public void JoinGame_Correct()
-        {
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
-            Game game = new(five, "I want to player more than one game against the same adversary.")
-            {
-                Token = "three"
-            };
-            game.First.Color = Color.Black;
-            five.InGame = true;
-            _repository.Games.Add(game);
-            GameEntrant entry = new(game.Token, six);
-
-            _repository.JoinGame(entry);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _repository.Games[3].Token, Is.EqualTo("three"));
-                Assert.That(actual: _repository.Games[3].Status, Is.EqualTo(Status.Playing));
-                Assert.That(actual: _repository.Games[3].First.Token, Is.EqualTo("fifth"));
-                Assert.That(actual: _repository.Games[3].Second.Token, Is.EqualTo("sixth"));
-            });
-        }
-
-        [Test]
-        public void JoinGame_Incorrect()
-        {
-            Player five = new("five") { Token = "fifth" };
-            Game game = new(five, "I want to player more than one game against the same adversary.")
-            {
-                Token = "three"
-            };
-            game.First.Color = Color.Black;
-            five.InGame = true;
-            _repository.Games.Add(game);
-            GameEntrant joiner = new(game.Token, five);
-
-            _repository.JoinGame(joiner);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _repository.Games[3].Token, Is.EqualTo("three"));
-                Assert.That(actual: _repository.Games[3].Status, Is.EqualTo(Status.Pending));
-                Assert.That(actual: _repository.Games[3].First.Token, Is.EqualTo("fifth"));
-                Assert.That(actual: _repository.Games[3].Second.Token, Is.EqualTo(""));
-            });
-        }
-
-        [Test]
-        public void DeleteGame_Correct()
-        {
-            int size = _repository.Games.Count;
-            Game game = _repository.Games[2];
-
-            _repository.DeleteGame(game);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _repository.Games, Has.Count.Not.EqualTo(size));
-                Assert.That(actual: size, Is.EqualTo(3));
-                Assert.That(size - 1, Is.EqualTo(_repository.Games.Count));
-            });
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: _repository.Games()[0].Description, Is.EqualTo(respons[0].Description));
+                    Assert.That(actual: _repository.Games()[1].First.Token, Is.EqualTo(respons[1].First.Token));
+                    Assert.That(actual: _repository.Games()[2].First.Token, Is.EqualTo(respons[2].First.Token));
+                });
+            }
+            else
+                Assert.Fail("Respons was null.");
         }
     }
 }

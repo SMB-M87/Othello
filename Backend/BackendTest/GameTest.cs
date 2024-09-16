@@ -26,12 +26,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             Assert.That(game.PlayersTurn, Is.EqualTo(Color.Black));
@@ -76,12 +74,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -110,12 +106,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.Black;
 
@@ -143,12 +137,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -177,12 +169,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -213,12 +203,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.Board[1, 3] = Color.White;
@@ -249,12 +237,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -290,12 +276,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -331,12 +315,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -367,12 +349,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -403,12 +383,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -444,12 +422,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -486,12 +462,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -519,12 +493,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.Black;
 
@@ -553,12 +525,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -590,12 +560,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -627,12 +595,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -664,12 +630,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -701,12 +665,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -738,12 +700,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -775,12 +735,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -812,12 +770,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -849,12 +805,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -890,12 +844,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.Black;
 
@@ -929,12 +881,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -970,12 +920,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1014,12 +962,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1059,12 +1005,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1110,12 +1054,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1160,12 +1102,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1203,12 +1143,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1248,12 +1186,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1299,12 +1235,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1364,12 +1298,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -1404,12 +1336,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.Black;
 
@@ -1444,12 +1374,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1488,12 +1416,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1535,12 +1461,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1580,12 +1504,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1627,12 +1549,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1672,12 +1592,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1719,12 +1637,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -1764,12 +1680,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.Black;
@@ -1812,12 +1726,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.Board[0, 0] = Color.White;
@@ -1909,12 +1821,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.White;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.Black
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -2007,12 +1917,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -2105,12 +2013,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.PlayersTurn = Color.White;
@@ -2203,12 +2109,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
             game.PlayersTurn = Color.White;
 
@@ -2236,12 +2140,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             //     0 1 2 3 4 5 6 7
@@ -2268,12 +2170,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.Board[2, 3] = Color.Black;
@@ -2306,12 +2206,10 @@ namespace BackendTest
                 Token = "one"
             };
             game.First.Color = Color.Black;
-            one.InGame = true;
             game.Second = new(two.Token)
             {
                 Color = Color.White
             };
-            two.InGame = true;
             game.Status = Status.Playing;
 
             game.Board[2, 3] = Color.White;

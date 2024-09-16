@@ -10,7 +10,7 @@ namespace Backend.Models
         public string Loser { get; set; }
         public string Draw { get; set; }
 
-        public GameResult(string token, string winner, string loser, string draw = "")
+        public GameResult(string token, string winner, string loser, string draw = "Empty")
         {
             Token = token;
             Winner = winner;

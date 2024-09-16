@@ -95,7 +95,7 @@ namespace Backend.Data
                 return null;
             }
 
-            string result = "";
+            string result = string.Empty;
             int row = 0;
             int column = 0;
 

@@ -1,7 +1,7 @@
 ﻿using System.Net;
-using Backend.Data;
 using Backend.Models;
 using Backend.Controllers;
+using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendTest
@@ -9,77 +9,59 @@ namespace BackendTest
     [TestFixture]
     public class GameControllerTest
     {
-        private GameRepository _repository;
+        private IRepository _repository;
         private GameController _controller;
-
-        private Player one;
-        private Player two;
-        private Player three;
-        private Player four;
-
-        private Game game0;
-        private Game game1;
-        private Game game2;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new GameRepository();
-            _controller = new GameController(_repository);
+            _repository = new Repository();
 
-            one = new("one") { Token = "first" };
-            two = new("two") { Token = "second" };
-            three = new("three") { Token = "third" };
-            four = new("four") { Token = "fourth" };
+            Player one = new("one") { Token = "first" };
+            Player two = new("two") { Token = "second" };
+            Player three = new("three") { Token = "third" };
+            Player four = new("four") { Token = "fourth" };
 
-            game0 = new(one, "I wanna play a game and don't have any requirements.")
+            _repository.PlayerRepository.AddPlayer(one);
+            _repository.PlayerRepository.AddPlayer(two);
+            _repository.PlayerRepository.AddPlayer(three);
+            _repository.PlayerRepository.AddPlayer(four);
+
+            Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
                 Token = "zero"
             };
             game0.First.Color = Color.Black;
-            one.InGame = true;
 
-            game1 = new(two, "I search an advanced player!")
+            Game game1 = new(two, "I search an advanced player!")
             {
                 Token = "one"
             };
             game1.First.Color = Color.Black;
-            two.InGame = true;
             game1.Second = new(three.Token)
             {
                 Color = Color.White
             };
-            three.InGame = true;
             game1.Status = Status.Playing;
 
-            game2 = new(four, "I want to player more than one game against the same adversary.")
+            Game game2 = new(four, "I want to player more than one game against the same adversary.")
             {
                 Token = "two"
             };
             game2.First.Color = Color.Black;
-            four.InGame = true;
 
-            _repository.Games = new List<Game> { game0, game1, game2 };
-            _repository.Players = new List<Player> { one, two , three, four };
-        }
+            _repository.GameRepository.AddGame(game0);
+            _repository.GameRepository.AddGame(game1);
+            _repository.GameRepository.AddGame(game2);
 
-        [Test]
-        public void DescriptionsOfPendingGames_Correct()
-        {
-            ActionResult<List<string>>? result = _controller.DescriptionsOfPendingGames();
-            List<string>? respons = result?.Value;
+            GameResult result0 = new("-3", "second", "third");
+            GameResult result1 = new("-2", "third", "second");
+            GameResult result2 = new("-1", "second", "third");
 
-            if (respons is not null)
-            {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: game0.Description, Is.EqualTo(respons[0]));
-                    Assert.That(actual: game2.Description, Is.EqualTo(respons[1]));
-                    Assert.That(respons.All(res => res != _repository.Games[1].Description));
-                });
-            }
-            else
-                Assert.Fail("Respons is null.");
+            _repository.ResultRepository.Create(result0);
+            _repository.ResultRepository.Create(result1);
+            _repository.ResultRepository.Create(result2);
+            _controller = new GameController(_repository);
         }
 
         [Test]
@@ -99,7 +81,7 @@ namespace BackendTest
         [Test]
         public void Create_FORBIDDEN()
         {
-            GameCreation create = new(new("player") { InGame = true });
+            GameCreation create = new(_repository.Players()[0]);
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -141,7 +123,7 @@ namespace BackendTest
         [Test]
         public void Join_FORBIDDEN()
         {
-            GameEntrant entry = new("zero", new("player") { InGame = true });
+            GameEntrant entry = new("zero", new("player"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -155,7 +137,7 @@ namespace BackendTest
         [Test]
         public void Delete_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games[2].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[2].First);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -167,11 +149,30 @@ namespace BackendTest
         [Test]
         public void Delete_FORBIDDEN()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games[1].Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[1].Second);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
                 Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void DescriptionsOfPendingGames_Correct()
+        {
+            ActionResult<List<string>>? result = _controller.DescriptionsOfPendingGames();
+            List<string>? respons = result?.Value;
+
+            if (respons is not null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: _repository.Games()[0].Description, Is.EqualTo(respons[0]));
+                    Assert.That(actual: _repository.Games()[2].Description, Is.EqualTo(respons[1]));
+                    Assert.That(respons.All(res => res != _repository.Games()[1].Description));
+                });
+            }
             else
                 Assert.Fail("Respons is null.");
         }
@@ -183,7 +184,7 @@ namespace BackendTest
             Game? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: _repository.Games[2].Token));
+                Assert.That(actual: respons.Token, Is.EqualTo(expected: _repository.Games()[2].Token));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -207,7 +208,7 @@ namespace BackendTest
             Game? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.First.Token, Is.EqualTo(expected: _repository.Games[2].First.Token));
+                Assert.That(actual: respons.First.Token, Is.EqualTo(expected: _repository.Games()[2].First.Token));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -231,7 +232,7 @@ namespace BackendTest
             Color? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons, Is.EqualTo(expected: _repository.Games[2].PlayersTurn));
+                Assert.That(actual: respons, Is.EqualTo(expected: _repository.Games()[2].PlayersTurn));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -251,7 +252,7 @@ namespace BackendTest
         [Test]
         public void Move_OK()
         {
-            GameStep action = new(_repository.Games[1].First);
+            GameStep action = new(_repository.Games()[1].First);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -265,7 +266,7 @@ namespace BackendTest
         [Test]
         public void Move_FORBIDDEN_NoSecondPlayer()
         {
-            GameStep action = new(_repository.Games[2].First);
+            GameStep action = new(_repository.Games()[2].First);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -279,7 +280,7 @@ namespace BackendTest
         [Test]
         public void Move_FORBIDDEN_IncorrectPlayer()
         {
-            GameStep action = new(_repository.Games[0].First);
+            GameStep action = new(_repository.Games()[0].First);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -293,7 +294,7 @@ namespace BackendTest
         [Test]
         public void Move_FORBIDDEN_IncorrectPlayerTurn()
         {
-            GameStep action = new(_repository.Games[1].Second);
+            GameStep action = new(_repository.Games()[1].Second);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -308,10 +309,9 @@ namespace BackendTest
         public void Pass_OK_FirstPlayer()
         {
             Player five = new("five") { Token = "fifth" };
-            _repository.Games[2].Second = new(five.Token) { Color = Color.White };
-            _repository.Games[2].Status = Status.Playing;
-
-            Game game = _repository.Games[2];
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.Status = Status.Playing;
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
             game.Board[0, 2] = Color.White;
@@ -377,7 +377,7 @@ namespace BackendTest
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(_repository.Games[2].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.First);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -390,11 +390,10 @@ namespace BackendTest
         public void Pass_OK_SecondPlayer()
         {
             Player five = new("five") { Token = "fifth" };
-            _repository.Games[2].Second = new(five.Token) { Color = Color.White };
-            _repository.Games[2].PlayersTurn = _repository.Games[2].Second.Color;
-            _repository.Games[2].Status = Status.Playing;
-
-            Game game = _repository.Games[2];
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.Second.Color;
+            game.Status = Status.Playing;
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
             game.Board[0, 2] = Color.White;
@@ -460,7 +459,7 @@ namespace BackendTest
             game.Board[7, 6] = Color.White;
             game.Board[7, 7] = Color.White;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(_repository.Games[2].Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.Second);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -473,11 +472,12 @@ namespace BackendTest
         public void Pass_BADREQUEST_FirstPlayer()
         {
             Player five = new("five") { Token = "fifth" };
-            _repository.Games[2].Second = new(five.Token) { Color = Color.White };
-            _repository.Games[2].PlayersTurn = _repository.Games[2].First.Color;
-            _repository.Games[2].Status = Status.Playing;
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.First.Color;
+            game.Status = Status.Playing;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(_repository.Games[2].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.First);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -490,11 +490,12 @@ namespace BackendTest
         public void Pass_BADREQUEST_SecondPlayer()
         {
             Player five = new("five") { Token = "fifth" };
-            _repository.Games[2].Second = new(five.Token) { Color = Color.White };
-            _repository.Games[2].PlayersTurn = _repository.Games[2].Second.Color;
-            _repository.Games[2].Status = Status.Playing;
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.Second.Color;
+            game.Status = Status.Playing;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(_repository.Games[2].Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.Second);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -507,11 +508,12 @@ namespace BackendTest
         public void Forfeit_OK()
         {
             Player five = new("five") { Token = "fifth" };
-            _repository.Games[2].Second = new(five.Token) { Color = Color.White };
-            _repository.Games[2].PlayersTurn = _repository.Games[2].First.Color;
-            _repository.Games[2].Status = Status.Playing;
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.First.Color;
+            game.Status = Status.Playing;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(_repository.Games[2].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -524,11 +526,12 @@ namespace BackendTest
         public void Forfeit_FORBIDDEN()
         {
             Player five = new("five") { Token = "fifth" };
-            _repository.Games[2].Second = new(five.Token) { Color = Color.White };
-            _repository.Games[2].PlayersTurn = _repository.Games[2].First.Color;
-            _repository.Games[2].Status = Status.Pending;
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.First.Color;
+            game.Status = Status.Pending;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(_repository.Games[2].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)

@@ -1,4 +1,5 @@
-using Backend.Data;
+using Backend.Models;
+using Backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

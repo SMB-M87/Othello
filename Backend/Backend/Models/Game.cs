@@ -55,7 +55,7 @@ namespace Backend.Models
             {
                 Color = new Random().Next(1, 3) == 1 ? Color.White : Color.Black
             };
-            Second = new("") { Color = GetOpponentsColor(First.Color) };
+            Second = new(string.Empty) { Color = GetOpponentsColor(First.Color) };
         }
 
         public void Pass()

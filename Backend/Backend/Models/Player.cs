@@ -8,20 +8,15 @@ namespace Backend.Models
         public string Token { get; set; }
         public string Username { get; set; }
 
-        public bool InGame { get; set; }
-
-        public int Won { get; set; }
-        public int Lost { get; set; }
-        public int Draw { get; set; }
+        public List<string> Friends;
+        public List<string> PendingFriends;
 
         public Player(string username)
         {
             Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "q").Replace("+", "r");
             Username = username;
-            InGame = false;
-            Won = 0;
-            Lost = 0;
-            Draw = 0;
+            Friends = new List<string>();
+            PendingFriends = new List<string>();
         }
     }
 }

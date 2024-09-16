@@ -1,5 +1,5 @@
-﻿using Backend.Data;
-using Backend.Models;
+﻿using Backend.Models;
+using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
@@ -8,44 +8,117 @@ namespace Backend.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        private readonly IGameRepository iRepository;
+        private readonly IRepository _repository;
 
-        public GameController(IGameRepository repository)
+        public GameController(IRepository repository)
         {
-            iRepository = repository;
-        }
-
-        [HttpGet]
-        public ActionResult<List<string>>? DescriptionsOfPendingGames()
-        {
-            var pendingGames = iRepository.GetGames();
-
-            if (pendingGames is not null)
-                return pendingGames.FindAll(game => string.IsNullOrEmpty(game.Second.Token)).Select(game => game.Description).ToList();
-            else
-                return null;
+            _repository = repository;
         }
 
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] GameCreation builder)
         {
-            if (builder.Player.InGame == true)
+            var player = _repository.PlayerRepository.GetPlayersName(builder.Player.Token);
+
+            if (player is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            var inGame = _repository.GameRepository.GetPlayersGame(builder.Player.Token);
+
+            if (inGame is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             Game game = new(builder.Player, builder.Description);
-            iRepository.AddGame(game);
-            var respons = iRepository.GetGame(game.Token);
+            _repository.GameRepository.AddGame(game);
+            var respons = _repository.GameRepository.GetGame(game.Token);
 
             if (respons is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
+        }
+
+        [HttpPost("join")]
+        public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entry)
+        {
+            var game = _repository.GameRepository.GetGame(entry.Token);
+            var player = _repository.PlayerRepository.GetPlayersName(entry.Player.Token);
+
+            if (game is null || player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            var inGame = _repository.GameRepository.GetPlayersGame(entry.Player.Token);
+
+            if (inGame is not null || game.Status is not Status.Pending || game.First.Token == entry.Player.Token )
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+
+            _repository.GameRepository.JoinGame(entry);
+            var respons = _repository.GameRepository.GetGame(game.Token);
+
+            if (respons is not null && respons.Status is Status.Playing && respons.Second.Token == entry.Player.Token)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
+        }
+
+        [HttpPost("join-player")]
+        public ActionResult<HttpResponseMessage> JoinPlayer([FromBody] GameEntrant entry)
+        {
+            var game = _repository.GameRepository.GetPlayersGame(entry.Token);
+            var player = _repository.PlayerRepository.GetPlayersName(entry.Token);
+
+            if (game is null || player is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            var inGame = _repository.GameRepository.GetPlayersGame(entry.Player.Token);
+
+            if (inGame is not null || game.Status is not Status.Pending || game.First.Token == entry.Player.Token)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+
+            _repository.GameRepository.JoinGame(entry);
+            var respons = _repository.GameRepository.GetGame(game.Token);
+
+            if (respons is not null && respons.Status is Status.Playing && respons.Second.Token == entry.Player.Token)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
+        }
+
+        [HttpPost("delete")]
+        public ActionResult<HttpResponseMessage> Delete([FromBody] GameParticipant player)
+        {
+            var game = _repository.GameRepository.GetPlayersGame(player.Token);
+
+            if (game is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            if (game.Status != Status.Pending || game.First.Token != player.Token)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+
+            _repository.GameRepository.DeleteGame(game);
+            var respons = _repository.GameRepository.GetGame(game.Token);
+
+            if (respons is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
+        }
+
+        [HttpGet]
+        public ActionResult<List<string>>? DescriptionsOfPendingGames()
+        {
+            var pendingGames = _repository.GameRepository.GetGames();
+
+            if (pendingGames is not null)
+                return pendingGames.FindAll(game => game.Status == Status.Pending).Select(game => game.Description).ToList();
+            else
+                return null;
         }
 
         [HttpGet("{token}")]
-        public ActionResult<Game>? GameByToken(string token)
+        public ActionResult<Game>? GameByToken([FromBody] string token)
         {
-            var game = iRepository.GetGame(token);
+            var game = _repository.GameRepository.GetGame(token);
 
             if (game is not null)
                 return game;
@@ -54,9 +127,9 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{token}/player")]
-        public ActionResult<Game>? GameByPlayerToken(string token)
+        public ActionResult<Game>? GameByPlayerToken([FromBody] string token)
         {
-            var game = iRepository.GetPlayersGame(token);
+            var game = _repository.GameRepository.GetPlayersGame(token);
 
             if (game is not null)
                 return game;
@@ -64,30 +137,10 @@ namespace Backend.Controllers
                 return null;
         }
 
-        [HttpPost("join")]
-        public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entry)
-        {
-            var game = iRepository.GetGame(entry.Token);
-
-            if (game is null)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-
-            if (entry.Player.InGame == true || game.Status == Status.Playing)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-
-            iRepository.JoinGame(entry);
-            var respons = iRepository.GetGame(entry.Token);
-
-            if (respons is not null && Status.Playing == respons.Status)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-        }
-
         [HttpGet("{token}/turn")]
-        public ActionResult<Color>? TurnByToken(string token)
+        public ActionResult<Color>? TurnByToken([FromBody] string token)
         {
-            var game = iRepository.GetGame(token);
+            var game = _repository.GameRepository.GetGame(token);
 
             if (game is not null)
                 return game.PlayersTurn;
@@ -98,7 +151,7 @@ namespace Backend.Controllers
         [HttpPut("{token}/move")]
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
-            var game = iRepository.GetPlayersGame(action.Participant.Token);
+            var game = _repository.GameRepository.GetPlayersGame(action.Participant.Token);
 
             if (game is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -111,15 +164,20 @@ namespace Backend.Controllers
             if (!game.PossibleMove(action.Y, action.X))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
 
-           game.MakeMove(action.Y, action.X);
-           iRepository.UpdateGame(game);
-           return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            game.MakeMove(action.Y, action.X);
+            _repository.GameRepository.UpdateGame(game);
+            var respons = _repository.GameRepository.GetGame(game.Token);
+
+            if (respons is not null && respons.PlayersTurn != action.Participant.Color)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
         }
 
-        [HttpPut("{token}/pass")]
+        [HttpPut("pass")]
         public ActionResult<HttpResponseMessage> Pass([FromBody] GameParticipant player)
         {
-            var game = iRepository.GetPlayersGame(player.Token);
+            var game = _repository.GameRepository.GetPlayersGame(player.Token);
 
             if (game is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -141,14 +199,19 @@ namespace Backend.Controllers
                 };
             }
 
-            iRepository.UpdateGame(game);
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            _repository.GameRepository.UpdateGame(game);
+            var respons = _repository.GameRepository.GetGame(game.Token);
+
+            if (respons is not null && respons.PlayersTurn != player.Color)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
         }
 
-        [HttpPut("{token}/giveup")]
+        [HttpPut("forfeit")]
         public ActionResult<HttpResponseMessage> Forfeit([FromBody] GameParticipant player)
         {
-            var game = iRepository.GetPlayersGame(player.Token);
+            var game = _repository.GameRepository.GetPlayersGame(player.Token);
 
             if (game is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -172,30 +235,15 @@ namespace Backend.Controllers
             }
             game.Status = Status.Finished;
             game.PlayersTurn = Color.None;
-            iRepository.UpdateGame(game);
+            _repository.GameRepository.UpdateGame(game);
             GameResult result = new(game.Token, winner, loser);
-            iRepository.AddResult(result);
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-        }
+            _repository.ResultRepository.Create(result); 
+            var respons = _repository.GameRepository.GetGame(game.Token);
 
-        [HttpPost("{token}/delete")]
-        public ActionResult<HttpResponseMessage> Delete([FromBody] GameParticipant player)
-        {
-            var game = iRepository.GetPlayersGame(player.Token);
-
-            if (game is null)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-
-            if (game.Status != Status.Pending || game.First.Token != player.Token)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-
-            iRepository.DeleteGame(game);
-            var respons = iRepository.GetGame(game.Token);
-
-            if (respons == null)
+            if (respons is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
         }
     }
 }
