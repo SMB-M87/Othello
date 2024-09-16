@@ -1,9 +1,9 @@
 using Backend.Models;
 
-namespace BackendTest
+namespace GameTest
 {
     [TestFixture]
-    public class GameTest
+    public class ModelTest
     {
         private Player one;
         private Player two;

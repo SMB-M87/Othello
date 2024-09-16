@@ -52,7 +52,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<Player>? PlayerByToken([FromBody] string token)
+        public ActionResult<Player>? PlayerByToken(string token)
         {
             var player = _repository.PlayerRepository.GetPlayer(token);
 
@@ -62,8 +62,8 @@ namespace Backend.Controllers
                 return null;
         }
 
-        [HttpGet("{token}/username")]
-        public ActionResult<Player>? PlayerByUsername([FromBody] string username)
+        [HttpGet("{username}/username")]
+        public ActionResult<Player>? PlayerByUsername(string username)
         {
             var player = _repository.PlayerRepository.GetPlayerByUsername(username);
 
@@ -74,7 +74,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{token}/name")]
-        public ActionResult<string>? PlayersName([FromBody] string token)
+        public ActionResult<string>? PlayersName(string token)
         {
             var player = _repository.PlayerRepository.GetPlayer(token);
 

@@ -1,10 +1,10 @@
 ﻿using Backend.Models;
 using Backend.Repositories;
 
-namespace BackendTest
+namespace GameTest
 {
     [TestFixture]
-    public class GameRepositoryTest
+    public class RepositoryTest
     {
         private IRepository _repository;
 

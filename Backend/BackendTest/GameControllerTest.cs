@@ -4,10 +4,10 @@ using Backend.Controllers;
 using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BackendTest
+namespace GameTest
 {
     [TestFixture]
-    public class GameControllerTest
+    public class ControllerTest
     {
         private IRepository _repository;
         private GameController _controller;
@@ -460,6 +460,100 @@ namespace BackendTest
 
             if (respons is not null)
                 Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_Finished_OK()
+        {
+            GameStep action = new(_repository.Games()[1].Second);
+            Game game = _repository.Games()[1];
+            game.PlayersTurn = Color.White;
+            game.Board[0, 0] = Color.White;
+            game.Board[0, 1] = Color.White;
+            game.Board[0, 2] = Color.White;
+            game.Board[0, 3] = Color.White;
+            game.Board[0, 4] = Color.White;
+            game.Board[0, 5] = Color.White;
+            game.Board[0, 6] = Color.White;
+            game.Board[0, 7] = Color.White;
+            game.Board[1, 0] = Color.White;
+            game.Board[1, 1] = Color.White;
+            game.Board[1, 2] = Color.White;
+            game.Board[1, 3] = Color.White;
+            game.Board[1, 4] = Color.White;
+            game.Board[1, 5] = Color.White;
+            game.Board[1, 6] = Color.White;
+            game.Board[1, 7] = Color.White;
+            game.Board[2, 0] = Color.White;
+            game.Board[2, 1] = Color.White;
+            game.Board[2, 2] = Color.White;
+            game.Board[2, 3] = Color.White;
+            game.Board[2, 4] = Color.White;
+            game.Board[2, 5] = Color.White;
+            game.Board[2, 6] = Color.White;
+            game.Board[2, 7] = Color.White;
+            game.Board[3, 0] = Color.White;
+            game.Board[3, 1] = Color.White;
+            game.Board[3, 2] = Color.White;
+            game.Board[3, 3] = Color.White;
+            game.Board[3, 4] = Color.White;
+            game.Board[3, 5] = Color.White;
+            game.Board[3, 6] = Color.White;
+            game.Board[3, 7] = Color.None;
+            game.Board[4, 0] = Color.White;
+            game.Board[4, 1] = Color.White;
+            game.Board[4, 2] = Color.White;
+            game.Board[4, 3] = Color.White;
+            game.Board[4, 4] = Color.White;
+            game.Board[4, 5] = Color.White;
+            game.Board[4, 6] = Color.None;
+            game.Board[4, 7] = Color.None;
+            game.Board[5, 0] = Color.White;
+            game.Board[5, 1] = Color.White;
+            game.Board[5, 2] = Color.White;
+            game.Board[5, 3] = Color.White;
+            game.Board[5, 4] = Color.White;
+            game.Board[5, 5] = Color.White;
+            game.Board[5, 6] = Color.None;
+            game.Board[5, 7] = Color.Black;
+            game.Board[6, 0] = Color.White;
+            game.Board[6, 1] = Color.White;
+            game.Board[6, 2] = Color.White;
+            game.Board[6, 3] = Color.White;
+            game.Board[6, 4] = Color.White;
+            game.Board[6, 5] = Color.White;
+            game.Board[6, 6] = Color.White;
+            game.Board[6, 7] = Color.None;
+            game.Board[7, 0] = Color.White;
+            game.Board[7, 1] = Color.White;
+            game.Board[7, 2] = Color.White;
+            game.Board[7, 3] = Color.White;
+            game.Board[7, 4] = Color.White;
+            game.Board[7, 5] = Color.White;
+            game.Board[7, 6] = Color.White;
+            game.Board[7, 7] = Color.White;
+            game.PlayersTurn = Color.White;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("second"), Is.EqualTo((2, 1, 0)));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("third"), Is.EqualTo((1, 2, 0)));
+            });
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("second"), Is.EqualTo((2, 2, 0)));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("third"), Is.EqualTo((2, 2, 0)));
+                });
+            }
             else
                 Assert.Fail("Respons is null.");
         }
@@ -1031,8 +1125,11 @@ namespace BackendTest
             game.PlayersTurn = game.First.Color;
             game.Status = Status.Playing;
 
-            Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo((0,0,0)));
-            Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First.Token), Is.EqualTo((0,0,0)));
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo((0, 0, 0)));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First.Token), Is.EqualTo((0, 0, 0)));
+            });
 
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
             HttpResponseMessage? respons = result?.Value;

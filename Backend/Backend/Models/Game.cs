@@ -99,7 +99,7 @@ namespace Backend.Models
         public bool PossibleMove(int rowMove, int columnMove)
         {
             if (!PositionInbetweenBoardLimits(rowMove, columnMove))
-                throw new Exception($"Move ({rowMove},{columnMove}) is outside the board!");
+                throw new InvalidGameOperationException($"Move ({rowMove},{columnMove}) is outside the board!");
 
             return PossibleMove(rowMove, columnMove, PlayersTurn);
         }
@@ -117,7 +117,7 @@ namespace Backend.Models
             }
             else
             {
-                throw new Exception($"Move ({rowMove},{columnMove}) is not possible!");
+                throw new InvalidGameOperationException($"Move ({rowMove},{columnMove}) is not possible!");
             }
         }
 
@@ -134,7 +134,7 @@ namespace Backend.Models
         private bool IsThereAPossibleMove(Color color)
         {
             if (color == Color.None)
-                throw new Exception("None is not a valid color!");
+                throw new InvalidGameOperationException("None is not a valid color!");
 
             for (int rowMove = 0; rowMove < boardScope; rowMove++)
             {

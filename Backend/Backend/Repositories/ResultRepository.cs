@@ -25,7 +25,7 @@ namespace Backend.Repositories
         public (int Wins, int Losses, int Draws) GetPlayerStats(string token)
         {
             var results = _repository.ResultRepository.GetPlayersMatchHistory(token);
-            int wins = -1, losses = -1, draws = -1;
+            int wins = 0, losses = 0, draws = 0;
 
             if (results is not null)
             {
