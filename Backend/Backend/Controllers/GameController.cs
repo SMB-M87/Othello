@@ -247,7 +247,7 @@ namespace Backend.Controllers
             game.PlayersTurn = Color.None;
             _repository.GameRepository.UpdateGame(game);
             GameResult result = new(game.Token, winner, loser);
-            _repository.ResultRepository.Create(result); 
+            _repository.ResultRepository.Create(result);
             var respons = _repository.GameRepository.GetGame(game.Token);
 
             if (respons is null)

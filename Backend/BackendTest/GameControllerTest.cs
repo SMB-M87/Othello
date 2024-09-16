@@ -525,7 +525,7 @@ namespace BackendTest
         }
 
         [Test]
-        public void Move_FirstParticipantIsCheating_Forbidden()
+        public void Move_FirstParticipantIncorrectColor_Forbidden()
         {
             Game game = _repository.Games()[1];
             game.PlayersTurn = Color.White;
@@ -541,7 +541,7 @@ namespace BackendTest
         }
 
         [Test]
-        public void Move_SecondParticipantIsCheating_Forbidden()
+        public void Move_SecondParticipantIncorrectColor_Forbidden()
         {
             Game game = _repository.Games()[1];
             GameStep action = new(new("third") { Color = Color.Black });
@@ -963,7 +963,7 @@ namespace BackendTest
         }
 
         [Test]
-        public void Pass_FirstPlayerIsCheating_FORBIDDEN()
+        public void Pass_FirstPlayerIncorrectColor_FORBIDDEN()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second") { Color = Color.White });
             HttpResponseMessage? respons = result?.Value;
@@ -975,7 +975,7 @@ namespace BackendTest
         }
 
         [Test]
-        public void Pass_SecondPlayerIsCheating_FORBIDDEN()
+        public void Pass_SecondPlayerIncorrectColor_FORBIDDEN()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third") { Color = Color.Black });
             HttpResponseMessage? respons = result?.Value;
@@ -1031,11 +1031,105 @@ namespace BackendTest
             game.PlayersTurn = game.First.Color;
             game.Status = Status.Playing;
 
+            Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo((0,0,0)));
+            Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First.Token), Is.EqualTo((0,0,0)));
+
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo((1, 0, 0)));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First.Token), Is.EqualTo((0, 1, 0)));
+                });
+            }
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Forfeit_Game_NOTFOUND()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("fifth"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Forfeit_StatusIncorrect_FORBIDDEN()
+        {
+            Player five = new("five") { Token = "fifth" };
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.First.Color;
+            game.Status = Status.Pending;
+
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Forfeit_PlayersturnIncorrect_FORBIDDEN()
+        {
+            Player five = new("five") { Token = "fifth" };
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = game.First.Color;
+            game.Status = Status.Pending;
+
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.Second);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Forfeit_FirstPlayerIncorrectColor_FORBIDDEN()
+        {
+            Player five = new("five") { Token = "fifth" };
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = Color.White;
+            game.Status = Status.Pending;
+
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("fourth") { Color = Color.White });
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Forfeit_SecondPlayerIncorrectColor_FORBIDDEN()
+        {
+            Player five = new("five") { Token = "fifth" };
+            Game game = _repository.Games()[2];
+            game.Second = new(five.Token) { Color = Color.White };
+            game.PlayersTurn = Color.Black;
+            game.Status = Status.Pending;
+
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("fifth") { Color = Color.Black });
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
             else
                 Assert.Fail("Respons is null.");
         }
