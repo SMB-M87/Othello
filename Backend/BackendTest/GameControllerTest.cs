@@ -21,11 +21,15 @@ namespace BackendTest
             Player two = new("two") { Token = "second" };
             Player three = new("three") { Token = "third" };
             Player four = new("four") { Token = "fourth" };
+            Player five = new("five") { Token = "fifth" };
+            Player six = new("six") { Token = "sixth" };
 
             _repository.PlayerRepository.AddPlayer(one);
             _repository.PlayerRepository.AddPlayer(two);
             _repository.PlayerRepository.AddPlayer(three);
             _repository.PlayerRepository.AddPlayer(four);
+            _repository.PlayerRepository.AddPlayer(five);
+            _repository.PlayerRepository.AddPlayer(six);
 
             Game game0 = new(one, "I wanna play a game and don't have any requirements.")
             {
@@ -67,7 +71,7 @@ namespace BackendTest
         [Test]
         public void Create_OK()
         {
-            GameCreation create = new(new("player"));
+            GameCreation create = new(_repository.Players()[4]);
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -79,9 +83,23 @@ namespace BackendTest
         }
 
         [Test]
-        public void Create_FORBIDDEN()
+        public void Create_Player_NOTFOUND()
         {
-            GameCreation create = new(_repository.Players()[0]);
+            GameCreation create = new(new("player"));
+
+            ActionResult<HttpResponseMessage>? result = _controller.Create(create);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Create_PlayerInGame_FORBIDDEN()
+        {
+            GameCreation create = new(_repository.Players()[2]);
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -95,7 +113,7 @@ namespace BackendTest
         [Test]
         public void Join_OK()
         {
-            GameEntrant entry = new("two", new("player"));
+            GameEntrant entry = new("two", _repository.Players()[4]);
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -107,9 +125,9 @@ namespace BackendTest
         }
 
         [Test]
-        public void Join_NOTFOUND()
+        public void Join_Player_NOTFOUND()
         {
-            GameEntrant entry = new("join", new("player"));
+            GameEntrant entry = new("two", new("player"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -121,11 +139,154 @@ namespace BackendTest
         }
 
         [Test]
-        public void Join_FORBIDDEN()
+        public void Join_Game_NOTFOUND()
         {
-            GameEntrant entry = new("zero", new("player"));
+            GameEntrant entry = new("join", _repository.Players()[4]);
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Join_PlayerInGame_FORBIDDEN()
+        {
+            GameEntrant entry = new("zero", _repository.Players()[3]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Join_GameFull_FORBIDDEN()
+        {
+            GameEntrant entry = new("one", _repository.Players()[4]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Join_OwnGame_FORBIDDEN()
+        {
+            GameEntrant entry = new("zero", _repository.Players()[0]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Join_FirstPlayerNonExistant_FORBIDDEN()
+        {
+            Game game = _repository.Games()[0];
+            game.First.Token = "nonexistant";
+            _repository.GameRepository.UpdateGame(game);
+            GameEntrant entry = new("zero", _repository.Players()[5]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void JoinPlayer_OK()
+        {
+            GameEntrant entry = new("fourth", _repository.Players()[4]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void JoinPlayer_Player_NOTFOUND()
+        {
+            GameEntrant entry = new("fourth", new("player"));
+
+            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void JoinPlayer_Game_NOTFOUND()
+        {
+            GameEntrant entry = new("join", _repository.Players()[4]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void JoinPlayer_PlayerInGame_FORBIDDEN()
+        {
+            GameEntrant entry = new("first", _repository.Players()[3]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void JoinPlayer_GameFull_FORBIDDEN()
+        {
+            GameEntrant entry = new("second", _repository.Players()[4]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void JoinPlayer_OwnGame_FORBIDDEN()
+        {
+            GameEntrant entry = new("first", _repository.Players()[0]);
+
+            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -147,9 +308,49 @@ namespace BackendTest
         }
 
         [Test]
-        public void Delete_FORBIDDEN()
+        public void Delete_Game_NOTFOUND()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[1].Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("fifth"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Delete_Player_NOTFOUND()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("sixteennnn"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Delete_Playing_FORBIDDEN()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[1].First);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Delete_SecondPlayer_FORBIDDEN()
+        {
+            Game game = _repository.Games()[0];
+            game.Second.Token = "fifth";
+            _repository.GameRepository.UpdateGame(game);
+
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[0].Second);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -240,7 +441,7 @@ namespace BackendTest
         [Test]
         public void TurnByToken_Incorrect()
         {
-            ActionResult<Color>? result = _controller.TurnByToken("adfgdh");
+            ActionResult<Color>? result = _controller.TurnByToken("fifth");
             Color? respons = result?.Value;
 
             if (respons is null)
@@ -264,7 +465,98 @@ namespace BackendTest
         }
 
         [Test]
-        public void Move_FORBIDDEN_NoSecondPlayer()
+        public void Move_Game_NOTFOUND()
+        {
+            GameStep action = new(new("fifth"));
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_Player_NOTFOUND()
+        {
+            GameStep action = new(new("zero"));
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_IncorrectStatus_Forbidden()
+        {
+            Game game = _repository.Games()[1];
+            game.Status = Status.Pending;
+            GameStep action = new(new("second"));
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_NotPlayersTurn_Forbidden()
+        {
+            Game game = _repository.Games()[1];
+            game.PlayersTurn = Color.White;
+            GameStep action = new(new("second"));
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_FirstParticipantIsCheating_Forbidden()
+        {
+            Game game = _repository.Games()[1];
+            game.PlayersTurn = Color.White;
+            GameStep action = new(new("second") { Color = Color.White });
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_SecondParticipantIsCheating_Forbidden()
+        {
+            Game game = _repository.Games()[1];
+            GameStep action = new(new("third") { Color = Color.Black });
+
+            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Move_NoSecondPlayer_FORBIDDEN()
         {
             GameStep action = new(_repository.Games()[2].First);
 
@@ -278,35 +570,21 @@ namespace BackendTest
         }
 
         [Test]
-        public void Move_FORBIDDEN_IncorrectPlayer()
+        public void Move_NotPossible_BADREQUEST()
         {
-            GameStep action = new(_repository.Games()[0].First);
+            GameStep action = new(_repository.Games()[1].First, 0, 0);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Move_FORBIDDEN_IncorrectPlayerTurn()
-        {
-            GameStep action = new(_repository.Games()[1].Second);
-
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_OK_FirstPlayer()
+        public void Pass_FirstPlayer_OK()
         {
             Player five = new("five") { Token = "fifth" };
             Game game = _repository.Games()[2];
@@ -387,7 +665,7 @@ namespace BackendTest
         }
 
         [Test]
-        public void Pass_OK_SecondPlayer()
+        public void Pass_SecondPlayer_OK()
         {
             Player five = new("five") { Token = "fifth" };
             Game game = _repository.Games()[2];
@@ -469,7 +747,55 @@ namespace BackendTest
         }
 
         [Test]
-        public void Pass_BADREQUEST_FirstPlayer()
+        public void Pass_Game_NOTFOUND()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("fifth"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_Player_NOTFOUND()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("zero"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_StatusIncorrect_FORBIDDEN()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("first"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_PlayersturnIncorrect_FORBIDDEN()
+        {
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("first"));
+            HttpResponseMessage? respons = result?.Value;
+
+            if (respons is not null)
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Pass_FirstPlayer_BADREQUEST()
         {
             Player five = new("five") { Token = "fifth" };
             Game game = _repository.Games()[2];
@@ -487,7 +813,7 @@ namespace BackendTest
         }
 
         [Test]
-        public void Pass_BADREQUEST_SecondPlayer()
+        public void Pass_SecondPlayer_BADREQUEST()
         {
             Player five = new("five") { Token = "fifth" };
             Game game = _repository.Games()[2];

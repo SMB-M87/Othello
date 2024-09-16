@@ -1,6 +1,7 @@
 ﻿using Backend.Models;
 using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Backend.Controllers
 {
@@ -18,7 +19,7 @@ namespace Backend.Controllers
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] GameCreation builder)
         {
-            var player = _repository.PlayerRepository.GetPlayersName(builder.Player.Token);
+            var player = _repository.PlayerRepository.GetPlayer(builder.Player.Token);
 
             if (player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
@@ -42,14 +43,15 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entry)
         {
             var game = _repository.GameRepository.GetGame(entry.Token);
-            var player = _repository.PlayerRepository.GetPlayersName(entry.Player.Token);
+            var player = _repository.PlayerRepository.GetPlayer(entry.Player.Token);
 
             if (game is null || player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
             var inGame = _repository.GameRepository.GetPlayersGame(entry.Player.Token);
+            var challenger = _repository.PlayerRepository.GetPlayer(game.First.Token);
 
-            if (inGame is not null || game.Status is not Status.Pending || game.First.Token == entry.Player.Token )
+            if (inGame is not null || game.Status is not Status.Pending || game.First.Token == entry.Player.Token || challenger is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             _repository.GameRepository.JoinGame(entry);
@@ -65,9 +67,10 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> JoinPlayer([FromBody] GameEntrant entry)
         {
             var game = _repository.GameRepository.GetPlayersGame(entry.Token);
-            var player = _repository.PlayerRepository.GetPlayersName(entry.Token);
+            var player = _repository.PlayerRepository.GetPlayer(entry.Token);
+            var entrant = _repository.PlayerRepository.GetPlayer(entry.Player.Token);
 
-            if (game is null || player is null)
+            if (game is null || player is null || entrant is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
             var inGame = _repository.GameRepository.GetPlayersGame(entry.Player.Token);
@@ -75,7 +78,7 @@ namespace Backend.Controllers
             if (inGame is not null || game.Status is not Status.Pending || game.First.Token == entry.Player.Token)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
-            _repository.GameRepository.JoinGame(entry);
+            _repository.GameRepository.JoinPlayer(entry);
             var respons = _repository.GameRepository.GetGame(game.Token);
 
             if (respons is not null && respons.Status is Status.Playing && respons.Second.Token == entry.Player.Token)
@@ -88,8 +91,9 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Delete([FromBody] GameParticipant player)
         {
             var game = _repository.GameRepository.GetPlayersGame(player.Token);
+            var participant = _repository.PlayerRepository.GetPlayer(player.Token);
 
-            if (game is null)
+            if (game is null || participant is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
             if (game.Status != Status.Pending || game.First.Token != player.Token)
@@ -152,11 +156,14 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
             var game = _repository.GameRepository.GetPlayersGame(action.Participant.Token);
+            var player = _repository.PlayerRepository.GetPlayer(action.Participant.Token);
 
-            if (game is null)
+            if (game is null || player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            if (game.Status != Status.Playing || game.PlayersTurn != action.Participant.Color ||
+            var challenger = _repository.PlayerRepository.GetPlayer(game.First.Token == action.Participant.Token ? game.Second.Token : game.First.Token);
+
+            if (game.Status != Status.Playing || game.PlayersTurn != action.Participant.Color || challenger is null ||
                (game.First.Token == action.Participant.Token && game.First.Color != action.Participant.Color) ||
                (game.Second.Token == action.Participant.Token && game.Second.Color != action.Participant.Color))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
@@ -178,11 +185,14 @@ namespace Backend.Controllers
         public ActionResult<HttpResponseMessage> Pass([FromBody] GameParticipant player)
         {
             var game = _repository.GameRepository.GetPlayersGame(player.Token);
+            var participant = _repository.PlayerRepository.GetPlayer(player.Token);
 
-            if (game is null)
+            if (game is null || participant is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            if (game.Status != Status.Playing || game.PlayersTurn != player.Color ||
+            var challenger = _repository.PlayerRepository.GetPlayer(game.First.Token == participant.Token ? game.Second.Token : game.First.Token);
+
+            if (game.Status != Status.Playing || game.PlayersTurn != player.Color || challenger is null ||
                (game.First.Token == player.Token && game.First.Color != player.Color) ||
                (game.Second.Token == player.Token && game.Second.Color != player.Color))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
