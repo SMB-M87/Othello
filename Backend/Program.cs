@@ -5,11 +5,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<Database>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Othello")));
+
 builder.Services
     .AddTransient<IRepository, Repository>()
-    .AddTransient<IGameRepository, GameRepository>()
-    .AddTransient<IResultRepository, ResultRepository>()
-    .AddTransient<IPlayerRepository, PlayerRepository>()
+    .AddTransient<IGameRepository, GameAccessLayer>()
+    .AddTransient<IResultRepository, ResultAccessLayer>()
+    .AddTransient<IPlayerRepository, PlayerAccessLayer>()
     .AddTransient<GameController>()
     .AddTransient<ResultController>()
     .AddTransient<PlayerController>()
@@ -19,7 +21,6 @@ builder.Services
         options.JsonSerializerOptions.Converters.Add(new ColorArrayConverter());
     });
 
-builder.Services.AddDbContext<Database>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Othello")));
 
 builder.Services
     .AddEndpointsApiExplorer()

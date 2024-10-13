@@ -1,7 +1,6 @@
 ﻿using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace Backend.Controllers
 {
@@ -26,7 +25,7 @@ namespace Backend.Controllers
 
             var inGame = _repository.GameRepository.GetPlayersGame(creater.Player);
 
-            if (inGame is not null)
+            if (inGame is not null && inGame.Status != Status.Finished)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             Game game = new(creater.Player, creater.Description);
@@ -51,7 +50,7 @@ namespace Backend.Controllers
             var inGame = _repository.GameRepository.GetPlayersGame(entrant.Player);
             var challenger = _repository.PlayerRepository.Get(game.First);
 
-            if (inGame is not null || game.Status is not Status.Pending || game.First == entrant.Player || challenger is null)
+            if ((inGame is not null && inGame.Status != Status.Finished) || game.Status is not Status.Pending || game.First == entrant.Player || challenger is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             _repository.GameRepository.Join(entrant);
@@ -75,7 +74,7 @@ namespace Backend.Controllers
 
             var inGame = _repository.GameRepository.GetPlayersGame(entry.Player);
 
-            if (inGame is not null || game.Status is not Status.Pending || game.First == entry.Player)
+            if ((inGame is not null && inGame.Status != Status.Finished) || game.Status is not Status.Pending || game.First == entry.Player)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             _repository.GameRepository.JoinPlayer(entry);
@@ -192,9 +191,8 @@ namespace Backend.Controllers
 
             game.MakeMove(action.Y, action.X);
             _repository.GameRepository.Update(game);
-            var respons = _repository.GameRepository.Get(game.Token);
 
-            if (respons is not null && respons.PlayersTurn != turn)
+            if (game.PlayersTurn != turn)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);

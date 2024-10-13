@@ -50,6 +50,7 @@ namespace Backend.Data
                 update.Status = game.Status;
                 update.PlayersTurn = game.PlayersTurn;
                 update.Board = game.Board;
+                _context.Entry(update).Property(g => g.Board).IsModified = true;
                 _context.SaveChanges();
             }
         }
@@ -73,8 +74,8 @@ namespace Backend.Data
         public Game? GetPlayersGame(string player)
         {
             var games = GetGames();
-            var game = games!.FirstOrDefault(s => s.First.Equals(player));
-            game ??= games!.FirstOrDefault(s => s.Second.Equals(player));
+            var game = games!.FirstOrDefault(s => s.First.Equals(player) && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second.Equals(player) && s.Status != Status.Finished);
 
             return game;
         }

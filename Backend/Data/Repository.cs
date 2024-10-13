@@ -4,36 +4,15 @@ namespace Backend.Data
 {
     public class Repository : IRepository
     {
-        private List<Game> _games;
-        private List<GameResult> _results;
-        private List<Player> _players;
+        private readonly Database _context;
 
-        public Repository()
+        public Repository(Database context)
         {
-            _games = new List<Game>();
-            _results = new List<GameResult>();
-            _players = new List<Player>();
+            _context = context;
         }
 
-        public IGameRepository GameRepository
-        {
-            get { return new GameRepository(this); }
-        }
-
-        public List<Game> Games() { return _games; }
-
-        public IResultRepository ResultRepository
-        {
-            get { return new ResultRepository(this); }
-        }
-
-        public List<GameResult> Results() { return _results; }
-
-        public IPlayerRepository PlayerRepository
-        {
-            get { return new PlayerRepository(this); }
-        }
-
-        public List<Player> Players() { return _players; }
+        public IGameRepository GameRepository => new GameAccessLayer(_context);
+        public IResultRepository ResultRepository => new ResultAccessLayer(_context);
+        public IPlayerRepository PlayerRepository => new PlayerAccessLayer(_context);
     }
 }
