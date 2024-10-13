@@ -1,8 +1,8 @@
 ﻿using System.Net;
+using Backend.Data;
 using Backend.Models;
 using Backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameTest
@@ -97,7 +97,7 @@ namespace GameTest
         [Test]
         public void Create_Player_NOTFOUND()
         {
-            GameCreation create = new(new("player"));
+            GameCreation create = new("player");
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -139,7 +139,7 @@ namespace GameTest
         [Test]
         public void Join_Player_NOTFOUND()
         {
-            GameEntrant entry = new("two", new("player"));
+            GameEntrant entry = new("two", "player");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -209,7 +209,7 @@ namespace GameTest
         [Test]
         public void Join_FirstPlayerNonExistant_FORBIDDEN()
         {
-            Game game = _repository.GameRepository.GetGames()?[0] ?? new();
+            Game game = _repository.GameRepository.Get("zero") ?? new();
             game.First = "nonexistant";
             _repository.GameRepository.Update(game);
             GameEntrant entry = new("zero", "sixth");
@@ -240,7 +240,7 @@ namespace GameTest
         [Test]
         public void JoinPlayer_Player_NOTFOUND()
         {
-            GameEntrant entry = new("fourth", new("player"));
+            GameEntrant entry = new("fourth", "player");
 
             ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -471,7 +471,17 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[3, 2], Is.EqualTo(Color.Black));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[3, 3], Is.EqualTo(Color.Black));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[3, 4], Is.EqualTo(Color.Black));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[4, 3], Is.EqualTo(Color.Black));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[4, 4], Is.EqualTo(Color.White));
+                });
+            }
             else
                 Assert.Fail("Respons is null.");
         }
