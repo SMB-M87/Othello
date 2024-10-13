@@ -1,17 +1,24 @@
 ﻿using Backend.Data;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ResultTest
 {
     [TestFixture]
     public class RepositoryTest
     {
+        private Database _context;
         private IRepository _repository;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Repository();
+            var options = new DbContextOptionsBuilder<Database>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new Database(options);
+            _repository = new Repository(_context);
 
             Player one = new("one") { Token = "first" };
             Player two = new("two") { Token = "second" };
@@ -61,18 +68,25 @@ namespace ResultTest
             _repository.ResultRepository.Create(result2);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void Create_Correct()
         {
-            int size = _repository.Results().Count;
+            int size = _context.Results.Count();
             GameResult result = new("-4", "third", "second");
 
             _repository.ResultRepository.Create(result);
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Results(), Has.Count.Not.EqualTo(expected: size));
-                Assert.That(actual: _repository.Results(), Has.Count.EqualTo(expected: size + 1));
+                Assert.That(actual: _context.Results.Count(), Is.Not.EqualTo(expected: size));
+                Assert.That(actual: _context.Results.Count(), Is.EqualTo(expected: size + 1));
             });
         }
 
@@ -92,7 +106,7 @@ namespace ResultTest
         [Test]
         public void GetPlayerStats_Draw_Correct()
         {
-            int size = _repository.Results().Count;
+            int size = _context.Results.Count();
             GameResult result = new("-4", "", "", "second third");
             _repository.ResultRepository.Create(result);
 

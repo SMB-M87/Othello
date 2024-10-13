@@ -1,17 +1,24 @@
 ﻿using Backend.Data;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameTest
 {
     [TestFixture]
     public class RepositoryTest
     {
+        private Database _context;
         private IRepository _repository;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Repository();
+            var options = new DbContextOptionsBuilder<Database>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new Database(options);
+            _repository = new Repository(_context);
 
             Player one = new("one") { Token = "first" };
             Player two = new("two") { Token = "second" };
@@ -61,10 +68,17 @@ namespace GameTest
             _repository.ResultRepository.Create(result2);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void Create_Correct()
         {
-            int size = _repository.Games().Count;
+            int size = _repository.GameRepository.GetGames()?.Count ?? 0;
             Player five = new("five") { Token = "fifth" };
             Game game = new(five.Token, "I search an advanced player!")
             {
@@ -76,8 +90,8 @@ namespace GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Games(), Has.Count.Not.EqualTo(expected: size));
-                Assert.That(actual: _repository.Games(), Has.Count.EqualTo(expected: size + 1));
+                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.Not.EqualTo(expected: size));
+                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.EqualTo(expected: size + 1));
             });
         }
 
@@ -90,10 +104,10 @@ namespace GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Games()[2].Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: _repository.Games()[2].Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: _repository.Games()[2].First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: _repository.Games()[2].Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].First, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Second, Is.EqualTo(expected: "fifth"));
             });
         }
 
@@ -106,49 +120,42 @@ namespace GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Games()[2].Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: _repository.Games()[2].Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: _repository.Games()[2].First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: _repository.Games()[2].Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].First, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Second, Is.EqualTo(expected: "fifth"));
             });
         }
 
         [Test]
         public void Update_Correct()
         {
-            Game game = new("five")
-            {
-                Token = "zero",
-                Status = Status.Finished,
-                Second = "six",
-                PlayersTurn = Color.None
-            };
+            Game game = _repository.GameRepository.Get("zero") ?? new();
+            game.Status = Status.Finished;
+            game.PlayersTurn = Color.None;
 
-            _repository.GameRepository.Update(game);
+            _context.Games.Update(game);
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Games()[0].Token, Is.EqualTo(expected: "zero"));
-                Assert.That(actual: _repository.Games()[0].Status, Is.EqualTo(expected: Status.Finished));
-                Assert.That(actual: _repository.Games()[0].First, Is.EqualTo(expected: "five"));
-                Assert.That(actual: _repository.Games()[0].Second, Is.EqualTo(expected: "six"));
-                Assert.That(actual: _repository.Games()[0].PlayersTurn, Is.EqualTo(expected: Color.None));
+                Assert.That(actual: _repository.GameRepository.Get("zero")?.Status, Is.EqualTo(expected: Status.Finished));
+                Assert.That(actual: _repository.GameRepository.Get("zero")?.PlayersTurn, Is.EqualTo(expected: Color.None));
             });
         }
 
         [Test]
         public void Delete_Correct()
         {
-            int size = _repository.Games().Count;
-            Game game = _repository.Games()[2];
+            int size = _repository.GameRepository.GetGames()?.Count ?? 0;
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
 
             _repository.GameRepository.Delete(game);
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Games(), Has.Count.Not.EqualTo(size));
+                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.Not.EqualTo(size));
                 Assert.That(actual: size, Is.EqualTo(3));
-                Assert.That(actual: _repository.Games(), Has.Count.EqualTo(expected: size - 1));
+                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.EqualTo(expected: size - 1));
             });
         }
 
@@ -156,8 +163,7 @@ namespace GameTest
         public void Get_Correct()
         {
             string token = "ValidTest";
-            Player five = new("five") { Token = "fifth" };
-            _repository.Games().Add(new Game(five.Token, "I wanna play a game and don't have any requirements!") { Token = token });
+            _repository.GameRepository.Create(new Game("fifth", "I wanna play a game and don't have any requirements!") { Token = token });
 
             var respons = _repository.GameRepository.Get(token);
 
@@ -191,7 +197,7 @@ namespace GameTest
                 Status = Status.Playing
             };
 
-            _repository.Games().Add(game);
+            _repository.GameRepository.Create(game);
 
             var respons = _repository.GameRepository.GetPlayersGame("fifth");
 
@@ -215,7 +221,7 @@ namespace GameTest
                 SColor = Color.White,
                 Status = Status.Playing
             };
-            _repository.Games().Add(game);
+            _repository.GameRepository.Create(game);
 
             var respons = _repository.GameRepository.GetPlayersGame("sixth");
 
@@ -244,9 +250,9 @@ namespace GameTest
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: _repository.Games()[0].Description, Is.EqualTo(respons[0].Description));
-                    Assert.That(actual: _repository.Games()[1].First, Is.EqualTo(respons[1].First));
-                    Assert.That(actual: _repository.Games()[2].First, Is.EqualTo(respons[2].First));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(respons[0].Description));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].First, Is.EqualTo(respons[1].First));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].First, Is.EqualTo(respons[2].First));
                 });
             }
             else

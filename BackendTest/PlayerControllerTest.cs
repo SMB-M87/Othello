@@ -3,19 +3,26 @@ using Backend.Data;
 using Backend.Models;
 using Backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlayerTest
 {
     [TestFixture]
     public class ControllerTest
     {
+        private Database _context;
         private IRepository _repository;
         private PlayerController _controller;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Repository();
+            var options = new DbContextOptionsBuilder<Database>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new Database(options);
+            _repository = new Repository(_context);
 
             Player one = new("one") { Token = "first" };
             Player two = new("two") { Token = "second" };
@@ -64,6 +71,13 @@ namespace PlayerTest
             _repository.ResultRepository.Create(result1);
             _repository.ResultRepository.Create(result2);
             _controller = new PlayerController(_repository);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
         }
 
         [Test]
@@ -121,7 +135,7 @@ namespace PlayerTest
             Player? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.Username, Is.EqualTo(_repository.Players()[0].Username));
+                Assert.That(actual: respons.Username, Is.EqualTo("one"));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -133,7 +147,7 @@ namespace PlayerTest
             Player? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(_repository.Players()[0].Token));
+                Assert.That(actual: respons.Token, Is.EqualTo("first"));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -145,7 +159,7 @@ namespace PlayerTest
             string? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons, Is.EqualTo(_repository.Players()[0].Username));
+                Assert.That(actual: respons, Is.EqualTo("one"));
             else
                 Assert.Fail("Respons is null.");
         }

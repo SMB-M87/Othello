@@ -3,19 +3,26 @@ using Backend.Models;
 using Backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameTest
 {
     [TestFixture]
     public class ControllerTest
     {
+        private Database _context;
         private IRepository _repository;
         private GameController _controller;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Repository();
+            var options = new DbContextOptionsBuilder<Database>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new Database(options);
+            _repository = new Repository(_context);
 
             Player one = new("one") { Token = "first" };
             Player two = new("two") { Token = "second" };
@@ -66,10 +73,17 @@ namespace GameTest
             _controller = new GameController(_repository);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void Create_OK()
         {
-            GameCreation create = new(_repository.Players()[4].Token);
+            GameCreation create = new("fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -97,7 +111,7 @@ namespace GameTest
         [Test]
         public void Create_PlayerInGame_FORBIDDEN()
         {
-            GameCreation create = new(_repository.Players()[2].Token);
+            GameCreation create = new("third");
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
             HttpResponseMessage? respons = result?.Value;
@@ -111,7 +125,7 @@ namespace GameTest
         [Test]
         public void Join_OK()
         {
-            GameEntrant entry = new("two", _repository.Players()[4].Token);
+            GameEntrant entry = new("two", "fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -139,7 +153,7 @@ namespace GameTest
         [Test]
         public void Join_Game_NOTFOUND()
         {
-            GameEntrant entry = new("join", _repository.Players()[4].Token);
+            GameEntrant entry = new("join", "fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -153,7 +167,7 @@ namespace GameTest
         [Test]
         public void Join_PlayerInGame_FORBIDDEN()
         {
-            GameEntrant entry = new("zero", _repository.Players()[3].Token);
+            GameEntrant entry = new("zero", "fourth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -167,7 +181,7 @@ namespace GameTest
         [Test]
         public void Join_GameFull_FORBIDDEN()
         {
-            GameEntrant entry = new("one", _repository.Players()[4].Token);
+            GameEntrant entry = new("one", "fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -181,7 +195,7 @@ namespace GameTest
         [Test]
         public void Join_OwnGame_FORBIDDEN()
         {
-            GameEntrant entry = new("zero", _repository.Players()[0].Token);
+            GameEntrant entry = new("zero", "first");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -195,10 +209,10 @@ namespace GameTest
         [Test]
         public void Join_FirstPlayerNonExistant_FORBIDDEN()
         {
-            Game game = _repository.Games()[0];
+            Game game = _repository.GameRepository.GetGames()?[0] ?? new();
             game.First = "nonexistant";
             _repository.GameRepository.Update(game);
-            GameEntrant entry = new("zero", _repository.Players()[5].Token);
+            GameEntrant entry = new("zero", "sixth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -212,7 +226,7 @@ namespace GameTest
         [Test]
         public void JoinPlayer_OK()
         {
-            GameEntrant entry = new("fourth", _repository.Players()[4].Token);
+            GameEntrant entry = new("fourth", "fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -240,7 +254,7 @@ namespace GameTest
         [Test]
         public void JoinPlayer_Game_NOTFOUND()
         {
-            GameEntrant entry = new("join", _repository.Players()[4].Token);
+            GameEntrant entry = new("join", "fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -254,7 +268,7 @@ namespace GameTest
         [Test]
         public void JoinPlayer_PlayerInGame_FORBIDDEN()
         {
-            GameEntrant entry = new("first", _repository.Players()[3].Token);
+            GameEntrant entry = new("first", "fourth");
 
             ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -268,7 +282,7 @@ namespace GameTest
         [Test]
         public void JoinPlayer_GameFull_FORBIDDEN()
         {
-            GameEntrant entry = new("second", _repository.Players()[4].Token);
+            GameEntrant entry = new("second", "fifth");
 
             ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -282,7 +296,7 @@ namespace GameTest
         [Test]
         public void JoinPlayer_OwnGame_FORBIDDEN()
         {
-            GameEntrant entry = new("first", _repository.Players()[0].Token);
+            GameEntrant entry = new("first", "first");
 
             ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
             HttpResponseMessage? respons = result?.Value;
@@ -296,7 +310,7 @@ namespace GameTest
         [Test]
         public void Delete_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[2].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.GameRepository.GetGames()?[2].First ?? "");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -332,7 +346,7 @@ namespace GameTest
         [Test]
         public void Delete_Playing_FORBIDDEN()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[1].First);
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.GameRepository.GetGames()?[1].First ?? "");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -344,11 +358,11 @@ namespace GameTest
         [Test]
         public void Delete_SecondPlayer_FORBIDDEN()
         {
-            Game game = _repository.Games()[0];
+            Game game = _repository.GameRepository.GetGames()?[0] ?? new();
             game.Second = "fifth";
             _repository.GameRepository.Update(game);
 
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.Games()[0].Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.GameRepository.GetGames()?[0].Second ?? "");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -367,9 +381,9 @@ namespace GameTest
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: _repository.Games()[0].Description, Is.EqualTo(respons[0]));
-                    Assert.That(actual: _repository.Games()[2].Description, Is.EqualTo(respons[1]));
-                    Assert.That(respons.All(res => res != _repository.Games()[1].Description));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(respons[0]));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].Description, Is.EqualTo(respons[1]));
+                    Assert.That(respons.All(res => res != _repository.GameRepository.GetGames()?[1].Description));
                 });
             }
             else
@@ -383,7 +397,7 @@ namespace GameTest
             Game? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: _repository.Games()[2].Token));
+                Assert.That(actual: respons.Token, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].Token));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -407,7 +421,7 @@ namespace GameTest
             Game? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.First, Is.EqualTo(expected: _repository.Games()[2].First));
+                Assert.That(actual: respons.First, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].First));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -431,7 +445,7 @@ namespace GameTest
             Color? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons, Is.EqualTo(expected: _repository.Games()[2].PlayersTurn));
+                Assert.That(actual: respons, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].PlayersTurn));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -451,7 +465,7 @@ namespace GameTest
         [Test]
         public void Move_OK()
         {
-            GameStep action = new(_repository.Games()[1].First);
+            GameStep action = new(_repository.GameRepository.GetGames()?[1].First ?? "");
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -465,8 +479,8 @@ namespace GameTest
         [Test]
         public void Move_Finished_OK()
         {
-            GameStep action = new(_repository.Games()[1].Second);
-            Game game = _repository.Games()[1];
+            GameStep action = new(_repository.GameRepository.GetGames()?[1].Second ?? "");
+            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             game.PlayersTurn = Color.White;
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
@@ -587,7 +601,7 @@ namespace GameTest
         [Test]
         public void Move_IncorrectStatus_Forbidden()
         {
-            Game game = _repository.Games()[1];
+            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             game.Status = Status.Pending;
             GameStep action = new(new("second"));
 
@@ -603,7 +617,7 @@ namespace GameTest
         [Test]
         public void Move_NotPlayersTurn_Forbidden()
         {
-            Game game = _repository.Games()[1];
+            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             game.PlayersTurn = Color.White;
             GameStep action = new(new("second"));
 
@@ -619,7 +633,7 @@ namespace GameTest
         [Test]
         public void Move_FirstParticipantIncorrectColor_Forbidden()
         {
-            Game game = _repository.Games()[1];
+            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             game.PlayersTurn = Color.White;
             GameStep action = new("second");
 
@@ -649,7 +663,7 @@ namespace GameTest
         [Test]
         public void Move_NoSecondPlayer_FORBIDDEN()
         {
-            GameStep action = new(_repository.Games()[2].First);
+            GameStep action = new(_repository.GameRepository.GetGames()?[2].First ?? "");
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -663,7 +677,7 @@ namespace GameTest
         [Test]
         public void Move_NotPossible_BADREQUEST()
         {
-            GameStep action = new(_repository.Games()[1].First, 0, 0);
+            GameStep action = new(_repository.GameRepository.GetGames()?[1].First ?? "", 0, 0);
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
@@ -678,7 +692,7 @@ namespace GameTest
         public void Pass_FirstPlayer_OK()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = new(five.Token);
             game.SColor = Color.White;
             game.Status = Status.Playing;
@@ -761,7 +775,7 @@ namespace GameTest
         public void Pass_SecondPlayer_OK()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = new(five.Token);
             game.SColor = Color.White;
             game.PlayersTurn = game.SColor;
@@ -892,7 +906,7 @@ namespace GameTest
         [Test]
         public void Pass_FirstPlayerNonExistant_FORBIDDEN()
         {
-            Game game = _repository.Games()[1];
+            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             game.First = "nonexistant";
             game.Second = "third";
             game.SColor = Color.White;
@@ -976,7 +990,7 @@ namespace GameTest
         [Test]
         public void Pass_SecondPlayerNonExistant_FORBIDDEN()
         {
-            Game game = _repository.Games()[1];
+            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             game.Second = "nonexistant";
             game.First = "second";
             game.FColor = Color.Black;
@@ -1085,7 +1099,7 @@ namespace GameTest
         public void Pass_FirstPlayer_BADREQUEST()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = game.FColor;
@@ -1104,7 +1118,7 @@ namespace GameTest
         public void Pass_SecondPlayer_BADREQUEST()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = game.SColor;
@@ -1123,7 +1137,7 @@ namespace GameTest
         public void Forfeit_OK()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = game.FColor;
@@ -1167,7 +1181,7 @@ namespace GameTest
         public void Forfeit_StatusIncorrect_FORBIDDEN()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = game.FColor;
@@ -1186,7 +1200,7 @@ namespace GameTest
         public void Forfeit_PlayersturnIncorrect_FORBIDDEN()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = game.FColor;
@@ -1205,7 +1219,7 @@ namespace GameTest
         public void Forfeit_FirstPlayerIncorrectColor_FORBIDDEN()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = Color.White;
@@ -1224,7 +1238,7 @@ namespace GameTest
         public void Forfeit_SecondPlayerIncorrectColor_FORBIDDEN()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = Color.Black;
@@ -1243,7 +1257,7 @@ namespace GameTest
         public void Forfeit_FORBIDDEN()
         {
             Player five = new("five") { Token = "fifth" };
-            Game game = _repository.Games()[2];
+            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
             game.PlayersTurn = game.FColor;

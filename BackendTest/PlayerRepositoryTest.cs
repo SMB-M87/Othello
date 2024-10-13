@@ -2,18 +2,25 @@
 using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlayerTest
 {
     [TestFixture]
     public class RepositoryTest
     {
+        private Database _context;
         private IRepository _repository;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Repository();
+            var options = new DbContextOptionsBuilder<Database>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new Database(options);
+            _repository = new Repository(_context);
 
             Player one = new("one") { Token = "first" };
             Player two = new("two") { Token = "second" };
@@ -63,25 +70,32 @@ namespace PlayerTest
             _repository.ResultRepository.Create(result2);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void Create_Correct()
         {
-            int size = _repository.Players().Count;
-            Player player = new("five") { Token = "fifth" };
+            int size = _context.Players.Count();
+            Player player = new("fivess") { Token = "sfifth" };
 
             _repository.PlayerRepository.Create(player);
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Players(), Has.Count.Not.EqualTo(expected: size));
-                Assert.That(actual: _repository.Players(), Has.Count.EqualTo(expected: size + 1));
+                Assert.That(actual: _context.Players.Count(), Is.Not.EqualTo(expected: size));
+                Assert.That(actual: _context.Players.Count(), Is.EqualTo(expected: size + 1));
             });
         }
 
         [Test]
         public void Update_Correct()
         {
-            Player player = _repository.Players()[0];
+            Player player = _context.Players.First(p => p.Username == "one");
             player.Username = "Umugud";
             player.Token = "Waaaah";
 
@@ -89,24 +103,24 @@ namespace PlayerTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Players()[0].Username, Is.EqualTo(expected: "Umugud"));
-                Assert.That(actual: _repository.Players()[0].Token, Is.EqualTo(expected: "Waaaah"));
+                Assert.That(actual: _context.Players.First(p => p.Username == "one").Username, Is.EqualTo(expected: "Umugud"));
+                Assert.That(actual: _context.Players.First(p => p.Username == "one").Token, Is.EqualTo(expected: "Waaaah"));
             });
         }
 
         [Test]
         public void Delete_Correct()
         {
-            int size = _repository.Players().Count;
+            int size = _context.Players.Count();
             Player player = new("five") { Token = "fifth" };
 
-            _repository.PlayerRepository.Delete(_repository.Players()[0]);
+            _repository.PlayerRepository.Delete(_context.Players.First(p => p.Username == "one"));
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.Players(), Has.Count.Not.EqualTo(expected: size));
+                Assert.That(actual: _context.Players.Count(), Is.Not.EqualTo(expected: size));
                 Assert.That(actual: size, Is.EqualTo(6));
-                Assert.That(actual: _repository.Players(), Has.Count.EqualTo(expected: size - 1));
+                Assert.That(actual: _context.Players.Count(), Is.EqualTo(expected: size - 1));
             });
         }
 
@@ -147,8 +161,8 @@ namespace PlayerTest
         [Test]
         public void SendFriendInvite_Correct()
         {
-            Player player1 = _repository.Players().First(p => p.Username == "one");
-            Player player2 = _repository.Players().First(p => p.Username == "two");
+            Player player1 = _context.Players.First(p => p.Username == "one");
+            Player player2 = _context.Players.First(p => p.Username == "two");
 
             _repository.PlayerRepository.SendFriendInvite("one", "two");
 
@@ -162,8 +176,8 @@ namespace PlayerTest
         [Test]
         public void AcceptFriendInvite_Correct()
         {
-            Player player1 = _repository.Players().First(p => p.Username == "one");
-            Player player2 = _repository.Players().First(p => p.Username == "two");
+            Player player1 = _context.Players.First(p => p.Username == "one");
+            Player player2 = _context.Players.First(p => p.Username == "two");
 
             _repository.PlayerRepository.SendFriendInvite("one", "two");
             _repository.PlayerRepository.AcceptFriendInvite("one", "two");
@@ -180,8 +194,8 @@ namespace PlayerTest
         [Test]
         public void DeclineFriendInvite_Correct()
         {
-            Player player1 = _repository.Players().First(p => p.Username == "one");
-            Player player2 = _repository.Players().First(p => p.Username == "two");
+            Player player1 = _context.Players.First(p => p.Username == "one");
+            Player player2 = _context.Players.First(p => p.Username == "two");
 
             _repository.PlayerRepository.SendFriendInvite("one", "two");
             _repository.PlayerRepository.DeclineFriendInvite("one", "two");

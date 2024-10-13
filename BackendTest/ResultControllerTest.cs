@@ -2,19 +2,26 @@
 using Backend.Models;
 using Backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ResultTest
 {
     [TestFixture]
     public class ControllerTest
     {
+        private Database _context;
         private IRepository _repository;
         private ResultController _controller;
 
         [SetUp]
         public void SetUp()
         {
-            _repository = new Repository();
+            var options = new DbContextOptionsBuilder<Database>()
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
+
+            _context = new Database(options);
+            _repository = new Repository(_context);
 
             Player one = new("one") { Token = "first" };
             Player two = new("two") { Token = "second" };
@@ -65,6 +72,13 @@ namespace ResultTest
             _controller = new ResultController(_repository);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Dispose();
+        }
+
         [Test]
         public void MatchHistory_Correct()
         {
@@ -75,9 +89,9 @@ namespace ResultTest
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons[0], Is.EqualTo(expected: _repository.Results()[0]));
-                    Assert.That(actual: respons[1], Is.EqualTo(expected: _repository.Results()[1]));
-                    Assert.That(actual: respons[2], Is.EqualTo(expected: _repository.Results()[2]));
+                    Assert.That(actual: respons[0], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-3")));
+                    Assert.That(actual: respons[1], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-2")));
+                    Assert.That(actual: respons[2], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-1")));
                 });
             }
             else
