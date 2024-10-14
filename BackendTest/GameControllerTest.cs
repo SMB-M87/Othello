@@ -89,7 +89,13 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Not.Null);
+                });
+            }
             else
                 Assert.Fail("Respons is null.");
         }
@@ -103,7 +109,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("player"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -117,7 +127,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("third"), Is.Not.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -131,7 +145,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Not.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -145,7 +163,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("player"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -159,7 +181,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -173,7 +199,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fourth"), Is.Not.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -187,7 +217,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -201,7 +235,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("first")?.Second, Is.EqualTo(string.Empty));
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -218,7 +256,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("sixth"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -232,7 +274,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Not.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -246,7 +292,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("player"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -260,7 +310,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -274,7 +328,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fourth"), Is.Not.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -288,7 +346,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -302,7 +364,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("first")?.Second, Is.EqualTo(string.Empty));
+                });
             else
                 Assert.Fail("Respons is null.");
         }
@@ -314,7 +380,11 @@ namespace GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fourth"), Is.Null);
+                });
             else
                 Assert.Fail("Respons is null.");
         }

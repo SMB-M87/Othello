@@ -1,6 +1,8 @@
 ﻿using Backend.Data;
 using Backend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace PlayerTest
 {
@@ -33,6 +35,10 @@ namespace PlayerTest
             _repository.PlayerRepository.Create(four);
             _repository.PlayerRepository.Create(five);
             _repository.PlayerRepository.Create(six);
+
+            _repository.PlayerRepository.SendFriendInvite("five", "six");
+            _repository.PlayerRepository.SendFriendInvite("four", "six");
+            _repository.PlayerRepository.AcceptFriendInvite("five", "six");
 
             Game game0 = new(one.Token, "I wanna play a game and don't have any requirements.")
             {
@@ -157,6 +163,28 @@ namespace PlayerTest
         }
 
         [Test]
+        public void PlayerFriends_Correct()
+        {
+            List<string>? respons = _repository.PlayerRepository.GetFriends("sixth");
+
+            if (respons is not null)
+                Assert.That(actual: respons, Does.Contain("five"));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void PlayerPending_Correct()
+        {
+            List<string>? respons = _repository.PlayerRepository.GetPending("fourth");
+
+            if (respons is not null)
+                Assert.That(actual: respons, Does.Contain("six"));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
         public void SendFriendInvite_Correct()
         {
             Player player1 = _context.Players.First(p => p.Username == "one");
@@ -167,7 +195,6 @@ namespace PlayerTest
             Assert.Multiple(() =>
             {
                 Assert.That(player1.PendingFriends, Does.Contain("two"));
-                Assert.That(player2.PendingFriends, Does.Contain("one"));
             });
         }
 
@@ -178,7 +205,7 @@ namespace PlayerTest
             Player player2 = _context.Players.First(p => p.Username == "two");
 
             _repository.PlayerRepository.SendFriendInvite("one", "two");
-            _repository.PlayerRepository.AcceptFriendInvite("one", "two");
+            _repository.PlayerRepository.AcceptFriendInvite("two", "one");
 
             Assert.Multiple(() =>
             {
@@ -196,12 +223,28 @@ namespace PlayerTest
             Player player2 = _context.Players.First(p => p.Username == "two");
 
             _repository.PlayerRepository.SendFriendInvite("one", "two");
-            _repository.PlayerRepository.DeclineFriendInvite("one", "two");
+            _repository.PlayerRepository.DeclineFriendInvite("two", "one");
 
             Assert.Multiple(() =>
             {
                 Assert.That(player1.PendingFriends, Does.Not.Contain("two"));
-                Assert.That(player2.PendingFriends, Does.Not.Contain("one"));
+            });
+        }
+
+        [Test]
+        public void DeleteFriend_OK()
+        {
+            _repository.PlayerRepository.DeleteFriend("six", "five");
+
+            Player? player = _repository.PlayerRepository.GetByUsername("six");
+            Player? sender = _repository.PlayerRepository.GetByUsername("five");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(actual: sender.Friends, Does.Not.Contain("six"));
+                Assert.That(actual: player.Friends, Does.Not.Contain("five"));
+                Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("six"))?.Friends, Does.Not.Contain("five"));
+                Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("five"))?.Friends, Does.Not.Contain("six"));
             });
         }
     }
