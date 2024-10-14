@@ -143,8 +143,13 @@ namespace PlayerTest
         [Test]
         public void PlayerByToken_Correct()
         {
-            ActionResult<Player>? result = _controller.PlayerByToken("first");
-            Player? respons = result?.Value;
+            var result = _controller.PlayerByToken("first");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var respons = (Player)okResult?.Value;
 
             if (respons is not null)
                 Assert.That(actual: respons.Username, Is.EqualTo("one"));
@@ -155,8 +160,13 @@ namespace PlayerTest
         [Test]
         public void PlayerByUsername_Correct()
         {
-            ActionResult<Player>? result = _controller.PlayerByUsername("one");
-            Player? respons = result?.Value;
+            var result = _controller.PlayerByUsername("one");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var respons = (Player)okResult?.Value;
 
             if (respons is not null)
                 Assert.That(actual: respons.Token, Is.EqualTo("first"));
@@ -167,8 +177,13 @@ namespace PlayerTest
         [Test]
         public void PlayersName_Correct()
         {
-            ActionResult<string>? result = _controller.PlayersName("first");
-            string? respons = result?.Value;
+            var result = _controller.PlayersName("first");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var respons = (string)okResult?.Value;
 
             if (respons is not null)
                 Assert.That(actual: respons, Is.EqualTo("one"));
@@ -179,8 +194,13 @@ namespace PlayerTest
         [Test]
         public void PlayerFriends_Correct()
         {
-            ActionResult<List<string>?>? result = _controller.PlayerFriends("sixth");
-            List<string>? respons = result?.Value;
+            var result = _controller.PlayerFriends("sixth");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var respons = okResult?.Value as List<string>;
 
             if (respons is not null)
                 Assert.That(actual: respons, Does.Contain("five"));
@@ -191,8 +211,13 @@ namespace PlayerTest
         [Test]
         public void PlayerPending_Correct()
         {
-            ActionResult<List<string>?>? result = _controller.PlayerPending("fourth");
-            List<string>? respons = result?.Value;
+            var result = _controller.PlayerPending("fourth");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var respons = okResult?.Value as List<string>;
 
             if (respons is not null)
                 Assert.That(actual: respons, Does.Contain("six"));
@@ -208,14 +233,23 @@ namespace PlayerTest
             HttpResponseMessage? respons = result?.Value;
 
             ActionResult<Player>? player = _controller.PlayerByUsername("one");
-            ActionResult<Player>? sender = _controller.PlayerByUsername("two");
+            Assert.That(player.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = player.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+            var player_respons = (Player)okResult?.Value;
 
-            if (respons is not null && player is not null && sender is not null)
+            ActionResult<Player>? sender = _controller.PlayerByUsername("two");
+            Assert.That(sender.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okkResult = sender.Result as OkObjectResult;
+            Assert.That(okkResult, Is.Not.Null, "Result should not be null");
+            var sender_respons = (Player)okkResult?.Value;
+
+            if (respons is not null && player_respons is not null && sender_respons is not null)
             {
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: player.Value?.PendingFriends, Does.Contain("two"));
+                    Assert.That(actual: player_respons.PendingFriends, Does.Contain("two"));
                     Assert.That(actual: _repository.PlayerRepository.GetByUsername("one")?.PendingFriends, Does.Contain("two"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.PendingFriends, Does.Contain("two"));
                 });

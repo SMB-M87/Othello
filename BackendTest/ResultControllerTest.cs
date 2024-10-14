@@ -3,6 +3,7 @@ using Backend.Models;
 using Backend.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace ResultTest
 {
@@ -82,38 +83,33 @@ namespace ResultTest
         [Test]
         public void MatchHistory_Correct()
         {
-            ActionResult<List<GameResult>>? result = _controller.MatchHistory("second");
-            List<GameResult>? respons = result?.Value;
+            var result = _controller.MatchHistory("second");
 
-            if (respons is not null)
+            Assert.Multiple(() =>
             {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: respons[0], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-3")));
-                    Assert.That(actual: respons[1], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-2")));
-                    Assert.That(actual: respons[2], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-1")));
-                });
-            }
-            else
-                Assert.Fail("Respons is null.");
+                Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null, "Result should not be null");
+                var results = okResult?.Value as List<GameResult>;
+                Assert.That(results, Is.Not.Null, "Results should not be null");
+                Assert.That(results?.Count, Is.GreaterThan(0), "Should have at least one result");
+                Assert.That(actual: results?[0], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-3")));
+                Assert.That(actual: results?[1], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-2")));
+                Assert.That(actual: results?[2], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-1")));
+            });
         }
 
         [Test]
         public void PlayerStats_Correct()
         {
-            ActionResult<(int, int, int)>? result = _controller.PlayerStats("second");
+            var result = _controller.PlayerStats("second");
 
-            if (result?.Value is (int wins, int losses, int draws))
-            {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: wins, Is.EqualTo(expected: 2));
-                    Assert.That(actual: losses, Is.EqualTo(expected: 1));
-                    Assert.That(actual: draws, Is.EqualTo(expected: 0));
-                });
-            }
-            else
-                Assert.Fail("Respons is null.");
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            if (okResult is not null)
+                Assert.That(actual: okResult.Value, Is.EqualTo(expected: "W:2 L:1 D:0"));
         }
     }
 }

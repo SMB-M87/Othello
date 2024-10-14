@@ -444,16 +444,21 @@ namespace GameTest
         [Test]
         public void DescriptionsOfPendingGames_Correct()
         {
-            ActionResult<List<string>>? result = _controller.DescriptionsOfPendingGames();
-            List<string>? respons = result?.Value;
+            var result = _controller.DescriptionsOfPendingGames();
 
-            if (respons is not null)
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var results = okResult?.Value as List<string>;
+
+            if (results is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(respons[0]));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].Description, Is.EqualTo(respons[1]));
-                    Assert.That(respons.All(res => res != _repository.GameRepository.GetGames()?[1].Description));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(results[0]));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].Description, Is.EqualTo(results[1]));
+                    Assert.That(results.All(res => res != _repository.GameRepository.GetGames()?[1].Description));
                 });
             }
             else
@@ -463,8 +468,13 @@ namespace GameTest
         [Test]
         public void GameByToken_Correct()
         {
-            ActionResult<Game>? result = _controller.GameByToken("two");
-            Game? respons = result?.Value;
+            var result = _controller.GameByToken("two");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            var respons = (Game)okResult?.Value;
 
             if (respons is not null)
                 Assert.That(actual: respons.Token, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].Token));
@@ -487,11 +497,20 @@ namespace GameTest
         [Test]
         public void GameByPlayerToken_Correct()
         {
-            ActionResult<Game>? result = _controller.GameByPlayerToken("fourth");
-            Game? respons = result?.Value;
+            var result = _controller.GameByPlayerToken("fourth");
 
-            if (respons is not null)
-                Assert.That(actual: respons.First, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].First));
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            if (okResult is not null)
+            {
+                var results = (Game)okResult?.Value;
+                if (results is not null)
+                    Assert.That(actual: results.First, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].First));
+                else
+                    Assert.Fail("Respons is null.");
+            }
             else
                 Assert.Fail("Respons is null.");
         }
@@ -511,25 +530,27 @@ namespace GameTest
         [Test]
         public void TurnByToken_Correct()
         {
-            ActionResult<Color>? result = _controller.TurnByToken("two");
-            Color? respons = result?.Value;
+            var result = _controller.TurnByToken("two");
 
-            if (respons is not null)
-                Assert.That(actual: respons, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].PlayersTurn));
-            else
-                Assert.Fail("Respons is null.");
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            if (okResult is not null)
+                Assert.That(actual: okResult.Value, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].PlayersTurn));
         }
 
         [Test]
         public void TurnByToken_Incorrect()
         {
-            ActionResult<Color>? result = _controller.TurnByToken("fifth");
-            Color? respons = result?.Value;
+            var result = _controller.TurnByToken("two");
 
-            if (respons is null)
-                Assert.That(actual: respons, Is.EqualTo(expected: null));
-            else
-                Assert.Fail("Respons is not null.");
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected Ok result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+
+            if (okResult is null)
+                Assert.That(actual: okResult.Value, Is.EqualTo(null));
         }
 
         [Test]
@@ -630,8 +651,8 @@ namespace GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("second"), Is.EqualTo((2, 1, 0)));
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("third"), Is.EqualTo((1, 2, 0)));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("second"), Is.EqualTo("W:2 L:1 D:0"));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("third"), Is.EqualTo("W:1 L:2 D:0"));
             });
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
@@ -642,8 +663,8 @@ namespace GameTest
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("second"), Is.EqualTo((2, 2, 0)));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("third"), Is.EqualTo((2, 2, 0)));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("second"), Is.EqualTo("W:2 L:2 D:0"));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("third"), Is.EqualTo("W:2 L:2 D:0"));
                 });
             }
             else
@@ -1225,8 +1246,8 @@ namespace GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo((0, 0, 0)));
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First), Is.EqualTo((0, 0, 0)));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo("W:0 L:0 D:0"));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First), Is.EqualTo("W:0 L:0 D:0"));
             });
 
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
@@ -1237,8 +1258,8 @@ namespace GameTest
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo((1, 0, 0)));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First), Is.EqualTo((0, 1, 0)));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats(five.Token), Is.EqualTo("W:1 L:0 D:0"));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats(game.First), Is.EqualTo("W:0 L:1 D:0"));
                 });
             }
             else

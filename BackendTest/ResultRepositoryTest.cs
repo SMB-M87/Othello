@@ -1,5 +1,6 @@
 ﻿using Backend.Data;
 using Backend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ResultTest
@@ -93,14 +94,9 @@ namespace ResultTest
         [Test]
         public void GetPlayerStats_Correct()
         {
-            var (Wins, Losses, Draws) = _repository.ResultRepository.GetPlayerStats("second");
+            var result = _repository.ResultRepository.GetPlayerStats("second");
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: Wins, Is.EqualTo(expected: 2));
-                Assert.That(actual: Losses, Is.EqualTo(expected: 1));
-                Assert.That(actual: Draws, Is.EqualTo(expected: 0));
-            });
+            Assert.That(actual: result, Is.EqualTo(expected: "W:2 L:1 D:0"));
         }
 
         [Test]
@@ -110,27 +106,17 @@ namespace ResultTest
             GameResult result = new("-4", "", "", "second third");
             _repository.ResultRepository.Create(result);
 
-            var (Wins, Losses, Draws) = _repository.ResultRepository.GetPlayerStats("second");
+            var results = _repository.ResultRepository.GetPlayerStats("second");
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: Wins, Is.EqualTo(expected: 2));
-                Assert.That(actual: Losses, Is.EqualTo(expected: 1));
-                Assert.That(actual: Draws, Is.EqualTo(expected: 1));
-            });
+            Assert.That(actual: results, Is.EqualTo(expected: "W:2 L:1 D:1"));
         }
 
         [Test]
         public void GetPlayerStats_NonExistant_Correct()
         {
-            var (Wins, Losses, Draws) = _repository.ResultRepository.GetPlayerStats("zero");
+            var result = _repository.ResultRepository.GetPlayerStats("zero");
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: Wins, Is.EqualTo(expected: 0));
-                Assert.That(actual: Losses, Is.EqualTo(expected: 0));
-                Assert.That(actual: Draws, Is.EqualTo(expected: 0));
-            });
+            Assert.That(actual: result, Is.EqualTo(expected: "W:0 L:0 D:0"));
         }
 
         [Test]
