@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using System.Numerics;
 
 namespace Backend.Data
 {
@@ -25,7 +26,9 @@ namespace Backend.Data
             {
                 update.Username = player.Username;
                 update.Friends = player.Friends;
+                _context.Entry(update).Property(g => g.Friends).IsModified = true;
                 update.PendingFriends = player.PendingFriends;
+                _context.Entry(update).Property(g => g.PendingFriends).IsModified = true;
                 _context.SaveChanges();
             }
         }
@@ -41,9 +44,9 @@ namespace Backend.Data
             }
         }
 
-        public Player? Get(string token)
+        public Player? Get(string player)
         {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(player));
         }
 
         public Player? GetByUsername(string username)
@@ -62,10 +65,9 @@ namespace Backend.Data
             var receiver_control = GetByUsername(receiver);
             var sender_control = GetByUsername(sender);
 
-            if (receiver_control is not null && sender_control is not null)
+            if (receiver_control is not null && sender_control is not null && !receiver_control.PendingFriends.Contains(sender))
             {
                 receiver_control.PendingFriends.Add(sender);
-                sender_control.PendingFriends.Add(receiver);
                 _context.SaveChanges();
             }
         }
@@ -75,12 +77,11 @@ namespace Backend.Data
             var receiver_control = GetByUsername(receiver);
             var sender_control = GetByUsername(sender);
 
-            if (receiver_control is not null && sender_control is not null)
+            if (receiver_control is not null && sender_control is not null && !receiver_control.Friends.Contains(sender))
             {
                 receiver_control.Friends.Add(sender);
-                receiver_control.PendingFriends.Remove(sender);
-                sender_control.Friends.Add(receiver);
                 sender_control.PendingFriends.Remove(receiver);
+                sender_control.Friends.Add(receiver);
                 _context.SaveChanges();
             }
         }
@@ -92,10 +93,32 @@ namespace Backend.Data
 
             if (receiver_control is not null && sender_control is not null)
             {
-                receiver_control.PendingFriends.Remove(sender);
                 sender_control.PendingFriends.Remove(receiver);
                 _context.SaveChanges();
             }
+        }
+
+        public void DeleteFriend(string receiver, string sender)
+        {
+            var receiver_control = GetByUsername(receiver);
+            var sender_control = GetByUsername(sender);
+
+            if (receiver_control is not null && sender_control is not null)
+            {
+                sender_control.Friends.Remove(receiver);
+                receiver_control.Friends.Remove(sender);
+                _context.SaveChanges();
+            }
+        }
+
+        public List<string>? GetPending(string player)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(player))?.PendingFriends;
+        }
+
+        public List<string>? GetFriends(string player)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(player))?.Friends;
         }
     }
 }

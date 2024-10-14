@@ -13,5 +13,8 @@ namespace Backend.Data
         void SendFriendInvite(string receiver, string sender);
         void AcceptFriendInvite(string receiver, string sender);
         void DeclineFriendInvite(string receiver, string sender);
+        void DeleteFriend(string receiver, string sender);
+        List<string>? GetPending(string player);
+        List<string>? GetFriends(string player);
     }
 }

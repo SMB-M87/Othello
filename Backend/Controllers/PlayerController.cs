@@ -1,6 +1,7 @@
 ﻿using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Backend.Controllers
 {
@@ -83,24 +84,89 @@ namespace Backend.Controllers
                 return null;
         }
 
+        [HttpGet("{token}/friends")]
+        public ActionResult<List<string>?>? PlayerFriends(string token)
+        {
+            return _repository.PlayerRepository.GetFriends(token);
+        }
+
+        [HttpGet("{token}/pending")]
+        public ActionResult<List<string>?>? PlayerPending(string token)
+        {
+            return _repository.PlayerRepository.GetPending(token);
+        }
+
         [HttpPost("send")]
         public ActionResult<HttpResponseMessage> Send([FromBody] PlayerRequest request)
         {
+            var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
+            var sender = _repository.PlayerRepository.GetByUsername(request.Sender);
+
+            if (receiver is null || sender is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            if (receiver.Friends.Contains(request.Sender) || receiver.PendingFriends.Contains(request.Sender))
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+
             _repository.PlayerRepository.SendFriendInvite(request.Receiver, request.Sender);
+            _repository.PlayerRepository.Update(receiver);
+
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
         [HttpPost("accept")]
         public ActionResult<HttpResponseMessage> Accept([FromBody] PlayerRequest request)
         {
+            var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
+            var sender = _repository.PlayerRepository.GetByUsername(request.Sender);
+
+            if (receiver is null || sender is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            if (receiver.Friends.Contains(request.Sender) || !sender.PendingFriends.Contains(request.Receiver))
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+
             _repository.PlayerRepository.AcceptFriendInvite(request.Receiver, request.Sender);
+            _repository.PlayerRepository.Update(receiver);
+            _repository.PlayerRepository.Update(sender);
+
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
         [HttpPost("decline")]
         public ActionResult<HttpResponseMessage> Decline([FromBody] PlayerRequest request)
         {
+            var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
+            var sender = _repository.PlayerRepository.GetByUsername(request.Sender);
+
+            if (receiver is null || sender is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            if (!sender.PendingFriends.Contains(request.Receiver))
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+
             _repository.PlayerRepository.DeclineFriendInvite(request.Receiver, request.Sender);
+            _repository.PlayerRepository.Update(sender);
+
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+        }
+
+        [HttpPost("delete")]
+        public ActionResult<HttpResponseMessage> DeleteFriend([FromBody] PlayerRequest request)
+        {
+            var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
+            var sender = _repository.PlayerRepository.GetByUsername(request.Sender);
+
+            if (receiver is null || sender is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
+
+            if (!receiver.Friends.Contains(request.Sender) || !sender.Friends.Contains(request.Receiver))
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+
+            _repository.PlayerRepository.DeleteFriend(request.Receiver, request.Sender);
+            _repository.PlayerRepository.Update(sender);
+            _repository.PlayerRepository.Update(receiver);
+
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
     }
