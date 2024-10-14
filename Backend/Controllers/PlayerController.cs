@@ -96,7 +96,7 @@ namespace Backend.Controllers
             return _repository.PlayerRepository.GetPending(token);
         }
 
-        [HttpPost("send")]
+        [HttpPost("friend/send")]
         public ActionResult<HttpResponseMessage> Send([FromBody] PlayerRequest request)
         {
             var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
@@ -105,7 +105,8 @@ namespace Backend.Controllers
             if (receiver is null || sender is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            if (receiver.Friends.Contains(request.Sender) || receiver.PendingFriends.Contains(request.Sender))
+            if (receiver.Friends.Contains(request.Sender) || sender.Friends.Contains(request.Receiver) || 
+                receiver.PendingFriends.Contains(request.Sender) || sender.PendingFriends.Contains(request.Receiver))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
 
             _repository.PlayerRepository.SendFriendInvite(request.Receiver, request.Sender);
@@ -114,7 +115,7 @@ namespace Backend.Controllers
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
-        [HttpPost("accept")]
+        [HttpPost("friend/accept")]
         public ActionResult<HttpResponseMessage> Accept([FromBody] PlayerRequest request)
         {
             var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
@@ -133,7 +134,7 @@ namespace Backend.Controllers
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
-        [HttpPost("decline")]
+        [HttpPost("friend/decline")]
         public ActionResult<HttpResponseMessage> Decline([FromBody] PlayerRequest request)
         {
             var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
@@ -151,7 +152,7 @@ namespace Backend.Controllers
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
-        [HttpPost("delete")]
+        [HttpPost("friend/delete")]
         public ActionResult<HttpResponseMessage> DeleteFriend([FromBody] PlayerRequest request)
         {
             var receiver = _repository.PlayerRepository.GetByUsername(request.Receiver);
