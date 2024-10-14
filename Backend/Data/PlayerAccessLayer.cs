@@ -24,7 +24,6 @@ namespace Backend.Data
 
             if (update is not null)
             {
-                update.Username = player.Username;
                 update.Friends = player.Friends;
                 _context.Entry(update).Property(g => g.Friends).IsModified = true;
                 update.PendingFriends = player.PendingFriends;

@@ -1,7 +1,7 @@
 ﻿using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using System.Numerics;
 
 namespace Backend.Controllers
 {
@@ -52,48 +52,58 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<Player>? PlayerByToken(string token)
+        public ActionResult<Player> PlayerByToken(string token)
         {
             var player = _repository.PlayerRepository.Get(token);
 
-            if (player is not null)
-                return player;
-            else
-                return null;
+            if (player is null)
+                return NotFound();
+
+            return Ok(player);
         }
 
         [HttpGet("{username}/username")]
-        public ActionResult<Player>? PlayerByUsername(string username)
+        public ActionResult<Player> PlayerByUsername(string username)
         {
             var player = _repository.PlayerRepository.GetByUsername(username);
 
-            if (player is not null)
-                return player;
-            else
-                return null;
+            if (player is null)
+                return NotFound();
+
+            return Ok(player);
         }
 
         [HttpGet("{token}/name")]
-        public ActionResult<string>? PlayersName(string token)
+        public ActionResult<string> PlayersName(string token)
         {
             var player = _repository.PlayerRepository.Get(token);
 
-            if (player is not null)
-                return player.Username;
-            else
-                return null;
+            if (player is null)
+                return NotFound();
+
+            return Ok(player.Username);
         }
 
         [HttpGet("{token}/friends")]
-        public ActionResult<List<string>?>? PlayerFriends(string token)
+        public ActionResult<List<string>> PlayerFriends(string token)
         {
-            return _repository.PlayerRepository.GetFriends(token);
+            var friends = _repository.PlayerRepository.GetFriends(token);
+
+            if (friends is null)
+                return NotFound();
+
+            return Ok(friends);
         }
 
         [HttpGet("{token}/pending")]
-        public ActionResult<List<string>?>? PlayerPending(string token)
+        public ActionResult<List<string>> PlayerPending(string token)
         {
-            return _repository.PlayerRepository.GetPending(token);
+            var pending = _repository.PlayerRepository.GetPending(token);
+
+            if (pending is null)
+                return NotFound();
+
+            return Ok(pending);
         }
 
         [HttpPost("friend/send")]

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20241013042041_Initial")]
+    [Migration("20241014011741_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -67,10 +67,10 @@ namespace Backend.Migrations
                             Token = "zero",
                             Board = "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]",
                             Description = "I wanna play a game and don't have any requirements.",
-                            FColor = 2,
+                            FColor = 1,
                             First = "karen",
                             PlayersTurn = 2,
-                            SColor = 1,
+                            SColor = 2,
                             Second = "",
                             Status = 0
                         },
@@ -89,14 +89,14 @@ namespace Backend.Migrations
                         new
                         {
                             Token = "two",
-                            Board = "[[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,2,2],[1,1,1,1,1,1,2,2],[1,1,1,1,1,1,1,2],[1,1,1,1,1,1,1,1]]",
+                            Board = "[[2,1,1,0,0,0,0,0],[2,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]",
                             Description = "I want to player more than one game against the same adversary.",
                             FColor = 2,
-                            First = " eltjo",
-                            PlayersTurn = 0,
+                            First = "eltjo",
+                            PlayersTurn = 1,
                             SColor = 1,
                             Second = "tijn",
-                            Status = 2
+                            Status = 1
                         });
                 });
 
@@ -127,20 +127,20 @@ namespace Backend.Migrations
                             Token = "-2",
                             Draw = "Empty",
                             Loser = "tijn",
-                            Winner = " eltjo"
+                            Winner = "eltjo"
                         },
                         new
                         {
                             Token = "-1",
                             Draw = "Empty",
-                            Loser = " eltjo",
+                            Loser = "eltjo",
                             Winner = "tijn"
                         },
                         new
                         {
-                            Token = "two",
+                            Token = "-0",
                             Draw = "Empty",
-                            Loser = " eltjo",
+                            Loser = "eltjo",
                             Winner = "tijn"
                         });
                 });
@@ -170,36 +170,36 @@ namespace Backend.Migrations
                         new
                         {
                             Token = "karen",
-                            Friends = "[]",
+                            Friends = "[\"Ernst\",\"John\"]",
                             PendingFriends = "[]",
                             Username = "Karen"
                         },
                         new
                         {
                             Token = "ernst",
-                            Friends = "[]",
+                            Friends = "[\"John\",\"Karen\"]",
                             PendingFriends = "[]",
-                            Username = "Ersnt"
+                            Username = "Ernst"
                         },
                         new
                         {
                             Token = "john",
-                            Friends = "[]",
+                            Friends = "[\"Ernst\",\"Karen\"]",
                             PendingFriends = "[]",
                             Username = "John"
                         },
                         new
                         {
-                            Token = " eltjo",
-                            Friends = "[]",
-                            PendingFriends = "[]",
+                            Token = "eltjo",
+                            Friends = "[\"Tijn\"]",
+                            PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
                             Username = "Eltjo"
                         },
                         new
                         {
                             Token = "tijn",
-                            Friends = "[]",
-                            PendingFriends = "[]",
+                            Friends = "[\"Eltjo\"]",
+                            PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
                             Username = "Tijn"
                         });
                 });

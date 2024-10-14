@@ -108,47 +108,48 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<string>>? DescriptionsOfPendingGames()
+        public ActionResult<List<string>> DescriptionsOfPendingGames()
         {
             var pendingGames = _repository.GameRepository.GetGames();
 
-            if (pendingGames is not null)
-                return pendingGames.FindAll(game => game.Status == Status.Pending).Select(game => game.Description).ToList();
-            else
-                return null;
+            if (pendingGames is null)
+                return NotFound();
+
+            var results = pendingGames.FindAll(game => game.Status == Status.Pending).Select(game => game.Description).ToList();
+            return Ok(results);
         }
 
         [HttpGet("{token}")]
-        public ActionResult<Game>? GameByToken(string token)
+        public ActionResult<Game> GameByToken(string token)
         {
             var game = _repository.GameRepository.Get(token);
 
-            if (game is not null)
-                return game;
-            else
-                return null;
+            if (game is null)
+                return NotFound();
+
+            return Ok(game);
         }
 
         [HttpGet("{token}/player")]
-        public ActionResult<Game>? GameByPlayerToken(string token)
+        public ActionResult<Game> GameByPlayerToken(string token)
         {
             var game = _repository.GameRepository.GetPlayersGame(token);
 
-            if (game is not null)
-                return game;
-            else
-                return null;
+            if (game is null)
+                return NotFound();
+
+            return Ok(game);
         }
 
         [HttpGet("{token}/turn")]
-        public ActionResult<Color>? TurnByToken(string token)
+        public ActionResult<Color> TurnByToken(string token)
         {
             var game = _repository.GameRepository.Get(token);
 
-            if (game is not null)
-                return game.PlayersTurn;
-            else
-                return null;
+            if (game is null)
+                return NotFound();
+
+            return Ok(game.PlayersTurn);
         }
 
         [HttpPut("{token}/move")]

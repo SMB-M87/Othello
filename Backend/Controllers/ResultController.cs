@@ -16,25 +16,27 @@ namespace Backend.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<List<GameResult>>? MatchHistory(string token)
+        public ActionResult<List<GameResult>> MatchHistory(string token)
         {
             var player = _repository.PlayerRepository.Get(token);
 
-            if (player is not null)
-                return _repository.ResultRepository.GetPlayersMatchHistory(token);
-            else
-                return null;
+            if (player is null)
+                return NotFound();
+
+            var results = _repository.ResultRepository.GetPlayersMatchHistory(token);
+            return Ok(results);
         }
 
         [HttpGet("{token}/stats")]
-        public ActionResult<(int Wins, int Losses, int Draws)>? PlayerStats(string token)
+        public ActionResult<string> PlayerStats(string token)
         {
             var player = _repository.PlayerRepository.Get(token);
 
-            if (player is not null)
-                return _repository.ResultRepository.GetPlayerStats(token);
-            else
-                return null;
+            if (player is null)
+                return NotFound();
+
+            var stats = _repository.ResultRepository.GetPlayerStats(token);
+            return Ok(stats);
         }
     }
 }

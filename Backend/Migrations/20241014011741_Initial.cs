@@ -65,8 +65,8 @@ namespace Backend.Migrations
                 values: new object[,]
                 {
                     { "one", "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I search an advanced player!", 2, "ernst", 2, 1, "john", 1 },
-                    { "two", "[[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,2,2],[1,1,1,1,1,1,2,2],[1,1,1,1,1,1,1,2],[1,1,1,1,1,1,1,1]]", "I want to player more than one game against the same adversary.", 2, " eltjo", 0, 1, "tijn", 2 },
-                    { "zero", "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I wanna play a game and don't have any requirements.", 2, "karen", 2, 1, "", 0 }
+                    { "two", "[[2,1,1,0,0,0,0,0],[2,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I want to player more than one game against the same adversary.", 2, "eltjo", 1, 1, "tijn", 1 },
+                    { "zero", "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I wanna play a game and don't have any requirements.", 1, "karen", 2, 2, "", 0 }
                 });
 
             migrationBuilder.InsertData(
@@ -74,11 +74,11 @@ namespace Backend.Migrations
                 columns: new[] { "Token", "Friends", "PendingFriends", "Username" },
                 values: new object[,]
                 {
-                    { " eltjo", "[]", "[]", "Eltjo" },
-                    { "ernst", "[]", "[]", "Ersnt" },
-                    { "john", "[]", "[]", "John" },
-                    { "karen", "[]", "[]", "Karen" },
-                    { "tijn", "[]", "[]", "Tijn" }
+                    { "eltjo", "[\"Tijn\"]", "[\"Karen\",\"Ernst\",\"John\"]", "Eltjo" },
+                    { "ernst", "[\"John\",\"Karen\"]", "[]", "Ernst" },
+                    { "john", "[\"Ernst\",\"Karen\"]", "[]", "John" },
+                    { "karen", "[\"Ernst\",\"John\"]", "[]", "Karen" },
+                    { "tijn", "[\"Eltjo\"]", "[\"Karen\",\"Ernst\",\"John\"]", "Tijn" }
                 });
 
             migrationBuilder.InsertData(
@@ -86,9 +86,9 @@ namespace Backend.Migrations
                 columns: new[] { "Token", "Draw", "Loser", "Winner" },
                 values: new object[,]
                 {
-                    { "-1", "Empty", " eltjo", "tijn" },
-                    { "-2", "Empty", "tijn", " eltjo" },
-                    { "two", "Empty", " eltjo", "tijn" }
+                    { "-0", "Empty", "eltjo", "tijn" },
+                    { "-1", "Empty", "eltjo", "tijn" },
+                    { "-2", "Empty", "tijn", "eltjo" }
                 });
         }
 
