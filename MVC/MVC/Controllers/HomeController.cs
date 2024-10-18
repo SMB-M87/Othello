@@ -1,5 +1,4 @@
-﻿using MVC.Data;
-using MVC.Models;
+﻿using MVC.Models;
 using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +8,10 @@ namespace MVC.Controllers
 {
     public class HomeController : Controller
     {
-        //private readonly Database _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(/*Database context, */UserManager<IdentityUser> userManager)
+        public HomeController(UserManager<IdentityUser> userManager)
         {
-            //_context = context;
             _userManager = userManager;
         }
 
@@ -22,19 +19,6 @@ namespace MVC.Controllers
         {
             ClaimsPrincipal currentUser = this.User;
             var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString();
-
-/*            if (currentUserID != null)
-            {
-                var speler = _context.Players.FirstOrDefault(s => s.Token == currentUserID);
-                if (speler == null)
-                {
-                    var user = _userManager.FindByIdAsync(currentUserID).Result;
-                    var nieuweSpeler = new Player (user.UserName) { Token = currentUserID };
-
-                    _context.Players.Add(nieuweSpeler);
-                    _context.SaveChanges();
-                }
-            }*/
 
             return View();
         }

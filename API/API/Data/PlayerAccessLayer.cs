@@ -23,6 +23,7 @@ namespace API.Data
 
             if (update is not null)
             {
+                update.IsOnline = player.IsOnline;
                 update.Friends = player.Friends;
                 _context.Entry(update).Property(g => g.Friends).IsModified = true;
                 update.PendingFriends = player.PendingFriends;
@@ -52,15 +53,14 @@ namespace API.Data
             return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
         }
 
-        public string GetName(string token)
-        {
-            var player = _context.Players.FirstOrDefault(s => s.Token.Equals(token));
-            return player?.Username ?? "";
-        }
-
         public bool Exists(string username)
         {
             return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
+        }
+
+        public List<Player>? GetPlayers()
+        {
+            return _context.Players.ToList();
         }
 
         public void SendFriendInvite(string receiver, string sender)

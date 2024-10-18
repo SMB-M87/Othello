@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("Identity");
+var connectionString = builder.Configuration.GetConnectionString("MVC");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -14,9 +14,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient();
-
-/*builder.Services.AddDbContext<Database>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MVC")));*/
 
 var app = builder.Build();
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20241018210748_Initial")]
+    [Migration("20241018225413_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -67,10 +67,10 @@ namespace API.Migrations
                             Token = "zero",
                             Board = "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]",
                             Description = "I wanna play a game and don't have any requirements.",
-                            FColor = 1,
+                            FColor = 2,
                             First = "karen",
                             PlayersTurn = 2,
-                            SColor = 2,
+                            SColor = 1,
                             Second = "",
                             Status = 0
                         },
@@ -154,6 +154,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PendingFriends")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -170,6 +173,7 @@ namespace API.Migrations
                         {
                             Username = "Karen",
                             Friends = "[\"Ernst\",\"John\"]",
+                            IsOnline = true,
                             PendingFriends = "[]",
                             Token = "karen"
                         },
@@ -177,6 +181,7 @@ namespace API.Migrations
                         {
                             Username = "Ernst",
                             Friends = "[\"John\",\"Karen\"]",
+                            IsOnline = true,
                             PendingFriends = "[]",
                             Token = "ernst"
                         },
@@ -184,6 +189,7 @@ namespace API.Migrations
                         {
                             Username = "John",
                             Friends = "[\"Ernst\",\"Karen\"]",
+                            IsOnline = true,
                             PendingFriends = "[]",
                             Token = "john"
                         },
@@ -191,6 +197,7 @@ namespace API.Migrations
                         {
                             Username = "Eltjo",
                             Friends = "[\"Tijn\"]",
+                            IsOnline = true,
                             PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
                             Token = "eltjo"
                         },
@@ -198,6 +205,7 @@ namespace API.Migrations
                         {
                             Username = "Tijn",
                             Friends = "[\"Eltjo\"]",
+                            IsOnline = true,
                             PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
                             Token = "tijn"
                         });

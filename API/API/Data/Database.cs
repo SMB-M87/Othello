@@ -45,6 +45,8 @@ namespace API.Data
                 entity.HasKey(e => e.Token);
                 entity.HasKey(e => e.Username);
 
+                entity.Property(e => e.IsOnline);
+
                 entity.Property(e => e.Friends)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),

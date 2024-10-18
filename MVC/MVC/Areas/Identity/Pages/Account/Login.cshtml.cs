@@ -10,13 +10,21 @@ namespace MVC.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
+        private readonly HttpClient _httpClient;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(
+            ILogger<LoginModel> logger,
+            IHttpClientFactory httpClientFactory,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager)
         {
             _logger = logger;
+            _userManager = userManager;
             _signInManager = signInManager;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         /// <summary>
@@ -106,6 +114,20 @@ namespace MVC.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // Retrieve the User ID from UserManager
+                    var user = await _userManager.FindByNameAsync(Input.Username);
+                    if (user != null)
+                    {
+                        var playerStatusUrl = "https://localhost:7023/api/player/login";
+                        var response = await _httpClient.PostAsJsonAsync(playerStatusUrl, user.Id);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            // Handle potential API failure here
+                            _logger.LogError("Failed to update player status in API.");
+                        }
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

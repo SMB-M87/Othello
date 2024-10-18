@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace API.Controllers
 {
@@ -48,6 +49,44 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
+        }
+
+        [HttpPost("login")]
+        public ActionResult<HttpResponseMessage> Login([FromBody] string token)
+        {
+            var player = _repository.PlayerRepository.Get(token);
+
+            if (player is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+
+            player.IsOnline = true;
+            _repository.PlayerRepository.Update(player);
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+        }
+
+        [HttpPost("logout")]
+        public ActionResult<HttpResponseMessage> Logout([FromBody] string token)
+        {
+            var player = _repository.PlayerRepository.Get(token);
+
+            if (player is null)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+
+            player.IsOnline = false;
+            _repository.PlayerRepository.Update(player);
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+        }
+
+        [HttpGet]
+        public ActionResult<List<string>> OnlinePlayers()
+        {
+            var players = _repository.PlayerRepository.GetPlayers();
+
+            if (players is null)
+                return NotFound();
+
+            var results = players.FindAll(player => player.IsOnline == true).Select(player => player.Username).ToList();
+            return Ok(results);
         }
 
         [HttpGet("{token}")]

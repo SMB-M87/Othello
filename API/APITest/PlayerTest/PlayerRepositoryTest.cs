@@ -150,17 +150,6 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void GetName_Correct()
-        {
-            var respons = _repository.PlayerRepository.GetName("first");
-
-            if (respons is not null)
-                Assert.That(actual: respons, Is.EqualTo(expected: "one"));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
         public void PlayerFriends_Correct()
         {
             List<string>? respons = _repository.PlayerRepository.GetFriends("sixth");

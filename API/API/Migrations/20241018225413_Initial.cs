@@ -37,6 +37,7 @@ namespace API.Migrations
                 {
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsOnline = table.Column<bool>(type: "bit", nullable: false),
                     Friends = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PendingFriends = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -66,19 +67,19 @@ namespace API.Migrations
                 {
                     { "one", "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I search an advanced player!", 2, "ernst", 2, 1, "john", 1 },
                     { "two", "[[2,1,1,0,0,0,0,0],[2,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I want to player more than one game against the same adversary.", 2, "eltjo", 1, 1, "tijn", 1 },
-                    { "zero", "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I wanna play a game and don't have any requirements.", 1, "karen", 2, 2, "", 0 }
+                    { "zero", "[[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,1,2,0,0,0],[0,0,0,2,1,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]", "I wanna play a game and don't have any requirements.", 2, "karen", 2, 1, "", 0 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Players",
-                columns: new[] { "Username", "Friends", "PendingFriends", "Token" },
+                columns: new[] { "Username", "Friends", "IsOnline", "PendingFriends", "Token" },
                 values: new object[,]
                 {
-                    { "Eltjo", "[\"Tijn\"]", "[\"Karen\",\"Ernst\",\"John\"]", "eltjo" },
-                    { "Ernst", "[\"John\",\"Karen\"]", "[]", "ernst" },
-                    { "John", "[\"Ernst\",\"Karen\"]", "[]", "john" },
-                    { "Karen", "[\"Ernst\",\"John\"]", "[]", "karen" },
-                    { "Tijn", "[\"Eltjo\"]", "[\"Karen\",\"Ernst\",\"John\"]", "tijn" }
+                    { "Eltjo", "[\"Tijn\"]", true, "[\"Karen\",\"Ernst\",\"John\"]", "eltjo" },
+                    { "Ernst", "[\"John\",\"Karen\"]", true, "[]", "ernst" },
+                    { "John", "[\"Ernst\",\"Karen\"]", true, "[]", "john" },
+                    { "Karen", "[\"Ernst\",\"John\"]", true, "[]", "karen" },
+                    { "Tijn", "[\"Eltjo\"]", true, "[\"Karen\",\"Ernst\",\"John\"]", "tijn" }
                 });
 
             migrationBuilder.InsertData(
