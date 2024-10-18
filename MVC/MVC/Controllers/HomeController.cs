@@ -1,25 +1,44 @@
-﻿using MVC.Models;
+﻿using MVC.Data;
+using MVC.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //private readonly Database _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(/*Database context, */UserManager<IdentityUser> userManager)
         {
-            _logger = logger;
+            //_context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
+            ClaimsPrincipal currentUser = this.User;
+            var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value.ToString();
+
+/*            if (currentUserID != null)
+            {
+                var speler = _context.Players.FirstOrDefault(s => s.Token == currentUserID);
+                if (speler == null)
+                {
+                    var user = _userManager.FindByIdAsync(currentUserID).Result;
+                    var nieuweSpeler = new Player (user.UserName) { Token = currentUserID };
+
+                    _context.Players.Add(nieuweSpeler);
+                    _context.SaveChanges();
+                }
+            }*/
+
             return View();
         }
 
-        [Authorize]
         public IActionResult Privacy()
         {
             return View();
