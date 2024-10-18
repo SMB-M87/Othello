@@ -58,6 +58,11 @@ namespace API.Data
             return player?.Username ?? "";
         }
 
+        public bool Exists(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
+        }
+
         public void SendFriendInvite(string receiver, string sender)
         {
             var receiver_control = GetByUsername(receiver);

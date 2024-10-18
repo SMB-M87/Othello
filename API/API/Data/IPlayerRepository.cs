@@ -10,6 +10,7 @@ namespace API.Data
         Player? Get(string token);
         Player? GetByUsername(string username);
         string GetName(string token);
+        bool Exists(string username);
         void SendFriendInvite(string receiver, string sender);
         void AcceptFriendInvite(string receiver, string sender);
         void DeclineFriendInvite(string receiver, string sender);

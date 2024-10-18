@@ -18,14 +18,14 @@ namespace API.Controllers
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] GameEntrant player)
         {
-            var name = _repository.PlayerRepository.GetByUsername(player.Player);
+            bool exists = _repository.PlayerRepository.Exists(player.Player);
 
-            if (name is not null)
+            if (exists == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             Player create = new(player.Token, player.Player);
             _repository.PlayerRepository.Create(create);
-            var respons = _repository.PlayerRepository.Get(player.Token);
+            var respons = _repository.PlayerRepository.Get(create.Token);
 
             if (respons is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -61,7 +61,7 @@ namespace API.Controllers
             return Ok(player);
         }
 
-        [HttpGet("{username}/username")]
+        [HttpGet("username/{username}")]
         public ActionResult<Player> PlayerByUsername(string username)
         {
             var player = _repository.PlayerRepository.GetByUsername(username);
@@ -72,7 +72,7 @@ namespace API.Controllers
             return Ok(player);
         }
 
-        [HttpGet("{token}/name")]
+        [HttpGet("name/{token}")]
         public ActionResult<string> PlayersName(string token)
         {
             var player = _repository.PlayerRepository.Get(token);
@@ -83,7 +83,18 @@ namespace API.Controllers
             return Ok(player.Username);
         }
 
-        [HttpGet("{token}/friends")]
+        [HttpGet("check/{username}")]
+        public ActionResult<bool> PlayerExists(string username)
+        {
+            bool player = _repository.PlayerRepository.Exists(username);
+
+            if (!player)
+                return NotFound();
+
+            return Ok(player);
+        }
+
+        [HttpGet("friends/{token}")]
         public ActionResult<List<string>> PlayerFriends(string token)
         {
             var friends = _repository.PlayerRepository.GetFriends(token);
@@ -94,7 +105,7 @@ namespace API.Controllers
             return Ok(friends);
         }
 
-        [HttpGet("{token}/pending")]
+        [HttpGet("pending/{token}")]
         public ActionResult<List<string>> PlayerPending(string token)
         {
             var pending = _repository.PlayerRepository.GetPending(token);

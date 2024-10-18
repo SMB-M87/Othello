@@ -62,7 +62,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
         }
 
-        [HttpPost("join-player")]
+        [HttpPost("join/player")]
         public ActionResult<HttpResponseMessage> JoinPlayer([FromBody] GameEntrant entry)
         {
             var game = _repository.GameRepository.GetPlayersGame(entry.Token);
@@ -130,7 +130,7 @@ namespace API.Controllers
             return Ok(game);
         }
 
-        [HttpGet("{token}/player")]
+        [HttpGet("from/{token}")]
         public ActionResult<Game> GameByPlayerToken(string token)
         {
             var game = _repository.GameRepository.GetPlayersGame(token);
@@ -141,7 +141,7 @@ namespace API.Controllers
             return Ok(game);
         }
 
-        [HttpGet("{token}/turn")]
+        [HttpGet("turn/{token}")]
         public ActionResult<Color> TurnByToken(string token)
         {
             var game = _repository.GameRepository.Get(token);
@@ -152,7 +152,7 @@ namespace API.Controllers
             return Ok(game.PlayersTurn);
         }
 
-        [HttpPut("{token}/move")]
+        [HttpPut("move")]
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
             var game = _repository.GameRepository.GetPlayersGame(action.Player);
