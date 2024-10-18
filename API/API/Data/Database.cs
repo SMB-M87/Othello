@@ -43,7 +43,7 @@ namespace API.Data
             builder.Entity<Player>(entity =>
             {
                 entity.HasKey(e => e.Token);
-                entity.Property(e => e.Username).IsRequired();
+                entity.HasKey(e => e.Username);
 
                 entity.Property(e => e.Friends)
                     .HasConversion(

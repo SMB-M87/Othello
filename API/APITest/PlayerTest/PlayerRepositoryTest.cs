@@ -20,12 +20,12 @@ namespace APITest.PlayerTest
             _context = new Database(options);
             _repository = new Repository(_context);
 
-            Player one = new("one") { Token = "first" };
-            Player two = new("two") { Token = "second" };
-            Player three = new("three") { Token = "third" };
-            Player four = new("four") { Token = "fourth" };
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
+            Player one = new("first", "one");
+            Player two = new("second", "two");
+            Player three = new("third", "three");
+            Player four = new("fourth", "four");
+            Player five = new("fifth", "five");
+            Player six = new("sixth", "six");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -83,7 +83,7 @@ namespace APITest.PlayerTest
         public void Create_Correct()
         {
             int size = _context.Players.Count();
-            Player player = new("fivess") { Token = "sfifth" };
+            Player player = new("sfifth", "fivess");
 
             _repository.PlayerRepository.Create(player);
 
@@ -114,7 +114,7 @@ namespace APITest.PlayerTest
         public void Delete_Correct()
         {
             int size = _context.Players.Count();
-            Player player = new("five") { Token = "fifth" };
+            Player player = new("fifth", "five");
 
             _repository.PlayerRepository.Delete(_context.Players.First(p => p.Username == "one"));
 

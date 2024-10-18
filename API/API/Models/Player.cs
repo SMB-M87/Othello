@@ -6,7 +6,7 @@ namespace API.Models
     {
         [Key]
         public string Token { get; set; }
-        [Required]
+        [Key]
         public string Username { get; set; }
 
         public ICollection<string> Friends { get; set; }
@@ -20,9 +20,9 @@ namespace API.Models
             PendingFriends = new List<string>();
         }
 
-        public Player(string username)
+        public Player(string token, string username)
         {
-            Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "q").Replace("+", "r");
+            Token = token;
             Username = username;
             Friends = new List<string>();
             PendingFriends = new List<string>();

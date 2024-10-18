@@ -24,12 +24,12 @@ namespace APITest.PlayerTest
             _context = new Database(options);
             _repository = new Repository(_context);
 
-            Player one = new("one") { Token = "first" };
-            Player two = new("two") { Token = "second" };
-            Player three = new("three") { Token = "third" };
-            Player four = new("four") { Token = "fourth" };
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
+            Player one = new("first", "one");
+            Player two = new("second", "two");
+            Player three = new("third", "three");
+            Player four = new("fourth", "four");
+            Player five = new("fifth", "five");
+            Player six = new("sixth", "six");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -87,7 +87,7 @@ namespace APITest.PlayerTest
         [Test]
         public void Create_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Create("newby");
+            ActionResult<HttpResponseMessage>? result = _controller.Create(new("new", "newby"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -103,7 +103,7 @@ namespace APITest.PlayerTest
         [Test]
         public void Create_FORBIDDEN()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Create("one");
+            ActionResult<HttpResponseMessage>? result = _controller.Create(new("one", "one"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)

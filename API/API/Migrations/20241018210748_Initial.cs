@@ -35,14 +35,14 @@ namespace API.Migrations
                 name: "Players",
                 columns: table => new
                 {
-                    Token = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Friends = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PendingFriends = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Players", x => x.Token);
+                    table.PrimaryKey("PK_Players", x => x.Username);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,14 +71,14 @@ namespace API.Migrations
 
             migrationBuilder.InsertData(
                 table: "Players",
-                columns: new[] { "Token", "Friends", "PendingFriends", "Username" },
+                columns: new[] { "Username", "Friends", "PendingFriends", "Token" },
                 values: new object[,]
                 {
-                    { "eltjo", "[\"Tijn\"]", "[\"Karen\",\"Ernst\",\"John\"]", "Eltjo" },
-                    { "ernst", "[\"John\",\"Karen\"]", "[]", "Ernst" },
-                    { "john", "[\"Ernst\",\"Karen\"]", "[]", "John" },
-                    { "karen", "[\"Ernst\",\"John\"]", "[]", "Karen" },
-                    { "tijn", "[\"Eltjo\"]", "[\"Karen\",\"Ernst\",\"John\"]", "Tijn" }
+                    { "Eltjo", "[\"Tijn\"]", "[\"Karen\",\"Ernst\",\"John\"]", "eltjo" },
+                    { "Ernst", "[\"John\",\"Karen\"]", "[]", "ernst" },
+                    { "John", "[\"Ernst\",\"Karen\"]", "[]", "john" },
+                    { "Karen", "[\"Ernst\",\"John\"]", "[]", "karen" },
+                    { "Tijn", "[\"Eltjo\"]", "[\"Karen\",\"Ernst\",\"John\"]", "tijn" }
                 });
 
             migrationBuilder.InsertData(

@@ -24,12 +24,12 @@ namespace APITest.GameTest
             _context = new Database(options);
             _repository = new Repository(_context);
 
-            Player one = new("one") { Token = "first" };
-            Player two = new("two") { Token = "second" };
-            Player three = new("three") { Token = "third" };
-            Player four = new("four") { Token = "fourth" };
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
+            Player one = new("first", "one");
+            Player two = new("second", "two");
+            Player three = new("third", "three");
+            Player four = new("fourth", "four");
+            Player five = new("fifth", "five");
+            Player six = new("sixth", "six");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -792,7 +792,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayer_OK()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = new(five.Token);
             game.SColor = Color.White;
@@ -875,7 +875,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayer_OK()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = new(five.Token);
             game.SColor = Color.White;
@@ -1199,7 +1199,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayer_BADREQUEST()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1218,7 +1218,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayer_BADREQUEST()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1237,7 +1237,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_OK()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1281,7 +1281,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_StatusIncorrect_FORBIDDEN()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1300,7 +1300,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_PlayersturnIncorrect_FORBIDDEN()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1319,7 +1319,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_FirstPlayerIncorrectColor_FORBIDDEN()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1338,7 +1338,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_SecondPlayerIncorrectColor_FORBIDDEN()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;
@@ -1357,7 +1357,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_FORBIDDEN()
         {
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
             game.Second = five.Token;
             game.SColor = Color.White;

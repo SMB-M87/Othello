@@ -144,7 +144,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Player", b =>
                 {
-                    b.Property<string>("Token")
+                    b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Friends")
@@ -155,49 +155,48 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
+                    b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Token");
+                    b.HasKey("Username");
 
                     b.ToTable("Players");
 
                     b.HasData(
                         new
                         {
-                            Token = "karen",
+                            Username = "Karen",
                             Friends = "[\"Ernst\",\"John\"]",
                             PendingFriends = "[]",
-                            Username = "Karen"
+                            Token = "karen"
                         },
                         new
                         {
-                            Token = "ernst",
+                            Username = "Ernst",
                             Friends = "[\"John\",\"Karen\"]",
                             PendingFriends = "[]",
-                            Username = "Ernst"
+                            Token = "ernst"
                         },
                         new
                         {
-                            Token = "john",
+                            Username = "John",
                             Friends = "[\"Ernst\",\"Karen\"]",
                             PendingFriends = "[]",
-                            Username = "John"
+                            Token = "john"
                         },
                         new
                         {
-                            Token = "eltjo",
+                            Username = "Eltjo",
                             Friends = "[\"Tijn\"]",
                             PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
-                            Username = "Eltjo"
+                            Token = "eltjo"
                         },
                         new
                         {
-                            Token = "tijn",
+                            Username = "Tijn",
                             Friends = "[\"Eltjo\"]",
                             PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
-                            Username = "Tijn"
+                            Token = "tijn"
                         });
                 });
 #pragma warning restore 612, 618

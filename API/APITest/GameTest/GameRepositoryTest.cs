@@ -20,12 +20,12 @@ namespace APITest.GameTest
             _context = new Database(options);
             _repository = new Repository(_context);
 
-            Player one = new("one") { Token = "first" };
-            Player two = new("two") { Token = "second" };
-            Player three = new("three") { Token = "third" };
-            Player four = new("four") { Token = "fourth" };
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
+            Player one = new("first", "one");
+            Player two = new("second", "two");
+            Player three = new("third", "three");
+            Player four = new("fourth", "four");
+            Player five = new("fifth", "five");
+            Player six = new("sixth", "six");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -79,7 +79,7 @@ namespace APITest.GameTest
         public void Create_Correct()
         {
             int size = _repository.GameRepository.GetGames()?.Count ?? 0;
-            Player five = new("five") { Token = "fifth" };
+            Player five = new("fifth", "five");
             Game game = new(five.Token, "I search an advanced player!")
             {
                 Token = "three",
@@ -186,8 +186,8 @@ namespace APITest.GameTest
         [Test]
         public void GetPlayersGame_Correct_FirstPlayer()
         {
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
+            Player five = new("fifth", "five");
+            Player six = new("sixth", "six");
             Game game = new(five.Token, "I search an advanced player!")
             {
                 Token = "three",
@@ -210,8 +210,8 @@ namespace APITest.GameTest
         [Test]
         public void GetPlayersGame_Correct_SecondPlayer()
         {
-            Player five = new("five") { Token = "fifth" };
-            Player six = new("six") { Token = "sixth" };
+            Player five = new("fifth", "five");
+            Player six = new("sixth", "six");
 
             Game game = new(five.Token, "I search an advanced player!")
             {

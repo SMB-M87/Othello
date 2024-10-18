@@ -16,15 +16,15 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult<HttpResponseMessage> Create([FromBody] string username)
+        public ActionResult<HttpResponseMessage> Create([FromBody] GameEntrant player)
         {
-            var name = _repository.PlayerRepository.GetByUsername(username);
+            var name = _repository.PlayerRepository.GetByUsername(player.Player);
 
             if (name is not null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
-            Player player = new(username);
-            _repository.PlayerRepository.Create(player);
+            Player create = new(player.Token, player.Player);
+            _repository.PlayerRepository.Create(create);
             var respons = _repository.PlayerRepository.Get(player.Token);
 
             if (respons is not null)

@@ -14,8 +14,8 @@ namespace APITest.GameTest
         [SetUp]
         public void SetUp()
         {
-            one = new("One") { Token = "first" };
-            two = new("Two") { Token = "second" };
+            one = new("first", "One");
+            two = new("second", "Two");
         }
 
         [Test]
