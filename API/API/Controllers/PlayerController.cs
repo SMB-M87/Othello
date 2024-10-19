@@ -122,6 +122,17 @@ namespace API.Controllers
             return Ok(player.Username);
         }
 
+        [HttpGet("token/{username}")]
+        public ActionResult<string> PlayersToken(string username)
+        {
+            var player = _repository.PlayerRepository.Get(username);
+
+            if (player is null)
+                return NotFound();
+
+            return Ok(player.Token);
+        }
+
         [HttpGet("check/{username}")]
         public ActionResult<bool> PlayerExists(string username)
         {

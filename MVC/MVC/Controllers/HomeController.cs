@@ -53,12 +53,12 @@ namespace MVC.Controllers
                 {
                     foreach (var game in matchHistory)
                     {
-                        game.Winner = await GetPlayersName(game.Winner); // Fetch the winner's name by token
-                        game.Loser = await GetPlayersName(game.Loser);   // Fetch the loser's name by token
+                        game.Winner = await GetPlayersName(game.Winner);
+                        game.Loser = await GetPlayersName(game.Loser);
 
                         if (!string.IsNullOrEmpty(game.Draw))
                         {
-                            var drawTokens = game.Draw.Split(' '); // Assuming draw contains multiple tokens
+                            var drawTokens = game.Draw.Split(' ');
                             game.Draw = $"{await GetPlayersName(drawTokens[0] == userId ? drawTokens[1] : drawTokens[0])}";
                         }
                     }
@@ -87,6 +87,10 @@ namespace MVC.Controllers
                     friends = await friendsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
                 }
 
+                var onlineFriends = friends.Intersect(onlinePlayers).ToList();
+                var offlineFriends = friends.Except(onlineFriends).ToList();
+                friends = onlineFriends.Concat(offlineFriends).ToList();
+
                 var sentResponse = await _httpClient.GetAsync($"api/player/sent/{_userManager.GetUserName(User)}");
                 List<string> sentRequests = new();
 
@@ -103,7 +107,6 @@ namespace MVC.Controllers
                     pendingRequests = await pendingResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
                 }
 
-                // Create a ViewModel to pass data to the view
                 var model = new HomeView
                 {
                     Stats = stats,
@@ -118,6 +121,12 @@ namespace MVC.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InviteToGame(string username)
+        {
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

@@ -1,41 +1,56 @@
 ﻿@model MVC.Models.ProfileView
 
-<h2>Username</h2>
-
-<div>
-    <h3>Stats</h3>
-    <p>@Model.Stats</p>
+<div class="text-center" style="font-size: 48px; margin-top: 20px;">
+    <h2>@Model.Username</h2>
+    <h3>@Model.Stats</h3>
 </div>
 
-<div>
+<div class="text-center" style="font-size: 48px; margin-top: 20px;">
     <h3>Match History</h3>
-    @if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Game ID</th>
-                    <th>Winner</th>
-                    <th>Loser</th>
-                    <th>Draw</th>
-                </tr>
-            </thead>
-            <tbody>
+</div>
+
+@if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
+{
+    <div class="d-flex justify-content-center">
+        <div class="col-md-6" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <ul style="list-style: none; padding-left: 0;">
                 @foreach (var game in Model.MatchHistory)
                 {
-                    <tr>
-                        <td>@game.Token</td>
-                        <td>@game.Winner</td>
-                        <td>@game.Loser</td>
-                        <td>@game.Draw</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>You have no match history.</p>
-    }
-</div>
+                    <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
+                        background-color: @(Model.Username == game.Winner ? "#d4edda" : Model.Username == game.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
 
+                        @if (Model.Username == game.Winner)
+                        {
+                            <span>Won</span>
+                        }
+                        else if (Model.Username == game.Loser)
+                        {
+                            <span>Lost</span>
+                        }
+                        else
+                        {
+                            <span>Draw</span>
+                        }
+
+                        @if (Model.Username == game.Winner)
+                        {
+                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Loser">@game.Loser</a></span>
+                        }
+                        else if (Model.Username == game.Loser)
+                        {
+                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Winner">@game.Winner</a></span>
+                        }
+                        else
+                        {
+                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw">@game.Draw</a></span>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <p class="text-center">No match history available.</p>
+}

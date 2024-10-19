@@ -11,52 +11,46 @@
     </div>
 
     <div class="row">
-        <!-- Match History Column, reduced width to fit everything in one row -->
+        <!-- Match History Column -->
         <div class="col-md-3">
             <h3>Match History</h3>
             @if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
             {
-                <table class="table table-sm" style="table-layout: fixed; width: 100%;">
-                    <colgroup>
-                        <col style="width: 30%;" />
-                        <col style="width: 70%;" />
-                    </colgroup>
-                    <tbody>
+                <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                    <ul style="list-style: none; padding-left: 0;">
                         @foreach (var game in Model.MatchHistory)
                         {
-                            <tr>
-                                <td>
-                                    @if (User.Identity.Name == game.Winner)
-                                    {
-                                        <span>Won</span>
-                                    }
-                                    else if (User.Identity.Name == game.Loser)
-                                    {
-                                        <span>Lost</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Draw</span>
-                                    }
-                                </td>
-                                <td>
-                                    @if (User.Identity.Name == game.Winner)
-                                    {
-                                        <span>@game.Loser</span>
-                                    }
-                                    else if (User.Identity.Name == game.Loser)
-                                    {
-                                        <span>@game.Winner</span>
-                                    }
-                                    else
-                                    {
-                                        <span>@game.Draw</span>
-                                    }
-                                </td>
-                            </tr>
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
+                        background-color: @(User.Identity.Name == game.Winner ? "#d4edda" : User.Identity.Name == game.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
+
+                                @if (User.Identity.Name == game.Winner)
+                                {
+                                    <span>Won</span>
+                                }
+                                else if (User.Identity.Name == game.Loser)
+                                {
+                                    <span>Lost</span>
+                                }
+                                else
+                                {
+                                    <span>Draw</span>
+                                }
+                                @if (User.Identity.Name == game.Winner)
+                                {
+                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Loser">@game.Loser</a></span>
+                                }
+                                else if (User.Identity.Name == game.Loser)
+                                {
+                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Winner">@game.Winner</a></span>
+                                }
+                                else
+                                {
+                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw">@game.Draw</a></span>
+                                }
+                            </li>
                         }
-                    </tbody>
-                </table>
+                    </ul>
+                </div>
             }
             else
             {
@@ -64,7 +58,7 @@
             }
         </div>
 
-        <!-- Online Players Column, reduced space between name and button -->
+        <!-- Online Players Column -->
         <div class="col-md-3">
             <h3>Online</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
@@ -74,14 +68,23 @@
                         @foreach (var player in Model.OnlinePlayers)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span>@player</span>
-                                @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player))
-                                {
-                                    <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
+                                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
+                                <div>
+                                    @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player))
+                                    {
+                                        <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
+                                            <input type="hidden" name="username" value="@player" />
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">✔</button>
+                                        </form>
+                                    }
+
+                                    <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;">✔</button>
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
+                                            <i class="fa fa-envelope"></i>
+                                        </button>
                                     </form>
-                                }
+                                </div>
                             </li>
                         }
                     </ul>
@@ -93,7 +96,7 @@
             </div>
         </div>
 
-        <!-- Friends Column, reduced space between name and button -->
+        <!-- Friends Column -->
         <div class="col-md-3">
             <h3>Friends</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
@@ -103,11 +106,20 @@
                         @foreach (var player in Model.Friends)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span>@player</span>
-                                <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                                    <input type="hidden" name="username" value="@player" />
-                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;">✖</button>
-                                </form>
+                                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
+                                <div>
+                                    <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
+                                            <i class="fa fa-envelope"></i>
+                                        </button>
+                                    </form>
+
+                                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">✖</button>
+                                    </form>
+                                </div>
                             </li>
                         }
                     </ul>
@@ -119,25 +131,25 @@
             </div>
         </div>
 
-        <!-- Requests Column, placed buttons next to each other -->
+        <!-- Requests Column -->
         <div class="col-md-3">
             <h3>Requests</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                 @if (Model.PendingRequests != null && Model.PendingRequests.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var request in Model.PendingRequests)
+                        @foreach (var player in Model.PendingRequests)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span>@request</span>
+                                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
                                 <div>
                                     <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
-                                        <input type="hidden" name="username" value="@request" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;">✔</button>
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">✔</button>
                                     </form>
                                     <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
-                                        <input type="hidden" name="username" value="@request" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;">✖</button>
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">✖</button>
                                     </form>
                                 </div>
                             </li>
