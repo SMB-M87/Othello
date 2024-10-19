@@ -108,7 +108,7 @@ namespace APITest.ResultTest
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
             if (okResult is not null)
-                Assert.That(actual: okResult.Value, Is.EqualTo(expected: "W:2 L:1 D:0"));
+                Assert.That(actual: okResult.Value, Is.EqualTo(expected: "Wins:2\t\tLosses:1\t\tDraws:0"));
         }
     }
 }

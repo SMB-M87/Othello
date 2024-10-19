@@ -30,7 +30,7 @@ namespace API.Data
             int losses = results.Count(r => r.Loser == token);
             int draws = results.Count(r => r.Draw.Contains(token));
 
-            return $"W:{wins} L:{losses} D:{draws}";
+            return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
         }
 
         public List<GameResult> GetPlayersMatchHistory(string token)

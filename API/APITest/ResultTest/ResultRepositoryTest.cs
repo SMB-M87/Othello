@@ -96,7 +96,7 @@ namespace APITest.ResultTest
         {
             var result = _repository.ResultRepository.GetPlayerStats("second");
 
-            Assert.That(actual: result, Is.EqualTo(expected: "W:2 L:1 D:0"));
+            Assert.That(actual: result, Is.EqualTo(expected: "Wins:2\t\tLosses:1\t\tDraws:0"));
         }
 
         [Test]
@@ -107,7 +107,7 @@ namespace APITest.ResultTest
 
             var results = _repository.ResultRepository.GetPlayerStats("second");
 
-            Assert.That(actual: results, Is.EqualTo(expected: "W:2 L:1 D:1"));
+            Assert.That(actual: results, Is.EqualTo(expected: "Wins:2\t\tLosses:1\t\tDraws:1"));
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace APITest.ResultTest
         {
             var result = _repository.ResultRepository.GetPlayerStats("zero");
 
-            Assert.That(actual: result, Is.EqualTo(expected: "W:0 L:0 D:0"));
+            Assert.That(actual: result, Is.EqualTo(expected: "Wins:0\t\tLosses:0\t\tDraws:0"));
         }
 
         [Test]
