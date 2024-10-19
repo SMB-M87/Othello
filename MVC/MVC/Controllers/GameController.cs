@@ -26,16 +26,6 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(string description)
         {
-            var userId = _userManager.GetUserId(User);
-
-            var gameResponse = await _httpClient.GetAsync($"api/game/from/{userId}");
-            if (gameResponse.IsSuccessStatusCode)
-            {
-                var gameTokenContent = await gameResponse.Content.ReadAsStringAsync();
-
-                return RedirectToAction("PlayGame", "Game", new { token = gameTokenContent });
-            }
-
             if (string.IsNullOrWhiteSpace(description))
             {
                 ModelState.AddModelError(string.Empty, "Description cannot be empty.");

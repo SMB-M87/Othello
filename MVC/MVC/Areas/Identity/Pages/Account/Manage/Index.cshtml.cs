@@ -76,7 +76,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
-
+/*            
             var userId = _userManager.GetUserId(User);
 
             var gameResponse = await _httpClient.GetAsync($"api/game/from/{userId}");
@@ -86,6 +86,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
                 return RedirectToAction("PlayGame", "Game", new { token = gameToken });
             }
+*/
 
             if (user == null)
             {
