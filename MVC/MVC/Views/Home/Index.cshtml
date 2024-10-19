@@ -70,18 +70,20 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                 <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
                                 <div>
-                                    @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player))
+                                    @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player) && !Model.PendingRequests.Contains(player))
                                     {
                                         <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
                                             <input type="hidden" name="username" value="@player" />
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">✔</button>
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
+                                                <i class="fas fa-check-circle" style="font-size: 18px;"></i>
+                                            </button>
                                         </form>
                                     }
 
                                     <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
-                                            <i class="fa fa-envelope"></i>
+                                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -111,13 +113,15 @@
                                     <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
-                                            <i class="fa fa-envelope"></i>
+                                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
                                         </button>
                                     </form>
 
                                     <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">✖</button>
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
+                                            <i class="fas fa-trash-alt" style="font-size: 18px;"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </li>
@@ -145,11 +149,15 @@
                                 <div>
                                     <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">✔</button>
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
+                                            <i class="fas fa-check-circle" style="font-size: 18px;"></i>
+                                        </button>
                                     </form>
                                     <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">✖</button>
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
+                                            <i class="fas fa-times-circle" style="font-size: 18px;"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </li>

@@ -1,14 +1,37 @@
 ﻿@model MVC.Models.ProfileView
 
-<div class="text-center" style="font-size: 48px; margin-top: 20px;">
-    <h2>@Model.Username</h2>
+<div class="d-flex justify-content-center" style="font-size: 48px; margin-top: 20px;">
+    <h2>
+        @if (!Model.HasSentRequest && !Model.IsFriend && !Model.HasPendingRequest)
+        {
+            <!-- If no request is sent, show the friend request button -->
+            <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
+                <input type="hidden" name="username" value="@Model.Username" />
+                <button type="submit" class="btn btn-primary" title="Friend request">
+                    <i class="fas fa-plus-circle" style="font-size: 24px;"></i>
+                </button>
+            </form>
+        }
+
+        @Model.Username
+
+        <!-- Invite to game button -->
+        <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
+            <input type="hidden" name="username" value="@Model.Username" />
+            <button type="submit" class="btn btn-link p-0" title="Invite to Game">
+                <i class="fa fa-envelope" style="font-size: 24px;"></i>
+            </button>
+        </form>
+    </h2>
+</div>
+
+<div class="text-center">
     <h3>@Model.Stats</h3>
 </div>
 
 <div class="text-center" style="font-size: 48px; margin-top: 20px;">
     <h3>Match History</h3>
 </div>
-
 @if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
 {
     <div class="d-flex justify-content-center">
@@ -54,3 +77,32 @@ else
 {
     <p class="text-center">No match history available.</p>
 }
+
+<div class="text-center" style="margin-top: 20px;">
+    @if (Model.IsFriend)
+    {
+        <!-- If they are friends, show the delete button -->
+        <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+            <input type="hidden" name="username" value="@Model.Username" />
+            <button type="submit" class="btn btn-danger" title="Remove friend">
+                <i class="fas fa-trash-alt" style="font-size: 24px;"></i>
+            </button>
+        </form>
+    }
+    else if (Model.HasPendingRequest)
+    {
+        <!-- If the user has a pending request, show accept/decline buttons -->
+        <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
+            <input type="hidden" name="username" value="@Model.Username" />
+            <button type="submit" class="btn btn-success" title="Accept request">
+                <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+            </button>
+        </form>
+        <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
+            <input type="hidden" name="username" value="@Model.Username" />
+            <button type="submit" class="btn btn-danger" title="Decline request">
+                <i class="fas fa-times-circle" style="font-size: 24px;"></i>
+            </button>
+        </form>
+    }
+</div>

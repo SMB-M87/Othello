@@ -1,16 +1,20 @@
 ﻿using MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Numerics;
 
 namespace MVC.Controllers
 {
     public class ProfileController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ProfileController(IHttpClientFactory httpClientFactory)
+        public ProfileController(
+            IHttpClientFactory httpClientFactory,
+            UserManager<IdentityUser> userManager
+            )
         {
+            _userManager = userManager;
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("https://localhost:7023/");
         }
@@ -69,11 +73,26 @@ namespace MVC.Controllers
                 }
             }
 
+            // Fetch the logged-in user's ID and friends
+            var currentUserId = _userManager.GetUserId(User);
+            var friendsResponse = await _httpClient.GetAsync($"api/player/friends/{currentUserId}");
+            var friends = friendsResponse.IsSuccessStatusCode ? await friendsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+
+            // Fetch sent and pending friend requests
+            var sentRequestsResponse = await _httpClient.GetAsync($"api/player/sent/{_userManager.GetUserName(User)}");
+            var sentRequests = sentRequestsResponse.IsSuccessStatusCode ? await sentRequestsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+
+            var pendingRequestsResponse = await _httpClient.GetAsync($"api/player/pending/{currentUserId}");
+            var pendingRequests = pendingRequestsResponse.IsSuccessStatusCode ? await pendingRequestsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+
             var model = new ProfileView
             {
-                Stats = stats,
                 Username = username,
-                MatchHistory = matchHistory
+                Stats = stats,
+                MatchHistory = matchHistory,
+                IsFriend = friends.Contains(username),
+                HasSentRequest = sentRequests.Contains(username),
+                HasPendingRequest = pendingRequests.Contains(username)
             };
 
             return View(model);
