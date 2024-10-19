@@ -2,6 +2,8 @@
 {
     public class HomeView
     {
+        public string Stats { get; set; } = null!;
+        public List<GameResult> MatchHistory { get; set; } = null!;
         public List<string> OnlinePlayers { get; set; } = null!;
         public List<string> Friends { get; set; } = null!;
         public List<string> SentRequests { get; set; } = null!;

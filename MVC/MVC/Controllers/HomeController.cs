@@ -25,8 +25,44 @@ namespace MVC.Controllers
         {
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                // Get the current user's ID
                 var userId = _userManager.GetUserId(User);
+
+                // Fetch player stats
+                var statsResponse = await _httpClient.GetAsync($"api/result/stats/{userId}");
+                string stats = string.Empty;
+
+                if (statsResponse.IsSuccessStatusCode)
+                {
+                    stats = await statsResponse.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
+                }
+
+                // Fetch match history
+                var historyResponse = await _httpClient.GetAsync($"api/result/{userId}");
+                List<GameResult> matchHistory = new();
+
+                if (historyResponse.IsSuccessStatusCode)
+                {
+                    matchHistory = await historyResponse.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
+                }
+
+                if (matchHistory.Count > 0)
+                {
+                    foreach (var game in matchHistory)
+                    {
+                        game.Winner = await GetPlayersName(game.Winner); // Fetch the winner's name by token
+                        game.Loser = await GetPlayersName(game.Loser);   // Fetch the loser's name by token
+
+                        if (!string.IsNullOrEmpty(game.Draw))
+                        {
+                            var drawTokens = game.Draw.Split(' '); // Assuming draw contains multiple tokens
+                            game.Draw = $"{await GetPlayersName(drawTokens[0] == userId ? drawTokens[1] : drawTokens[0])}";
+                        }
+                    }
+                }
 
                 // Fetch online players
                 var response = await _httpClient.GetAsync("api/player");
@@ -70,6 +106,8 @@ namespace MVC.Controllers
                 // Create a ViewModel to pass data to the view
                 var model = new HomeView
                 {
+                    Stats = stats,
+                    MatchHistory = matchHistory,
                     OnlinePlayers = onlinePlayers,
                     Friends = friends,
                     SentRequests = sentRequests,
@@ -156,6 +194,18 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<string> GetPlayersName(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/player/name/{token}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            return "Unknown";
         }
 
         public IActionResult Privacy()
