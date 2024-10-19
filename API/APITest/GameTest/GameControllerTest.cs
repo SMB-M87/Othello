@@ -450,15 +450,15 @@ namespace APITest.GameTest
             var okResult = result.Result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
-            var results = okResult?.Value as List<string>;
+            var results = okResult?.Value as List<GameDescription>;
 
             if (results is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(results[0]));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].Description, Is.EqualTo(results[1]));
-                    Assert.That(results.All(res => res != _repository.GameRepository.GetGames()?[1].Description));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(results[0].Description));
+                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].Description, Is.EqualTo(results[1].Description));
+                    Assert.That(results.All(res => res.Description != _repository.GameRepository.GetGames()?[1].Description));
                 });
             }
             else

@@ -108,15 +108,35 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<string>> DescriptionsOfPendingGames()
+        public ActionResult<List<GameDescription>> DescriptionsOfPendingGames()
         {
-            var pendingGames = _repository.GameRepository.GetGames();
+            var games = _repository.GameRepository.GetGames();
 
-            if (pendingGames is null)
+            if (games is null)
                 return NotFound();
 
-            var results = pendingGames.FindAll(game => game.Status == Status.Pending).Select(game => game.Description).ToList();
-            return Ok(results);
+            var pending = games.FindAll(game => game.Status == Status.Pending).ToList();
+            if (pending is null)
+                return NotFound();
+
+            List<GameDescription> result = new();
+
+            foreach(Game game in pending)
+            {
+                GameDescription temp = new() { Token = game.Token, Description = game.Description };
+
+                var player = _repository.PlayerRepository.Get(game.First);
+                if (player is not null)
+                    temp.Player = player.Username;
+
+                var stat = _repository.ResultRepository.GetPlayerStats(game.First);
+                if (stat is not null)
+                    temp.Stats = stat;
+
+                result.Add(temp);
+            }
+
+            return Ok(result);
         }
 
         [HttpGet("{token}")]
