@@ -505,9 +505,9 @@ namespace APITest.GameTest
 
             if (okResult is not null)
             {
-                var results = (Game?)okResult?.Value;
+                var results = (string?)okResult?.Value;
                 if (results is not null)
-                    Assert.That(actual: results.First, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].First));
+                    Assert.That(actual: results, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].Token));
                 else
                     Assert.Fail("Respons is null.");
             }
@@ -518,8 +518,8 @@ namespace APITest.GameTest
         [Test]
         public void GameByPlayerToken_Incorrect()
         {
-            ActionResult<Game>? result = _controller.GameByPlayerToken("dsahg");
-            Game? respons = result?.Value;
+            ActionResult<string>? result = _controller.GameByPlayerToken("dsahg");
+            string? respons = result?.Value;
 
             if (respons is null)
                 Assert.That(actual: respons, Is.EqualTo(expected: null));

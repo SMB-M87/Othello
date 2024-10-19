@@ -151,14 +151,14 @@ namespace API.Controllers
         }
 
         [HttpGet("from/{token}")]
-        public ActionResult<Game> GameByPlayerToken(string token)
+        public ActionResult<string> GameByPlayerToken(string token)
         {
             var game = _repository.GameRepository.GetPlayersGame(token);
 
             if (game is null)
                 return NotFound();
 
-            return Ok(game);
+            return Ok(game.Token);
         }
 
         [HttpGet("turn/{token}")]

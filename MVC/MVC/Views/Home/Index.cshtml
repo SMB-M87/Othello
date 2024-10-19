@@ -10,6 +10,14 @@
         <h3>@Model.Stats</h3>
     </div>
 
+    <div class="d-flex justify-content-center">
+        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+            <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
+                New game
+            </button>
+        </form>
+    </div>
+
     <div class="row">
         <!-- Match History Column -->
         <div class="col-md-3">
@@ -67,27 +75,40 @@
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OnlinePlayers)
                         {
-                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
-                                <div>
-                                    @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player) && !Model.PendingRequests.Contains(player))
-                                    {
+                            @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player) && !Model.PendingRequests.Contains(player))
+                            {
+                                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
+                                    <div>
+                                        @if (Model.Joinable.Contains(player))
+                                        {
+                                            <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+                                                <input type="hidden" name="username" value="@player" />
+                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
+                                                    <i class="fa fa-link" style="font-size: 18px;"></i>
+                                                </button>
+                                            </form>
+                                        }
+
+                                        @if (Model.Invitable.Contains(player))
+                                        {
+                                            <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
+                                                <input type="hidden" name="username" value="@player" />
+                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
+                                                    <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                                                </button>
+                                            </form>
+                                        }
+
                                         <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
                                             <input type="hidden" name="username" value="@player" />
                                             <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
-                                                <i class="fas fa-check-circle" style="font-size: 18px;"></i>
+                                                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
                                             </button>
                                         </form>
-                                    }
-
-                                    <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
-                                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </li>
+                                    </div>
+                                </li>
+                            }
                         }
                     </ul>
                 }
@@ -110,17 +131,30 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                 <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
                                 <div>
-                                    <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
-                                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                                        </button>
-                                    </form>
+                                    @if (Model.Joinable.Contains(player))
+                                    {
+                                        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+                                            <input type="hidden" name="username" value="@player" />
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
+                                                <i class="fa fa-link" style="font-size: 18px;"></i>
+                                            </button>
+                                        </form>
+                                    }
+
+                                    @if (Model.Invitable.Contains(player))
+                                    {
+                                        <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
+                                            <input type="hidden" name="username" value="@player" />
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
+                                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                                            </button>
+                                        </form>
+                                    }
 
                                     <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                                            <i class="fas fa-trash-alt" style="font-size: 18px;"></i>
+                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -147,16 +181,36 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                 <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player">@player</a></span>
                                 <div>
+                                    @if (Model.Joinable.Contains(player))
+                                    {
+                                        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+                                            <input type="hidden" name="username" value="@player" />
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
+                                                <i class="fa fa-link" style="font-size: 18px;"></i>
+                                            </button>
+                                        </form>
+                                    }
+
+                                    @if (Model.Invitable.Contains(player))
+                                    {
+                                        <form method="post" asp-action="InviteToGame" asp-controller="Home" style="display: inline;">
+                                            <input type="hidden" name="username" value="@player" />
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite to Game">
+                                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                                            </button>
+                                        </form>
+                                    }
+
                                     <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
-                                            <i class="fas fa-check-circle" style="font-size: 18px;"></i>
+                                            <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
                                         </button>
                                     </form>
                                     <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
-                                            <i class="fas fa-times-circle" style="font-size: 18px;"></i>
+                                            <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -170,6 +224,37 @@
                 }
             </div>
         </div>
+    </div>
+
+    <div class="text-center">
+        <h3>Pending Games</h3>
+
+    </div>
+    <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        @if (Model.PendingGames != null && Model.PendingGames.Count > 0)
+        {
+            <ul style="list-style: none; padding-left: 0;">
+                @foreach (var game in Model.PendingGames)
+                {
+                    <li style="margin-bottom: 10px;">
+                        <form method="post" asp-action="JoinGameToken" asp-controller="Home" style="display: block; text-align: left;">
+                            <input type="hidden" name="token" value="@game.Token" />
+                            <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span><strong>@game.Player</strong></span>
+                                    <span style="margin-left: 20px;">@game.Stats</span>
+                                    <span style="margin-left: 20px;">@game.Description</span>
+                                </div>
+                            </button>
+                        </form>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No pending game requests.</p>
+        }
     </div>
 }
 else

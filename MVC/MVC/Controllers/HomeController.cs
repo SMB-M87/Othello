@@ -106,13 +106,34 @@ namespace MVC.Controllers
                     pendingRequests = await pendingResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
                 }
 
+                var gamesResponse = await _httpClient.GetAsync("api/game");
+                List<GameDescription> games = new();
+
+                if (gamesResponse.IsSuccessStatusCode)
+                {
+                    games = await gamesResponse.Content.ReadFromJsonAsync<List<GameDescription>>() ?? new();
+                }
+
+                var joinablePlayers = games.Select(g => g.Player).ToList();
+
+                var invitableResponse = await _httpClient.GetAsync("api/player/invitable");
+                List<string> invitablePlayers = new();
+
+                if (invitableResponse.IsSuccessStatusCode)
+                {
+                    invitablePlayers = await invitableResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
+                }
+
                 var model = new HomeView
                 {
                     Stats = stats,
-                    MatchHistory = matchHistory,
-                    OnlinePlayers = onlinePlayers,
                     Friends = friends,
+                    PendingGames = games,
+                    Joinable = joinablePlayers,
                     SentRequests = sentRequests,
+                    MatchHistory = matchHistory,
+                    Invitable = invitablePlayers,
+                    OnlinePlayers = onlinePlayers,
                     PendingRequests = pendingRequests
                 };
 
@@ -126,6 +147,62 @@ namespace MVC.Controllers
         public async Task<IActionResult> InviteToGame(string username)
         {
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> JoinGame(string username)
+        {
+            var playerTokenResponse = await _httpClient.GetAsync($"api/player/token/{username}");
+            if (!playerTokenResponse.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to find player.");
+                return RedirectToAction("Index");
+            }
+            var playerToken = await playerTokenResponse.Content.ReadAsStringAsync();
+
+            var entrant = new
+            {
+                Token = playerToken,
+                Player = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/join/player", entrant);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to join game.");
+                return RedirectToAction("Index");
+            }
+
+            var game = await _httpClient.GetAsync($"api/game/from/{entrant.Player}");
+            if (!game.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to find game.");
+                return RedirectToAction("Index");
+            }
+            var gameToken = await game.Content.ReadAsStringAsync();
+
+            return RedirectToAction("PlayGame", "Game", new { token = gameToken });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> JoinGameToken(string token)
+        {
+            var entrant = new
+            {
+                Token = token,
+                Player = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/join", entrant);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to join game.");
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("PlayGame", "Game", new { token });
         }
 
         [HttpPost]

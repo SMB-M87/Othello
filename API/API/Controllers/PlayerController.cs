@@ -89,6 +89,18 @@ namespace API.Controllers
             return Ok(results);
         }
 
+        [HttpGet("invitable")]
+        public ActionResult<List<string>> InvitablePlayers()
+        {
+            var players = _repository.PlayerRepository.GetPlayers();
+
+            if (players is null)
+                return NotFound();
+
+            var results = players.FindAll(player => player.IsOnline == true && _repository.GameRepository.GetPlayersGame(player.Token) is null).Select(player => player.Username).ToList();
+            return Ok(results);
+        }
+
         [HttpGet("{token}")]
         public ActionResult<Player> PlayerByToken(string token)
         {
