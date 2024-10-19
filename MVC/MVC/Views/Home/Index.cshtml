@@ -1,8 +1,103 @@
-﻿@{
+﻿@model MVC.Models.HomeView
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
+{
+    <h2>Welcome, @User.Identity.Name!</h2>
+
+    <div>
+        <h3>Online</h3>
+        <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            @if (Model.OnlinePlayers != null && Model.OnlinePlayers.Count > 0)
+            {
+                <ul>
+                    @foreach (var player in Model.OnlinePlayers)
+                    {
+                        <li>
+                            @player
+                            @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player))
+                            {
+                                <form method="post" asp-action="SendFriendRequest" asp-controller="Home">
+                                    <input type="hidden" name="username" value="@player" />
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No players online.</p>
+            }
+        </div>
+    </div>
+
+    <div>
+        <h3>Friends</h3>
+        <div>
+            @if (Model.Friends != null && Model.Friends.Count > 0)
+            {
+                <ul>
+                    @foreach (var player in Model.Friends)
+                    {
+                        <li>
+                            @player
+                            <form method="post" asp-action="DeleteFriend" asp-controller="Home">
+                                <input type="hidden" name="username" value="@player" />
+                                <button type="submit" class="btn btn-primary">Delete</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>You have no friends added.</p>
+            }
+        </div>
+    </div>
+
+    <div>
+        <h3>Requests</h3>
+        <div>
+            @if (Model.PendingRequests != null && Model.PendingRequests.Count > 0)
+            {
+                <ul>
+                    @foreach (var request in Model.PendingRequests)
+                    {
+                        <li>
+                            @request
+                            <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home">
+                                <input type="hidden" name="username" value="@request" />
+                                <button type="submit" class="btn btn-success">Accept</button>
+                            </form>
+                            <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home">
+                                <input type="hidden" name="username" value="@request" />
+                                <button type="submit" class="btn btn-danger">Decline</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No pending friend requests.</p>
+            }
+        </div>
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="Profile" asp-action="Index">Profile</a>
+    </li>
+}
+else
+{
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>
+}

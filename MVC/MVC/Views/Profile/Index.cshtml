@@ -1,0 +1,41 @@
+﻿@model MVC.Models.ProfileView
+
+<h2>@User.Identity.Name</h2>
+
+<div>
+    <h3>Stats</h3>
+    <p>@Model.Stats</p>
+</div>
+
+<div>
+    <h3>Match History</h3>
+    @if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Game ID</th>
+                    <th>Winner</th>
+                    <th>Loser</th>
+                    <th>Draw</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var game in Model.MatchHistory)
+                {
+                    <tr>
+                        <td>@game.Token</td>
+                        <td>@game.Winner</td>
+                        <td>@game.Loser</td>
+                        <td>@game.Draw</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>You have no match history.</p>
+    }
+</div>
+

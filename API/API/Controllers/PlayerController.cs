@@ -1,7 +1,7 @@
 ﻿using API.Data;
 using API.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -153,6 +153,17 @@ namespace API.Controllers
                 return NotFound();
 
             return Ok(pending);
+        }
+
+        [HttpGet("sent/{username}")]
+        public ActionResult<List<string>> PlayerSent(string username)
+        {
+            var sent = _repository.PlayerRepository.GetPlayers();
+
+            if (sent is null)
+                return NotFound();
+
+            return Ok(sent.FindAll(p => p.PendingFriends.Contains(username)).Select(p => p.Username).ToList());
         }
 
         [HttpPost("friend/send")]

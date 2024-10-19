@@ -27,7 +27,7 @@ namespace API.Controllers
             return Ok(results);
         }
 
-        [HttpGet("{token}/stats")]
+        [HttpGet("stats/{token}")]
         public ActionResult<string> PlayerStats(string token)
         {
             var player = _repository.PlayerRepository.Get(token);
