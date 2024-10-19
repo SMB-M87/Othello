@@ -197,18 +197,20 @@
             <ul style="list-style: none; padding-left: 0;">
                 @foreach (var game in Model.PendingGames)
                 {
-                    <li style="margin-bottom: 10px;">
-                        <form method="post" asp-action="JoinGameToken" asp-controller="Home" style="display: block; text-align: left;">
-                            <input type="hidden" name="token" value="@game.Token" />
-                            <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span><strong>@game.Player</strong></span>
-                                    <span style="margin-left: 20px;">@game.Stats</span>
-                                    <span style="margin-left: 20px;">@game.Description</span>
-                                </div>
-                            </button>
-                        </form>
-                    </li>
+                    @if (game.Player != User.Identity.Name)
+                    {
+                        <li style="margin-bottom: 10px;">
+                            <form method="post" asp-action="JoinGameToken" asp-controller="Home" style="display: block; text-align: left;">
+                                <input type="hidden" name="token" value="@game.Token" />
+                                <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="margin-left: 20px;">@game.Description</span>
+                                        <span style="margin-right: 20px"><strong>@game.Player</strong> @game.Stats</span>
+                                    </div>
+                                </button>
+                            </form>
+                        </li>
+                    }
                 }
             </ul>
         }
@@ -218,7 +220,7 @@
         }
     </div>
     <div class="d-flex justify-content-center">
-        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+        <form method="post" asp-action="Create" asp-controller="Game" style="display: inline;">
             <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
                 New game
             </button>

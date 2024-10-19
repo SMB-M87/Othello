@@ -1,6 +1,8 @@
 ﻿using MVC.Models;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using NuGet.Common;
 
 namespace MVC.Controllers
 {
@@ -16,49 +18,113 @@ namespace MVC.Controllers
             _httpClient.BaseAddress = new Uri("https://localhost:7023/");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(string description)
+        [HttpGet]
+        public IActionResult Create()
         {
-            if (ModelState.IsValid)
-            {
-                var userToken = _userManager.GetUserId(User);
-                var createGameRequest = new
-                {
-                    Player = userToken,
-                    Description = description
-                };
-
-                var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    ModelState.AddModelError(string.Empty, "Unable to create game.");
-                    return View(description);
-                }
-
-                // Optionally, get the game token and redirect to the game page
-                // var gameToken = await response.Content.ReadAsStringAsync();
-                // return RedirectToAction("PlayGame", "Game", new { token = gameToken });
-
-                return RedirectToAction("Index", "Home");
-            }
-
-            return View(description);
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteGame()
+        public async Task<IActionResult> Create(string description)
         {
-            var userToken = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                ModelState.AddModelError(string.Empty, "Description cannot be empty.");
+                return View();
+            }
 
-            var response = await _httpClient.PostAsJsonAsync("api/game/delete", userToken);
+            var userToken = _userManager.GetUserId(User);
+            var createGameRequest = new
+            {
+                Player = userToken,
+                Description = description
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to create game.");
+                return View();
+            }
+
+            var game = await _httpClient.GetAsync($"api/game/from/{userToken}");
+
+            if (!game.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to create game.");
+                return View();
+            }
+
+            var gameToken = await game.Content.ReadAsStringAsync();
+
+            return RedirectToAction("WaitForOpponent", new { token = gameToken });
+        }
+
+        public IActionResult WaitForOpponent(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(model: token);
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> CheckGameStatus(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/{token}");
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                var game = await response.Content.ReadFromJsonAsync<Game>(options);
+                if (game != null && game.Status == Status.Playing)
+                {
+                    return Json(new { started = true });
+                }
+            }
+
+            return Json(new { started = false });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteGame(string token)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/game/delete", token);
 
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to delete game.");
+                return RedirectToAction("WaitForOpponent", new { player = token });
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> PlayGame(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/{token}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                var gameResult = await response.Content.ReadFromJsonAsync<Game>(options);
+                return View(model: gameResult);
+            }
+
+            ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

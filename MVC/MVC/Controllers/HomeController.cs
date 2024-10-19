@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
+using NuGet.Common;
 
 namespace MVC.Controllers
 {
@@ -159,13 +161,13 @@ namespace MVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            var game = await _httpClient.GetAsync($"api/game/from/{entrant.Player}");
-            if (!game.IsSuccessStatusCode)
+            var gameTokenRespons = await _httpClient.GetAsync($"api/game/from/{entrant.Player}");
+            if (!gameTokenRespons.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to find game.");
                 return RedirectToAction("Index");
             }
-            var gameToken = await game.Content.ReadAsStringAsync();
+            var gameToken = await gameTokenRespons.Content.ReadAsStringAsync();
 
             return RedirectToAction("PlayGame", "Game", new { token = gameToken });
         }
@@ -187,7 +189,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("PlayGame", "Game", new { token });
+            return RedirectToAction("PlayGame", "Game", new { token = token });
         }
 
         [HttpPost]

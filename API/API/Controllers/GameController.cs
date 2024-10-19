@@ -172,6 +172,17 @@ namespace API.Controllers
             return Ok(game.PlayersTurn);
         }
 
+        [HttpGet("status/{token}")]
+        public ActionResult<Status> StatusByToken(string token)
+        {
+            var game = _repository.GameRepository.Get(token);
+
+            if (game is null)
+                return NotFound();
+
+            return Ok(game.Status);
+        }
+
         [HttpPut("move")]
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
