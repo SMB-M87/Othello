@@ -26,6 +26,16 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            var userId = _userManager.GetUserId(User);
+
+            var gameResponse = await _httpClient.GetAsync($"api/game/from/{userId}");
+            if (gameResponse.IsSuccessStatusCode)
+            {
+                var gameToken = await gameResponse.Content.ReadAsStringAsync();
+
+                return RedirectToAction("PlayGame", "Game", new { token = gameToken });
+            }
+
             // Fetch the token by username
             var respons = await _httpClient.GetAsync($"api/player/token/{username}");
             if (!respons.IsSuccessStatusCode)

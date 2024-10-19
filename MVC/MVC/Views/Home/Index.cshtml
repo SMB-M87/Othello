@@ -67,7 +67,7 @@
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OnlinePlayers)
                         {
-                            @if (!Model.Friends.Contains(player) && !Model.SentRequests.Contains(player) && !Model.PendingRequests.Contains(player))
+                            @if (!Model.Friends.Contains(player) && !Model.PendingRequests.Contains(player))
                             {
                                 <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                     <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -82,12 +82,15 @@
                                             </form>
                                         }
 
-                                        <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
-                                            <input type="hidden" name="username" value="@player" />
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
-                                                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
-                                            </button>
-                                        </form>
+                                        @if (!Model.SentRequests.Contains(player))
+                                        {
+                                            <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
+                                                <input type="hidden" name="username" value="@player" />
+                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
+                                                    <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
+                                                </button>
+                                            </form>
+                                        }
                                     </div>
                                 </li>
                             }

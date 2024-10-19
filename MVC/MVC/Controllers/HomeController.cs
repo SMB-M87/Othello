@@ -2,8 +2,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Text.Json;
-using NuGet.Common;
 
 namespace MVC.Controllers
 {
@@ -27,6 +25,14 @@ namespace MVC.Controllers
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
                 var userId = _userManager.GetUserId(User);
+
+                var gameResponse = await _httpClient.GetAsync($"api/game/from/{userId}");
+                if (gameResponse.IsSuccessStatusCode)
+                {
+                    var gameToken = await gameResponse.Content.ReadAsStringAsync();
+
+                    return RedirectToAction("PlayGame", "Game", new { token = gameToken });
+                }
 
                 // Fetch player stats
                 var statsResponse = await _httpClient.GetAsync($"api/result/stats/{userId}");
@@ -280,8 +286,20 @@ namespace MVC.Controllers
             return "Unknown";
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
+            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
+            {
+                var userId = _userManager.GetUserId(User);
+
+                var gameResponse = await _httpClient.GetAsync($"api/game/from/{userId}");
+                if (gameResponse.IsSuccessStatusCode)
+                {
+                    var gameToken = await gameResponse.Content.ReadAsStringAsync();
+
+                    return RedirectToAction("PlayGame", "Game", new { token = gameToken });
+                }
+            }
             return View();
         }
 
