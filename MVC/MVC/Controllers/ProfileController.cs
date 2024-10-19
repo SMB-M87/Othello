@@ -87,8 +87,8 @@ namespace MVC.Controllers
 
             var model = new ProfileView
             {
-                Username = username,
                 Stats = stats,
+                Username = username,
                 MatchHistory = matchHistory,
                 IsFriend = friends.Contains(username),
                 HasSentRequest = sentRequests.Contains(username),

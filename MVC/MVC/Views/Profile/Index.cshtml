@@ -77,15 +77,15 @@
 
                         @if (Model.Username == game.Winner)
                         {
-                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Loser">@game.Loser</a></span>
+                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Loser</a></span>
                         }
                         else if (Model.Username == game.Loser)
                         {
-                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Winner">@game.Winner</a></span>
+                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Winner</a></span>
                         }
                         else
                         {
-                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw">@game.Draw</a></span>
+                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw" style="text-decoration: none; color: inherit;">@game.Draw</a></span>
                         }
                     </li>
                 }
@@ -97,3 +97,9 @@ else
 {
     <p class="text-center">No match history available.</p>
 }
+
+<div class="d-flex justify-content-center">
+    <a href="javascript:history.back()" class="btn btn-link" title="Go back" style="font-size: 24px; color: black;">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>

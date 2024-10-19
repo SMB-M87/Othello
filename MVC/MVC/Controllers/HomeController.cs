@@ -116,14 +116,6 @@ namespace MVC.Controllers
 
                 var joinablePlayers = games.Select(g => g.Player).ToList();
 
-                var invitableResponse = await _httpClient.GetAsync("api/player/invitable");
-                List<string> invitablePlayers = new();
-
-                if (invitableResponse.IsSuccessStatusCode)
-                {
-                    invitablePlayers = await invitableResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                }
-
                 var model = new HomeView
                 {
                     Stats = stats,
@@ -132,7 +124,6 @@ namespace MVC.Controllers
                     Joinable = joinablePlayers,
                     SentRequests = sentRequests,
                     MatchHistory = matchHistory,
-                    Invitable = invitablePlayers,
                     OnlinePlayers = onlinePlayers,
                     PendingRequests = pendingRequests
                 };
@@ -141,12 +132,6 @@ namespace MVC.Controllers
             }
 
             return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> InviteToGame(string username)
-        {
-            return RedirectToAction("Index");
         }
 
         [HttpPost]
