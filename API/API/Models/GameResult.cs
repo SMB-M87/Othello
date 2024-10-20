@@ -9,6 +9,7 @@ namespace API.Models
         public string Winner { get; set; }
         public string Loser { get; set; }
         public string Draw { get; set; }
+        public DateTime Date { get; set; }
 
         public GameResult()
         {

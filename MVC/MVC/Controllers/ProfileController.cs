@@ -60,7 +60,7 @@ namespace MVC.Controllers
             }
 
             // Fetch match history by token
-            var historyResponse = await _httpClient.GetAsync($"api/result/{token}");
+            var historyResponse = await _httpClient.GetAsync($"api/result/history/{token}");
             List<GameResult> matchHistory = new();
 
             if (historyResponse.IsSuccessStatusCode)

@@ -13,6 +13,7 @@ namespace API.Data
 
         public void Create(GameResult result)
         {
+            result.Date = DateTime.UtcNow;
             _context.Results.Add(result);
 
             var game = _context.Games.FirstOrDefault(s => s.Token.Equals(result.Token));

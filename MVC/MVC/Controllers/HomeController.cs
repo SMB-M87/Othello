@@ -50,6 +50,8 @@ namespace MVC.Controllers
 
                 if (matchHistory.Count > 0)
                 {
+                    matchHistory = matchHistory.OrderByDescending(g => g.Date).ToList();
+
                     foreach (var game in matchHistory)
                     {
                         string url = "api/player/name/";

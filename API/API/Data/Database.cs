@@ -73,6 +73,7 @@ namespace API.Data
                 entity.Property(e => e.Winner);
                 entity.Property(e => e.Loser);
                 entity.Property(e => e.Draw);
+                entity.Property(e => e.Date);
             });
 
             new DbInitializer(builder).Seed();

@@ -6,5 +6,6 @@
         public string Winner { get; set; } = null!;
         public string Loser { get; set; } = null!;
         public string Draw { get; set; } = null!;
+        public DateTime Date { get; set; }
     }
 }
