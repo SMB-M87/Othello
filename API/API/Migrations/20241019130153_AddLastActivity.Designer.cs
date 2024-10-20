@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(Database))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20241019130153_AddLastActivity")]
+    partial class AddLastActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,6 +155,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastActivity")
                         .HasColumnType("datetime2");
 
@@ -171,7 +177,8 @@ namespace API.Migrations
                         {
                             Username = "Karen",
                             Friends = "[\"Ernst\",\"John\"]",
-                            LastActivity = new DateTime(2024, 10, 19, 14, 59, 20, 232, DateTimeKind.Utc).AddTicks(6521),
+                            IsOnline = true,
+                            LastActivity = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PendingFriends = "[]",
                             Token = "karen"
                         },
@@ -179,7 +186,8 @@ namespace API.Migrations
                         {
                             Username = "Ernst",
                             Friends = "[\"John\",\"Karen\"]",
-                            LastActivity = new DateTime(2024, 10, 19, 14, 59, 20, 232, DateTimeKind.Utc).AddTicks(6528),
+                            IsOnline = true,
+                            LastActivity = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PendingFriends = "[]",
                             Token = "ernst"
                         },
@@ -187,7 +195,8 @@ namespace API.Migrations
                         {
                             Username = "John",
                             Friends = "[\"Ernst\",\"Karen\"]",
-                            LastActivity = new DateTime(2024, 10, 19, 14, 59, 20, 232, DateTimeKind.Utc).AddTicks(6530),
+                            IsOnline = true,
+                            LastActivity = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PendingFriends = "[]",
                             Token = "john"
                         },
@@ -195,7 +204,8 @@ namespace API.Migrations
                         {
                             Username = "Eltjo",
                             Friends = "[\"Tijn\"]",
-                            LastActivity = new DateTime(2024, 10, 19, 14, 59, 20, 232, DateTimeKind.Utc).AddTicks(6532),
+                            IsOnline = true,
+                            LastActivity = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
                             Token = "eltjo"
                         },
@@ -203,7 +213,8 @@ namespace API.Migrations
                         {
                             Username = "Tijn",
                             Friends = "[\"Eltjo\"]",
-                            LastActivity = new DateTime(2024, 10, 19, 14, 59, 20, 232, DateTimeKind.Utc).AddTicks(6534),
+                            IsOnline = true,
+                            LastActivity = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             PendingFriends = "[\"Karen\",\"Ernst\",\"John\"]",
                             Token = "tijn"
                         });

@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -180,7 +181,7 @@ namespace API.Controllers
             if (game is null)
                 return NotFound();
 
-            return Ok(game.Status);
+            return Ok((int)game.Status);
         }
 
         [HttpPut("move")]

@@ -40,7 +40,7 @@ namespace MVC.Controllers
                 }
 
                 // Fetch match history
-                var historyResponse = await _httpClient.GetAsync($"api/result/{userId}");
+                var historyResponse = await _httpClient.GetAsync($"api/result/history/{userId}");
                 List<GameResult> matchHistory = new();
 
                 if (historyResponse.IsSuccessStatusCode)
@@ -52,13 +52,20 @@ namespace MVC.Controllers
                 {
                     foreach (var game in matchHistory)
                     {
-                        game.Winner = await GetPlayersName(game.Winner);
-                        game.Loser = await GetPlayersName(game.Loser);
+                        string url = "api/player/name/";
+
+                        var winResponse = await _httpClient.GetAsync($"{url}{game.Winner}");
+                        var loseResponse = await _httpClient.GetAsync($"{url}{game.Loser}");
+
+                        game.Winner = await winResponse.Content.ReadAsStringAsync();
+                        game.Loser = await loseResponse.Content.ReadAsStringAsync();
 
                         if (!string.IsNullOrEmpty(game.Draw))
                         {
                             var drawTokens = game.Draw.Split(' ');
-                            game.Draw = $"{await GetPlayersName(drawTokens[0] == userId ? drawTokens[1] : drawTokens[0])}";
+                            var Drawer = drawTokens[0] == _userManager.GetUserId(User) ? drawTokens[1] : drawTokens[0];
+                            var drawReponse = await _httpClient.GetAsync($"{url}{Drawer}");
+                            game.Draw = await drawReponse.Content.ReadAsStringAsync();
                         }
                     }
                 }
@@ -165,9 +172,9 @@ namespace MVC.Controllers
                 ModelState.AddModelError(string.Empty, "Unable to find game.");
                 return RedirectToAction("Index");
             }
-            var gameToken = await gameTokenRespons.Content.ReadAsStringAsync();
+            var token = await gameTokenRespons.Content.ReadAsStringAsync();
 
-            return RedirectToAction("PlayGame", "Game", new { token = gameToken });
+            return RedirectToAction("PlayGame", "Game", new { token });
         }
 
         [HttpPost]
@@ -187,7 +194,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("PlayGame", "Game", new { token = token });
+            return RedirectToAction("PlayGame", "Game", new { token });
         }
 
         [HttpPost]
@@ -264,18 +271,6 @@ namespace MVC.Controllers
             }
 
             return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public async Task<string> GetPlayersName(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/player/name/{token}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
-            return "Unknown";
         }
 
         public IActionResult Privacy()

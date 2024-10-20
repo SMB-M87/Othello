@@ -27,15 +27,13 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            var user = await _userManager.GetUserAsync(User); // Get the currently logged-in user
+            var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
-                // Call the API to update the player's online status using User ID
-                var playerStatusUrl = "https://localhost:7023/api/player/logout";
-                var response = await _httpClient.PostAsJsonAsync(playerStatusUrl, user.Id); // Send the User ID
+                var playerStatusUrl = "https://localhost:7023/api/player/activity";
+                var response = await _httpClient.PostAsJsonAsync(playerStatusUrl, user.Id);
                 if (!response.IsSuccessStatusCode)
                 {
-                    // Handle potential API failure here
                     _logger.LogError("Failed to update player status in API.");
                 }
             }

@@ -119,7 +119,7 @@ namespace MVC.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByNameAsync(Input.Username);
                     if (user != null)
                     {
-                        var playerStatusUrl = "https://localhost:7023/api/player/login";
+                        var playerStatusUrl = "https://localhost:7023/api/player/activity";
                         var response = await _httpClient.PostAsJsonAsync(playerStatusUrl, user.Id);
                         if (!response.IsSuccessStatusCode)
                         {

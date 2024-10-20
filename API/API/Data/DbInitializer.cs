@@ -14,11 +14,11 @@ namespace API.Data
 
         public void Seed()
         {
-            Player one = new("karen", "Karen") { IsOnline = true, Friends = { "Ernst", "John" } };
-            Player two = new("ernst", "Ernst") { IsOnline = true, Friends = { "John", "Karen" } };
-            Player three = new("john", "John") { IsOnline = true, Friends = { "Ernst", "Karen" } };
-            Player four = new("eltjo", "Eltjo") { IsOnline = true, Friends = { "Tijn" }, PendingFriends = { "Karen", "Ernst", "John" } };
-            Player five = new("tijn", "Tijn") { IsOnline = true, Friends = { "Eltjo" }, PendingFriends = { "Karen", "Ernst", "John" } };
+            Player one = new("karen", "Karen") { LastActivity = DateTime.UtcNow, Friends = { "Ernst", "John" } };
+            Player two = new("ernst", "Ernst") { LastActivity = DateTime.UtcNow, Friends = { "John", "Karen" } };
+            Player three = new("john", "John") { LastActivity = DateTime.UtcNow, Friends = { "Ernst", "Karen" } };
+            Player four = new("eltjo", "Eltjo") { LastActivity = DateTime.UtcNow, Friends = { "Tijn" }, PendingFriends = { "Karen", "Ernst", "John" } };
+            Player five = new("tijn", "Tijn") { LastActivity = DateTime.UtcNow, Friends = { "Eltjo" }, PendingFriends = { "Karen", "Ernst", "John" } };
 
             _builder.Entity<Player>().HasData(one, two, three, four, five);
 

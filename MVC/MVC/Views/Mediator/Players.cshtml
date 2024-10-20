@@ -1,0 +1,21 @@
+﻿@model IEnumerable<MVC.Models.Player>
+
+<h2>All Players</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Last Activity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@player.Username</td>
+                <td>@player.LastActivity</td>
+            </tr>
+        }
+    </tbody>
+</table>

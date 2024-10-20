@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MVC.Models.Game>
+
+<h2>Active Games</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Game Token</th>
+            <th>First Player</th>
+            <th>Second Player</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Token</td>
+                <td>@game.First</td>
+                <td>@game.Second</td>
+                <td>@game.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -9,7 +9,7 @@ namespace API.Models
         [Key]
         public string Username { get; set; }
 
-        public bool IsOnline { get; set; }
+        public DateTime LastActivity { get; set; }
 
         public ICollection<string> Friends { get; set; }
         public ICollection<string> PendingFriends { get; set; }
@@ -18,7 +18,6 @@ namespace API.Models
         {
             Token = string.Empty;
             Username = string.Empty;
-            IsOnline = false;
             Friends = new List<string>();
             PendingFriends = new List<string>();
         }
@@ -27,7 +26,6 @@ namespace API.Models
         {
             Token = token;
             Username = username;
-            IsOnline = false;
             Friends = new List<string>();
             PendingFriends = new List<string>();
         }

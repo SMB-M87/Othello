@@ -11,7 +11,7 @@
     </div>
 
     <div class="row">
-        <!-- Match History Column -->
+        <!-- Match History -->
         <div class="col-md-3">
             <h3>Match History</h3>
             @if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
@@ -58,7 +58,7 @@
             }
         </div>
 
-        <!-- Online Players Column -->
+        <!-- Online Players -->
         <div class="col-md-3">
             <h3>Online</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
@@ -104,7 +104,7 @@
             </div>
         </div>
 
-        <!-- Friends Column -->
+        <!-- Friends -->
         <div class="col-md-3">
             <h3>Friends</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <!-- Requests Column -->
+        <!-- Requests -->
         <div class="col-md-3">
             <h3>Requests</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
@@ -191,6 +191,7 @@
         </div>
     </div>
 
+    <!-- Pending Games -->
     <div class="text-center">
         <h3>Pending Games</h3>
     </div>
@@ -237,9 +238,3 @@ else
         <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
     </div>
 }
-
-<script>
-    setTimeout(function() {
-        window.location.reload();
-    }, 10000);
-</script>

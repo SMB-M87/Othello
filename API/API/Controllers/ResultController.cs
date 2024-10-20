@@ -16,6 +16,17 @@ namespace API.Controllers
         }
 
         [HttpGet("{token}")]
+        public ActionResult<List<GameResult>> Result(string token)
+        {
+            var result = _repository.ResultRepository.Get(token);
+
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpGet("history/{token}")]
         public ActionResult<List<GameResult>> MatchHistory(string token)
         {
             var player = _repository.PlayerRepository.Get(token);

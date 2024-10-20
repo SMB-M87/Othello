@@ -1,0 +1,43 @@
+﻿@model MVC.Models.GameResult
+
+@{
+    ViewData["Title"] = "Game Result";
+}
+
+<div class="d-flex justify-content-center">
+    <h2>Game Result</h2>
+</div>
+
+<div class="d-flex justify-content-center">
+    @if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
+    {
+        <div style="display: flex; justify-content: center; margin-bottom: 5px;
+                        background-color: @(User.Identity.Name == Model.Winner ? "#d4edda" : User.Identity.Name == Model.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
+            @if (User.Identity.Name == Model.Winner)
+            {
+                <span>Won against </span>
+            }
+            else if (User.Identity.Name == Model.Loser)
+            {
+                <span>Lost against </span>
+            }
+            else
+            {
+                <span>Draw against </span>
+            }
+
+            @if (User.Identity.Name == Model.Winner)
+            {
+                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Loser" style="text-decoration: none; color: inherit;">@Model.Loser</a></span>
+            }
+            else if (User.Identity.Name == Model.Loser)
+            {
+                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Winner" style="text-decoration: none; color: inherit;">@Model.Winner</a></span>
+            }
+            else
+            {
+                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@Model.Draw" style="text-decoration: none; color: inherit;">@Model.Draw</a></span>
+            }
+        </div>
+    }
+</div>

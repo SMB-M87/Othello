@@ -23,6 +23,11 @@ namespace API.Data
             _context.SaveChanges();
         }
 
+        public GameResult? Get(string token)
+        {
+            return _context.Results.FirstOrDefault(s => s.Token == token);
+        }
+
         public string GetPlayerStats(string token)
         {
             var results = GetPlayersMatchHistory(token);

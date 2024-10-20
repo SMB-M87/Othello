@@ -51,28 +51,15 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
         }
 
-        [HttpPost("login")]
-        public ActionResult<HttpResponseMessage> Login([FromBody] string token)
+         [HttpPost("activity")]
+        public ActionResult<HttpResponseMessage> Activity([FromBody] string token)
         {
             var player = _repository.PlayerRepository.Get(token);
 
             if (player is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
-            player.IsOnline = true;
-            _repository.PlayerRepository.Update(player);
-            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-        }
-
-        [HttpPost("logout")]
-        public ActionResult<HttpResponseMessage> Logout([FromBody] string token)
-        {
-            var player = _repository.PlayerRepository.Get(token);
-
-            if (player is null)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-
-            player.IsOnline = false;
+            player.LastActivity = DateTime.UtcNow;
             _repository.PlayerRepository.Update(player);
             return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
@@ -85,7 +72,7 @@ namespace API.Controllers
             if (players is null)
                 return NotFound();
 
-            var results = players.FindAll(player => player.IsOnline == true).Select(player => player.Username).ToList();
+            var results = players.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).Select(player => player.Username).ToList();
             return Ok(results);
         }
 

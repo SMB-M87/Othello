@@ -136,6 +136,7 @@ namespace MVC.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    await _userManager.AddToRoleAsync(user, "player");
 
                     var playerCreation = new
                     {
@@ -146,7 +147,6 @@ namespace MVC.Areas.Identity.Pages.Account
                     var createPlayerResponse = await _httpClient.PostAsJsonAsync("https://localhost:7023/api/player/create/", playerCreation);
                     if (!createPlayerResponse.IsSuccessStatusCode)
                     {
-                        // Handle API error (consider deleting the user if necessary)
                         ModelState.AddModelError(string.Empty, "An error occurred while creating the player in the API.");
                         await _userManager.DeleteAsync(user);
                         return Page();

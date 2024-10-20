@@ -21,7 +21,6 @@ builder.Services
         options.JsonSerializerOptions.Converters.Add(new ColorArrayConverter());
     });
 
-
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen();

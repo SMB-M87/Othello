@@ -23,7 +23,8 @@ namespace API.Data
 
             if (update is not null)
             {
-                update.IsOnline = player.IsOnline;
+                update.LastActivity = player.LastActivity;
+                _context.Entry(update).Property(g => g.LastActivity).IsModified = true;
                 update.Friends = player.Friends;
                 _context.Entry(update).Property(g => g.Friends).IsModified = true;
                 update.PendingFriends = player.PendingFriends;

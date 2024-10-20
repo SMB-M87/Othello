@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
  * Package Manager Console:
  * Add-Migration NameOfMigration -Verbose
  * Update-Database -Verbose
+ * 
+ * Add-Migration AddLastActivity
+ * Update-Database
 */
 namespace API.Data
 {
@@ -45,7 +48,7 @@ namespace API.Data
                 entity.HasKey(e => e.Token);
                 entity.HasKey(e => e.Username);
 
-                entity.Property(e => e.IsOnline);
+                entity.Property(e => e.LastActivity);
 
                 entity.Property(e => e.Friends)
                     .HasConversion(
