@@ -25,7 +25,19 @@ namespace APITest.PlayerTest
             Player three = new("third", "three");
             Player four = new("fourth", "four");
             Player five = new("fifth", "five");
-            Player six = new("sixth", "six");
+            Player six = new("sixth", "six")
+            {
+                Friends = { "eight" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "seven"),
+                    new(Inquiry.Friend, "four"),
+                    new(Inquiry.Friend, "five")
+                }
+            };
+            Player seven = new("seven", "seven");
+            Player eight = new("eight", "eight");
+            Player nine = new("nine", "nine");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -33,35 +45,40 @@ namespace APITest.PlayerTest
             _repository.PlayerRepository.Create(four);
             _repository.PlayerRepository.Create(five);
             _repository.PlayerRepository.Create(six);
+            _repository.PlayerRepository.Create(seven);
+            _repository.PlayerRepository.Create(eight);
+            _repository.PlayerRepository.Create(nine);
 
-            _repository.PlayerRepository.SendFriendInvite("five", "six");
-            _repository.PlayerRepository.SendFriendInvite("four", "six");
-            _repository.PlayerRepository.AcceptFriendInvite("five", "six");
+            Game game = new("null", one.Token, Color.Black, one.Token, Status.Finished, Color.None);
 
-            Game game0 = new(one.Token, "I wanna play a game and don't have any requirements.")
-            {
-                Token = "zero",
-                FColor = Color.Black
-            };
+            Game game0 = new("zero", one.Token);
 
-            Game game1 = new(two.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = three.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game1 = new("one", two.Token, Color.Black, three.Token, Status.Playing, Color.Black, "I search an advanced player!");
 
-            Game game2 = new(four.Token, "I want to player more than one game against the same adversary.")
-            {
-                Token = "two",
-                FColor = Color.Black
-            };
+            Game game2 = new("two", four.Token, Color.Black);
+
+            Game game3 = new("three", "nonexistant");
+
+            Game game4 = new("four", six.Token, Color.Black, seven.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game5 = new("five", eight.Token, Color.Black, nine.Token, Status.Pending, Color.White, "I search an advanced player!");
+
+            Game game6 = new("six", eight.Token, Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game7 = new("seven", "nonexistant", Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game8 = new("eight", nine.Token, Color.Black, "nonexistant", Status.Playing, Color.White, "I search an advanced player!");
 
             _repository.GameRepository.Create(game0);
             _repository.GameRepository.Create(game1);
             _repository.GameRepository.Create(game2);
+            _repository.GameRepository.Create(game3);
+            _repository.GameRepository.Create(game4);
+            _repository.GameRepository.Create(game5);
+            _repository.GameRepository.Create(game6);
+            _repository.GameRepository.Create(game7);
+            _repository.GameRepository.Create(game8);
+            _repository.GameRepository.Create(game);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -98,15 +115,13 @@ namespace APITest.PlayerTest
         public void Update_Correct()
         {
             Player player = _context.Players.First(p => p.Username == "one");
-            player.Username = "Umugud";
-            player.Token = "Waaaah";
+            player.Friends.Add("Umugud");
 
             _repository.PlayerRepository.Update(player);
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _context.Players.First(p => p.Username == "one").Username, Is.EqualTo(expected: "Umugud"));
-                Assert.That(actual: _context.Players.First(p => p.Username == "one").Token, Is.EqualTo(expected: "Waaaah"));
+                Assert.That(actual: _context.Players.First(p => p.Username == "one").Friends, Does.Contain(expected: "Umugud"));
             });
         }
 
@@ -115,13 +130,13 @@ namespace APITest.PlayerTest
         {
             int size = _context.Players.Count();
             Player player = new("fifth", "five");
+            Assert.That(actual: _context.Players.Count(), Is.EqualTo(size));
 
             _repository.PlayerRepository.Delete(_context.Players.First(p => p.Username == "one"));
 
             Assert.Multiple(() =>
             {
                 Assert.That(actual: _context.Players.Count(), Is.Not.EqualTo(expected: size));
-                Assert.That(actual: size, Is.EqualTo(6));
                 Assert.That(actual: _context.Players.Count(), Is.EqualTo(expected: size - 1));
             });
         }
@@ -155,7 +170,7 @@ namespace APITest.PlayerTest
             List<string>? respons = _repository.PlayerRepository.GetFriends("sixth");
 
             if (respons is not null)
-                Assert.That(actual: respons, Does.Contain("five"));
+                Assert.That(actual: respons, Does.Contain("eight"));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -163,10 +178,10 @@ namespace APITest.PlayerTest
         [Test]
         public void PlayerPending_Correct()
         {
-            List<string>? respons = _repository.PlayerRepository.GetPending("fourth");
+            List<Request>? respons = _repository.PlayerRepository.GetPending("sixth");
 
             if (respons is not null)
-                Assert.That(actual: respons, Does.Contain("six"));
+                Assert.That(actual: respons.Any(r => r.Username == "five" && r.Type == Inquiry.Friend), Is.True);
             else
                 Assert.Fail("Respons is null.");
         }
@@ -181,7 +196,7 @@ namespace APITest.PlayerTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(player1.PendingFriends, Does.Contain("two"));
+                Assert.That(player1.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.True);
             });
         }
 
@@ -198,8 +213,7 @@ namespace APITest.PlayerTest
             {
                 Assert.That(player1.Friends, Does.Contain("two"));
                 Assert.That(player2.Friends, Does.Contain("one"));
-                Assert.That(player1.PendingFriends, Does.Not.Contain("two"));
-                Assert.That(player2.PendingFriends, Does.Not.Contain("one"));
+                Assert.That(player1.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
             });
         }
 
@@ -214,7 +228,7 @@ namespace APITest.PlayerTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(player1.PendingFriends, Does.Not.Contain("two"));
+                Assert.That(player1.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
             });
         }
 

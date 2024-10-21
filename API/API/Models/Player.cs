@@ -6,20 +6,20 @@ namespace API.Models
     {
         [Key]
         public string Token { get; set; }
-        [Key]
-        public string Username { get; set; }
+        [Required]
+        public string Username { get; private set; }
 
         public DateTime LastActivity { get; set; }
 
         public ICollection<string> Friends { get; set; }
-        public ICollection<string> PendingFriends { get; set; }
+        public ICollection<Request> Requests { get; set; }
 
         public Player()
         {
             Token = string.Empty;
             Username = string.Empty;
             Friends = new List<string>();
-            PendingFriends = new List<string>();
+            Requests = new List<Request>();
         }
 
         public Player(string token, string username)
@@ -27,7 +27,7 @@ namespace API.Models
             Token = token;
             Username = username;
             Friends = new List<string>();
-            PendingFriends = new List<string>();
+            Requests = new List<Request>();
         }
     }
 }

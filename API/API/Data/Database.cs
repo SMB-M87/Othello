@@ -27,13 +27,49 @@ namespace API.Data
             builder.Entity<Game>(entity =>
             {
                 entity.HasKey(e => e.Token);
-                entity.Property(e => e.Description);
-                entity.Property(e => e.Status);
-                entity.Property(e => e.PlayersTurn);
-                entity.Property(e => e.First);
-                entity.Property(e => e.FColor);
-                entity.Property(e => e.Second);
-                entity.Property(e => e.SColor);
+
+                entity.Property(e => e.Token)
+                      .IsRequired();
+
+                entity.Property(e => e.Description)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+                entity.Property(e => e.Status)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+                entity.Property(e => e.PlayersTurn)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+                entity.HasOne<Player>()
+                      .WithMany()
+                      .HasForeignKey(e => e.First)
+                      .HasPrincipalKey(p => p.Token)
+                      .OnDelete(DeleteBehavior.Restrict);
+                      
+                entity.Property(e => e.First)
+                      .IsRequired(false);
+
+                entity.Property(e => e.FColor)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+                entity.HasOne<Player>()
+                      .WithMany()
+                      .HasForeignKey(e => e.Second)
+                      .HasPrincipalKey(p => p.Token)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.SColor)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
                 entity.Property(e => e.Board)
                     .HasConversion(
@@ -46,7 +82,17 @@ namespace API.Data
             builder.Entity<Player>(entity =>
             {
                 entity.HasKey(e => e.Token);
-                entity.HasKey(e => e.Username);
+
+                entity.Property(e => e.Token)
+                      .IsRequired();
+
+                entity.HasIndex(e => e.Username)
+                      .IsUnique();
+
+                entity.Property(e => e.Username)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
                 entity.Property(e => e.LastActivity);
 
@@ -58,21 +104,39 @@ namespace API.Data
                     .HasColumnType("nvarchar(max)")
                     .Metadata.SetValueComparer(new StringCollectionComparer());
 
-                entity.Property(e => e.PendingFriends)
+                entity.Property(e => e.Requests)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-                        v => JsonSerializer.Deserialize<List<string>>(v, new JsonSerializerOptions()) ?? new List<string>()
+                        v => JsonSerializer.Deserialize<ICollection<Request>>(v, new JsonSerializerOptions()) ?? new List<Request>()
                     )
                     .HasColumnType("nvarchar(max)")
-                    .Metadata.SetValueComparer(new StringCollectionComparer());
+                    .Metadata.SetValueComparer(new RequestCollectionComparer());
             });
 
             builder.Entity<GameResult>(entity =>
             {
                 entity.HasKey(e => e.Token);
-                entity.Property(e => e.Winner);
-                entity.Property(e => e.Loser);
-                entity.Property(e => e.Draw);
+
+                entity.Property(e => e.Token)
+                      .IsRequired();
+
+                entity.HasOne<Player>()
+                      .WithMany()
+                      .HasForeignKey(e => e.Winner)
+                      .HasPrincipalKey(p => p.Token)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Player>()
+                      .WithMany()
+                      .HasForeignKey(e => e.Loser)
+                      .HasPrincipalKey(p => p.Token)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Draw)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
                 entity.Property(e => e.Date);
             });
 

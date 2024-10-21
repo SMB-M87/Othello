@@ -29,6 +29,9 @@ namespace APITest.ResultTest
             Player four = new("fourth", "four");
             Player five = new("fifth", "five");
             Player six = new("sixth", "six");
+            Player seven = new("seven", "seven");
+            Player eight = new("eight", "eight");
+            Player nine = new("nine", "nine");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -36,31 +39,40 @@ namespace APITest.ResultTest
             _repository.PlayerRepository.Create(four);
             _repository.PlayerRepository.Create(five);
             _repository.PlayerRepository.Create(six);
+            _repository.PlayerRepository.Create(seven);
+            _repository.PlayerRepository.Create(eight);
+            _repository.PlayerRepository.Create(nine);
 
-            Game game0 = new(one.Token, "I wanna play a game and don't have any requirements.")
-            {
-                Token = "zero",
-                FColor = Color.Black
-            };
+            Game game = new("null", one.Token, Color.Black, one.Token, Status.Finished, Color.None);
 
-            Game game1 = new(two.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = three.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game0 = new("zero", one.Token);
 
-            Game game2 = new(four.Token, "I want to player more than one game against the same adversary.")
-            {
-                Token = "two",
-                FColor = Color.Black
-            };
+            Game game1 = new("one", two.Token, Color.Black, three.Token, Status.Playing, Color.Black, "I search an advanced player!");
+
+            Game game2 = new("two", four.Token, Color.Black);
+
+            Game game3 = new("three", "nonexistant");
+
+            Game game4 = new("four", six.Token, Color.Black, seven.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game5 = new("five", eight.Token, Color.Black, nine.Token, Status.Pending, Color.White, "I search an advanced player!");
+
+            Game game6 = new("six", eight.Token, Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game7 = new("seven", "nonexistant", Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game8 = new("eight", nine.Token, Color.Black, "nonexistant", Status.Playing, Color.White, "I search an advanced player!");
 
             _repository.GameRepository.Create(game0);
             _repository.GameRepository.Create(game1);
             _repository.GameRepository.Create(game2);
+            _repository.GameRepository.Create(game3);
+            _repository.GameRepository.Create(game4);
+            _repository.GameRepository.Create(game5);
+            _repository.GameRepository.Create(game6);
+            _repository.GameRepository.Create(game7);
+            _repository.GameRepository.Create(game8);
+            _repository.GameRepository.Create(game);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -69,6 +81,7 @@ namespace APITest.ResultTest
             _repository.ResultRepository.Create(result0);
             _repository.ResultRepository.Create(result1);
             _repository.ResultRepository.Create(result2);
+
             _controller = new ResultController(_repository);
         }
 

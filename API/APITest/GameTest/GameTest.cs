@@ -1,4 +1,5 @@
 using API.Models;
+using static Azure.Core.HttpHeader;
 
 namespace APITest.GameTest
 {
@@ -21,14 +22,7 @@ namespace APITest.GameTest
         [Test]
         public void GameCreation_BlackStarts_IsValid()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
 
             Assert.That(game.PlayersTurn, Is.EqualTo(Color.Black));
         }
@@ -36,15 +30,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_OutOfBound_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
 
             //     0 1 2 3 4 5 6 7
             //                     v
@@ -66,15 +52,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_StartSituationMove23Black_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
 
             //     0 1 2 3 4 5 6 7
             //           v
@@ -95,15 +73,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_StartSituationMove23White_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             //     0 1 2 3 4 5 6 7
             //           v
@@ -125,16 +95,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnTopEdge_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
-
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
 
@@ -157,18 +118,9 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnTopEdge_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
-
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
-            game.PlayersTurn = Color.White;
 
             //     0 1 2 3 4 5 6 7
             //           v
@@ -189,16 +141,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnTopEdgeWhileColumnAlmostFilled_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
-
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
             game.Board[3, 3] = Color.White;
@@ -226,15 +169,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnTopEdgeWhileColumnAlreadyFilled_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
             game.Board[3, 3] = Color.White;
@@ -262,15 +197,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightEdge_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
             game.Board[4, 5] = Color.White;
             game.Board[4, 6] = Color.White;
 
@@ -293,15 +220,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightEdge_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[4, 5] = Color.White;
             game.Board[4, 6] = Color.White;
 
@@ -324,15 +243,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightEdgeWhileRowAlmostFilled_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing);
             game.Board[4, 0] = Color.Black;
             game.Board[4, 1] = Color.White;
             game.Board[4, 2] = Color.White;
@@ -360,15 +271,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightEdgeWhileRowAlreadyFilled_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[4, 0] = Color.Black;
             game.Board[4, 1] = Color.White;
             game.Board[4, 2] = Color.White;
@@ -397,15 +300,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_StartSituationMove22White_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             //     0 1 2 3 4 5 6 7
             //         v
@@ -426,15 +321,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_StartSituationMove22Black_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
 
             //     0 1 2 3 4 5 6 7
             //         v
@@ -456,15 +343,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightTopCorner_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[2, 5] = Color.Black;
             game.Board[1, 6] = Color.Black;
             game.Board[5, 2] = Color.White;
@@ -488,15 +367,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightTopCorner_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[2, 5] = Color.Black;
             game.Board[1, 6] = Color.Black;
             game.Board[5, 2] = Color.White;
@@ -520,15 +391,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightBottomCorner_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[2, 2] = Color.Black;
             game.Board[5, 5] = Color.White;
             game.Board[6, 6] = Color.White;
@@ -552,15 +415,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnRightBottomCorner_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[2, 2] = Color.Black;
             game.Board[5, 5] = Color.White;
             game.Board[6, 6] = Color.White;
@@ -584,15 +439,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnLeftTopCorner_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[1, 1] = Color.White;
             game.Board[2, 2] = Color.White;
             game.Board[5, 5] = Color.Black;
@@ -616,15 +463,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnLeftTopCorner_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[1, 1] = Color.White;
             game.Board[2, 2] = Color.White;
             game.Board[5, 5] = Color.Black;
@@ -648,15 +487,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnLeftBottomCorner_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[2, 5] = Color.White;
             game.Board[5, 2] = Color.Black;
             game.Board[6, 1] = Color.Black;
@@ -680,15 +511,7 @@ namespace APITest.GameTest
         [Test]
         public void PossibleMove_MoveOnLeftBottomCorner_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[2, 5] = Color.White;
             game.Board[5, 2] = Color.Black;
             game.Board[6, 1] = Color.Black;
@@ -712,15 +535,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_OutOfBound_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             //     0 1 2 3 4 5 6 7
             //                     v
@@ -749,15 +564,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_StartSituationMove23Black_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
 
             //     0 1 2 3 4 5 6 7
             //           v
@@ -784,15 +591,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_StartSituationMove23White_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             //     0 1 2 3 4 5 6 7
             //           v
@@ -821,15 +620,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnTopEdge_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
 
@@ -860,15 +651,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnTopEdge_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
 
@@ -900,15 +683,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnTopEdgeWhileColumnAlmostFilled_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
             game.Board[3, 3] = Color.White;
@@ -946,15 +721,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnTopEdgeWhileColumnAlreadyFilled_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[1, 3] = Color.White;
             game.Board[2, 3] = Color.White;
             game.Board[3, 3] = Color.White;
@@ -991,15 +758,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightEdge_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[4, 5] = Color.White;
             game.Board[4, 6] = Color.White;
 
@@ -1029,15 +788,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightEdge_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[4, 5] = Color.White;
             game.Board[4, 6] = Color.White;
 
@@ -1069,15 +820,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightEdgeWhileRowAlmostFilled_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[4, 0] = Color.Black;
             game.Board[4, 1] = Color.White;
             game.Board[4, 2] = Color.White;
@@ -1115,15 +858,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightEdgeWhileRowAlreadyFilled_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[4, 0] = Color.Black;
             game.Board[4, 1] = Color.White;
             game.Board[4, 2] = Color.White;
@@ -1175,15 +910,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_StartSituationMove22White_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             //     0 1 2 3 4 5 6 7
             //         v
@@ -1211,15 +938,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_StartSituationMove22Black_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
 
             //     0 1 2 3 4 5 6 7
             //         v
@@ -1247,15 +966,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightTopCorner_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[2, 5] = Color.Black;
             game.Board[1, 6] = Color.Black;
             game.Board[5, 2] = Color.White;
@@ -1286,15 +997,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightTopCorner_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[2, 5] = Color.Black;
             game.Board[1, 6] = Color.Black;
             game.Board[5, 2] = Color.White;
@@ -1328,15 +1031,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightBottomCorner_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[2, 2] = Color.Black;
             game.Board[5, 5] = Color.White;
             game.Board[6, 6] = Color.White;
@@ -1368,15 +1063,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnRightBottomCorner_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[2, 2] = Color.Black;
             game.Board[5, 5] = Color.White;
             game.Board[6, 6] = Color.White;
@@ -1410,15 +1097,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnLeftTopCorner_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[1, 1] = Color.White;
             game.Board[2, 2] = Color.White;
             game.Board[5, 5] = Color.Black;
@@ -1450,15 +1129,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnLeftTopCorner_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[1, 1] = Color.White;
             game.Board[2, 2] = Color.White;
             game.Board[5, 5] = Color.Black;
@@ -1492,15 +1163,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnLeftBottomCorner_MoveCorrectlyExecuted()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[2, 5] = Color.White;
             game.Board[5, 2] = Color.Black;
             game.Board[6, 1] = Color.Black;
@@ -1532,15 +1195,7 @@ namespace APITest.GameTest
         [Test]
         public void MakeMove_MoveOnLeftBottomCorner_Exception()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.Black
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[2, 5] = Color.White;
             game.Board[5, 2] = Color.Black;
             game.Board[6, 1] = Color.Black;
@@ -1575,15 +1230,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_BlackTurnAndNoPossibleMove_ReturnTrueAndChangedTurns()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
-
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
             game.Board[0, 2] = Color.White;
@@ -1668,15 +1315,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_WhiteTurnButNoPossibleMove_ReturnTrueAndChangedTurns()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.White,
-                Second = two.Token,
-                SColor = Color.Black,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
             game.Board[0, 2] = Color.White;
@@ -1761,15 +1400,7 @@ namespace APITest.GameTest
         [Test]
         public void Finished_NoPossibleMoveAnymore_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
             game.Board[0, 2] = Color.White;
@@ -1854,15 +1485,7 @@ namespace APITest.GameTest
         [Test]
         public void Finished_NoPossibleMoveBoardIsFull_ReturnTrue()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
             game.Board[0, 0] = Color.White;
             game.Board[0, 1] = Color.White;
             game.Board[0, 2] = Color.White;
@@ -1947,15 +1570,7 @@ namespace APITest.GameTest
         [Test]
         public void Finished_MoveIsPossible_ReturnFalse()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing,
-                PlayersTurn = Color.White
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             //     0 1 2 3 4 5 6 7
             //                     
@@ -1976,14 +1591,7 @@ namespace APITest.GameTest
         [Test]
         public void WinningColor_Equal_ReturnColorNone()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
 
             //     0 1 2 3 4 5 6 7
             //                     
@@ -2004,14 +1612,7 @@ namespace APITest.GameTest
         [Test]
         public void WinningColor_Black_ReturnColorBlack()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.Black);
 
             game.Board[2, 3] = Color.Black;
             game.Board[3, 3] = Color.Black;
@@ -2038,14 +1639,7 @@ namespace APITest.GameTest
         [Test]
         public void WinningColor_White_ReturnColorWhite()
         {
-            Game game = new(one.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = two.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game = new("one", one.Token, Color.Black, two.Token, Status.Playing, Color.White);
 
             game.Board[2, 3] = Color.White;
             game.Board[3, 3] = Color.White;
@@ -2067,6 +1661,29 @@ namespace APITest.GameTest
             var actual = game.WinningColor();
 
             Assert.That(actual, Is.EqualTo(Color.White));
+        }
+
+        [Test]
+        public void WTF()
+        {
+            Game game12 = new("12", "WTF", Color.Black, "BROER", Status.Playing, Color.White, "I search an advanced player!");
+            game12.Board[0, 0] = Color.White;
+            game12.Board[0, 1] = Color.Black;
+            game12.Board[1, 1] = Color.White;
+            game12.Board[3, 3] = Color.None;
+            game12.Board[3, 4] = Color.None;
+            game12.Board[4, 4] = Color.None;
+            game12.Board[4, 3] = Color.None;
+
+            Assert.That(game12.PossibleMove(0, 2), Is.True);
+
+            game12.MakeMove(0, 2);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(game12.Board[0, 1], Is.EqualTo(Color.White));
+                Assert.That(game12.Finished(), Is.True);
+            });
         }
     }
 }

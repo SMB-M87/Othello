@@ -26,6 +26,11 @@ namespace APITest.GameTest
             Player four = new("fourth", "four");
             Player five = new("fifth", "five");
             Player six = new("sixth", "six");
+            Player seven = new("seven", "seven");
+            Player eight = new("eight", "eight");
+            Player nine = new("nine", "nine");
+            Player ten = new("12", "12");
+            Player eleven = new("13", "13");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -33,31 +38,48 @@ namespace APITest.GameTest
             _repository.PlayerRepository.Create(four);
             _repository.PlayerRepository.Create(five);
             _repository.PlayerRepository.Create(six);
+            _repository.PlayerRepository.Create(seven);
+            _repository.PlayerRepository.Create(eight);
+            _repository.PlayerRepository.Create(nine);
+            _repository.PlayerRepository.Create(ten);
+            _repository.PlayerRepository.Create(eleven);
 
-            Game game0 = new(one.Token, "I wanna play a game and don't have any requirements.")
-            {
-                Token = "zero",
-                FColor = Color.Black
-            };
+            Game game = new("null", ten.Token, Color.Black, eleven.Token, Status.Playing, Color.Black);
 
-            Game game1 = new(two.Token, "I search an advanced player!")
-            {
-                Token = "one",
-                FColor = Color.Black,
-                Second = three.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game0 = new("zero", one.Token);
 
-            Game game2 = new(four.Token, "I want to player more than one game against the same adversary.")
-            {
-                Token = "two",
-                FColor = Color.Black
-            };
+            Game game1 = new("one", two.Token, Color.Black, three.Token, Status.Playing, Color.Black, "I search an advanced player!");
+
+            Game game2 = new("two", four.Token, Color.Black);
+
+            Game game3 = new("three", "nonexistant");
+
+            Game game4 = new("four", six.Token, Color.Black, seven.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game5 = new("five", eight.Token, Color.Black, nine.Token, Status.Pending, Color.White, "I search an advanced player!");
+
+            Game game6 = new("six", eight.Token, Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game7 = new("seven", "nonexistant", Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game8 = new("eight", nine.Token, Color.Black, "nonexistant", Status.Playing, Color.White, "I search an advanced player!");
+
+            Game game9 = new("nine", eight.Token, Color.Black, nine.Token, Status.Playing, Color.Black, "I search an advanced player!");
+
+            Game game10 = new("ten", eight.Token, Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
 
             _repository.GameRepository.Create(game0);
             _repository.GameRepository.Create(game1);
             _repository.GameRepository.Create(game2);
+            _repository.GameRepository.Create(game3);
+            _repository.GameRepository.Create(game4);
+            _repository.GameRepository.Create(game5);
+            _repository.GameRepository.Create(game6);
+            _repository.GameRepository.Create(game7);
+            _repository.GameRepository.Create(game8);
+            _repository.GameRepository.Create(game);
+            _repository.GameRepository.Create(game9);
+            _repository.GameRepository.Create(game10);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -80,11 +102,7 @@ namespace APITest.GameTest
         {
             int size = _repository.GameRepository.GetGames()?.Count ?? 0;
             Player five = new("fifth", "five");
-            Game game = new(five.Token, "I search an advanced player!")
-            {
-                Token = "three",
-                FColor = Color.Black
-            };
+            Game game = new("three", five.Token, Color.Black);
 
             _repository.GameRepository.Create(game);
 
@@ -130,16 +148,17 @@ namespace APITest.GameTest
         [Test]
         public void Update_Correct()
         {
-            Game game = _repository.GameRepository.Get("zero") ?? new();
-            game.Status = Status.Finished;
-            game.PlayersTurn = Color.None;
+            Game game = _repository.GameRepository.Get("null") ?? new();
+            Assert.That(actual: _repository.GameRepository.Get("null")?.PlayersTurn, Is.EqualTo(expected: Color.Black));
+
+            game.MakeMove(2,3);
 
             _context.Games.Update(game);
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.Get("zero")?.Status, Is.EqualTo(expected: Status.Finished));
-                Assert.That(actual: _repository.GameRepository.Get("zero")?.PlayersTurn, Is.EqualTo(expected: Color.None));
+                Assert.That(actual: _repository.GameRepository.Get("null")?.PlayersTurn, Is.EqualTo(expected: Color.White));
+                Assert.That(actual: _repository.GameRepository.Get("null")?.Board[2,3], Is.EqualTo(expected: Color.Black));
             });
         }
 
@@ -149,12 +168,13 @@ namespace APITest.GameTest
             int size = _repository.GameRepository.GetGames()?.Count ?? 0;
             Game game = _repository.GameRepository.GetGames()?[2] ?? new();
 
+            Assert.That(actual: _repository.GameRepository.GetGames()?.Count, Is.EqualTo(size));
+
             _repository.GameRepository.Delete(game);
 
             Assert.Multiple(() =>
             {
                 Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.Not.EqualTo(size));
-                Assert.That(actual: size, Is.EqualTo(3));
                 Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.EqualTo(expected: size - 1));
             });
         }
@@ -163,12 +183,12 @@ namespace APITest.GameTest
         public void Get_Correct()
         {
             string token = "ValidTest";
-            _repository.GameRepository.Create(new Game("fifth", "I wanna play a game and don't have any requirements!") { Token = token });
+            _repository.GameRepository.Create(new Game(token));
 
-            var respons = _repository.GameRepository.Get(token);
+            var respons = _repository.GameRepository.GetPlayersGame(token);
 
             if (respons is not null)
-                Assert.That(actual: respons.First, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: respons.First, Is.EqualTo(expected: token));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -188,14 +208,7 @@ namespace APITest.GameTest
         {
             Player five = new("fifth", "five");
             Player six = new("sixth", "six");
-            Game game = new(five.Token, "I search an advanced player!")
-            {
-                Token = "three",
-                FColor = Color.Black,
-                Second = six.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
+            Game game = new("nullito", five.Token, Color.Black, six.Token, Status.Playing);
 
             _repository.GameRepository.Create(game);
 
@@ -210,20 +223,13 @@ namespace APITest.GameTest
         [Test]
         public void GetPlayersGame_Correct_SecondPlayer()
         {
-            Player five = new("fifth", "five");
-            Player six = new("sixth", "six");
+            Player five = new("ten", "ten");
+            Player six = new("11", "11");
+            Game game = new("nullito", five.Token, Color.Black, six.Token, Status.Playing);
 
-            Game game = new(five.Token, "I search an advanced player!")
-            {
-                Token = "three",
-                FColor = Color.Black,
-                Second = six.Token,
-                SColor = Color.White,
-                Status = Status.Playing
-            };
             _repository.GameRepository.Create(game);
 
-            var respons = _repository.GameRepository.GetPlayersGame("sixth");
+            var respons = _repository.GameRepository.GetPlayersGame("11");
 
             if (respons is not null)
                 Assert.That(actual: respons.Token, Is.EqualTo(expected: game.Token));

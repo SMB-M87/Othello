@@ -2,45 +2,45 @@
 {
     public class GameStep
     {
-        public string Player { get; set; }
+        public string Token { get; set; }
 
-        private int y;
-        public int Y
+        private int _column;
+        public int Column
         {
             get
             {
-                return y;
+                return _column;
             }
             set
             {
                 if (value >= 0 && value <= 7)
                 {
-                    y = value;
+                    _column = value;
                 }
             }
         }
 
-        private int x;
-        public int X
+        private int _row;
+        public int Row
         {
             get
             {
-                return x;
+                return _row;
             }
             set
             {
                 if (value >= 0 && value <= 7)
                 {
-                    x = value;
+                    _row = value;
                 }
             }
         }
 
-        public GameStep(string player, int x = 2, int y = 3)
+        public GameStep(string player, int row = 2, int column = 3)
         {
-            Player = player;
-            this.X = x;
-            this.Y = y;
+            Token = player;
+            this.Row = row;
+            this.Column = column;
         }
     }
 }

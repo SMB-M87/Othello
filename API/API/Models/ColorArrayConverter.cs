@@ -5,12 +5,12 @@ namespace API.Models
 {
     public class ColorArrayConverter : JsonConverter<Color[,]>
     {
-        public override bool CanConvert(Type typeToConvert)
+        public override bool CanConvert(System.Type typeToConvert)
         {
             return typeToConvert.IsArray && typeToConvert.GetElementType() == typeof(Color);
         }
 
-        public override Color[,] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override Color[,] Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType != JsonTokenType.StartArray)
             {

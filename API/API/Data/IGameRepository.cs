@@ -8,6 +8,7 @@ namespace API.Data
         void Join(GameEntrant entry);
         void JoinPlayer(GameEntrant entry);
         void Update(Game game);
+        void Finish(Game game);
         void Delete(Game game);
         Game? Get(string token);
         Game? GetPlayersGame(string token);

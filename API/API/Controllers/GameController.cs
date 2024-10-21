@@ -1,7 +1,6 @@
 ﻿using API.Data;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -187,27 +186,30 @@ namespace API.Controllers
         [HttpPut("move")]
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
-            var game = _repository.GameRepository.GetPlayersGame(action.Player);
-            var player = _repository.PlayerRepository.Get(action.Player);
+            var game = _repository.GameRepository.GetPlayersGame(action.Token);
+            var player = _repository.PlayerRepository.Get(action.Token);
 
-            if (game is null || player is null)
+            if (game is null || player is null || game.Second is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            var challenger = _repository.PlayerRepository.Get(game.First == action.Player ? game.Second : game.First);
-            Color turn = game.First == action.Player ? game.FColor : game.SColor;
+            var challenger = _repository.PlayerRepository.Get(game.First == action.Token ? game.Second : game.First);
+            Color turn = game.First == action.Token ? game.FColor : game.SColor;
 
             if (game.Status != Status.Playing || game.PlayersTurn != turn || challenger is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
+            game.MakeMove(action.Row, action.Column);
+            _repository.GameRepository.Update(game);
+
             if (game.Finished())
             {
-                game.Status = Status.Finished;
-                _repository.GameRepository.Update(game);
+                _repository.GameRepository.Finish(game);
 
                 Color win = game.WinningColor();
+
                 string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
                 string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
-                string draw = win == Color.None ? $"{game.First} {game.Second}" : "";
+                bool draw = win == Color.None;
                 GameResult result = new(game.Token, winner, loser, draw);
                 _repository.ResultRepository.Create(result);
 
@@ -218,12 +220,6 @@ namespace API.Controllers
                 else
                     return new HttpResponseMessage(System.Net.HttpStatusCode.ExpectationFailed);
             }
-
-            if (!game.PossibleMove(action.Y, action.X))
-                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-
-            game.MakeMove(action.Y, action.X);
-            _repository.GameRepository.Update(game);
 
             if (game.PlayersTurn != turn)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -237,7 +233,7 @@ namespace API.Controllers
             var game = _repository.GameRepository.GetPlayersGame(player);
             var participant = _repository.PlayerRepository.Get(player);
 
-            if (game is null || participant is null)
+            if (game is null || participant is null || game.Second is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
             var challenger = _repository.PlayerRepository.Get(game.First == participant.Token ? game.Second : game.First);
@@ -277,7 +273,7 @@ namespace API.Controllers
 
             Color turn = game.First == player ? game.FColor : game.SColor;
 
-            if (game.Status != Status.Playing || game.PlayersTurn != turn)
+            if (game.Status != Status.Playing || game.PlayersTurn != turn || game.Second is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
 
             string winner;
@@ -292,9 +288,7 @@ namespace API.Controllers
                 winner = game.First;
                 loser = player;
             }
-            game.Status = Status.Finished;
-            game.PlayersTurn = Color.None;
-            _repository.GameRepository.Update(game);
+            _repository.GameRepository.Finish(game);
             GameResult result = new(game.Token, winner, loser);
             _repository.ResultRepository.Create(result);
             var respons = _repository.GameRepository.Get(game.Token);

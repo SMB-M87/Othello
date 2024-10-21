@@ -23,8 +23,9 @@ namespace API.Data
 
             if (game is not null)
             {
-                game.Second = entrant.Player;
-                game.Status = Status.Playing;
+                game.SetSecondPlayer(entrant.Player);
+                _context.Entry(game).Property(g => g.Status).IsModified = true;
+                _context.Entry(game).Property(g => g.Second).IsModified = true;
                 _context.SaveChanges();
             }
         }
@@ -35,8 +36,9 @@ namespace API.Data
 
             if (game is not null)
             {
-                game.Second = entrant.Player;
-                game.Status = Status.Playing;
+                game.SetSecondPlayer(entrant.Player);
+                _context.Entry(game).Property(g => g.Status).IsModified = true;
+                _context.Entry(game).Property(g => g.Second).IsModified = true;
                 _context.SaveChanges();
             }
         }
@@ -47,10 +49,22 @@ namespace API.Data
 
             if (update is not null)
             {
-                update.Status = game.Status;
-                update.PlayersTurn = game.PlayersTurn;
+                _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                 update.Board = game.Board;
                 _context.Entry(update).Property(g => g.Board).IsModified = true;
+                _context.SaveChanges();
+            }
+        }
+
+        public void Finish(Game game)
+        {
+            var update = Get(game.Token);
+
+            if (update is not null)
+            {
+                game.Finish();
+                _context.Entry(game).Property(g => g.Status).IsModified = true;
+                _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                 _context.SaveChanges();
             }
         }
@@ -75,7 +89,7 @@ namespace API.Data
         {
             var games = GetGames();
             var game = games!.FirstOrDefault(s => s.First.Equals(player) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second.Equals(player) && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(player) && s.Status != Status.Finished);
 
             return game;
         }

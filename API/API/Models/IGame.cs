@@ -5,11 +5,11 @@
 
     public interface IGame
     {
-        string Token { get; set; }
-        string Description { get; set; }
-        Status Status { get; set; }
+        string Token { get; }
+        string Description { get; }
+        Status Status { get; }
         Color[,] Board { get; set; }
-        Color PlayersTurn { get; set; }
+        Color PlayersTurn { get; }
         Color WinningColor();
         bool PossibleMove(int rowMove, int columnMove);
         void MakeMove(int rowMove, int columnMove);

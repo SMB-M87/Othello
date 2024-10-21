@@ -32,9 +32,9 @@ namespace API.Data
         public string GetPlayerStats(string token)
         {
             var results = GetPlayersMatchHistory(token);
-            int wins = results.Count(r => r.Winner == token);
-            int losses = results.Count(r => r.Loser == token);
-            int draws = results.Count(r => r.Draw.Contains(token));
+            int wins = results.Count(r => r.Winner == token && r.Draw == false);
+            int losses = results.Count(r => r.Loser == token && r.Draw == false);
+            int draws = results.Count(r => (r.Winner.Contains(token) || r.Loser.Contains(token)) && r.Draw == true);
 
             return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
         }
@@ -42,7 +42,7 @@ namespace API.Data
         public List<GameResult> GetPlayersMatchHistory(string token)
         {
             return _context.Results
-                .Where(s => s.Winner == token || s.Loser == token || s.Draw.Contains(token))
+                .Where(s => s.Winner == token || s.Loser == token)
                 .ToList();
         }
     }

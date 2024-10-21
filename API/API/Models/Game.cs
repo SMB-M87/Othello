@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models
 {
@@ -16,16 +17,18 @@ namespace API.Models
                                 { -1, -1 } };       // top left
 
         [Key]
-        public string Token { get; set; }
-        public string Description { get; set; }
-        public Status Status { get; set; }
-        public Color PlayersTurn { get; set; }
+        public string Token { get; private set; }
+        public string Description { get; private set; }
+        public Status Status { get; private set; }
+        public Color PlayersTurn { get; private set; }
 
-        public string First { get; set; }
-        public Color FColor { get; set; }
+        [ForeignKey("Player")]
+        public string First { get; private set; }
+        public Color FColor { get; private set; }
 
-        public string Second { get; set; }
-        public Color SColor { get; set; }
+        [ForeignKey("Player")]
+        public string? Second { get; private set; }
+        public Color SColor { get; private set; }
 
         private Color[,] board;
         public Color[,] Board
@@ -46,7 +49,7 @@ namespace API.Models
             Description = string.Empty;
             First = string.Empty;
             FColor = Color.None;
-            Second = string.Empty;
+            Second = null;
             SColor = Color.None;
             board = new Color[boardScope, boardScope];
         }
@@ -68,8 +71,48 @@ namespace API.Models
             First = first;
             FColor = new Random().Next(1, 3) == 1 ? Color.White : Color.Black;
 
-            Second = string.Empty;
+            Second = null;
             SColor = GetOpponentsColor(FColor);
+        }
+
+        public Game(string token, string first, Color fcolor, string? second = null, Status game = Status.Pending, Color turn = Color.Black, string description = "I wanna play a game and don't have any requirements!")
+        {
+            Token = token;
+
+            board = new Color[boardScope, boardScope];
+            Board[3, 3] = Color.White;
+            Board[4, 4] = Color.White;
+            Board[3, 4] = Color.Black;
+            Board[4, 3] = Color.Black;
+
+            PlayersTurn = turn;
+            Description = description;
+            Status = game;
+
+            First = first;
+            FColor = fcolor;
+
+            Second = second;
+            SColor = GetOpponentsColor(FColor);
+        }
+
+        public void SetSecondPlayer(string secondPlayerToken)
+        {
+            if (Second == null)
+            {
+                Second = secondPlayerToken;
+                Status = Status.Playing;
+            }
+            else
+            {
+                throw new InvalidGameOperationException("The second player is already set and cannot be changed.");
+            }
+        }
+
+        public void Finish()
+        {
+            Status = Status.Finished;
+            PlayersTurn = Color.None;
         }
 
         public void Pass()

@@ -143,7 +143,7 @@ namespace API.Controllers
         }
 
         [HttpGet("pending/{token}")]
-        public ActionResult<List<string>> PlayerPending(string token)
+        public ActionResult<List<Request>> PlayerPending(string token)
         {
             var pending = _repository.PlayerRepository.GetPending(token);
 
@@ -161,7 +161,7 @@ namespace API.Controllers
             if (sent is null)
                 return NotFound();
 
-            return Ok(sent.FindAll(p => p.PendingFriends.Contains(username)).Select(p => p.Username).ToList());
+            return Ok(sent.FindAll(p => p.Requests.Any(r => r.Username == username)).Select(p => p.Username).ToList());
         }
 
         [HttpPost("friend/send")]
@@ -174,7 +174,8 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
             if (receiver.Friends.Contains(request.Sender) || sender.Friends.Contains(request.Receiver) || 
-                receiver.PendingFriends.Contains(request.Sender) || sender.PendingFriends.Contains(request.Receiver))
+                receiver.Requests.Any(p => p.Username == request.Sender && p.Type == Inquiry.Friend) || 
+                sender.Requests.Any(p => p.Username == request.Receiver && p.Type == Inquiry.Friend))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
 
             _repository.PlayerRepository.SendFriendInvite(request.Receiver, request.Sender);
@@ -192,7 +193,8 @@ namespace API.Controllers
             if (receiver is null || sender is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            if (receiver.Friends.Contains(request.Sender) || !sender.PendingFriends.Contains(request.Receiver))
+            if (receiver.Friends.Contains(request.Sender) || 
+                !sender.Requests.Any(p => p.Username == request.Receiver && p.Type == Inquiry.Friend))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
 
             _repository.PlayerRepository.AcceptFriendInvite(request.Receiver, request.Sender);
@@ -211,7 +213,7 @@ namespace API.Controllers
             if (receiver is null || sender is null)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
 
-            if (!sender.PendingFriends.Contains(request.Receiver))
+            if (!sender.Requests.Any(p => p.Username == request.Receiver && p.Type == Inquiry.Friend))
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
 
             _repository.PlayerRepository.DeclineFriendInvite(request.Receiver, request.Sender);

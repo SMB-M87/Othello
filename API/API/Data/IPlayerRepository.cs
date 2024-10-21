@@ -15,7 +15,11 @@ namespace API.Data
         void AcceptFriendInvite(string receiver, string sender);
         void DeclineFriendInvite(string receiver, string sender);
         void DeleteFriend(string receiver, string sender);
-        List<string>? GetPending(string player);
+        List<Request>? GetPending(string player);
         List<string>? GetFriends(string player);
+        void SendGameInvite(string receiver, string sender);
+        void AcceptGameInvite(string receiver, string sender);
+        void DeclineGameInvite(string receiver, string sender);
+        void DeleteGameInvites(string token);
     }
 }
