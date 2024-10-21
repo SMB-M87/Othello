@@ -17,50 +17,7 @@ namespace MVC.Controllers
             _httpClient.BaseAddress = new Uri("https://localhost:7023/");
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(string description)
-        {
-            if (string.IsNullOrWhiteSpace(description))
-            {
-                ModelState.AddModelError(string.Empty, "Description cannot be empty.");
-                return View();
-            }
-
-            var userToken = _userManager.GetUserId(User);
-            var createGameRequest = new
-            {
-                Player = userToken,
-                Description = description
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to create game.");
-                return View();
-            }
-
-            var game = await _httpClient.GetAsync($"api/game/from/{userToken}");
-
-            if (!game.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to find game.");
-                return View();
-            }
-
-            var token = await game.Content.ReadAsStringAsync();
-
-            return RedirectToAction("WaitForOpponent", new { token });
-        }
-
-        public IActionResult WaitForOpponent(string token)
+        public IActionResult Wait(string token)
         {
             if (string.IsNullOrEmpty(token))
             {
@@ -71,20 +28,20 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteGame(string token)
+        public async Task<IActionResult> Delete(string token)
         {
             var response = await _httpClient.PostAsJsonAsync("api/game/delete", token);
 
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to delete game.");
-                return RedirectToAction("WaitForOpponent", new { player = token });
+                return RedirectToAction("Wait", new { player = token });
             }
 
             return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> PlayGame(string token)
+        public async Task<IActionResult> Play(string token)
         {
             var response = await _httpClient.GetAsync($"api/game/{token}");
 
@@ -101,36 +58,7 @@ namespace MVC.Controllers
             }
 
             ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
-            return RedirectToAction("GameResult", new { token });
-        }
-
-        public async Task<IActionResult> GameResult(string token)
-        {
-            var resultResponse = await _httpClient.GetAsync($"api/result/{token}");
-
-            if (resultResponse.IsSuccessStatusCode)
-            {
-                GameResult result = await resultResponse.Content.ReadFromJsonAsync<GameResult>() ?? new();
-
-                string url = "api/player/name/";
-
-                var winResponse = await _httpClient.GetAsync($"{url}{result.Winner}");
-                var loseResponse = await _httpClient.GetAsync($"{url}{result.Loser}");
-
-                result.Winner = await winResponse.Content.ReadAsStringAsync();
-                result.Loser = await loseResponse.Content.ReadAsStringAsync();
-
-                if (!string.IsNullOrEmpty(result.Draw))
-                {
-                    var drawTokens = result.Draw.Split(' ');
-                    var Drawer = drawTokens[0] == _userManager.GetUserId(User) ? drawTokens[1] : drawTokens[0];
-                    var drawReponse = await _httpClient.GetAsync($"{url}{Drawer}");
-                    result.Draw = await drawReponse.Content.ReadAsStringAsync();
-                }
-
-                return View(result);
-            }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Result", "Home", new { token });
         }
     }
 }

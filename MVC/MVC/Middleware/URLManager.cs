@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using NuGet.Common;
 
 namespace MVC.Middleware
 {
@@ -38,14 +39,26 @@ namespace MVC.Middleware
                             var gameStatus = await gameStatusResponse.Content.ReadAsStringAsync();
 
                             var currentPath = context.Request.Path.Value?.ToLower();
-                            if (gameStatus == "1" && currentPath is not null && !currentPath.Contains("/game/playgame"))
+                            if (gameStatus == "1" && currentPath is not null && !currentPath.Contains("/game/play"))
                             {
-                                context.Response.Redirect($"/Game/PlayGame?token={token}");
+                                context.Response.Redirect($"/Game/Play?token={token}");
+                                return;
                             }
-                            else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/game/waitforopponent"))
+                            else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/game/wait"))
                             {
-                                context.Response.Redirect($"/Game/WaitForOpponent?token={token}");
+                                context.Response.Redirect($"/Game/Wait?token={token}");
+                                return;
                             }
+                        }
+                    }
+                    else
+                    {
+                        var currentPath = context.Request.Path.Value?.ToLower();
+
+                        if (currentPath is not null && (!currentPath.Contains("/home") && !currentPath.Contains("/account")))
+                        {
+                            context.Response.Redirect($"/Home/Index");
+                            return;
                         }
                     }
                 }

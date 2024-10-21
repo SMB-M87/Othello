@@ -1,11 +1,11 @@
 ﻿using MVC.Models;
+using System.Text;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVC.Controllers
 {
@@ -15,8 +15,11 @@ namespace MVC.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public AdminController(IHttpClientFactory httpClientFactory)
+        public AdminController(
+            IHttpClientFactory httpClientFactory,
+            UserManager<IdentityUser> userManager)
         {
+            _userManager = userManager;
             _httpClientFactory = httpClientFactory;
         }
 
@@ -114,14 +117,14 @@ namespace MVC.Controllers
             var key = Encoding.UTF8.GetBytes("Admin123!");
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.NameIdentifier, user.Id),
+                new(ClaimTypes.Name, user.UserName),
             };
 
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new(ClaimTypes.Role, role));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor

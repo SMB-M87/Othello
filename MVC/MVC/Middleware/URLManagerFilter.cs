@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Filters;
+using NuGet.Common;
 
 namespace MVC.Middleware
 {
@@ -38,14 +39,26 @@ namespace MVC.Middleware
                         var controller = context.RouteData.Values["controller"]?.ToString();
                         var action = context.RouteData.Values["action"]?.ToString();
 
-                        if (!(controller == "Game" && gameStatus == "1" && action == "PlayGame"))
+                        if (!(controller == "Game" && gameStatus == "1" && action == "Play"))
                         {
-                            context.Result = new RedirectToActionResult("PlayGame", "Game", new { token });
+                            context.Result = new RedirectToActionResult("Play", "Game", new { token });
+                            return;
                         }
-                        else if (!(controller == "Game" && gameStatus == "0" && action == "WaitForOpponent"))
+                        else if (!(controller == "Game" && gameStatus == "0" && action == "Wait"))
                         {
-                            context.Result = new RedirectToActionResult("WaitForOpponent", "Game", new { token });
+                            context.Result = new RedirectToActionResult("Wait", "Game", new { token });
+                            return;
                         }
+                    }
+                }
+                else
+                {
+                    var controller = context.RouteData.Values["controller"]?.ToString();
+
+                    if (!(controller == "Home" && controller == "Account"))
+                    {
+                        context.Result = new RedirectToPageResult("Index", "Home");
+                        return;
                     }
                 }
             }

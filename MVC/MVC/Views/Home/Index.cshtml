@@ -37,15 +37,15 @@
                                 }
                                 @if (User.Identity.Name == game.Winner)
                                 {
-                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Loser</a></span>
+                                    <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Loser</a></span>
                                 }
                                 else if (User.Identity.Name == game.Loser)
                                 {
-                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Winner</a></span>
+                                    <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Winner</a></span>
                                 }
                                 else
                                 {
-                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw" style="text-decoration: none; color: inherit;">@game.Draw</a></span>
+                                    <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Draw" style="text-decoration: none; color: inherit;">@game.Draw</a></span>
                                 }
                                 <span>@game.Date.ToString("dd/MM/yyyy")</span>
                             </li>
@@ -71,7 +71,7 @@
                             @if (!Model.Friends.Contains(player) && !Model.PendingRequests.Contains(player))
                             {
                                 <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                    <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                    <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                     <div>
                                         @if (Model.Joinable.Contains(player))
                                         {
@@ -115,7 +115,7 @@
                         @foreach (var player in Model.Friends)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
                                     @if (Model.Joinable.Contains(player))
                                     {
@@ -155,7 +155,7 @@
                         @foreach (var player in Model.PendingRequests)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
                                     @if (Model.Joinable.Contains(player))
                                     {
@@ -225,7 +225,7 @@
         }
     </div>
     <div class="d-flex justify-content-center">
-        <form method="post" asp-action="Create" asp-controller="Game" style="display: inline;">
+        <form method="post" asp-action="Create" asp-controller="Home" style="display: inline;">
             <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
                 New game
             </button>

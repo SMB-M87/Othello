@@ -19,7 +19,7 @@
 </div>
 
 <div class="d-flex justify-content-center">
-    <form method="post" asp-action="DeleteGame">
+    <form method="post" asp-action="Delete">
         <input type="hidden" name="token" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
         <button type="submit" class="btn btn-danger">Cancel Game</button>
     </form>

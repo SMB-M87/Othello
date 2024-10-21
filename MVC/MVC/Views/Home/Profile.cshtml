@@ -52,40 +52,30 @@
 <div class="text-center" style="font-size: 48px; margin-top: 20px;">
     <h3>Match History</h3>
 </div>
-@if (Model.MatchHistory != null && Model.MatchHistory.Count > 0)
+@if (Model.MatchHistory != null && Model.MatchHistory.Count > 0 && User is not null && User.Identity is not null)
 {
     <div class="d-flex justify-content-center">
         <div class="col-md-6" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
             <ul style="list-style: none; padding-left: 0;">
                 @foreach (var game in Model.MatchHistory)
                 {
-                    <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
-                        background-color: @(Model.Username == game.Winner ? "#d4edda" : Model.Username == game.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
-
-                        @if (Model.Username == game.Winner)
+                    <li style="display: flex; justify-content: center; margin-bottom: 5px;
+                        background-color: @(User.Identity.Name == game.Winner ? "#d4edda" : User.Identity.Name == game.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
+                        @if (game.Winner == User.Identity.Name)
                         {
-                            <span>Won</span>
+                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Won against @game.Loser</a></p>
                         }
-                        else if (Model.Username == game.Loser)
+                        else if (game.Loser == User.Identity.Name)
                         {
-                            <span>Lost</span>
+                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Lost against @game.Winner</a></p>
                         }
-                        else
+                        else if (game.Draw && game.Winner == User.Identity.Name)
                         {
-                            <span>Draw</span>
-                        }
-
-                        @if (Model.Username == game.Winner)
-                        {
-                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Loser</a></span>
-                        }
-                        else if (Model.Username == game.Loser)
-                        {
-                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Winner</a></span>
+                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Drew with @game.Loser</a></p>
                         }
                         else
                         {
-                            <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw" style="text-decoration: none; color: inherit;">@game.Draw</a></span>
+                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Drew with @game.Winner</a></p>
                         }
                     </li>
                 }

@@ -61,14 +61,6 @@ namespace MVC.Controllers
 
                         game.Winner = await winResponse.Content.ReadAsStringAsync();
                         game.Loser = await loseResponse.Content.ReadAsStringAsync();
-
-                        if (!string.IsNullOrEmpty(game.Draw))
-                        {
-                            var drawTokens = game.Draw.Split(' ');
-                            var Drawer = drawTokens[0] == _userManager.GetUserId(User) ? drawTokens[1] : drawTokens[0];
-                            var drawReponse = await _httpClient.GetAsync($"{url}{Drawer}");
-                            game.Draw = await drawReponse.Content.ReadAsStringAsync();
-                        }
                     }
                 }
 
@@ -176,7 +168,7 @@ namespace MVC.Controllers
             }
             var token = await gameTokenRespons.Content.ReadAsStringAsync();
 
-            return RedirectToAction("PlayGame", "Game", new { token });
+            return RedirectToAction("Play", "Game", new { token });
         }
 
         [HttpPost]
@@ -196,7 +188,7 @@ namespace MVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            return RedirectToAction("PlayGame", "Game", new { token });
+            return RedirectToAction("Play", "Game", new { token });
         }
 
         [HttpPost]
@@ -272,6 +264,150 @@ namespace MVC.Controllers
                 ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
             }
 
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Profile(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Fetch the token by username
+            var respons = await _httpClient.GetAsync($"api/player/token/{username}");
+            if (!respons.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Extract the token from the response
+            var token = await respons.Content.ReadAsStringAsync();
+
+            // Fetch player stats by token
+            var statsResponse = await _httpClient.GetAsync($"api/result/stats/{token}");
+            string stats = string.Empty;
+
+            if (statsResponse.IsSuccessStatusCode)
+            {
+                stats = await statsResponse.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
+            }
+
+            // Fetch match history by token
+            var historyResponse = await _httpClient.GetAsync($"api/result/history/{token}");
+            List<GameResult> matchHistory = new();
+
+            if (historyResponse.IsSuccessStatusCode)
+            {
+                matchHistory = await historyResponse.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
+            }
+
+            if (matchHistory.Count > 0)
+            {
+                matchHistory = matchHistory.OrderByDescending(g => g.Date).ToList();
+
+                foreach (var game in matchHistory)
+                {
+                    string url = "api/player/name/";
+
+                    var winResponse = await _httpClient.GetAsync($"{url}{game.Winner}");
+                    var loseResponse = await _httpClient.GetAsync($"{url}{game.Loser}");
+
+                    game.Winner = await winResponse.Content.ReadAsStringAsync();
+                    game.Loser = await loseResponse.Content.ReadAsStringAsync();
+                }
+            }
+
+            // Fetch the logged-in user's ID and friends
+            var currentUserId = _userManager.GetUserId(User);
+            var friendsResponse = await _httpClient.GetAsync($"api/player/friends/{currentUserId}");
+            var friends = friendsResponse.IsSuccessStatusCode ? await friendsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+
+            // Fetch sent and pending friend requests
+            var sentRequestsResponse = await _httpClient.GetAsync($"api/player/sent/{_userManager.GetUserName(User)}");
+            var sentRequests = sentRequestsResponse.IsSuccessStatusCode ? await sentRequestsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+
+            var pendingRequestsResponse = await _httpClient.GetAsync($"api/player/pending/{currentUserId}");
+            var pendingRequests = pendingRequestsResponse.IsSuccessStatusCode ? await pendingRequestsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+
+            var model = new ProfileView
+            {
+                Stats = stats,
+                Username = username,
+                MatchHistory = matchHistory,
+                IsFriend = friends.Contains(username),
+                HasSentRequest = sentRequests.Contains(username),
+                HasPendingRequest = pendingRequests.Contains(username)
+            };
+
+            return View("Profile", model);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View("Create");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(string description)
+        {
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                ModelState.AddModelError(string.Empty, "Description cannot be empty.");
+                return View("Create");
+            }
+
+            var userToken = _userManager.GetUserId(User);
+            var createGameRequest = new
+            {
+                Player = userToken,
+                Description = description
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to create game.");
+                return View("Create");
+            }
+
+            var game = await _httpClient.GetAsync($"api/game/from/{userToken}");
+
+            if (!game.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to find game.");
+                return View("Create");
+            }
+
+            var token = await game.Content.ReadAsStringAsync();
+
+            return RedirectToAction("Wait", "Game", new { token });
+        }
+
+        public async Task<IActionResult> Result(string token)
+        {
+            var resultResponse = await _httpClient.GetAsync($"api/result/{token}");
+
+            if (resultResponse.IsSuccessStatusCode)
+            {
+                GameResult result = await resultResponse.Content.ReadFromJsonAsync<GameResult>() ?? new();
+
+                string url = "api/player/name/";
+
+                var winResponse = await _httpClient.GetAsync($"{url}{result.Winner}");
+                var loseResponse = await _httpClient.GetAsync($"{url}{result.Loser}");
+
+                result.Winner = await winResponse.Content.ReadAsStringAsync();
+                result.Loser = await loseResponse.Content.ReadAsStringAsync();
+
+                return View("Result", result);
+            }
             return RedirectToAction("Index");
         }
 
