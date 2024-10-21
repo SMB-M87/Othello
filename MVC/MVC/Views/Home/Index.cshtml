@@ -47,6 +47,7 @@
                                 {
                                     <span><a asp-controller="Profile" asp-action="Index" asp-route-username="@game.Draw" style="text-decoration: none; color: inherit;">@game.Draw</a></span>
                                 }
+                                <span>@game.Date.ToString("dd/MM/yyyy")</span>
                             </li>
                         }
                     </ul>

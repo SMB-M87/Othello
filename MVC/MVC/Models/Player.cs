@@ -8,6 +8,6 @@
         public DateTime LastActivity { get; set; }
 
         public ICollection<string> Friends { get; set; } = null!;
-        public ICollection<string> PendingFriends { get; set; } = null!;
+        public ICollection<Request> Requests { get; set; } = null!;
     }
 }
