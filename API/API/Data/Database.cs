@@ -37,23 +37,21 @@ namespace API.Data
                       .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
                 entity.Property(e => e.Status)
-                      .IsRequired()
-                      .ValueGeneratedNever()
-                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+                      .IsRequired();
 
                 entity.Property(e => e.PlayersTurn)
-                      .IsRequired()
-                      .ValueGeneratedNever()
-                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+                      .IsRequired();
 
                 entity.HasOne<Player>()
                       .WithMany()
                       .HasForeignKey(e => e.First)
                       .HasPrincipalKey(p => p.Token)
                       .OnDelete(DeleteBehavior.Restrict);
-                      
+
                 entity.Property(e => e.First)
-                      .IsRequired(false);
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
                 entity.Property(e => e.FColor)
                       .IsRequired()

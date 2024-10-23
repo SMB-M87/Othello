@@ -1,5 +1,4 @@
 using API.Models;
-using static Azure.Core.HttpHeader;
 
 namespace APITest.GameTest
 {

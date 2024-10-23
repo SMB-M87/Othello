@@ -116,7 +116,7 @@ namespace APITest.GameTest
         [Test]
         public void Create_Correct()
         {
-            int size = _context.Games.ToList().Count();
+            int size = _context.Games.ToList().Count;
             Game game = new("-15", "61", Color.Black);
 
             _repository.GameRepository.Create(game);
@@ -124,26 +124,8 @@ namespace APITest.GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: games.Count(), Is.Not.EqualTo(expected: size));
-                Assert.That(actual: games.Count(), Is.EqualTo(expected: size + 1));
-            });
-        }
-
-        [Test]
-        public void Join_Correct()
-        {
-             GameEntrant entry = new("two", "fifth");
-
-            _repository.GameRepository.Join(entry);
-
-            var games = _context.Games.ToList();
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: games, Has.Count.Not.EqualTo(expected: size));
+                Assert.That(actual: games, Has.Count.EqualTo(expected: size + 1));
             });
         }
 
@@ -169,12 +151,12 @@ namespace APITest.GameTest
         {
             Assert.That(actual: _repository.GameRepository.GetPlayersTurnByPlayersToken("12"), Is.EqualTo(expected: Color.Black));
 
-            _repository.GameRepository.Move(new("12",2,3));
+            _repository.GameRepository.Move(new("12", 2, 3));
 
             Assert.Multiple(() =>
             {
                 Assert.That(actual: _repository.GameRepository.GetPlayersTurnByPlayersToken("12"), Is.EqualTo(expected: Color.White));
-                Assert.That(actual: _repository.GameRepository.GetBoardByPlayersToken("12")?[2,3], Is.EqualTo(expected: Color.Black));
+                Assert.That(actual: _repository.GameRepository.GetBoardByPlayersToken("12")?[2, 3], Is.EqualTo(expected: Color.Black));
             });
         }
 

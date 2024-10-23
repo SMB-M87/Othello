@@ -11,7 +11,6 @@ namespace API.Data
         Color? GetPlayersTurnByPlayersToken(string player_token);
         Status? GetStatusByPlayersToken(string player_token);
         Color[,]? GetBoardByPlayersToken(string player_token);
-        bool Join(GameEntrant entry);
         bool JoinPlayer(GameEntrant entry);
         (bool succeded, string? error) Move(GameStep action);
         bool Pass(string player_token, out string error_message);

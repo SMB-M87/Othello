@@ -454,7 +454,7 @@ namespace APITest.GameTest
         {
             GameEntrant entry = new("fourth", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -472,7 +472,7 @@ namespace APITest.GameTest
         {
             GameEntrant entry = new("fourth", "player");
 
-            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -490,7 +490,7 @@ namespace APITest.GameTest
         {
             GameEntrant entry = new("join", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -508,7 +508,7 @@ namespace APITest.GameTest
         {
             GameEntrant entry = new("first", "fourth");
 
-            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -526,7 +526,7 @@ namespace APITest.GameTest
         {
             GameEntrant entry = new("second", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -544,7 +544,7 @@ namespace APITest.GameTest
         {
             GameEntrant entry = new("first", "first");
 
-            ActionResult<HttpResponseMessage>? result = _controller.JoinPlayer(entry);
+            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -608,7 +608,7 @@ namespace APITest.GameTest
         [Test]
         public void Delete_SecondPlayer_BadRequest()
         {
-            _repository.GameRepository.Join(new("zero", "fifth"));
+            _repository.GameRepository.JoinPlayer(new("zero", "fifth"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Delete("fifth");
             HttpResponseMessage? respons = result?.Value;
@@ -717,7 +717,7 @@ namespace APITest.GameTest
         [Test]
         public void Move_Finished_OK()
         {
-            GameStep action = new("fifth", 0,2);
+            GameStep action = new("fifth", 0, 2);
 
             Assert.Multiple(() =>
             {
@@ -820,8 +820,8 @@ namespace APITest.GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(result.Value.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                Assert.That(result.Value.Content.ReadAsStringAsync().Result, Is.EqualTo("Move (0,0) is not possible!"));  // Expected error message
+                Assert.That(result.Value?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(result.Value?.Content.ReadAsStringAsync().Result, Is.EqualTo("Move (0,0) is not possible!"));  // Expected error message
             });
         }
 
@@ -912,7 +912,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayerNonExistant_NotFound()
         {
-             ActionResult<HttpResponseMessage>? result = _controller.Pass("nine");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("nine");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)

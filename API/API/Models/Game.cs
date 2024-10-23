@@ -45,7 +45,7 @@ namespace API.Models
 
         public Game()
         {
-            Token = string.Empty;           
+            Token = string.Empty;
             Description = string.Empty;
             First = string.Empty;
             FColor = Color.None;
@@ -96,12 +96,17 @@ namespace API.Models
             SColor = GetOpponentsColor(FColor);
         }
 
+        private void SetPlayingStatus()
+        {
+            Status = Status.Playing;
+        }
+
         public void SetSecondPlayer(string secondPlayerToken)
         {
             if (Second == null)
             {
                 Second = secondPlayerToken;
-                Status = Status.Playing;
+                SetPlayingStatus();
             }
             else
             {

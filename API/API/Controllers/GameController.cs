@@ -1,6 +1,5 @@
 ﻿using API.Data;
 using API.Models;
-using Azure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -85,17 +84,6 @@ namespace API.Controllers
         [HttpPut("join")]
         public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entrant)
         {
-            var respons = _repository.GameRepository.Join(entrant);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-        }
-
-        [HttpPut("join/player")]
-        public ActionResult<HttpResponseMessage> JoinPlayer([FromBody] GameEntrant entrant)
-        {
             var respons = _repository.GameRepository.JoinPlayer(entrant);
 
             if (respons == true)
@@ -121,8 +109,7 @@ namespace API.Controllers
         [HttpPut("pass")]
         public ActionResult<HttpResponseMessage> Pass([FromBody] string player_token)
         {
-            string error_message;
-            var respons = _repository.GameRepository.Pass(player_token, out error_message);
+            var respons = _repository.GameRepository.Pass(player_token, out string error_message);
 
             if (respons)
             {

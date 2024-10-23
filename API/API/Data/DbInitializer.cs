@@ -14,9 +14,9 @@ namespace API.Data
 
         public void Seed()
         {
-            Player one = new("karen", "Karen") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player one = new("karen", "Karen")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "Ernst", "John" },
                 Requests = new List<Request>
                 {
@@ -25,9 +25,9 @@ namespace API.Data
                     new(Inquiry.Friend, "bad")
                 }
             };
-            Player two = new("ernst", "Ernst") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player two = new("ernst", "Ernst")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "John", "Karen" },
                 Requests = new List<Request>
                 {
@@ -36,9 +36,9 @@ namespace API.Data
                     new(Inquiry.Friend, "eltjo")
                 }
             };
-            Player three = new("john", "John") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player three = new("john", "John")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "Ernst", "Karen" },
                 Requests = new List<Request>
                 {
@@ -47,31 +47,31 @@ namespace API.Data
                     new(Inquiry.Friend, "john")
                 }
             };
-            Player four = new("eltjo", "Eltjo") 
-            { 
-                LastActivity = DateTime.UtcNow, 
-                Friends = { "Tijn" }, 
+            Player four = new("eltjo", "Eltjo")
+            {
+                LastActivity = DateTime.UtcNow,
+                Friends = { "Tijn" },
                 Requests = new List<Request>
-                { 
+                {
                     new(Inquiry.Friend, "karen"),
                     new(Inquiry.Friend, "ernst"),
-                    new(Inquiry.Friend, "john") 
-                } 
+                    new(Inquiry.Friend, "john")
+                }
             };
-            Player five = new("tijn", "Tijn") 
-            { 
-                LastActivity = DateTime.UtcNow, 
-                Friends = { "Eltjo" }, 
+            Player five = new("tijn", "Tijn")
+            {
+                LastActivity = DateTime.UtcNow,
+                Friends = { "Eltjo" },
                 Requests = new List<Request>
                 {
                     new(Inquiry.Friend, "tijn"),
                     new(Inquiry.Friend, "bad"),
                     new(Inquiry.Friend, "sad")
-                } 
+                }
             };
-            Player six = new("cena", "Cena") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player six = new("cena", "Cena")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "John", "Karen" },
                 Requests = new List<Request>
                 {
@@ -80,9 +80,9 @@ namespace API.Data
                     new(Inquiry.Friend, "sad")
                 }
             };
-            Player seven = new("burst", "Burst") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player seven = new("burst", "Burst")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "Cena", "Karen" },
                 Requests = new List<Request>
                 {
@@ -91,9 +91,9 @@ namespace API.Data
                     new(Inquiry.Friend, "sad")
                 }
             };
-            Player eight = new("burton", "Burton") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player eight = new("burton", "Burton")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "Ernst", "Karen" },
                 Requests = new List<Request>
                 {
@@ -102,9 +102,9 @@ namespace API.Data
                     new(Inquiry.Friend, "sad")
                 }
             };
-            Player nine = new("nice", "Sadbux") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player nine = new("nice", "Sadbux")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "Eltjo", "Tijn" },
                 Requests = new List<Request>
                 {
@@ -113,9 +113,9 @@ namespace API.Data
                     new(Inquiry.Friend, "sad")
                 }
             };
-            Player ten = new("bad", "Badbux") 
-            { 
-                LastActivity = DateTime.UtcNow, 
+            Player ten = new("bad", "Badbux")
+            {
+                LastActivity = DateTime.UtcNow,
                 Friends = { "Eltjo", "Tijn" },
                 Requests = new List<Request>
                 {

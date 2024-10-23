@@ -1,6 +1,6 @@
 ﻿namespace API.Models
 {
-    public enum Inquiry { Friend = 0, Game = 1, None = 2}
+    public enum Inquiry { Friend = 0, Game = 1, None = 2 }
 
     public class Request
     {

@@ -36,6 +36,13 @@
             }
         }
 
+        public GameStep()
+        {
+            Token = string.Empty;
+            Row = 0;
+            Column = 0;
+        }
+
         public GameStep(string player, int row = 2, int column = 3)
         {
             Token = player;
