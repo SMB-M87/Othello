@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using NuGet.Common;
 
 namespace MVC.Middleware
 {
@@ -47,6 +46,11 @@ namespace MVC.Middleware
                             else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/game/wait"))
                             {
                                 context.Response.Redirect($"/Game/Wait?token={token}");
+                                return;
+                            }
+                            else
+                            {
+                                await _next(context);
                                 return;
                             }
                         }

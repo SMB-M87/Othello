@@ -11,17 +11,23 @@ namespace API.Data
             _context = context;
         }
 
-        public void Create(GameResult result)
+        public bool Create(GameResult result)
         {
-            result.Date = DateTime.UtcNow;
-            _context.Results.Add(result);
+            var request = Get(result.Token);
 
-            var game = _context.Games.FirstOrDefault(s => s.Token.Equals(result.Token));
+            if (request is null)
+            {
+                result.Date = DateTime.UtcNow;
+                _context.Results.Add(result);
 
-            if (game != null)
-                _context.Games.Remove(game);
+                var game = _context.Games.FirstOrDefault(s => s.Token.Equals(result.Token));
+                if (game != null)
+                    _context.Games.Remove(game);
 
-            _context.SaveChanges();
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public GameResult? Get(string token)
@@ -29,21 +35,61 @@ namespace API.Data
             return _context.Results.FirstOrDefault(s => s.Token == token);
         }
 
-        public string GetPlayerStats(string token)
+        private string? GetToken(string username)
         {
-            var results = GetPlayersMatchHistory(token);
-            int wins = results.Count(r => r.Winner == token && r.Draw == false);
-            int losses = results.Count(r => r.Loser == token && r.Draw == false);
-            int draws = results.Count(r => (r.Winner.Contains(token) || r.Loser.Contains(token)) && r.Draw == true);
-
-            return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(username))?.Token;
         }
 
-        public List<GameResult> GetPlayersMatchHistory(string token)
+        private List<GameResult> GetMatchHistory(string player_token)
         {
             return _context.Results
-                .Where(s => s.Winner == token || s.Loser == token)
+                .Where(s => s.Winner == player_token || s.Loser == player_token)
                 .ToList();
+        }
+
+        public string? GetPlayerStats(string username)
+        {
+            var token = GetToken(username);
+
+            if (token is not null)
+            {
+                List<GameResult> results = GetMatchHistory(token);
+
+                int wins = results.Count(r => r.Winner == token && r.Draw == false);
+                int losses = results.Count(r => r.Loser == token && r.Draw == false);
+                int draws = results.Count(r => (r.Winner.Contains(token) || r.Loser.Contains(token)) && r.Draw == true);
+
+                return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
+            }
+            return null;
+        }
+
+        private string? GetName(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(token))?.Username;
+        }
+
+        public List<GameResult>? GetPlayersMatchHistory(string username)
+        {
+            var token = GetToken(username);
+
+            if (token is not null)
+            {
+                var results = GetMatchHistory(token);
+
+                if (results.Count > 0)
+                {
+                    results = results.OrderByDescending(r => r.Date).ToList();
+
+                    foreach (var game in results)
+                    {
+                        game.Winner = GetName(game.Winner) ?? string.Empty;
+                        game.Loser = GetName(game.Loser) ?? string.Empty;
+                    }
+                }
+                return results;
+            }
+            return null;
         }
     }
 }

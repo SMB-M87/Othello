@@ -11,188 +11,237 @@ namespace API.Data
             _context = context;
         }
 
-        public void Create(Player player)
+        private bool PlayerExists(string token)
         {
-            _context.Players.Add(player);
-            _context.SaveChanges();
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(token)) != null;
         }
 
-        public void Update(Player player)
+        public bool Create(Player player)
         {
-            var update = Get(player.Token);
+            var exists = PlayerExists(player.Token);
 
-            if (update is not null)
+            if (exists == false)
             {
-                update.LastActivity = player.LastActivity;
-                _context.Entry(update).Property(g => g.LastActivity).IsModified = true;
-                update.Friends = player.Friends;
-                _context.Entry(update).Property(g => g.Friends).IsModified = true;
-                update.Requests = player.Requests;
-                _context.Entry(update).Property(g => g.Requests).IsModified = true;
+                _context.Players.Add(player);
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
-        public void Delete(Player player)
+        private Player? Get(string token)
         {
-            var remove = Get(player.Token);
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
+        }
 
-            if (remove is not null)
+        public bool UpdateActivity(string token)
+        {
+            var exists = PlayerExists(token);
+
+            if (exists == true)
             {
-                _context.Players.Remove(remove);
-                _context.SaveChanges();
+                var player = Get(token);
+
+                if (player is not null)
+                {
+                    player.LastActivity = DateTime.UtcNow;
+                    _context.Entry(player).Property(g => g.LastActivity).IsModified = true;
+                    _context.SaveChanges();
+                    return true;
+                }
             }
+            return false;
         }
 
-        public Player? Get(string player)
-        {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(player));
-        }
-
-        public Player? GetByUsername(string username)
+        private Player? GetByUsername(string username)
         {
             return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
         }
 
-        public bool Exists(string username)
+        public bool FriendRequest(string receiver_username, string sender_token)
         {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
-        }
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
 
-        public List<Player>? GetPlayers()
-        {
-            return _context.Players.ToList();
-        }
-
-        public List<string>? GetFriends(string player)
-        {
-            return (List<string>?)(_context.Players.FirstOrDefault(s => s.Token.Equals(player))?.Friends);
-        }
-
-        public void SendFriendInvite(string receiver, string sender)
-        {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
-
-            if (receiver_control is not null && sender_control is not null && !receiver_control.Friends.Contains(sender) && 
-                !receiver_control.Requests.Any(p => p.Username == sender && p.Type == Inquiry.Friend))
+            if (receiver is not null && sender is not null &&
+                !receiver.Friends.Contains(sender.Username) && !sender.Friends.Contains(receiver.Username) &&
+                !receiver.Requests.Any(p => p.Username == sender.Username && p.Type == Inquiry.Friend) &&
+                !sender.Requests.Any(p => p.Username == receiver.Username && p.Type == Inquiry.Friend))
             {
-                receiver_control.Requests.Add(new(Inquiry.Friend, sender));
+                receiver.Requests.Add(new(Inquiry.Friend, sender.Username));
+                _context.Entry(receiver).Property(g => g.Requests).IsModified = true;
                 _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
-        public void AcceptFriendInvite(string receiver, string sender)
+        public bool AcceptFriendRequest(string receiver_username, string sender_token)
         {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
 
-            if (receiver_control is not null && sender_control is not null && !receiver_control.Friends.Contains(sender))
+            if (receiver is not null && sender is not null &&
+                !receiver.Friends.Contains(sender.Username) && !sender.Friends.Contains(receiver.Username) &&
+                sender.Requests.Any(p => p.Username == receiver.Username && p.Type == Inquiry.Friend))
             {
-                var control = sender_control.Requests.FirstOrDefault(p => p.Username == receiver && p.Type == Inquiry.Friend);
+                var request = sender.Requests.FirstOrDefault(p => p.Username == receiver.Username && p.Type == Inquiry.Friend);
 
-                if (control is not null)
+                if (request is not null)
                 {
-                    receiver_control.Friends.Add(sender);
-                    sender_control.Requests.Remove(control);
-                    sender_control.Friends.Add(receiver);
+                    receiver.Friends.Add(sender.Username);
+                    _context.Entry(receiver).Property(p => p.Friends).IsModified = true;
+
+                    sender.Requests.Remove(request);
+                    sender.Friends.Add(receiver.Username);
+                    _context.Entry(sender).Property(p => p.Friends).IsModified = true;
+                    _context.Entry(sender).Property(p => p.Requests).IsModified = true;
                     _context.SaveChanges();
+                    return true;
                 }
             }
+            return false;
         }
 
-        public void DeclineFriendInvite(string receiver, string sender)
+        public bool DeclineFriendRequest(string receiver_username, string sender_token)
         {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
 
-            if (receiver_control is not null && sender_control is not null)
+            if (receiver is not null && sender is not null &&
+                !receiver.Friends.Contains(sender.Username) && !sender.Friends.Contains(receiver.Username) &&
+                sender.Requests.Any(p => p.Username == receiver.Username && p.Type == Inquiry.Friend))
             {
-                var control = sender_control.Requests.FirstOrDefault(p => p.Username == receiver && p.Type == Inquiry.Friend);
+                var request = sender.Requests.FirstOrDefault(p => p.Username == receiver.Username && p.Type == Inquiry.Friend);
 
-                if (control is not null)
+                if (request is not null)
                 {
-                    sender_control.Requests.Remove(control);
+                    sender.Requests.Remove(request);
+                    _context.Entry(sender).Property(p => p.Requests).IsModified = true;
                     _context.SaveChanges();
+                    return true;
                 }
             }
+            return false;
         }
 
-        public void DeleteFriend(string receiver, string sender)
+        private bool PlayerInGame(string token)
         {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
-
-            if (receiver_control is not null && sender_control is not null)
-            {
-                sender_control.Friends.Remove(receiver);
-                receiver_control.Friends.Remove(sender);
-                _context.SaveChanges();
-            }
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
+            return game is not null;
         }
 
-        public List<Request>? GetPending(string player)
+        private bool PlayerInPendingGame(string token)
         {
-            return (List<Request>?)(_context.Players.FirstOrDefault(s => s.Token.Equals(player))?.Requests);
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status == Status.Pending);
+            return game is not null;
         }
 
-        public void SendGameInvite(string receiver, string sender)
+        public bool GameRequest(string receiver_username, string sender_token)
         {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
             DateTime now = DateTime.UtcNow;
 
-            if (receiver_control is not null && sender_control is not null && (now - receiver_control.LastActivity).TotalSeconds <= 240
-                && !receiver_control.Requests.Any(p => p.Username == sender && p.Type == Inquiry.Game))
+            if (receiver is not null && sender is not null &&
+                !PlayerInGame(receiver.Token) && PlayerInPendingGame(sender.Token) &&
+                (now - receiver.LastActivity).TotalSeconds <= 240 &&
+                !receiver.Requests.Any(p => p.Username == sender.Username && p.Type == Inquiry.Game))
             {
-                var game_control = _context.Games.FirstOrDefault(g => g.First == receiver_control.Token || g.Second == receiver_control.Token);
-
-                if (game_control is null)
-                {
-                    receiver_control.Requests.Add(new(Inquiry.Game, sender));
-                    _context.SaveChanges();
-                }
+                receiver.Requests.Add(new(Inquiry.Game, sender.Username));
+                _context.Entry(receiver).Property(p => p.Requests).IsModified = true;
+                _context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
-        public void AcceptGameInvite(string receiver, string sender)
+        private bool JoinPlayersGame(string receiver_token, string sender_token)
         {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
+            List<Game>? games = _context.Games.ToList();
 
-            if (receiver_control is not null && sender_control is not null)
+            if (games.Count > 0)
             {
-                var control = sender_control.Requests.FirstOrDefault(p => p.Username == receiver && p.Type == Inquiry.Game);
-                var game_control = _context.Games.FirstOrDefault(g => g.First == receiver_control.Token && g.Second == string.Empty);
+                var game = games!.FirstOrDefault(s => s.First.Equals(receiver_token) && s.Status != Status.Finished);
 
-                if (control is not null && game_control is not null)
+                if (game is not null)
                 {
-                    receiver_control.Friends.Add(sender);
-                    sender_control.Requests.Remove(control);
-                    sender_control.Friends.Add(receiver);
+                    game.SetSecondPlayer(sender_token);
+                    _context.Entry(game).Property(g => g.Status).IsModified = true;
+                    _context.Entry(game).Property(g => g.Second).IsModified = true;
                     _context.SaveChanges();
+                    return true;
                 }
             }
+            return false;
         }
 
-        public void DeclineGameInvite(string receiver, string sender)
+        public bool AcceptGameRequest(string receiver_username, string sender_token)
         {
-            var receiver_control = GetByUsername(receiver);
-            var sender_control = GetByUsername(sender);
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
+            DateTime now = DateTime.UtcNow;
 
-            if (receiver_control is not null && sender_control is not null)
+            if (receiver is not null && sender is not null &&
+                PlayerInPendingGame(receiver.Token) && !PlayerInGame(sender.Token) &&
+                !receiver.Requests.Any(p => p.Username == sender.Username && p.Type == Inquiry.Game))
             {
-                var control = sender_control.Requests.FirstOrDefault(p => p.Username == receiver && p.Type == Inquiry.Game);
+                var request = sender.Requests.FirstOrDefault(p => p.Username == receiver.Username && p.Type == Inquiry.Game);
 
-                if (control is not null)
+                if (request is not null && (now - request.Date).TotalSeconds <= 29)
                 {
-                    sender_control.Requests.Remove(control);
+                    JoinPlayersGame(receiver.Token, sender.Token);
+                    sender.Requests.Remove(request);
+                    _context.Entry(sender).Property(p => p.Requests).IsModified = true;
                     _context.SaveChanges();
+                    return true;
                 }
             }
+            return false;
         }
 
-        public void DeleteGameInvites(string token)
+        public bool DeclineGameRequest(string receiver_username, string sender_token)
+        {
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
+
+            if (receiver is not null && sender is not null &&
+                sender.Requests.Any(p => p.Username == receiver.Username && p.Type == Inquiry.Game))
+            {
+                var request = sender.Requests.FirstOrDefault(p => p.Username == receiver.Username && p.Type == Inquiry.Game);
+
+                if (request is not null)
+                {
+                    sender.Requests.Remove(request);
+                    _context.Entry(sender).Property(p => p.Requests).IsModified = true;
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool DeleteFriend(string receiver_username, string sender_token)
+        {
+            var receiver = GetByUsername(receiver_username);
+            var sender = Get(sender_token);
+
+            if (receiver is not null && sender is not null)
+            {
+                sender.Friends.Remove(receiver_username);
+                _context.Entry(sender).Property(p => p.Friends).IsModified = true;
+                receiver.Friends.Remove(sender_token);
+                _context.Entry(receiver).Property(p => p.Friends).IsModified = true;
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        public bool DeleteGameInvites(string token)
         {
             var player = Get(token);
 
@@ -206,9 +255,55 @@ namespace API.Data
                 {
                     player.Requests.Remove(expiredRequest);
                 }
-
+                _context.Entry(player).Property(p => p.Requests).IsModified = true;
                 _context.SaveChanges();
+                return true;
             }
+            return false;
+        }
+
+        public bool Delete(string token)
+        {
+            var player = Get(token);
+
+            if (player is not null)
+            {
+                _context.Players.Remove(player);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
+
+        private List<Player>? GetPlayers()
+        {
+            return _context.Players.ToList();
+        }
+
+        public List<string>? GetOnlinePlayers()
+        {
+            return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).Select(player => player.Username).ToList();
+        }
+
+        public List<string>? GetFriends(string token)
+        {
+            return (List<string>?)(Get(token)?.Friends);
+        }
+
+        public List<Request>? GetRequests(string token)
+        {
+            return (List<Request>?)(Get(token)?.Requests);
+        }
+
+        private string? GetName(string token)
+        {
+            return Get(token)?.Username;
+        }
+
+        public List<string>? GetSent(string token)
+        {
+            string? username = GetName(token);
+            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username)).Select(p => p.Username).ToList();
         }
     }
 }

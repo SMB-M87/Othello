@@ -2,13 +2,13 @@
 {
     public class PlayerRequest
     {
-        public string Receiver { get; set; }
-        public string Sender { get; set; }
+        public string ReceiverUsername { get; set; }
+        public string SenderToken { get; set; }
 
-        public PlayerRequest(string receiver, string sender)
+        public PlayerRequest(string receiver_username, string sender_token)
         {
-            Receiver = receiver;
-            Sender = sender;
+            ReceiverUsername = receiver_username;
+            SenderToken = sender_token;
         }
     }
 }

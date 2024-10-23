@@ -4,22 +4,21 @@ namespace API.Data
 {
     public interface IPlayerRepository
     {
-        void Create(Player player);
-        void Update(Player player);
-        void Delete(Player player);
-        Player? Get(string token);
-        Player? GetByUsername(string username);
-        bool Exists(string username);
-        List<Player>? GetPlayers();
-        void SendFriendInvite(string receiver, string sender);
-        void AcceptFriendInvite(string receiver, string sender);
-        void DeclineFriendInvite(string receiver, string sender);
-        void DeleteFriend(string receiver, string sender);
-        List<Request>? GetPending(string player);
-        List<string>? GetFriends(string player);
-        void SendGameInvite(string receiver, string sender);
-        void AcceptGameInvite(string receiver, string sender);
-        void DeclineGameInvite(string receiver, string sender);
-        void DeleteGameInvites(string token);
+        bool Create(Player player);
+        bool UpdateActivity(string token);
+        bool FriendRequest(string receiver_username, string sender_token);
+        bool AcceptFriendRequest(string receiver_username, string sender_token);
+        bool DeclineFriendRequest(string receiver_username, string sender_token);
+        bool GameRequest(string receiver_username, string sender_token);
+        bool AcceptGameRequest(string receiver_username, string sender_token);
+        bool DeclineGameRequest(string receiver_username, string sender_token);
+        bool DeleteFriend(string receiver_username, string sender_token);
+        bool DeleteGameInvites(string token);
+        bool Delete(string token);
+
+        List<string>? GetOnlinePlayers();
+        List<string>? GetFriends(string token);
+        List<Request>? GetRequests(string token);
+        List<string>? GetSent(string token);
     }
 }

@@ -16,38 +16,36 @@ namespace API.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<List<GameResult>> Result(string token)
+        public ActionResult<GameResult> Result(string token)
         {
-            var result = _repository.ResultRepository.Get(token);
+            var respons = _repository.ResultRepository.Get(token);
 
-            if (result is null)
+            if (respons is null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok(respons);
         }
 
-        [HttpGet("history/{token}")]
-        public ActionResult<List<GameResult>> MatchHistory(string token)
+        [HttpGet("history/{username}")]
+        public ActionResult<List<GameResult>> MatchHistory(string username)
         {
-            var player = _repository.PlayerRepository.Get(token);
+            var respons = _repository.ResultRepository.GetPlayersMatchHistory(username);
 
-            if (player is null)
+            if (respons is null)
                 return NotFound();
 
-            var results = _repository.ResultRepository.GetPlayersMatchHistory(token);
-            return Ok(results);
+            return Ok(respons);
         }
 
-        [HttpGet("stats/{token}")]
-        public ActionResult<string> PlayerStats(string token)
+        [HttpGet("stats/{username}")]
+        public ActionResult<string> PlayerStats(string username)
         {
-            var player = _repository.PlayerRepository.Get(token);
+            var respons = _repository.ResultRepository.GetPlayerStats(username);
 
-            if (player is null)
+            if (respons is null)
                 return NotFound();
 
-            var stats = _repository.ResultRepository.GetPlayerStats(token);
-            return Ok(stats);
+            return Ok(respons);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Filters;
-using NuGet.Common;
 
 namespace MVC.Middleware
 {
@@ -16,6 +15,7 @@ namespace MVC.Middleware
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("https://localhost:7023/");
         }
+
 
         public async void OnActionExecuting(ActionExecutingContext context)
         {
@@ -64,6 +64,8 @@ namespace MVC.Middleware
             }
         }
 
-        public void OnActionExecuted(ActionExecutedContext context) { }
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+        }
     }
 }

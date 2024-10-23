@@ -14,18 +14,48 @@ namespace API.Data
 
         public void Seed()
         {
-            Player one = new("karen", "Karen") { LastActivity = DateTime.UtcNow, Friends = { "Ernst", "John" } };
-            Player two = new("ernst", "Ernst") { LastActivity = DateTime.UtcNow, Friends = { "John", "Karen" } };
-            Player three = new("john", "John") { LastActivity = DateTime.UtcNow, Friends = { "Ernst", "Karen" } };
+            Player one = new("karen", "Karen") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "Ernst", "John" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "eltjo"),
+                    new(Inquiry.Friend, "bad")
+                }
+            };
+            Player two = new("ernst", "Ernst") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "John", "Karen" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "burton"),
+                    new(Inquiry.Friend, "burst"),
+                    new(Inquiry.Friend, "eltjo")
+                }
+            };
+            Player three = new("john", "John") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "Ernst", "Karen" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "eltjo"),
+                    new(Inquiry.Friend, "john")
+                }
+            };
             Player four = new("eltjo", "Eltjo") 
             { 
                 LastActivity = DateTime.UtcNow, 
                 Friends = { "Tijn" }, 
                 Requests = new List<Request>
                 { 
-                    new(Inquiry.Friend, "Karen"),
-                    new(Inquiry.Friend, "Ernst"),
-                    new(Inquiry.Friend, "John") 
+                    new(Inquiry.Friend, "karen"),
+                    new(Inquiry.Friend, "ernst"),
+                    new(Inquiry.Friend, "john") 
                 } 
             };
             Player five = new("tijn", "Tijn") 
@@ -34,16 +64,68 @@ namespace API.Data
                 Friends = { "Eltjo" }, 
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "Karen"),
-                    new(Inquiry.Friend, "Ernst"),
-                    new(Inquiry.Friend, "John")
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "bad"),
+                    new(Inquiry.Friend, "sad")
                 } 
             };
-            Player six = new("cena", "Cena") { LastActivity = DateTime.UtcNow, Friends = { "John", "Karen" } };
-            Player seven = new("burst", "Burst") { LastActivity = DateTime.UtcNow, Friends = { "Cena", "Karen" } };
-            Player eight = new("burton", "Burton") { LastActivity = DateTime.UtcNow, Friends = { "Ernst", "Karen" } };
+            Player six = new("cena", "Cena") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "John", "Karen" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "eltjo"),
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "sad")
+                }
+            };
+            Player seven = new("burst", "Burst") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "Cena", "Karen" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "eltjo"),
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "sad")
+                }
+            };
+            Player eight = new("burton", "Burton") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "Ernst", "Karen" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "eltjo"),
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "sad")
+                }
+            };
+            Player nine = new("nice", "Sadbux") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "Eltjo", "Tijn" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "sad"),
+                    new(Inquiry.Friend, "tijn"),
+                    new(Inquiry.Friend, "sad")
+                }
+            };
+            Player ten = new("bad", "Badbux") 
+            { 
+                LastActivity = DateTime.UtcNow, 
+                Friends = { "Eltjo", "Tijn" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "burton"),
+                    new(Inquiry.Friend, "bad"),
+                    new(Inquiry.Friend, "sad")
+                }
+            };
 
-            _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight);
+            _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten);
 
             Game game0 = new("zero", one.Token, Color.Black);
 

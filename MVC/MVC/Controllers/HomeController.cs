@@ -24,115 +24,149 @@ namespace MVC.Controllers
         {
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                var userId = _userManager.GetUserId(User);
+                var username = _userManager.GetUserName(User);
+                var token = _userManager.GetUserId(User);
 
-                // Fetch player stats
-                var statsResponse = await _httpClient.GetAsync($"api/result/stats/{userId}");
-                string stats = string.Empty;
-
-                if (statsResponse.IsSuccessStatusCode)
-                {
-                    stats = await statsResponse.Content.ReadAsStringAsync();
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
-                }
-
-                // Fetch match history
-                var historyResponse = await _httpClient.GetAsync($"api/result/history/{userId}");
-                List<GameResult> matchHistory = new();
-
-                if (historyResponse.IsSuccessStatusCode)
-                {
-                    matchHistory = await historyResponse.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
-                }
-
-                if (matchHistory.Count > 0)
-                {
-                    matchHistory = matchHistory.OrderByDescending(g => g.Date).ToList();
-
-                    foreach (var game in matchHistory)
-                    {
-                        string url = "api/player/name/";
-
-                        var winResponse = await _httpClient.GetAsync($"{url}{game.Winner}");
-                        var loseResponse = await _httpClient.GetAsync($"{url}{game.Loser}");
-
-                        game.Winner = await winResponse.Content.ReadAsStringAsync();
-                        game.Loser = await loseResponse.Content.ReadAsStringAsync();
-                    }
-                }
-
-                // Fetch online players
-                var response = await _httpClient.GetAsync("api/player");
-                List<string> onlinePlayers = new();
-
-                if (response.IsSuccessStatusCode)
-                {
-                    onlinePlayers = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                    onlinePlayers.Remove(_userManager.GetUserName(User));
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Unable to fetch online players.");
-                }
-
-                // Fetch friends, pending and sent requests
-                var friendsResponse = await _httpClient.GetAsync($"api/player/friends/{userId}");
-                List<string> friends = new();
-
-                if (friendsResponse.IsSuccessStatusCode)
-                {
-                    friends = await friendsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                }
-
-                var onlineFriends = friends.Intersect(onlinePlayers).ToList();
-                var offlineFriends = friends.Except(onlineFriends).ToList();
-                friends = onlineFriends.Concat(offlineFriends).ToList();
-
-                var sentResponse = await _httpClient.GetAsync($"api/player/sent/{_userManager.GetUserName(User)}");
-                List<string> sentRequests = new();
-
-                if (sentResponse.IsSuccessStatusCode)
-                {
-                    sentRequests = await sentResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                }
-
-                var pendingResponse = await _httpClient.GetAsync($"api/player/pending/{userId}");
-                List<string> pendingRequests = new();
-
-                if (pendingResponse.IsSuccessStatusCode)
-                {
-                    pendingRequests = await pendingResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                }
-
-                var gamesResponse = await _httpClient.GetAsync("api/game");
-                List<GameDescription> games = new();
-
-                if (gamesResponse.IsSuccessStatusCode)
-                {
-                    games = await gamesResponse.Content.ReadFromJsonAsync<List<GameDescription>>() ?? new();
-                }
-
-                var joinablePlayers = games.Select(g => g.Player).ToList();
+                string stats = await GetStats(username);
+                List<GameResult> history = await GetMatchHistory(username);
+                List<string> onlinePlayers = await GetOnlinePlayers();
+                List<string> friends = await GetFriends(token);
+                List<string> onlineFriends = friends.Intersect(onlinePlayers).ToList();
+                List<string> offlineFriends = friends.Except(onlineFriends).ToList();
+                List<string> sentRequests = await GetSent(username);
+                List<Request> pendingRequests = await GetRequest(username);
+                List<Request> joinRequests = pendingRequests.FindAll(r => r.Type == Inquiry.Game).ToList();
+                List<Request> friendRequest = pendingRequests.FindAll(r => r.Type == Inquiry.Friend).ToList();
+                List<GameDescription> games = await GetPendingGames();
+                List<string> joinablePlayers = games.Select(g => g.Player).ToList();
 
                 var model = new HomeView
                 {
                     Stats = stats,
-                    Friends = friends,
                     PendingGames = games,
+                    Friends = offlineFriends,
+                    Requests = pendingRequests,
                     Joinable = joinablePlayers,
+                    JoinRequests = joinRequests,
                     SentRequests = sentRequests,
-                    MatchHistory = matchHistory,
+                    MatchHistory = history,
                     OnlinePlayers = onlinePlayers,
-                    PendingRequests = pendingRequests
+                    OnlineFriends = onlineFriends
                 };
 
                 return View(model);
             }
 
             return View();
+        }
+
+        private async Task<string> GetStats(string username)
+        {
+            var statsResponse = await _httpClient.GetAsync($"api/result/stats/{username}");
+            string stats = string.Empty;
+
+            if (statsResponse.IsSuccessStatusCode)
+            {
+                stats = await statsResponse.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
+            }
+            return stats;
+        }
+
+        private async Task<List<GameResult>> GetMatchHistory(string username)
+        {
+            var historyResponse = await _httpClient.GetAsync($"api/result/history/{username}");
+            List<GameResult> history = new();
+
+            if (historyResponse.IsSuccessStatusCode)
+            {
+                history = await historyResponse.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
+            }
+
+            if (history.Count > 0)
+            {
+                history = history.OrderByDescending(g => g.Date).ToList();
+
+                foreach (var game in history)
+                {
+                    string url = "api/player/name/";
+
+                    var winResponse = await _httpClient.GetAsync($"{url}{game.Winner}");
+                    var loseResponse = await _httpClient.GetAsync($"{url}{game.Loser}");
+
+                    game.Winner = await winResponse.Content.ReadAsStringAsync();
+                    game.Loser = await loseResponse.Content.ReadAsStringAsync();
+                }
+            }
+            return history;
+        }
+
+        private async Task<List<string>> GetOnlinePlayers()
+        {
+            var response = await _httpClient.GetAsync("api/player");
+            List<string> online = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                online = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
+                online.Remove(_userManager.GetUserName(User));
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Unable to fetch online players.");
+            }
+            return online;
+        }
+
+        private async Task<List<string>> GetFriends(string token)
+        {
+            var friendsResponse = await _httpClient.GetAsync($"api/player/friends/{token}");
+            List<string> friends = new();
+
+            if (friendsResponse.IsSuccessStatusCode)
+            {
+                friends = await friendsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
+            }
+            return friends;
+        }
+
+        private async Task<List<string>> GetSent(string token)
+        {
+            var sentResponse = await _httpClient.GetAsync($"api/player/sent/{token}");
+            List<string> sentRequests = new();
+
+            if (sentResponse.IsSuccessStatusCode)
+            {
+                sentRequests = await sentResponse.Content.ReadFromJsonAsync<List<string>>() ?? new();
+            }
+            return sentRequests;
+        }
+
+        private async Task<List<Request>> GetRequest(string token)
+        {
+            var pendingResponse = await _httpClient.GetAsync($"api/player/pending/{token}");
+            List<Request> pendingRequests = new();
+
+            if (pendingResponse.IsSuccessStatusCode)
+            {
+                pendingRequests = await pendingResponse.Content.ReadFromJsonAsync<List<Request>>() ?? new();
+            }
+            return pendingRequests;
+        }
+
+        private async Task<List<GameDescription>> GetPendingGames()
+        {
+            var gamesResponse = await _httpClient.GetAsync("api/game");
+            List<GameDescription> games = new();
+
+            if (gamesResponse.IsSuccessStatusCode)
+            {
+                games = await gamesResponse.Content.ReadFromJsonAsync<List<GameDescription>>() ?? new();
+            }
+            return games;
         }
 
         [HttpPost]
@@ -274,65 +308,22 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Fetch the token by username
             var respons = await _httpClient.GetAsync($"api/player/token/{username}");
             if (!respons.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            // Extract the token from the response
             var token = await respons.Content.ReadAsStringAsync();
 
-            // Fetch player stats by token
-            var statsResponse = await _httpClient.GetAsync($"api/result/stats/{token}");
-            string stats = string.Empty;
+            string stats = await GetStats(token);
+            List<GameResult> matchHistory = await GetMatchHistory(token);
 
-            if (statsResponse.IsSuccessStatusCode)
-            {
-                stats = await statsResponse.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
-            }
-
-            // Fetch match history by token
-            var historyResponse = await _httpClient.GetAsync($"api/result/history/{token}");
-            List<GameResult> matchHistory = new();
-
-            if (historyResponse.IsSuccessStatusCode)
-            {
-                matchHistory = await historyResponse.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
-            }
-
-            if (matchHistory.Count > 0)
-            {
-                matchHistory = matchHistory.OrderByDescending(g => g.Date).ToList();
-
-                foreach (var game in matchHistory)
-                {
-                    string url = "api/player/name/";
-
-                    var winResponse = await _httpClient.GetAsync($"{url}{game.Winner}");
-                    var loseResponse = await _httpClient.GetAsync($"{url}{game.Loser}");
-
-                    game.Winner = await winResponse.Content.ReadAsStringAsync();
-                    game.Loser = await loseResponse.Content.ReadAsStringAsync();
-                }
-            }
-
-            // Fetch the logged-in user's ID and friends
-            var currentUserId = _userManager.GetUserId(User);
-            var friendsResponse = await _httpClient.GetAsync($"api/player/friends/{currentUserId}");
-            var friends = friendsResponse.IsSuccessStatusCode ? await friendsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
-
-            // Fetch sent and pending friend requests
-            var sentRequestsResponse = await _httpClient.GetAsync($"api/player/sent/{_userManager.GetUserName(User)}");
-            var sentRequests = sentRequestsResponse.IsSuccessStatusCode ? await sentRequestsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
-
-            var pendingRequestsResponse = await _httpClient.GetAsync($"api/player/pending/{currentUserId}");
-            var pendingRequests = pendingRequestsResponse.IsSuccessStatusCode ? await pendingRequestsResponse.Content.ReadFromJsonAsync<List<string>>() ?? new() : new();
+            string currentUserId = _userManager.GetUserId(User);
+            string currentUsername = _userManager.GetUserName(User);
+            List<string> friends = await GetFriends(currentUserId);
+            List<string> sentRequests = await GetSent(currentUsername);
+            List<Request> requests = await GetRequest(currentUserId);
 
             var model = new ProfileView
             {
@@ -341,7 +332,7 @@ namespace MVC.Controllers
                 MatchHistory = matchHistory,
                 IsFriend = friends.Contains(username),
                 HasSentRequest = sentRequests.Contains(username),
-                HasPendingRequest = pendingRequests.Contains(username)
+                HasPendingRequest = requests.Contains(username)
             };
 
             return View("Profile", model);

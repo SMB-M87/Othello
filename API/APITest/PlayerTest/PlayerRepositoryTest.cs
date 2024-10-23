@@ -178,7 +178,7 @@ namespace APITest.PlayerTest
         [Test]
         public void PlayerPending_Correct()
         {
-            List<Request>? respons = _repository.PlayerRepository.GetPending("sixth");
+            List<Request>? respons = _repository.PlayerRepository.GetRequests("sixth");
 
             if (respons is not null)
                 Assert.That(actual: respons.Any(r => r.Username == "five" && r.Type == Inquiry.Friend), Is.True);
@@ -192,7 +192,7 @@ namespace APITest.PlayerTest
             Player player1 = _context.Players.First(p => p.Username == "one");
             Player player2 = _context.Players.First(p => p.Username == "two");
 
-            _repository.PlayerRepository.SendFriendInvite("one", "two");
+            _repository.PlayerRepository.FriendRequest("one", "two");
 
             Assert.Multiple(() =>
             {
@@ -206,8 +206,8 @@ namespace APITest.PlayerTest
             Player player1 = _context.Players.First(p => p.Username == "one");
             Player player2 = _context.Players.First(p => p.Username == "two");
 
-            _repository.PlayerRepository.SendFriendInvite("one", "two");
-            _repository.PlayerRepository.AcceptFriendInvite("two", "one");
+            _repository.PlayerRepository.FriendRequest("one", "two");
+            _repository.PlayerRepository.AcceptFriendRequest("two", "one");
 
             Assert.Multiple(() =>
             {
@@ -223,8 +223,8 @@ namespace APITest.PlayerTest
             Player player1 = _context.Players.First(p => p.Username == "one");
             Player player2 = _context.Players.First(p => p.Username == "two");
 
-            _repository.PlayerRepository.SendFriendInvite("one", "two");
-            _repository.PlayerRepository.DeclineFriendInvite("two", "one");
+            _repository.PlayerRepository.FriendRequest("one", "two");
+            _repository.PlayerRepository.DeclineFriendRequest("two", "one");
 
             Assert.Multiple(() =>
             {

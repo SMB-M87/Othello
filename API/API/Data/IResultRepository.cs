@@ -4,9 +4,9 @@ namespace API.Data
 {
     public interface IResultRepository
     {
-        void Create(GameResult result);
+        bool Create(GameResult result);
         GameResult? Get(string token);
-        string GetPlayerStats(string token);
-        List<GameResult> GetPlayersMatchHistory(string token);
+        string? GetPlayerStats(string player_token);
+        List<GameResult>? GetPlayersMatchHistory(string player_token);
     }
 }

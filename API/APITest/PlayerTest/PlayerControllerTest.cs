@@ -224,7 +224,7 @@ namespace APITest.PlayerTest
         [Test]
         public void PlayerPending_Correct()
         {
-            var result = _controller.PlayerPending("sixth");
+            var result = _controller.PlayerRequests("sixth");
 
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
             var okResult = result.Result as OkObjectResult;
@@ -242,7 +242,7 @@ namespace APITest.PlayerTest
         public void Send_OK()
         {
             PlayerRequest request = new("one", "two");
-            ActionResult<HttpResponseMessage>? result = _controller.Send(request);
+            ActionResult<HttpResponseMessage>? result = _controller.FriendRequest(request);
             HttpResponseMessage? respons = result?.Value;
 
             ActionResult<Player>? player = _controller.PlayerByUsername("one");
@@ -274,8 +274,8 @@ namespace APITest.PlayerTest
         [Test]
         public void Accept_OK()
         {
-            _controller.Send(new("one", "two"));
-            ActionResult<HttpResponseMessage>? result = _controller.Accept(new("two", "one"));
+            _controller.FriendRequest(new("one", "two"));
+            ActionResult<HttpResponseMessage>? result = _controller.AcceptFriendRequest(new("two", "one"));
             HttpResponseMessage? respons = result?.Value;
 
             Player? player = _repository.PlayerRepository.GetByUsername("one");
@@ -304,8 +304,8 @@ namespace APITest.PlayerTest
         public void Decline_OK()
         {
             PlayerRequest request = new("one", "two");
-            _controller.Send(request);
-            ActionResult<HttpResponseMessage>? result = _controller.Decline(new("two", "one"));
+            _controller.FriendRequest(request);
+            ActionResult<HttpResponseMessage>? result = _controller.DeclineFriendRequest(new("two", "one"));
             HttpResponseMessage? respons = result?.Value;
 
             Player? player = _repository.PlayerRepository.GetByUsername("one");
