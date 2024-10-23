@@ -31,6 +31,11 @@ namespace APITest.GameTest
             Player nine = new("nine", "nine");
             Player ten = new("12", "12");
             Player eleven = new("13", "13");
+            Player twelve = new("21", "21");
+            Player thirdteen = new("31", "31");
+            Player fourteen = new("41", "41");
+            Player fifteen = new("51", "51");
+            Player sixteen = new("61", "61");
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -43,6 +48,11 @@ namespace APITest.GameTest
             _repository.PlayerRepository.Create(nine);
             _repository.PlayerRepository.Create(ten);
             _repository.PlayerRepository.Create(eleven);
+            _repository.PlayerRepository.Create(twelve);
+            _repository.PlayerRepository.Create(thirdteen);
+            _repository.PlayerRepository.Create(fourteen);
+            _repository.PlayerRepository.Create(fifteen);
+            _repository.PlayerRepository.Create(sixteen);
 
             Game game = new("null", ten.Token, Color.Black, eleven.Token, Status.Playing, Color.Black);
 
@@ -68,6 +78,10 @@ namespace APITest.GameTest
 
             Game game10 = new("ten", eight.Token, Color.Black, nine.Token, Status.Playing, Color.White, "I search an advanced player!");
 
+            Game game11 = new("11", fourteen.Token, Color.Black);
+
+            Game game12 = new("12", fifteen.Token, Color.Black);
+
             _repository.GameRepository.Create(game0);
             _repository.GameRepository.Create(game1);
             _repository.GameRepository.Create(game2);
@@ -80,6 +94,8 @@ namespace APITest.GameTest
             _repository.GameRepository.Create(game);
             _repository.GameRepository.Create(game9);
             _repository.GameRepository.Create(game10);
+            _repository.GameRepository.Create(game11);
+            _repository.GameRepository.Create(game12);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -100,16 +116,16 @@ namespace APITest.GameTest
         [Test]
         public void Create_Correct()
         {
-            int size = _context.Games.Count();
-            Player five = new("fifth", "five");
-            Game game = new("three", five.Token, Color.Black);
+            int size = _context.Games.ToList().Count();
+            Game game = new("-15", "61", Color.Black);
 
             _repository.GameRepository.Create(game);
+            var games = _context.Games.ToList();
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _context.Games.Count(), Is.Not.EqualTo(expected: size));
-                Assert.That(actual: _context.Games.Count(), Is.EqualTo(expected: size + 1));
+                Assert.That(actual: games.Count(), Is.Not.EqualTo(expected: size));
+                Assert.That(actual: games.Count(), Is.EqualTo(expected: size + 1));
             });
         }
 
@@ -120,12 +136,14 @@ namespace APITest.GameTest
 
             _repository.GameRepository.Join(entry);
 
+            var games = _context.Games.ToList();
+
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _context.Games.ElementAt(2).Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: _context.Games.ElementAt(2).Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: _context.Games.ElementAt(2).First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: _context.Games.ElementAt(2).Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.First, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Second, Is.EqualTo(expected: "fifth"));
             });
         }
 
@@ -136,12 +154,13 @@ namespace APITest.GameTest
 
             _repository.GameRepository.JoinPlayer(entry);
 
+            var games = _context.Games.ToList();
+
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _context.Games.ElementAt(2).Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: _context.Games.ElementAt(2).Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: _context.Games.ElementAt(2).First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: _context.Games.ElementAt(2).Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.First, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: games.FirstOrDefault(g => g.Token == "two")?.Second, Is.EqualTo(expected: "fifth"));
             });
         }
 

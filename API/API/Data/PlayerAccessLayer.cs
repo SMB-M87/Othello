@@ -24,7 +24,7 @@ namespace API.Data
 
         public bool Create(Player player)
         {
-            if (TokenExists(player.Token) == false && UsernameExists(player.Username) == false)
+            if (!TokenExists(player.Token) && !UsernameExists(player.Username))
             {
                 _context.Players.Add(player);
                 _context.SaveChanges();

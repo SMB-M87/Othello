@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Models;
+using Azure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -106,12 +107,15 @@ namespace API.Controllers
         [HttpPut("move")]
         public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
         {
-            var respons = _repository.GameRepository.Move(action);
+            var (succeded, error) = _repository.GameRepository.Move(action);
 
-            if (respons == true)
+            if (succeded)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent(error ?? "Move not possible")
+                };
         }
 
         [HttpPut("pass")]
@@ -156,7 +160,7 @@ namespace API.Controllers
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
     }
 }

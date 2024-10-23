@@ -13,7 +13,7 @@ namespace API.Data
         Color[,]? GetBoardByPlayersToken(string player_token);
         bool Join(GameEntrant entry);
         bool JoinPlayer(GameEntrant entry);
-        bool Move(GameStep action);
+        (bool succeded, string? error) Move(GameStep action);
         bool Pass(string player_token, out string error_message);
         bool Forfeit(string player_token);
         bool Delete(string player_token);

@@ -1,8 +1,4 @@
 ﻿using API.Models;
-using Microsoft.OpenApi.MicrosoftExtensions;
-using System;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Collections.Specialized.BitVector32;
 
 namespace API.Data
 {
@@ -174,9 +170,10 @@ namespace API.Data
             return false;
         }
 
-        public bool Move(GameStep action)
+        public (bool succeded, string? error) Move(GameStep action)
         {
             var game = GetPlayersGame(action.Token);
+
 
             if (game is not null && PlayerExists(action.Token) && game.Second is not null)
             {
@@ -184,119 +181,126 @@ namespace API.Data
                 string challenger = action.Token == game.First ? game.Second : game.First;
                 Color turn = action.Token == game.First ? game.FColor : game.SColor;
 
-                if (game.PossibleMove(action.Row, action.Column) && player != challenger && PlayerExists(challenger) &&
-                    turn == game.PlayersTurn && game.Status == Status.Playing)
-                {
-                    game.MakeMove(action.Row, action.Column);
-                    _context.Entry(game).Property(g => g.Board).IsModified = true;
-                    _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-
-                    if (game.Finished())
-                    {
-                        game.Finish();
-                        _context.Entry(game).Property(g => g.Status).IsModified = true;
-                        _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-
-                        Color win = game.WinningColor();
-                        string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
-                        string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
-                        bool draw = win == Color.None;
-                        GameResult result = new(game.Token, winner, loser, draw);
-                        result.Date = DateTime.UtcNow;
-                        _context.Results.Add(result);
-                        _context.Games.Remove(game);
-                    }
-                    _context.SaveChanges();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public bool Pass(string player_token, out string error_message)
-        {
-            var game = GetPlayersGame(player_token);
-            error_message = string.Empty;
-
-            if (game is not null && PlayerExists(player_token) && game.Second is not null)
-            {
-                string player = player_token == game.First ? game.First : game.Second;
-                string challenger = player_token == game.First ? game.Second : game.First;
-                Color turn = player_token == game.First ? game.FColor : game.SColor;
-
                 if (player != challenger && PlayerExists(challenger) &&
                     turn == game.PlayersTurn && game.Status == Status.Playing)
                 {
                     try
                     {
-                        game.Pass();
+                        game.MakeMove(action.Row, action.Column);
+                        _context.Entry(game).Property(g => g.Board).IsModified = true;
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+
+                        if (game.Finished())
+                        {
+                            game.Finish();
+                            _context.Entry(game).Property(g => g.Status).IsModified = true;
+                            _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+
+                            Color win = game.WinningColor();
+                            string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
+                            string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
+                            bool draw = win == Color.None;
+                            GameResult result = new(game.Token, winner, loser, draw);
+                            result.Date = DateTime.UtcNow;
+                            _context.Results.Add(result);
+                            _context.Games.Remove(game);
+                        }
                         _context.SaveChanges();
-                        return true;
+                        return (true, null);
                     }
                     catch (InvalidGameOperationException ex)
                     {
-                        error_message = ex.Message;
-                        return false;
+                        return (false, ex.Message);
                     }
                 }
             }
-            return false;
+            return (false, "Move not possible");
         }
 
-        public bool Forfeit(string player_token)
+    public bool Pass(string player_token, out string error_message)
+    {
+        var game = GetPlayersGame(player_token);
+        error_message = string.Empty;
+
+        if (game is not null && PlayerExists(player_token) && game.Second is not null)
         {
-            var game = GetPlayersGame(player_token);
+            string player = player_token == game.First ? game.First : game.Second;
+            string challenger = player_token == game.First ? game.Second : game.First;
+            Color turn = player_token == game.First ? game.FColor : game.SColor;
 
-            if (game is not null && PlayerExists(player_token) && game.Second is not null)
+            if (player != challenger && PlayerExists(challenger) &&
+                turn == game.PlayersTurn && game.Status == Status.Playing)
             {
-                string player = player_token == game.First ? game.First : game.Second;
-                string challenger = player_token == game.First ? game.Second : game.First;
-                Color turn = player_token == game.First ? game.FColor : game.SColor;
-
-                if (player != challenger && PlayerExists(challenger) &&
-                    turn == game.PlayersTurn && game.Status == Status.Playing)
+                try
                 {
-                    string winner;
-                    string loser;
-
-                    if (game.First == player_token)
-                    {
-                        winner = game.Second;
-                        loser = player_token;
-                    }
-                    else
-                    {
-                        winner = game.First;
-                        loser = player_token;
-                    }
-                    GameResult result = new(game.Token, winner, loser);
-                    result.Date = DateTime.UtcNow;
-                    _context.Results.Add(result);
-                    _context.Games.Remove(game);
-
-                    game.Finish();
-                    _context.Entry(game).Property(g => g.Status).IsModified = true;
+                    game.Pass();
                     _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                     _context.SaveChanges();
                     return true;
                 }
+                catch (InvalidGameOperationException ex)
+                {
+                    error_message = ex.Message;
+                    return false;
+                }
             }
-            return false;
         }
+        return false;
+    }
 
-        public bool Delete(string player_token)
+    public bool Forfeit(string player_token)
+    {
+        var game = GetPlayersGame(player_token);
+
+        if (game is not null && PlayerExists(player_token) && game.Second is not null)
         {
-            var game = GetPlayersGame(player_token);
+            string player = player_token == game.First ? game.First : game.Second;
+            string challenger = player_token == game.First ? game.Second : game.First;
+            Color turn = player_token == game.First ? game.FColor : game.SColor;
 
-            if (game is not null && PlayerExists(player_token) &&
-                PlayerInPendingGame(player_token) && player_token == game.First)
+            if (player != challenger && PlayerExists(challenger) &&
+                turn == game.PlayersTurn && game.Status == Status.Playing)
             {
+                string winner;
+                string loser;
+
+                if (game.First == player_token)
+                {
+                    winner = game.Second;
+                    loser = player_token;
+                }
+                else
+                {
+                    winner = game.First;
+                    loser = player_token;
+                }
+                GameResult result = new(game.Token, winner, loser);
+                result.Date = DateTime.UtcNow;
+                _context.Results.Add(result);
                 _context.Games.Remove(game);
+
+                game.Finish();
+                _context.Entry(game).Property(g => g.Status).IsModified = true;
+                _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                 _context.SaveChanges();
                 return true;
             }
-            return false;
         }
+        return false;
     }
+
+    public bool Delete(string player_token)
+    {
+        var game = GetPlayersGame(player_token);
+
+        if (game is not null && PlayerExists(player_token) &&
+            PlayerInPendingGame(player_token) && player_token == game.First)
+        {
+            _context.Games.Remove(game);
+            _context.SaveChanges();
+            return true;
+        }
+        return false;
+    }
+}
 }

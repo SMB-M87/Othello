@@ -678,7 +678,7 @@ namespace APITest.GameTest
         [Test]
         public void TurnByToken_Correct()
         {
-            var result = _controller.TurnByToken("two");
+            var result = _controller.TurnByToken("fourth");
 
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
             var okResult = result.Result as OkObjectResult;
@@ -691,14 +691,11 @@ namespace APITest.GameTest
         [Test]
         public void TurnByToken_Incorrect()
         {
-            var result = _controller.TurnByToken("two");
 
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected Ok result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
+            var result = _controller.TurnByToken("nonexistent-token");
 
-            if (okResult is null)
-                Assert.That(actual: okResult.Value, Is.EqualTo(null));
+            Assert.That(result.Result, Is.InstanceOf<NotFoundResult>(), "Expected NotFound result");
+
         }
 
         [Test]
@@ -819,15 +816,19 @@ namespace APITest.GameTest
         {
             GameStep action = new("second", 0, 0);
 
-            var ex = Assert.Throws<InvalidGameOperationException>(() => _controller.Move(action));
+            var result = _controller.Move(action);
 
-            Assert.That(ex.Message, Is.EqualTo("Move (0,0) is not possible!"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Value.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(result.Value.Content.ReadAsStringAsync().Result, Is.EqualTo("Move (0,0) is not possible!"));  // Expected error message
+            });
         }
 
         [Test]
         public void Pass_FirstPlayer_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("18");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("17");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -839,7 +840,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayer_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("16");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("15");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -849,13 +850,13 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_Game_BadRequest()
+        public void Pass_Game_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("fourth"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -863,11 +864,11 @@ namespace APITest.GameTest
         [Test]
         public void Pass_Player_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("zero"));
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("first"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -879,49 +880,49 @@ namespace APITest.GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_PlayersturnIncorrect_BadRequest()
+        public void Pass_PlayersturnIncorrect_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_FirstPlayerNonExistant_BadRequest()
+        public void Pass_FirstPlayerNonExistant_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_SecondPlayerNonExistant_BadRequest()
+        public void Pass_SecondPlayerNonExistant_NotFound()
         {
              ActionResult<HttpResponseMessage>? result = _controller.Pass("nine");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_FirstPlayerPossibleMove_BADREQUEST()
+        public void Pass_FirstPlayerPossibleMove_NoTFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass("second");
             HttpResponseMessage? respons = result?.Value;
@@ -933,37 +934,13 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_SecondPlayerIncorrectColor_BadRequest()
+        public void Pass_SecondPlayerIncorrectColor_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_FirstPlayer_BADREQUEST()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("15");
-            HttpResponseMessage? respons = result?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_SecondPlayer_BADREQUEST()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("17");
-            HttpResponseMessage? respons = result?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -1008,7 +985,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_StatusIncorrect_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("23");
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("24");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
