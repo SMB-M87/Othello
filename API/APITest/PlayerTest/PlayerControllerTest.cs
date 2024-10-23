@@ -36,12 +36,40 @@ namespace APITest.PlayerTest
                 {
                     new(Inquiry.Friend, "seven"),
                     new(Inquiry.Friend, "four"),
-                    new(Inquiry.Friend, "five")
+                    new(Inquiry.Friend, "five"),
+                    new(Inquiry.Game, "one")
                 }
             };
             Player seven = new("seven", "seven");
             Player eight = new("eight", "eight") { Friends = { "six" } };
             Player nine = new("nine", "nine");
+            Player ten = new("10", "10")
+            {
+                LastActivity = DateTime.UtcNow
+            };
+            Player t11 = new("11", "11")
+            {
+                LastActivity = DateTime.UtcNow
+            };
+            Player t12 = new("12", "12")
+            {
+                LastActivity = DateTime.UtcNow,
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Game, "10")
+                }
+            };
+            Player t13 = new("13", "13")
+            {
+                LastActivity = DateTime.UtcNow,
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Game, "10")
+                    {
+                        Date = DateTime.UtcNow.AddMinutes(2),
+                    }
+                }
+            };
 
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
@@ -52,8 +80,11 @@ namespace APITest.PlayerTest
             _repository.PlayerRepository.Create(seven);
             _repository.PlayerRepository.Create(eight);
             _repository.PlayerRepository.Create(nine);
+            _repository.PlayerRepository.Create(ten);
+            _repository.PlayerRepository.Create(t11);
+            _repository.PlayerRepository.Create(t12);
+            _repository.PlayerRepository.Create(t13);
 
-            Game game = new("null", one.Token, Color.Black, one.Token, Status.Finished, Color.None);
 
             Game game0 = new("zero", one.Token);
 
@@ -73,6 +104,10 @@ namespace APITest.PlayerTest
 
             Game game8 = new("eight", nine.Token, Color.Black, "nonexistant", Status.Playing, Color.White, "I search an advanced player!");
 
+            Game game9 = new("null", one.Token, Color.Black, one.Token, Status.Finished, Color.None);
+
+            Game game10 = new("10", ten.Token, Color.Black);
+
             _repository.GameRepository.Create(game0);
             _repository.GameRepository.Create(game1);
             _repository.GameRepository.Create(game2);
@@ -82,7 +117,8 @@ namespace APITest.PlayerTest
             _repository.GameRepository.Create(game6);
             _repository.GameRepository.Create(game7);
             _repository.GameRepository.Create(game8);
-            _repository.GameRepository.Create(game);
+            _repository.GameRepository.Create(game9);
+            _repository.GameRepository.Create(game10);
 
             GameResult result0 = new("-3", "second", "third");
             GameResult result1 = new("-2", "third", "second");
@@ -150,7 +186,7 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void PlayerFriends_Correct()
+        public void Player_Friends_Correct()
         {
             var result = _controller.PlayerFriends("sixth");
 
@@ -167,20 +203,66 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void PlayerPending_Correct()
+        public void Player_FriendRequests_OK()
         {
-            var result = _controller.PlayerRequests("sixth");
+            var result = _controller.PlayerFriendRequests("sixth");
 
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
             var okResult = result.Result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
-            var respons = okResult?.Value as List<Request>;
+            var respons = okResult?.Value as List<string>;
 
             if (respons is not null)
-                Assert.That(actual: respons.Any(r => r.Type == Inquiry.Friend && r.Username == "five"), Is.True);
+                Assert.That(actual: respons.Any(r => r == "five"), Is.True);
             else
                 Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void Player_FriendRequests_NotFound()
+        {
+            var result = _controller.PlayerFriendRequests("nonexistant");
+
+            Assert.That(result.Result, Is.InstanceOf<NotFoundResult>(), "Expected NotFound result");
+        }
+
+        [Test]
+        public void Player_GameRequests_OK()
+        {
+            var result = _controller.PlayerGameRequests("sixth");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult?.Value, Is.EqualTo(new List<string> { "one" }));
+        }
+
+        [Test]
+        public void Player_GameRequests_NotFound()
+        {
+            var result = _controller.PlayerGameRequests("nonexistant");
+
+            Assert.That(result.Result, Is.InstanceOf<NotFoundResult>(), "Expected NotFound result");
+        }
+
+        [Test]
+        public void Player_SentFriendRequests_OK()
+        {
+            var result = _controller.PlayerSentFriendRequests("seven");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult?.Value, Is.EqualTo(new List<string> { "six" }));
+        }
+
+        [Test]
+        public void Get_SentGameRequests_OK()
+        {
+            var result = _controller.GetSentGameRequests("first");
+
+            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
+            var okResult = result.Result as OkObjectResult;
+            Assert.That(okResult?.Value, Is.EqualTo(new List<string> { "six" }));
         }
 
         [Test]
@@ -260,6 +342,142 @@ namespace APITest.PlayerTest
             }
             else
                 Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public void GameRequest_OK()
+        {
+            var request = new PlayerRequest { ReceiverUsername = "11", SenderToken = "10" };
+            var result = _controller.GameRequest(request);
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
+            });
+        }
+
+        [Test]
+        public void GameRequest_BadRequest()
+        {
+            var request = new PlayerRequest { ReceiverUsername = "nonexistent", SenderToken = "second" };
+            var result = _controller.GameRequest(request);
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
+            });
+        }
+
+        [Test]
+        public void AcceptGameRequest_OK()
+        {
+            var request = new PlayerRequest { ReceiverUsername = "10", SenderToken = "12" };
+            var result = _controller.AcceptGameRequest(request);
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
+            });
+        }
+
+        [Test]
+        public void AcceptGameRequest_BadRequest()
+        {
+            var request = new PlayerRequest { ReceiverUsername = "nonexistent", SenderToken = "second" };
+            var result = _controller.AcceptGameRequest(request);
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
+            });
+        }
+
+        [Test]
+        public void DeclineGameRequest_OK()
+        {
+            var request = new PlayerRequest { ReceiverUsername = "10", SenderToken = "12" };
+            var result = _controller.DeclineGameRequest(request);
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
+            });
+        }
+
+        [Test]
+        public void DeclineGameRequest_BadRequest()
+        {
+            var request = new PlayerRequest { ReceiverUsername = "nonexistent", SenderToken = "two" };
+            var result = _controller.DeclineGameRequest(request);
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
+            });
+        }
+
+        [Test]
+        public void DeleteGameInvites_OK()
+        {
+            var result = _controller.DeleteGameInvites("13");
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
+            });
+        }
+
+        [Test]
+        public void DeleteGameInvites_BadRequest()
+        {
+            var result = _controller.DeleteGameInvites("nonexistent");
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
+            });
+        }
+
+        [Test]
+        public void DeletePlayer_OK()
+        {
+            var result = _controller.Delete("13");
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
+            });
+        }
+
+        [Test]
+        public void DeletePlayer_BadRequest()
+        {
+            var result = _controller.Delete("nonexistent");
+
+            Assert.Multiple(() =>
+            {
+                var httpResponse = result.Value as HttpResponseMessage;
+                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
+                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
+            });
         }
     }
 }

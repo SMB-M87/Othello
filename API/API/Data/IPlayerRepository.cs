@@ -7,8 +7,10 @@ namespace API.Data
         bool Create(Player player);
         List<string>? GetOnlinePlayers();
         List<string>? GetFriends(string token);
-        List<Request>? GetRequests(string token);
-        List<string>? GetSent(string token);
+        List<string>? GetFriendRequests(string token);
+        List<string>? GetGameRequests(string token);
+        List<string>? GetSentFriendRequests(string token);
+        List<string>? GetSentGameRequests(string token);
         bool UpdateActivity(string token);
         bool FriendRequest(string receiver_username, string sender_token);
         bool AcceptFriendRequest(string receiver_username, string sender_token);

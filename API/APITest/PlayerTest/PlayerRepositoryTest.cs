@@ -139,12 +139,12 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void PlayerPending_Correct()
+        public void Player_FriendRequest_Correct()
         {
-            List<Request>? respons = _repository.PlayerRepository.GetRequests("sixth");
+            List<string>? respons = _repository.PlayerRepository.GetFriendRequests("sixth");
 
             if (respons is not null)
-                Assert.That(actual: respons.Any(r => r.Username == "five" && r.Type == Inquiry.Friend), Is.True);
+                Assert.That(actual: respons.Any(r => r == "five"), Is.True);
             else
                 Assert.Fail("Respons is null.");
         }

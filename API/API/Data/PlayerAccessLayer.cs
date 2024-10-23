@@ -39,17 +39,22 @@ namespace API.Data
 
         public List<string>? GetOnlinePlayers()
         {
-            return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).Select(player => player.Username).ToList();
+            return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
         }
 
         public List<string>? GetFriends(string token)
         {
-            return (List<string>?)(Get(token)?.Friends);
+            return Get(token)?.Friends.OrderBy(friend => friend).ToList();
         }
 
-        public List<Request>? GetRequests(string token)
+        public List<string>? GetFriendRequests(string token)
         {
-            return (List<Request>?)(Get(token)?.Requests);
+            return Get(token)?.Requests.Where(r => r.Type == Inquiry.Friend).OrderBy(r => r.Username).Select(p => p.Username).ToList();
+        }
+
+        public List<string>? GetGameRequests(string token)
+        {
+            return Get(token)?.Requests?.Where(r => r.Type == Inquiry.Game).OrderByDescending(r => r.Date).Select(p => p.Username).ToList();
         }
 
         private string? GetName(string token)
@@ -57,10 +62,16 @@ namespace API.Data
             return Get(token)?.Username;
         }
 
-        public List<string>? GetSent(string token)
+        public List<string>? GetSentFriendRequests(string token)
         {
             string? username = GetName(token);
-            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username)).Select(p => p.Username).ToList();
+            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Friend)).Select(p => p.Username).ToList();
+        }
+
+        public List<string>? GetSentGameRequests(string token)
+        {
+            string? username = GetName(token);
+            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Game)).Select(p => p.Username).ToList();
         }
 
         private Player? Get(string token)
@@ -223,7 +234,7 @@ namespace API.Data
             {
                 var request = sender.Requests.FirstOrDefault(p => p.Username == receiver.Username && p.Type == Inquiry.Game);
 
-                if (request is not null && (now - request.Date).TotalSeconds <= 29)
+                if (request is not null && (now - request.Date).TotalSeconds <= 59)
                 {
                     JoinPlayersGame(receiver.Token, sender.Token);
                     sender.Requests.Remove(request);
@@ -280,7 +291,7 @@ namespace API.Data
             if (player is not null)
             {
                 var expiredRequests = player.Requests
-                    .Where(request => request.Type == Inquiry.Game && (DateTime.UtcNow - request.Date).TotalSeconds >= 30)
+                    .Where(request => request.Type == Inquiry.Game && (DateTime.UtcNow - request.Date).TotalSeconds >= 60)
                     .ToList();
 
                 foreach (var expiredRequest in expiredRequests)

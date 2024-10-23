@@ -48,10 +48,10 @@ namespace API.Controllers
             return Ok(friends);
         }
 
-        [HttpGet("requests/{token}")]
-        public ActionResult<List<Request>> PlayerRequests(string token)
+        [HttpGet("requests/friend/{token}")]
+        public ActionResult<List<string>> PlayerFriendRequests(string token)
         {
-            var pending = _repository.PlayerRepository.GetRequests(token);
+            var pending = _repository.PlayerRepository.GetFriendRequests(token);
 
             if (pending is null)
                 return NotFound();
@@ -59,10 +59,32 @@ namespace API.Controllers
             return Ok(pending);
         }
 
-        [HttpGet("requests/sent/{token}")]
-        public ActionResult<List<string>> PlayerSent(string token)
+        [HttpGet("requests/game/{token}")]
+        public ActionResult<List<string>> PlayerGameRequests(string token)
         {
-            var sent = _repository.PlayerRepository.GetSent(token);
+            var pending = _repository.PlayerRepository.GetGameRequests(token);
+
+            if (pending is null)
+                return NotFound();
+
+            return Ok(pending);
+        }
+
+        [HttpGet("sent/friend/{token}")]
+        public ActionResult<List<string>> PlayerSentFriendRequests(string token)
+        {
+            var sent = _repository.PlayerRepository.GetSentFriendRequests(token);
+
+            if (sent is null)
+                return NotFound();
+
+            return Ok(sent);
+        }
+
+        [HttpGet("sent/game/{token}")]
+        public ActionResult<List<string>> GetSentGameRequests(string token)
+        {
+            var sent = _repository.PlayerRepository.GetSentGameRequests(token);
 
             if (sent is null)
                 return NotFound();
