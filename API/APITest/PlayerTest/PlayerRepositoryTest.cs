@@ -112,56 +112,19 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Update_Correct()
-        {
-            Player player = _context.Players.First(p => p.Username == "one");
-            player.Friends.Add("Umugud");
-
-            _repository.PlayerRepository.Update(player);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _context.Players.First(p => p.Username == "one").Friends, Does.Contain(expected: "Umugud"));
-            });
-        }
-
-        [Test]
         public void Delete_Correct()
         {
             int size = _context.Players.Count();
             Player player = new("fifth", "five");
             Assert.That(actual: _context.Players.Count(), Is.EqualTo(size));
 
-            _repository.PlayerRepository.Delete(_context.Players.First(p => p.Username == "one"));
+            _repository.PlayerRepository.Delete("first");
 
             Assert.Multiple(() =>
             {
                 Assert.That(actual: _context.Players.Count(), Is.Not.EqualTo(expected: size));
                 Assert.That(actual: _context.Players.Count(), Is.EqualTo(expected: size - 1));
             });
-        }
-
-        [Test]
-        public void Get_Correct()
-        {
-            var respons = _repository.PlayerRepository.Get("first");
-
-            if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: "first"));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-
-        [Test]
-        public void GetByUsername_Correct()
-        {
-            var respons = _repository.PlayerRepository.GetByUsername("one");
-
-            if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: "first"));
-            else
-                Assert.Fail("Respons is null.");
         }
 
         [Test]
@@ -192,7 +155,7 @@ namespace APITest.PlayerTest
             Player player1 = _context.Players.First(p => p.Username == "one");
             Player player2 = _context.Players.First(p => p.Username == "two");
 
-            _repository.PlayerRepository.FriendRequest("one", "two");
+            _repository.PlayerRepository.FriendRequest(player1.Username, player2.Token);
 
             Assert.Multiple(() =>
             {
@@ -206,8 +169,8 @@ namespace APITest.PlayerTest
             Player player1 = _context.Players.First(p => p.Username == "one");
             Player player2 = _context.Players.First(p => p.Username == "two");
 
-            _repository.PlayerRepository.FriendRequest("one", "two");
-            _repository.PlayerRepository.AcceptFriendRequest("two", "one");
+            _repository.PlayerRepository.FriendRequest(player1.Username, player2.Token);
+            _repository.PlayerRepository.AcceptFriendRequest(player2.Username, player1.Token);
 
             Assert.Multiple(() =>
             {
@@ -237,13 +200,8 @@ namespace APITest.PlayerTest
         {
             _repository.PlayerRepository.DeleteFriend("six", "five");
 
-            Player? player = _repository.PlayerRepository.GetByUsername("six");
-            Player? sender = _repository.PlayerRepository.GetByUsername("five");
-
             Assert.Multiple(() =>
             {
-                Assert.That(actual: sender?.Friends, Does.Not.Contain("six"));
-                Assert.That(actual: player?.Friends, Does.Not.Contain("five"));
                 Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("six"))?.Friends, Does.Not.Contain("five"));
                 Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("five"))?.Friends, Does.Not.Contain("six"));
             });

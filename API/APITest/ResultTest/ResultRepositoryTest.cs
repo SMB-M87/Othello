@@ -127,7 +127,7 @@ namespace APITest.ResultTest
         {
             var result = _repository.ResultRepository.GetPlayerStats("zero");
 
-            Assert.That(actual: result, Is.EqualTo(expected: "Wins:0\t\tLosses:0\t\tDraws:0"));
+            Assert.That(actual: result, Is.Null);
         }
 
         [Test]
@@ -157,10 +157,8 @@ namespace APITest.ResultTest
         {
             var result = _repository.ResultRepository.GetPlayersMatchHistory("zero");
 
-            if (result is not null)
-                Assert.That(actual: result, Has.Count.EqualTo(expected: 0));
-            else
-                Assert.Fail("Result is null.");
+
+            Assert.That(actual: result, Is.Null);
         }
     }
 }

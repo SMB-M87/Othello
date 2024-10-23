@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using System.Numerics;
 
 namespace API.Data
 {
@@ -11,22 +12,56 @@ namespace API.Data
             _context = context;
         }
 
-        private bool PlayerExists(string token)
+        private bool TokenExists(string token)
         {
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token)) != null;
         }
 
+        private bool UsernameExists(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
+        }
+
         public bool Create(Player player)
         {
-            var exists = PlayerExists(player.Token);
-
-            if (exists == false)
+            if (TokenExists(player.Token) == false && UsernameExists(player.Username) == false)
             {
                 _context.Players.Add(player);
                 _context.SaveChanges();
                 return true;
             }
             return false;
+        }
+
+        private List<Player>? GetPlayers()
+        {
+            return _context.Players.ToList();
+        }
+
+        public List<string>? GetOnlinePlayers()
+        {
+            return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).Select(player => player.Username).ToList();
+        }
+
+        public List<string>? GetFriends(string token)
+        {
+            return (List<string>?)(Get(token)?.Friends);
+        }
+
+        public List<Request>? GetRequests(string token)
+        {
+            return (List<Request>?)(Get(token)?.Requests);
+        }
+
+        private string? GetName(string token)
+        {
+            return Get(token)?.Username;
+        }
+
+        public List<string>? GetSent(string token)
+        {
+            string? username = GetName(token);
+            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username)).Select(p => p.Username).ToList();
         }
 
         private Player? Get(string token)
@@ -36,9 +71,7 @@ namespace API.Data
 
         public bool UpdateActivity(string token)
         {
-            var exists = PlayerExists(token);
-
-            if (exists == true)
+            if (TokenExists(token))
             {
                 var player = Get(token);
 
@@ -136,7 +169,7 @@ namespace API.Data
         private bool PlayerInPendingGame(string token)
         {
             var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status == Status.Pending);
+            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Second is null && s.Status == Status.Pending);
             return game is not null;
         }
 
@@ -231,9 +264,9 @@ namespace API.Data
 
             if (receiver is not null && sender is not null)
             {
-                sender.Friends.Remove(receiver_username);
+                sender.Friends.Remove(receiver.Username);
                 _context.Entry(sender).Property(p => p.Friends).IsModified = true;
-                receiver.Friends.Remove(sender_token);
+                receiver.Friends.Remove(sender.Username);
                 _context.Entry(receiver).Property(p => p.Friends).IsModified = true;
                 _context.SaveChanges();
                 return true;
@@ -273,37 +306,6 @@ namespace API.Data
                 return true;
             }
             return false;
-        }
-
-        private List<Player>? GetPlayers()
-        {
-            return _context.Players.ToList();
-        }
-
-        public List<string>? GetOnlinePlayers()
-        {
-            return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).Select(player => player.Username).ToList();
-        }
-
-        public List<string>? GetFriends(string token)
-        {
-            return (List<string>?)(Get(token)?.Friends);
-        }
-
-        public List<Request>? GetRequests(string token)
-        {
-            return (List<Request>?)(Get(token)?.Requests);
-        }
-
-        private string? GetName(string token)
-        {
-            return Get(token)?.Username;
-        }
-
-        public List<string>? GetSent(string token)
-        {
-            string? username = GetName(token);
-            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username)).Select(p => p.Username).ToList();
         }
     }
 }

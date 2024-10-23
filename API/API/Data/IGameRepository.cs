@@ -4,14 +4,18 @@ namespace API.Data
 {
     public interface IGameRepository
     {
+        bool Create(GameCreation game);
         void Create(Game game);
-        void Join(GameEntrant entry);
-        void JoinPlayer(GameEntrant entry);
-        void Update(Game game);
-        void Finish(Game game);
-        void Delete(Game game);
-        Game? Get(string token);
-        Game? GetPlayersGame(string token);
-        List<Game>? GetGames();
+        List<GameDescription>? GetPendingGames();
+        string? GetGameTokenByPlayersToken(string player_token);
+        Color? GetPlayersTurnByPlayersToken(string player_token);
+        Status? GetStatusByPlayersToken(string player_token);
+        Color[,]? GetBoardByPlayersToken(string player_token);
+        bool Join(GameEntrant entry);
+        bool JoinPlayer(GameEntrant entry);
+        bool Move(GameStep action);
+        bool Pass(string player_token, out string error_message);
+        bool Forfeit(string player_token);
+        bool Delete(string player_token);
     }
 }

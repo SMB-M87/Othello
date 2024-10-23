@@ -105,9 +105,9 @@ namespace APITest.ResultTest
                 var results = okResult?.Value as List<GameResult>;
                 Assert.That(results, Is.Not.Null, "Results should not be null");
                 Assert.That(results?.Count, Is.GreaterThan(0), "Should have at least one result");
-                Assert.That(actual: results?[0], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-3")));
+                Assert.That(actual: results?[0], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-1")));
                 Assert.That(actual: results?[1], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-2")));
-                Assert.That(actual: results?[2], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-1")));
+                Assert.That(actual: results?[2], Is.EqualTo(expected: _context.Results.First(p => p.Token == "-3")));
             });
         }
 

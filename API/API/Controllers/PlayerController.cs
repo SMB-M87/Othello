@@ -23,117 +23,7 @@ namespace API.Controllers
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("activity")]
-        public ActionResult<HttpResponseMessage> Activity([FromBody] PlayerActivity player)
-        {
-            var respons = _repository.PlayerRepository.UpdateActivity(player.Token);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else            
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("request/friend")]
-        public ActionResult<HttpResponseMessage> FriendRequest([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.FriendRequest(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("request/friend/accept")]
-        public ActionResult<HttpResponseMessage> AcceptFriendRequest([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.AcceptFriendRequest(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("request/friend/decline")]
-        public ActionResult<HttpResponseMessage> DeclineFriendRequest([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.DeclineFriendRequest(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("request/game")]
-        public ActionResult<HttpResponseMessage> GameRequest([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.GameRequest(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("request/game/accept")]
-        public ActionResult<HttpResponseMessage> AcceptGameRequest([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.AcceptGameRequest(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("request/game/decline")]
-        public ActionResult<HttpResponseMessage> DeclineGameRequest([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.DeclineGameRequest(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("friend/delete")]
-        public ActionResult<HttpResponseMessage> DeleteFriend([FromBody] PlayerRequest request)
-        {
-            var respons = _repository.PlayerRepository.DeleteFriend(request.ReceiverUsername, request.SenderToken);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("game/delete")]
-        public ActionResult<HttpResponseMessage> DeleteGameInvites([FromBody] PlayerActivity player)
-        {
-            var respons = _repository.PlayerRepository.DeleteGameInvites(player.Token);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
-        }
-
-        [HttpPost("delete")]
-        public ActionResult<HttpResponseMessage> Delete([FromBody] PlayerActivity player)
-        {
-            var respons = _repository.PlayerRepository.Delete(player.Token);
-
-            if (respons == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden);
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
         [HttpGet]
@@ -178,6 +68,116 @@ namespace API.Controllers
                 return NotFound();
 
             return Ok(sent);
+        }
+
+        [HttpPut("activity")]
+        public ActionResult<HttpResponseMessage> Activity([FromBody] string token)
+        {
+            var respons = _repository.PlayerRepository.UpdateActivity(token);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else            
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("request/friend")]
+        public ActionResult<HttpResponseMessage> FriendRequest([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.FriendRequest(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("request/friend/accept")]
+        public ActionResult<HttpResponseMessage> AcceptFriendRequest([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.AcceptFriendRequest(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("request/friend/decline")]
+        public ActionResult<HttpResponseMessage> DeclineFriendRequest([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.DeclineFriendRequest(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("request/game")]
+        public ActionResult<HttpResponseMessage> GameRequest([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.GameRequest(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("request/game/accept")]
+        public ActionResult<HttpResponseMessage> AcceptGameRequest([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.AcceptGameRequest(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("request/game/decline")]
+        public ActionResult<HttpResponseMessage> DeclineGameRequest([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.DeclineGameRequest(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("friend/delete")]
+        public ActionResult<HttpResponseMessage> DeleteFriend([FromBody] PlayerRequest request)
+        {
+            var respons = _repository.PlayerRepository.DeleteFriend(request.ReceiverUsername, request.SenderToken);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpPut("game/delete")]
+        public ActionResult<HttpResponseMessage> DeleteGameInvites([FromBody] string token)
+        {
+            var respons = _repository.PlayerRepository.DeleteGameInvites(token);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [HttpDelete("delete")]
+        public ActionResult<HttpResponseMessage> Delete([FromBody] string token)
+        {
+            var respons = _repository.PlayerRepository.Delete(token);
+
+            if (respons == true)
+                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            else
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
     }
 }

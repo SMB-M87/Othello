@@ -99,8 +99,136 @@ namespace APITest.GameTest
             Game game9 = new("nine", nineteen.Token, Color.Black, twenty.Token, Status.Playing, Color.Black, "I search an advanced player!");
 
             Game game10 = new("ten", eighteen.Token, Color.Black, seventeen.Token, Status.Playing, Color.White, "I search an advanced player!");
+            game10.Board[0, 0] = Color.White;
+            game10.Board[0, 1] = Color.White;
+            game10.Board[0, 2] = Color.White;
+            game10.Board[0, 3] = Color.White;
+            game10.Board[0, 4] = Color.White;
+            game10.Board[0, 5] = Color.White;
+            game10.Board[0, 6] = Color.White;
+            game10.Board[0, 7] = Color.White;
+            game10.Board[1, 0] = Color.White;
+            game10.Board[1, 1] = Color.White;
+            game10.Board[1, 2] = Color.White;
+            game10.Board[1, 3] = Color.White;
+            game10.Board[1, 4] = Color.White;
+            game10.Board[1, 5] = Color.White;
+            game10.Board[1, 6] = Color.White;
+            game10.Board[1, 7] = Color.White;
+            game10.Board[2, 0] = Color.White;
+            game10.Board[2, 1] = Color.White;
+            game10.Board[2, 2] = Color.White;
+            game10.Board[2, 3] = Color.White;
+            game10.Board[2, 4] = Color.White;
+            game10.Board[2, 5] = Color.White;
+            game10.Board[2, 6] = Color.White;
+            game10.Board[2, 7] = Color.White;
+            game10.Board[3, 0] = Color.White;
+            game10.Board[3, 1] = Color.White;
+            game10.Board[3, 2] = Color.White;
+            game10.Board[3, 3] = Color.White;
+            game10.Board[3, 4] = Color.White;
+            game10.Board[3, 5] = Color.White;
+            game10.Board[3, 6] = Color.White;
+            game10.Board[3, 7] = Color.None;
+            game10.Board[4, 0] = Color.White;
+            game10.Board[4, 1] = Color.White;
+            game10.Board[4, 2] = Color.White;
+            game10.Board[4, 3] = Color.White;
+            game10.Board[4, 4] = Color.White;
+            game10.Board[4, 5] = Color.White;
+            game10.Board[4, 6] = Color.None;
+            game10.Board[4, 7] = Color.None;
+            game10.Board[5, 0] = Color.White;
+            game10.Board[5, 1] = Color.White;
+            game10.Board[5, 2] = Color.White;
+            game10.Board[5, 3] = Color.White;
+            game10.Board[5, 4] = Color.White;
+            game10.Board[5, 5] = Color.White;
+            game10.Board[5, 6] = Color.None;
+            game10.Board[5, 7] = Color.Black;
+            game10.Board[6, 0] = Color.White;
+            game10.Board[6, 1] = Color.White;
+            game10.Board[6, 2] = Color.White;
+            game10.Board[6, 3] = Color.White;
+            game10.Board[6, 4] = Color.White;
+            game10.Board[6, 5] = Color.White;
+            game10.Board[6, 6] = Color.White;
+            game10.Board[6, 7] = Color.None;
+            game10.Board[7, 0] = Color.White;
+            game10.Board[7, 1] = Color.White;
+            game10.Board[7, 2] = Color.White;
+            game10.Board[7, 3] = Color.White;
+            game10.Board[7, 4] = Color.White;
+            game10.Board[7, 5] = Color.White;
+            game10.Board[7, 6] = Color.White;
+            game10.Board[7, 7] = Color.White;
 
             Game game11 = new("eleven", fifteen.Token, Color.Black, sixteen.Token, Status.Playing, Color.Black, "I search an advanced player!");
+            game11.Board[0, 0] = Color.White;
+            game11.Board[0, 1] = Color.White;
+            game11.Board[0, 2] = Color.White;
+            game11.Board[0, 3] = Color.White;
+            game11.Board[0, 4] = Color.White;
+            game11.Board[0, 5] = Color.White;
+            game11.Board[0, 6] = Color.White;
+            game11.Board[0, 7] = Color.White;
+            game11.Board[1, 0] = Color.White;
+            game11.Board[1, 1] = Color.White;
+            game11.Board[1, 2] = Color.White;
+            game11.Board[1, 3] = Color.White;
+            game11.Board[1, 4] = Color.White;
+            game11.Board[1, 5] = Color.White;
+            game11.Board[1, 6] = Color.White;
+            game11.Board[1, 7] = Color.White;
+            game11.Board[2, 0] = Color.White;
+            game11.Board[2, 1] = Color.White;
+            game11.Board[2, 2] = Color.White;
+            game11.Board[2, 3] = Color.White;
+            game11.Board[2, 4] = Color.White;
+            game11.Board[2, 5] = Color.White;
+            game11.Board[2, 6] = Color.White;
+            game11.Board[2, 7] = Color.White;
+            game11.Board[3, 0] = Color.White;
+            game11.Board[3, 1] = Color.White;
+            game11.Board[3, 2] = Color.White;
+            game11.Board[3, 3] = Color.White;
+            game11.Board[3, 4] = Color.White;
+            game11.Board[3, 5] = Color.White;
+            game11.Board[3, 6] = Color.White;
+            game11.Board[3, 7] = Color.None;
+            game11.Board[4, 0] = Color.White;
+            game11.Board[4, 1] = Color.White;
+            game11.Board[4, 2] = Color.White;
+            game11.Board[4, 3] = Color.White;
+            game11.Board[4, 4] = Color.White;
+            game11.Board[4, 5] = Color.White;
+            game11.Board[4, 6] = Color.None;
+            game11.Board[4, 7] = Color.None;
+            game11.Board[5, 0] = Color.White;
+            game11.Board[5, 1] = Color.White;
+            game11.Board[5, 2] = Color.White;
+            game11.Board[5, 3] = Color.White;
+            game11.Board[5, 4] = Color.White;
+            game11.Board[5, 5] = Color.White;
+            game11.Board[5, 6] = Color.None;
+            game11.Board[5, 7] = Color.Black;
+            game11.Board[6, 0] = Color.White;
+            game11.Board[6, 1] = Color.White;
+            game11.Board[6, 2] = Color.White;
+            game11.Board[6, 3] = Color.White;
+            game11.Board[6, 4] = Color.White;
+            game11.Board[6, 5] = Color.White;
+            game11.Board[6, 6] = Color.White;
+            game11.Board[6, 7] = Color.None;
+            game11.Board[7, 0] = Color.White;
+            game11.Board[7, 1] = Color.White;
+            game11.Board[7, 2] = Color.White;
+            game11.Board[7, 3] = Color.White;
+            game11.Board[7, 4] = Color.White;
+            game11.Board[7, 5] = Color.White;
+            game11.Board[7, 6] = Color.White;
+            game11.Board[7, 7] = Color.White;
 
             Game game12 = new("12", fourteen.Token, Color.Black, five.Token, Status.Playing, Color.White, "I search an advanced player!");
             game12.Board[0, 0] = Color.White;
@@ -156,7 +284,7 @@ namespace APITest.GameTest
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("26"), Is.Not.Null);
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("26"), Is.Not.Null);
                 });
             }
             else
@@ -164,7 +292,7 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Create_Player_NOTFOUND()
+        public void Create_Player_BadRequest()
         {
             GameCreation create = new("player");
 
@@ -174,15 +302,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("player"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("player"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Create_PlayerInGame_FORBIDDEN()
+        public void Create_PlayerInGame_BadRequest()
         {
             GameCreation create = new("third");
 
@@ -192,8 +320,8 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("third"), Is.Not.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("third"), Is.Not.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
@@ -211,14 +339,14 @@ namespace APITest.GameTest
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fifth"), Is.Not.Null);
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fifth"), Is.Not.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_Player_NOTFOUND()
+        public void Join_Player_BadRequest()
         {
             GameEntrant entry = new("two", "player");
 
@@ -228,15 +356,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("player"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("player"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_Game_NOTFOUND()
+        public void Join_Game_BadRequest()
         {
             GameEntrant entry = new("join", "25");
 
@@ -246,15 +374,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("25"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_PlayerInGame_FORBIDDEN()
+        public void Join_PlayerInGame_BadRequest()
         {
             GameEntrant entry = new("zero", "fourth");
 
@@ -264,15 +392,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fourth"), Is.Not.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fourth"), Is.Not.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_GameFull_FORBIDDEN()
+        public void Join_GameFull_BadRequest()
         {
             GameEntrant entry = new("one", "25");
 
@@ -282,15 +410,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("25"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_OwnGame_FORBIDDEN()
+        public void Join_OwnGame_BadRequest()
         {
             GameEntrant entry = new("zero", "first");
 
@@ -298,19 +426,14 @@ namespace APITest.GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("first")?.Second, Is.Null);
-                });
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_FirstPlayerNonExistant_FORBIDDEN()
+        public void Join_FirstPlayerNonExistant_BadRequest()
         {
-            Game game = _repository.GameRepository.Get("three") ?? new();
             GameEntrant entry = new("three", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
@@ -319,8 +442,8 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("25"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
@@ -338,14 +461,14 @@ namespace APITest.GameTest
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("25"), Is.Not.Null);
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Not.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_Player_NOTFOUND()
+        public void JoinPlayer_Player_BadRequest()
         {
             GameEntrant entry = new("fourth", "player");
 
@@ -355,15 +478,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("player"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("player"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_Game_NOTFOUND()
+        public void JoinPlayer_Game_BadRequest()
         {
             GameEntrant entry = new("join", "25");
 
@@ -373,15 +496,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("25"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_PlayerInGame_FORBIDDEN()
+        public void JoinPlayer_PlayerInGame_BadRequest()
         {
             GameEntrant entry = new("first", "fourth");
 
@@ -391,15 +514,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fourth"), Is.Not.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fourth"), Is.Not.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_GameFull_FORBIDDEN()
+        public void JoinPlayer_GameFull_BadRequest()
         {
             GameEntrant entry = new("second", "25");
 
@@ -409,15 +532,15 @@ namespace APITest.GameTest
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("25"), Is.Null);
+                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_OwnGame_FORBIDDEN()
+        public void JoinPlayer_OwnGame_BadRequest()
         {
             GameEntrant entry = new("first", "first");
 
@@ -425,11 +548,7 @@ namespace APITest.GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("first")?.Second, Is.EqualTo(null));
-                });
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -437,67 +556,65 @@ namespace APITest.GameTest
         [Test]
         public void Delete_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.GameRepository.GetGames()?[2].First ?? "");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete("fourth");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.GameRepository.GetPlayersGame("fourth"), Is.Null);
+                    Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fourth"), Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Delete_Game_NOTFOUND()
+        public void Delete_Game_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("zero"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Delete_Player_NOTFOUND()
+        public void Delete_Player_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("sixteennnn"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Delete_Playing_FORBIDDEN()
+        public void Delete_Playing_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.GameRepository.GetGames()?[1].First ?? "");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete("second");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Delete_SecondPlayer_FORBIDDEN()
+        public void Delete_SecondPlayer_BadRequest()
         {
-            Game game = _repository.GameRepository.GetGames()?[0] ?? new();
-            game.SetSecondPlayer("fifth");
-            _repository.GameRepository.Update(game);
+            _repository.GameRepository.Join(new("zero", "fifth"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(_repository.GameRepository.GetGames()?[0].Second ?? "");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete("fifth");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -517,8 +634,8 @@ namespace APITest.GameTest
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(results[0].Description));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].Description, Is.EqualTo(results[1].Description));
+                    Assert.That(actual: results[0].Description, Is.EqualTo("I wanna play a game and don't have any requirements!"));
+                    Assert.That(actual: results[1].Description, Is.EqualTo("I wanna play a game and don't have any requirements!"));
                 });
             }
             else
@@ -526,38 +643,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void GameByToken_Correct()
-        {
-            var result = _controller.GameByToken("two");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-
-            var respons = (Game?)okResult?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].Token));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void GameByToken_Incorrect()
-        {
-            ActionResult<Game>? result = _controller.GameByToken("three");
-            Game? respons = result?.Value;
-
-            if (respons is null)
-                Assert.That(actual: respons, Is.EqualTo(expected: null));
-            else
-                Assert.Fail("Respons is not null.");
-        }
-
-        [Test]
         public void GameByPlayerToken_Correct()
         {
-            var result = _controller.GameByPlayerToken("fourth");
+            var result = _controller.GameTokenByPlayerToken("fourth");
 
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
             var okResult = result.Result as OkObjectResult;
@@ -567,7 +655,7 @@ namespace APITest.GameTest
             {
                 var results = (string?)okResult?.Value;
                 if (results is not null)
-                    Assert.That(actual: results, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].Token));
+                    Assert.That(actual: results, Is.EqualTo(expected: "two"));
                 else
                     Assert.Fail("Respons is null.");
             }
@@ -578,7 +666,7 @@ namespace APITest.GameTest
         [Test]
         public void GameByPlayerToken_Incorrect()
         {
-            ActionResult<string>? result = _controller.GameByPlayerToken("dsahg");
+            ActionResult<string>? result = _controller.GameTokenByPlayerToken("dsahg");
             string? respons = result?.Value;
 
             if (respons is null)
@@ -597,7 +685,7 @@ namespace APITest.GameTest
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
             if (okResult is not null)
-                Assert.That(actual: okResult.Value, Is.EqualTo(expected: _repository.GameRepository.GetGames()?[2].PlayersTurn));
+                Assert.That(actual: okResult.Value, Is.EqualTo(expected: Color.Black));
         }
 
         [Test]
@@ -616,22 +704,14 @@ namespace APITest.GameTest
         [Test]
         public void Move_OK()
         {
-            GameStep action = new(_repository.GameRepository.GetGames()?[1].First ?? "");
+            GameStep action = new("second");
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
             {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[2, 3], Is.EqualTo(Color.Black));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[3, 3], Is.EqualTo(Color.Black));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[3, 4], Is.EqualTo(Color.Black));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[4, 3], Is.EqualTo(Color.Black));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].Board[4, 4], Is.EqualTo(Color.White));
-                });
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             else
                 Assert.Fail("Respons is null.");
@@ -640,7 +720,7 @@ namespace APITest.GameTest
         [Test]
         public void Move_Finished_OK()
         {
-            GameStep action = new(_repository.GameRepository.Get("12")?.Second ?? "", 0,2);
+            GameStep action = new("fifth", 0,2);
 
             Assert.Multiple(() =>
             {
@@ -665,7 +745,7 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_Game_NOTFOUND()
+        public void Move_Game_BadRequest()
         {
             GameStep action = new(new("fourth"));
 
@@ -673,13 +753,13 @@ namespace APITest.GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Move_Player_NOTFOUND()
+        public void Move_Player_BadRequest()
         {
             GameStep action = new(new("zero"));
 
@@ -687,51 +767,49 @@ namespace APITest.GameTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Move_IncorrectStatus_Forbidden()
+        public void Move_IncorrectStatus_BadRequest()
         {
-            Game game = _repository.GameRepository.GetGames()?[6] ?? new();
             GameStep action = new(new("nine"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Move_NotPlayersTurn_Forbidden()
+        public void Move_NotPlayersTurn_BadRequest()
         {
-            Game game = _repository.GameRepository.GetGames()?[1] ?? new();
             GameStep action = new(new("third"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Move_NoSecondPlayer_NOTFOUND()
+        public void Move_NoSecondPlayer_BadRequest()
         {
-            GameStep action = new(_repository.GameRepository.GetGames()?[2].First ?? "");
+            GameStep action = new("fourth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -739,8 +817,7 @@ namespace APITest.GameTest
         [Test]
         public void Move_NotPossible_InvalidGameOperation()
         {
-            var playerToken = _repository.GameRepository.GetGames()?[1].First ?? "";
-            GameStep action = new(playerToken, 0, 0);
+            GameStep action = new("second", 0, 0);
 
             var ex = Assert.Throws<InvalidGameOperationException>(() => _controller.Move(action));
 
@@ -750,74 +827,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayer_OK()
         {
-            Game game = _repository.GameRepository.GetGames()?[11] ?? new();
-            game.Board[0, 0] = Color.White;
-            game.Board[0, 1] = Color.White;
-            game.Board[0, 2] = Color.White;
-            game.Board[0, 3] = Color.White;
-            game.Board[0, 4] = Color.White;
-            game.Board[0, 5] = Color.White;
-            game.Board[0, 6] = Color.White;
-            game.Board[0, 7] = Color.White;
-            game.Board[1, 0] = Color.White;
-            game.Board[1, 1] = Color.White;
-            game.Board[1, 2] = Color.White;
-            game.Board[1, 3] = Color.White;
-            game.Board[1, 4] = Color.White;
-            game.Board[1, 5] = Color.White;
-            game.Board[1, 6] = Color.White;
-            game.Board[1, 7] = Color.White;
-            game.Board[2, 0] = Color.White;
-            game.Board[2, 1] = Color.White;
-            game.Board[2, 2] = Color.White;
-            game.Board[2, 3] = Color.White;
-            game.Board[2, 4] = Color.White;
-            game.Board[2, 5] = Color.White;
-            game.Board[2, 6] = Color.White;
-            game.Board[2, 7] = Color.White;
-            game.Board[3, 0] = Color.White;
-            game.Board[3, 1] = Color.White;
-            game.Board[3, 2] = Color.White;
-            game.Board[3, 3] = Color.White;
-            game.Board[3, 4] = Color.White;
-            game.Board[3, 5] = Color.White;
-            game.Board[3, 6] = Color.White;
-            game.Board[3, 7] = Color.None;
-            game.Board[4, 0] = Color.White;
-            game.Board[4, 1] = Color.White;
-            game.Board[4, 2] = Color.White;
-            game.Board[4, 3] = Color.White;
-            game.Board[4, 4] = Color.White;
-            game.Board[4, 5] = Color.White;
-            game.Board[4, 6] = Color.None;
-            game.Board[4, 7] = Color.None;
-            game.Board[5, 0] = Color.White;
-            game.Board[5, 1] = Color.White;
-            game.Board[5, 2] = Color.White;
-            game.Board[5, 3] = Color.White;
-            game.Board[5, 4] = Color.White;
-            game.Board[5, 5] = Color.White;
-            game.Board[5, 6] = Color.None;
-            game.Board[5, 7] = Color.Black;
-            game.Board[6, 0] = Color.White;
-            game.Board[6, 1] = Color.White;
-            game.Board[6, 2] = Color.White;
-            game.Board[6, 3] = Color.White;
-            game.Board[6, 4] = Color.White;
-            game.Board[6, 5] = Color.White;
-            game.Board[6, 6] = Color.White;
-            game.Board[6, 7] = Color.None;
-            game.Board[7, 0] = Color.White;
-            game.Board[7, 1] = Color.White;
-            game.Board[7, 2] = Color.White;
-            game.Board[7, 3] = Color.White;
-            game.Board[7, 4] = Color.White;
-            game.Board[7, 5] = Color.White;
-            game.Board[7, 6] = Color.White;
-            game.Board[7, 7] = Color.White;
-            _repository.GameRepository.Update(game);
-
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.First);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("18");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -829,74 +839,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayer_OK()
         {
-            Game game = _repository.GameRepository.GetGames()?[10] ?? new();
-            game.Board[0, 0] = Color.White;
-            game.Board[0, 1] = Color.White;
-            game.Board[0, 2] = Color.White;
-            game.Board[0, 3] = Color.White;
-            game.Board[0, 4] = Color.White;
-            game.Board[0, 5] = Color.White;
-            game.Board[0, 6] = Color.White;
-            game.Board[0, 7] = Color.White;
-            game.Board[1, 0] = Color.White;
-            game.Board[1, 1] = Color.White;
-            game.Board[1, 2] = Color.White;
-            game.Board[1, 3] = Color.White;
-            game.Board[1, 4] = Color.White;
-            game.Board[1, 5] = Color.White;
-            game.Board[1, 6] = Color.White;
-            game.Board[1, 7] = Color.White;
-            game.Board[2, 0] = Color.White;
-            game.Board[2, 1] = Color.White;
-            game.Board[2, 2] = Color.White;
-            game.Board[2, 3] = Color.White;
-            game.Board[2, 4] = Color.White;
-            game.Board[2, 5] = Color.White;
-            game.Board[2, 6] = Color.White;
-            game.Board[2, 7] = Color.White;
-            game.Board[3, 0] = Color.White;
-            game.Board[3, 1] = Color.White;
-            game.Board[3, 2] = Color.White;
-            game.Board[3, 3] = Color.White;
-            game.Board[3, 4] = Color.White;
-            game.Board[3, 5] = Color.White;
-            game.Board[3, 6] = Color.White;
-            game.Board[3, 7] = Color.None;
-            game.Board[4, 0] = Color.White;
-            game.Board[4, 1] = Color.White;
-            game.Board[4, 2] = Color.White;
-            game.Board[4, 3] = Color.White;
-            game.Board[4, 4] = Color.White;
-            game.Board[4, 5] = Color.White;
-            game.Board[4, 6] = Color.None;
-            game.Board[4, 7] = Color.None;
-            game.Board[5, 0] = Color.White;
-            game.Board[5, 1] = Color.White;
-            game.Board[5, 2] = Color.White;
-            game.Board[5, 3] = Color.White;
-            game.Board[5, 4] = Color.White;
-            game.Board[5, 5] = Color.White;
-            game.Board[5, 6] = Color.None;
-            game.Board[5, 7] = Color.Black;
-            game.Board[6, 0] = Color.White;
-            game.Board[6, 1] = Color.White;
-            game.Board[6, 2] = Color.White;
-            game.Board[6, 3] = Color.White;
-            game.Board[6, 4] = Color.White;
-            game.Board[6, 5] = Color.White;
-            game.Board[6, 6] = Color.White;
-            game.Board[6, 7] = Color.None;
-            game.Board[7, 0] = Color.White;
-            game.Board[7, 1] = Color.White;
-            game.Board[7, 2] = Color.White;
-            game.Board[7, 3] = Color.White;
-            game.Board[7, 4] = Color.White;
-            game.Board[7, 5] = Color.White;
-            game.Board[7, 6] = Color.White;
-            game.Board[7, 7] = Color.White;
-            _repository.GameRepository.Update(game);
-
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("16");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -906,207 +849,73 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_Game_NOTFOUND()
+        public void Pass_Game_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("fourth"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_Player_NOTFOUND()
+        public void Pass_Player_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("zero"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_StatusIncorrect_FORBIDDEN()
+        public void Pass_StatusIncorrect_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_PlayersturnIncorrect_FORBIDDEN()
+        public void Pass_PlayersturnIncorrect_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_FirstPlayerNonExistant_FORBIDDEN()
+        public void Pass_FirstPlayerNonExistant_BadRequest()
         {
-            Game game = _repository.GameRepository.GetGames()?[8] ?? new();
-            game.Board[0, 0] = Color.White;
-            game.Board[0, 1] = Color.White;
-            game.Board[0, 2] = Color.White;
-            game.Board[0, 3] = Color.White;
-            game.Board[0, 4] = Color.White;
-            game.Board[0, 5] = Color.White;
-            game.Board[0, 6] = Color.White;
-            game.Board[0, 7] = Color.White;
-            game.Board[1, 0] = Color.White;
-            game.Board[1, 1] = Color.White;
-            game.Board[1, 2] = Color.White;
-            game.Board[1, 3] = Color.White;
-            game.Board[1, 4] = Color.White;
-            game.Board[1, 5] = Color.White;
-            game.Board[1, 6] = Color.White;
-            game.Board[1, 7] = Color.White;
-            game.Board[2, 0] = Color.White;
-            game.Board[2, 1] = Color.White;
-            game.Board[2, 2] = Color.White;
-            game.Board[2, 3] = Color.White;
-            game.Board[2, 4] = Color.White;
-            game.Board[2, 5] = Color.White;
-            game.Board[2, 6] = Color.White;
-            game.Board[2, 7] = Color.White;
-            game.Board[3, 0] = Color.White;
-            game.Board[3, 1] = Color.White;
-            game.Board[3, 2] = Color.White;
-            game.Board[3, 3] = Color.White;
-            game.Board[3, 4] = Color.White;
-            game.Board[3, 5] = Color.White;
-            game.Board[3, 6] = Color.White;
-            game.Board[3, 7] = Color.None;
-            game.Board[4, 0] = Color.White;
-            game.Board[4, 1] = Color.White;
-            game.Board[4, 2] = Color.White;
-            game.Board[4, 3] = Color.White;
-            game.Board[4, 4] = Color.White;
-            game.Board[4, 5] = Color.White;
-            game.Board[4, 6] = Color.None;
-            game.Board[4, 7] = Color.None;
-            game.Board[5, 0] = Color.White;
-            game.Board[5, 1] = Color.White;
-            game.Board[5, 2] = Color.White;
-            game.Board[5, 3] = Color.White;
-            game.Board[5, 4] = Color.White;
-            game.Board[5, 5] = Color.White;
-            game.Board[5, 6] = Color.None;
-            game.Board[5, 7] = Color.Black;
-            game.Board[6, 0] = Color.White;
-            game.Board[6, 1] = Color.White;
-            game.Board[6, 2] = Color.White;
-            game.Board[6, 3] = Color.White;
-            game.Board[6, 4] = Color.White;
-            game.Board[6, 5] = Color.White;
-            game.Board[6, 6] = Color.White;
-            game.Board[6, 7] = Color.None;
-            game.Board[7, 0] = Color.White;
-            game.Board[7, 1] = Color.White;
-            game.Board[7, 2] = Color.White;
-            game.Board[7, 3] = Color.White;
-            game.Board[7, 4] = Color.White;
-            game.Board[7, 5] = Color.White;
-            game.Board[7, 6] = Color.White;
-            game.Board[7, 7] = Color.White;
-            _repository.GameRepository.Update(game);
-
             ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Pass_SecondPlayerNonExistant_FORBIDDEN()
+        public void Pass_SecondPlayerNonExistant_BadRequest()
         {
-            Game game = _repository.GameRepository.GetGames()?[8] ?? new();
-            game.Board[0, 0] = Color.White;
-            game.Board[0, 1] = Color.White;
-            game.Board[0, 2] = Color.White;
-            game.Board[0, 3] = Color.White;
-            game.Board[0, 4] = Color.White;
-            game.Board[0, 5] = Color.White;
-            game.Board[0, 6] = Color.White;
-            game.Board[0, 7] = Color.White;
-            game.Board[1, 0] = Color.White;
-            game.Board[1, 1] = Color.White;
-            game.Board[1, 2] = Color.White;
-            game.Board[1, 3] = Color.White;
-            game.Board[1, 4] = Color.White;
-            game.Board[1, 5] = Color.White;
-            game.Board[1, 6] = Color.White;
-            game.Board[1, 7] = Color.White;
-            game.Board[2, 0] = Color.White;
-            game.Board[2, 1] = Color.White;
-            game.Board[2, 2] = Color.White;
-            game.Board[2, 3] = Color.White;
-            game.Board[2, 4] = Color.White;
-            game.Board[2, 5] = Color.White;
-            game.Board[2, 6] = Color.White;
-            game.Board[2, 7] = Color.White;
-            game.Board[3, 0] = Color.White;
-            game.Board[3, 1] = Color.White;
-            game.Board[3, 2] = Color.White;
-            game.Board[3, 3] = Color.White;
-            game.Board[3, 4] = Color.White;
-            game.Board[3, 5] = Color.White;
-            game.Board[3, 6] = Color.White;
-            game.Board[3, 7] = Color.None;
-            game.Board[4, 0] = Color.White;
-            game.Board[4, 1] = Color.White;
-            game.Board[4, 2] = Color.White;
-            game.Board[4, 3] = Color.White;
-            game.Board[4, 4] = Color.White;
-            game.Board[4, 5] = Color.White;
-            game.Board[4, 6] = Color.None;
-            game.Board[4, 7] = Color.None;
-            game.Board[5, 0] = Color.White;
-            game.Board[5, 1] = Color.White;
-            game.Board[5, 2] = Color.White;
-            game.Board[5, 3] = Color.White;
-            game.Board[5, 4] = Color.White;
-            game.Board[5, 5] = Color.White;
-            game.Board[5, 6] = Color.None;
-            game.Board[5, 7] = Color.Black;
-            game.Board[6, 0] = Color.White;
-            game.Board[6, 1] = Color.White;
-            game.Board[6, 2] = Color.White;
-            game.Board[6, 3] = Color.White;
-            game.Board[6, 4] = Color.White;
-            game.Board[6, 5] = Color.White;
-            game.Board[6, 6] = Color.White;
-            game.Board[6, 7] = Color.None;
-            game.Board[7, 0] = Color.White;
-            game.Board[7, 1] = Color.White;
-            game.Board[7, 2] = Color.White;
-            game.Board[7, 3] = Color.White;
-            game.Board[7, 4] = Color.White;
-            game.Board[7, 5] = Color.White;
-            game.Board[7, 6] = Color.White;
-            game.Board[7, 7] = Color.White;
-            _repository.GameRepository.Update(game);
-
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("nine");
+             ActionResult<HttpResponseMessage>? result = _controller.Pass("nine");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -1124,13 +933,13 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_SecondPlayerIncorrectColor_FORBIDDEN()
+        public void Pass_SecondPlayerIncorrectColor_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -1138,9 +947,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayer_BADREQUEST()
         {
-            Game game = _repository.GameRepository.GetGames()?[11] ?? new();
-
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.First);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("15");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -1152,9 +959,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayer_BADREQUEST()
         {
-            Game game = _repository.GameRepository.GetGames()?[10] ?? new();
-
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(game.Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Pass("17");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -1166,15 +971,13 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_OK()
         {
-            Game game = _repository.GameRepository.GetGames()?[9] ?? new();
-
             Assert.Multiple(() =>
             {
                 Assert.That(actual: _repository.ResultRepository.GetPlayerStats("19"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
                 Assert.That(actual: _repository.ResultRepository.GetPlayerStats("20"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
             });
 
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("19");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -1191,58 +994,49 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Forfeit_Game_NOTFOUND()
+        public void Forfeit_Game_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("26"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Forfeit_StatusIncorrect_FORBIDDEN()
+        public void Forfeit_StatusIncorrect_BadRequest()
         {
-            Player five = new("fifth", "five");
-            Game game = _repository.GameRepository.GetGames()?[6] ?? new();
-
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("23");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Forfeit_PlayersturnIncorrect_FORBIDDEN()
+        public void Forfeit_PlayersturnIncorrect_BadRequest()
         {
-            Player five = new("fifth", "five");
-            Game game = _repository.GameRepository.GetGames()?[8] ?? new();
-
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.Second);
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("nonexistant");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Forfeit_FORBIDDEN()
+        public void Forfeit_BadRequest()
         {
-            Player five = new("fifth", "five");
-            Game game = _repository.GameRepository.GetGames()?[6] ?? new();
-
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(game.First);
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("24");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }

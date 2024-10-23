@@ -100,7 +100,7 @@ namespace APITest.GameTest
         [Test]
         public void Create_Correct()
         {
-            int size = _repository.GameRepository.GetGames()?.Count ?? 0;
+            int size = _context.Games.Count();
             Player five = new("fifth", "five");
             Game game = new("three", five.Token, Color.Black);
 
@@ -108,8 +108,8 @@ namespace APITest.GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.Not.EqualTo(expected: size));
-                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.EqualTo(expected: size + 1));
+                Assert.That(actual: _context.Games.Count(), Is.Not.EqualTo(expected: size));
+                Assert.That(actual: _context.Games.Count(), Is.EqualTo(expected: size + 1));
             });
         }
 
@@ -122,10 +122,10 @@ namespace APITest.GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: _context.Games.ElementAt(2).Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: _context.Games.ElementAt(2).Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: _context.Games.ElementAt(2).First, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: _context.Games.ElementAt(2).Second, Is.EqualTo(expected: "fifth"));
             });
         }
 
@@ -138,103 +138,39 @@ namespace APITest.GameTest
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Token, Is.EqualTo(expected: "two"));
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Status, Is.EqualTo(expected: Status.Playing));
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].First, Is.EqualTo(expected: "fourth"));
-                Assert.That(actual: _repository.GameRepository.GetGames()?[2].Second, Is.EqualTo(expected: "fifth"));
+                Assert.That(actual: _context.Games.ElementAt(2).Token, Is.EqualTo(expected: "two"));
+                Assert.That(actual: _context.Games.ElementAt(2).Status, Is.EqualTo(expected: Status.Playing));
+                Assert.That(actual: _context.Games.ElementAt(2).First, Is.EqualTo(expected: "fourth"));
+                Assert.That(actual: _context.Games.ElementAt(2).Second, Is.EqualTo(expected: "fifth"));
             });
         }
 
         [Test]
         public void Update_Correct()
         {
-            Game game = _repository.GameRepository.Get("null") ?? new();
-            Assert.That(actual: _repository.GameRepository.Get("null")?.PlayersTurn, Is.EqualTo(expected: Color.Black));
+            Assert.That(actual: _repository.GameRepository.GetPlayersTurnByPlayersToken("12"), Is.EqualTo(expected: Color.Black));
 
-            game.MakeMove(2,3);
-
-            _context.Games.Update(game);
+            _repository.GameRepository.Move(new("12",2,3));
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.Get("null")?.PlayersTurn, Is.EqualTo(expected: Color.White));
-                Assert.That(actual: _repository.GameRepository.Get("null")?.Board[2,3], Is.EqualTo(expected: Color.Black));
+                Assert.That(actual: _repository.GameRepository.GetPlayersTurnByPlayersToken("12"), Is.EqualTo(expected: Color.White));
+                Assert.That(actual: _repository.GameRepository.GetBoardByPlayersToken("12")?[2,3], Is.EqualTo(expected: Color.Black));
             });
         }
 
         [Test]
         public void Delete_Correct()
         {
-            int size = _repository.GameRepository.GetGames()?.Count ?? 0;
-            Game game = _repository.GameRepository.GetGames()?[2] ?? new();
+            int size = _context.Games.Count();
 
-            Assert.That(actual: _repository.GameRepository.GetGames()?.Count, Is.EqualTo(size));
-
-            _repository.GameRepository.Delete(game);
+            _repository.GameRepository.Delete("fourth");
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.Not.EqualTo(size));
-                Assert.That(actual: _repository.GameRepository.GetGames(), Has.Count.EqualTo(expected: size - 1));
+                Assert.That(actual: _context.Games.Count(), Is.Not.EqualTo(size));
+                Assert.That(actual: _context.Games.Count(), Is.EqualTo(expected: size - 1));
             });
-        }
-
-        [Test]
-        public void Get_Correct()
-        {
-            string token = "ValidTest";
-            _repository.GameRepository.Create(new Game(token));
-
-            var respons = _repository.GameRepository.GetPlayersGame(token);
-
-            if (respons is not null)
-                Assert.That(actual: respons.First, Is.EqualTo(expected: token));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Get_Incorrect()
-        {
-            string token = "BlaBlaInvalidTestT123";
-
-            var respons = _repository.GameRepository.Get(token);
-
-            Assert.That(respons, Is.Null);
-        }
-
-        [Test]
-        public void GetPlayersGame_Correct_FirstPlayer()
-        {
-            Player five = new("fifth", "five");
-            Player six = new("sixth", "six");
-            Game game = new("nullito", five.Token, Color.Black, six.Token, Status.Playing);
-
-            _repository.GameRepository.Create(game);
-
-            var respons = _repository.GameRepository.GetPlayersGame("fifth");
-
-            if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: game.Token));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void GetPlayersGame_Correct_SecondPlayer()
-        {
-            Player five = new("ten", "ten");
-            Player six = new("11", "11");
-            Game game = new("nullito", five.Token, Color.Black, six.Token, Status.Playing);
-
-            _repository.GameRepository.Create(game);
-
-            var respons = _repository.GameRepository.GetPlayersGame("11");
-
-            if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo(expected: game.Token));
-            else
-                Assert.Fail("Respons is null.");
         }
 
         [Test]
@@ -242,27 +178,9 @@ namespace APITest.GameTest
         {
             string playerToken = "first123456";
 
-            var respons = _repository.GameRepository.GetPlayersGame(playerToken);
+            var respons = _repository.GameRepository.GetGameTokenByPlayersToken(playerToken);
 
             Assert.That(respons, Is.Null);
-        }
-
-        [Test]
-        public void GetGames_Correct()
-        {
-            var respons = _repository.GameRepository.GetGames();
-
-            if (respons is not null)
-            {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[0].Description, Is.EqualTo(respons[0].Description));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[1].First, Is.EqualTo(respons[1].First));
-                    Assert.That(actual: _repository.GameRepository.GetGames()?[2].First, Is.EqualTo(respons[2].First));
-                });
-            }
-            else
-                Assert.Fail("Respons was null.");
         }
     }
 }

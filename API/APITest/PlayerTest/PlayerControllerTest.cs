@@ -104,23 +104,19 @@ namespace APITest.PlayerTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.PlayerRepository.GetByUsername("newby"), Is.Not.Null);
-                });
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Create_FORBIDDEN()
+        public void Create_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Create(new("one", "one"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -132,74 +128,19 @@ namespace APITest.PlayerTest
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.PlayerRepository.Get("first"), Is.Null);
-                });
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Delete_NotFound()
+        public void Delete_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete("firsttt");
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void PlayerByToken_Correct()
-        {
-            var result = _controller.PlayerByToken("first");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-
-            var respons = (Player?)okResult?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons.Username, Is.EqualTo("one"));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void PlayerByUsername_Correct()
-        {
-            var result = _controller.PlayerByUsername("one");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-
-            var respons = (Player?)okResult?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons.Token, Is.EqualTo("first"));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void PlayersName_Correct()
-        {
-            var result = _controller.PlayersName("first");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-
-            var respons = (string?)okResult?.Value;
-
-            if (respons is not null)
-                Assert.That(actual: respons, Is.EqualTo("one"));
+                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -241,29 +182,15 @@ namespace APITest.PlayerTest
         [Test]
         public void Send_OK()
         {
-            PlayerRequest request = new("one", "two");
+            PlayerRequest request = new("one", "second");
             ActionResult<HttpResponseMessage>? result = _controller.FriendRequest(request);
             HttpResponseMessage? respons = result?.Value;
 
-            ActionResult<Player>? player = _controller.PlayerByUsername("one");
-            Assert.That(player.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = player.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-            var player_respons = (Player?)okResult?.Value;
-
-            ActionResult<Player>? sender = _controller.PlayerByUsername("two");
-            Assert.That(sender.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okkResult = sender.Result as OkObjectResult;
-            Assert.That(okkResult, Is.Not.Null, "Result should not be null");
-            var sender_respons = (Player?)okkResult?.Value;
-
-            if (respons is not null && player_respons is not null && sender_respons is not null)
+            if (respons is not null)
             {
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: player_respons.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.True);
-                    Assert.That(actual: _repository.PlayerRepository.GetByUsername("one")?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.True);
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.True);
                 });
             }
@@ -274,23 +201,15 @@ namespace APITest.PlayerTest
         [Test]
         public void Accept_OK()
         {
-            _controller.FriendRequest(new("one", "two"));
-            ActionResult<HttpResponseMessage>? result = _controller.AcceptFriendRequest(new("two", "one"));
+            _controller.FriendRequest(new("one", "second"));
+            ActionResult<HttpResponseMessage>? result = _controller.AcceptFriendRequest(new("two", "first"));
             HttpResponseMessage? respons = result?.Value;
 
-            Player? player = _repository.PlayerRepository.GetByUsername("one");
-            Player? sender = _repository.PlayerRepository.GetByUsername("two");
-
-            if (respons is not null && player is not null && sender is not null)
+            if (respons is not null)
             {
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: player.Friends, Does.Contain("two"));
-                    Assert.That(actual: sender.Friends, Does.Contain("one"));
-                    Assert.That(actual: _repository.PlayerRepository.GetByUsername("one")?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
-                    Assert.That(actual: _repository.PlayerRepository.GetByUsername("one")?.Friends, Does.Contain("two"));
-                    Assert.That(actual: _repository.PlayerRepository.GetByUsername("two")?.Friends, Does.Contain("one"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Friends, Does.Contain("two"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("two"))?.Friends, Does.Contain("one"));
@@ -303,21 +222,16 @@ namespace APITest.PlayerTest
         [Test]
         public void Decline_OK()
         {
-            PlayerRequest request = new("one", "two");
+            PlayerRequest request = new("one", "second");
             _controller.FriendRequest(request);
-            ActionResult<HttpResponseMessage>? result = _controller.DeclineFriendRequest(new("two", "one"));
+            ActionResult<HttpResponseMessage>? result = _controller.DeclineFriendRequest(new("two", "first"));
             HttpResponseMessage? respons = result?.Value;
 
-            Player? player = _repository.PlayerRepository.GetByUsername("one");
-            Player? sender = _repository.PlayerRepository.GetByUsername("two");
-
-            if (respons is not null && player is not null && sender is not null)
+            if (respons is not null)
             {
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: player.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
-                    Assert.That(actual: player.Friends, Does.Not.Contain("two"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
                 });
             }
@@ -328,19 +242,14 @@ namespace APITest.PlayerTest
         [Test]
         public void DeleteFriend_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.DeleteFriend(new("eight", "six"));
+            ActionResult<HttpResponseMessage>? result = _controller.DeleteFriend(new("eight", "sixth"));
             HttpResponseMessage? respons = result?.Value;
 
-            Player? player = _repository.PlayerRepository.GetByUsername("eight");
-            Player? sender = _repository.PlayerRepository.GetByUsername("six");
-
-            if (respons is not null && player is not null && sender is not null)
+            if (respons is not null)
             {
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: sender.Friends, Does.Not.Contain("eight"));
-                    Assert.That(actual: player.Friends, Does.Not.Contain("six"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("six"))?.Friends, Does.Not.Contain("eight"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("eight"))?.Friends, Does.Not.Contain("six"));
                 });
