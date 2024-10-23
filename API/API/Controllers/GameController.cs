@@ -82,9 +82,9 @@ namespace API.Controllers
         }
 
         [HttpPut("join")]
-        public ActionResult<HttpResponseMessage> Join([FromBody] GameEntrant entrant)
+        public ActionResult<HttpResponseMessage> Join([FromBody] PlayerRequest request)
         {
-            var respons = _repository.GameRepository.JoinPlayer(entrant);
+            var respons = _repository.GameRepository.JoinPlayer(request);
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -93,7 +93,7 @@ namespace API.Controllers
         }
 
         [HttpPut("move")]
-        public ActionResult<HttpResponseMessage> Move([FromBody] GameStep action)
+        public ActionResult<HttpResponseMessage> Move([FromBody] GameMove action)
         {
             var (succeded, error) = _repository.GameRepository.Move(action);
 

@@ -26,9 +26,9 @@ namespace API.Data
 
         public bool Create(GameCreation game)
         {
-            if (PlayerExists(game.Player) && !PlayerInGame(game.Player))
+            if (PlayerExists(game.PlayerToken) && !PlayerInGame(game.PlayerToken))
             {
-                _context.Games.Add(new(game.Player, game.Description));
+                _context.Games.Add(new(game.PlayerToken, game.Description));
                 _context.SaveChanges();
                 return true;
             }
@@ -143,19 +143,19 @@ namespace API.Data
             return game;
         }
 
-        public bool JoinPlayer(GameEntrant entry)
+        public bool JoinPlayer(PlayerRequest request)
         {
-            var player_token = GetToken(entry.Token);
+            var player_token = GetToken(request.ReceiverUsername);
 
             if (player_token is null)
                 return false;
 
             var game = GetPlayersGame(player_token);
 
-            if (game is not null && PlayerExists(player_token) && PlayerExists(entry.Player) &&
-                entry.Player != player_token && !PlayerInGame(entry.Player) && PlayerInPendingGame(player_token))
+            if (game is not null && PlayerExists(player_token) && PlayerExists(request.SenderToken) &&
+                request.SenderToken != player_token && !PlayerInGame(request.SenderToken) && PlayerInPendingGame(player_token))
             {
-                game.SetSecondPlayer(entry.Player);
+                game.SetSecondPlayer(request.SenderToken);
                 _context.Entry(game).Property(g => g.Status).IsModified = true;
                 _context.Entry(game).Property(g => g.Second).IsModified = true;
                 _context.SaveChanges();
@@ -164,15 +164,15 @@ namespace API.Data
             return false;
         }
 
-        public (bool succeded, string? error) Move(GameStep action)
+        public (bool succeded, string? error) Move(GameMove action)
         {
-            var game = GetPlayersGame(action.Token);
+            var game = GetPlayersGame(action.PlayerToken);
 
-            if (game is not null && PlayerExists(action.Token) && game.Second is not null)
+            if (game is not null && PlayerExists(action.PlayerToken) && game.Second is not null)
             {
-                string player = action.Token == game.First ? game.First : game.Second;
-                string challenger = action.Token == game.First ? game.Second : game.First;
-                Color turn = action.Token == game.First ? game.FColor : game.SColor;
+                string player = action.PlayerToken == game.First ? game.First : game.Second;
+                string challenger = action.PlayerToken == game.First ? game.Second : game.First;
+                Color turn = action.PlayerToken == game.First ? game.FColor : game.SColor;
 
                 if (player != challenger && PlayerExists(challenger) &&
                     turn == game.PlayersTurn && game.Status == Status.Playing)

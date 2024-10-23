@@ -20,9 +20,9 @@ namespace API.Data
                 Friends = { "Ernst", "John" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "eltjo"),
-                    new(Inquiry.Friend, "bad")
+                    new(Inquiry.Friend, "Tijn"),
+                    new(Inquiry.Friend, "Eltjo"),
+                    new(Inquiry.Friend, "Badbux")
                 }
             };
             Player two = new("ernst", "Ernst")
@@ -31,9 +31,9 @@ namespace API.Data
                 Friends = { "John", "Karen" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "burton"),
-                    new(Inquiry.Friend, "burst"),
-                    new(Inquiry.Friend, "eltjo")
+                    new(Inquiry.Friend, "Burton"),
+                    new(Inquiry.Friend, "Burst"),
+                    new(Inquiry.Friend, "Eltjo")
                 }
             };
             Player three = new("john", "John")
@@ -42,9 +42,9 @@ namespace API.Data
                 Friends = { "Ernst", "Karen" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "eltjo"),
-                    new(Inquiry.Friend, "john")
+                    new(Inquiry.Friend, "Tijn"),
+                    new(Inquiry.Friend, "Eltjo"),
+                    new(Inquiry.Friend, "Sadbux")
                 }
             };
             Player four = new("eltjo", "Eltjo")
@@ -53,9 +53,9 @@ namespace API.Data
                 Friends = { "Tijn" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "karen"),
-                    new(Inquiry.Friend, "ernst"),
-                    new(Inquiry.Friend, "john")
+                    new(Inquiry.Friend, "Karen"),
+                    new(Inquiry.Friend, "Ernst"),
+                    new(Inquiry.Friend, "John")
                 }
             };
             Player five = new("tijn", "Tijn")
@@ -64,9 +64,9 @@ namespace API.Data
                 Friends = { "Eltjo" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "bad"),
-                    new(Inquiry.Friend, "sad")
+                    new(Inquiry.Friend, "Karen"),
+                    new(Inquiry.Friend, "Badbux"),
+                    new(Inquiry.Friend, "Sadbux")
                 }
             };
             Player six = new("cena", "Cena")
@@ -75,9 +75,9 @@ namespace API.Data
                 Friends = { "John", "Karen" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "eltjo"),
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "sad")
+                    new(Inquiry.Friend, "Eltjo"),
+                    new(Inquiry.Friend, "Tijn"),
+                    new(Inquiry.Friend, "Sadbux")
                 }
             };
             Player seven = new("burst", "Burst")
@@ -86,9 +86,9 @@ namespace API.Data
                 Friends = { "Cena", "Karen" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "eltjo"),
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "sad")
+                    new(Inquiry.Friend, "Eltjo"),
+                    new(Inquiry.Friend, "Tijn"),
+                    new(Inquiry.Friend, "Sadbux")
                 }
             };
             Player eight = new("burton", "Burton")
@@ -97,35 +97,46 @@ namespace API.Data
                 Friends = { "Ernst", "Karen" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "eltjo"),
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "sad")
+                    new(Inquiry.Friend, "Eltjo"),
+                    new(Inquiry.Friend, "Tijn"),
+                    new(Inquiry.Friend, "Sadbux")
                 }
             };
-            Player nine = new("nice", "Sadbux")
+            Player nine = new("sadbux", "Sadbux")
             {
                 LastActivity = DateTime.UtcNow,
                 Friends = { "Eltjo", "Tijn" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "sad"),
-                    new(Inquiry.Friend, "tijn"),
-                    new(Inquiry.Friend, "sad")
+                    new(Inquiry.Friend, "Cena"),
+                    new(Inquiry.Friend, "Burton"),
+                    new(Inquiry.Friend, "Ernst")
                 }
             };
-            Player ten = new("bad", "Badbux")
+            Player ten = new("badbux", "Badbux")
             {
                 LastActivity = DateTime.UtcNow,
                 Friends = { "Eltjo", "Tijn" },
                 Requests = new List<Request>
                 {
-                    new(Inquiry.Friend, "burton"),
-                    new(Inquiry.Friend, "bad"),
-                    new(Inquiry.Friend, "sad")
+                    new(Inquiry.Friend, "Burton"),
+                    new(Inquiry.Friend, "Badbux"),
+                    new(Inquiry.Friend, "Sadbux")
+                }
+            };
+            Player eleven = new("identity", "Identity")
+            {
+                LastActivity = DateTime.UtcNow,
+                Friends = { "Eltjo", "Tijn" },
+                Requests = new List<Request>
+                {
+                    new(Inquiry.Friend, "Burton"),
+                    new(Inquiry.Friend, "Badbux"),
+                    new(Inquiry.Friend, "Sadbux")
                 }
             };
 
-            _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten);
+            _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten, eleven);
 
             Game game0 = new("zero", one.Token, Color.Black);
 

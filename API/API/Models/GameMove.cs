@@ -1,8 +1,8 @@
 ﻿namespace API.Models
 {
-    public class GameStep
+    public class GameMove
     {
-        public string Token { get; set; }
+        public string PlayerToken { get; set; }
 
         private int _column;
         public int Column
@@ -36,16 +36,16 @@
             }
         }
 
-        public GameStep()
+        public GameMove()
         {
-            Token = string.Empty;
+            PlayerToken = string.Empty;
             Row = 0;
             Column = 0;
         }
 
-        public GameStep(string player, int row = 2, int column = 3)
+        public GameMove(string player_token, int row = 2, int column = 3)
         {
-            Token = player;
+            PlayerToken = player_token;
             this.Row = row;
             this.Column = column;
         }

@@ -132,9 +132,9 @@ namespace APITest.GameTest
         [Test]
         public void JoinPlayer_Correct()
         {
-            GameEntrant entry = new("fourth", "fifth");
+            PlayerRequest request = new("four", "fifth");
 
-            _repository.GameRepository.JoinPlayer(entry);
+            _repository.GameRepository.JoinPlayer(request);
 
             var games = _context.Games.ToList();
 

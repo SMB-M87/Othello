@@ -30,9 +30,16 @@ namespace API.Data
             return false;
         }
 
-        public GameResult? Get(string token)
+        public GameResultView? Get(string token)
         {
-            return _context.Results.FirstOrDefault(s => s.Token == token);
+            var respons = _context.Results.FirstOrDefault(s => s.Token == token);
+
+            if (respons is not null)
+            {
+                GameResultView result = new(GetName(respons.Winner) ?? string.Empty, GetName(respons.Loser) ?? string.Empty, respons.Draw, respons.Date);
+                return result;
+            }
+            return null;
         }
 
         private string? GetToken(string username)
@@ -69,22 +76,23 @@ namespace API.Data
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token))?.Username;
         }
 
-        public List<GameResult>? GetPlayersMatchHistory(string username)
+        public List<GameResultView>? GetPlayersMatchHistory(string username)
         {
             var token = GetToken(username);
 
             if (token is not null)
             {
-                var results = GetMatchHistory(token);
+                var respons = GetMatchHistory(token);
+                List<GameResultView> results = new();
 
-                if (results.Count > 0)
+                if (respons.Count > 0)
                 {
-                    results = results.OrderByDescending(r => r.Date).ToList();
+                    respons = respons.OrderByDescending(r => r.Date).ToList();
 
-                    foreach (var game in results)
+                    foreach (var game in respons)
                     {
-                        game.Winner = GetName(game.Winner) ?? string.Empty;
-                        game.Loser = GetName(game.Loser) ?? string.Empty;
+                        GameResultView adding = new(GetName(game.Winner) ?? string.Empty, GetName(game.Loser) ?? string.Empty, game.Draw, game.Date);
+                        results.Add(adding);
                     }
                 }
                 return results;

@@ -16,9 +16,9 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult<HttpResponseMessage> Create([FromBody] GameEntrant player)
+        public ActionResult<HttpResponseMessage> Create([FromBody] PlayerRequest player)
         {
-            bool respons = _repository.PlayerRepository.Create(new(player.Token, player.Player));
+            bool respons = _repository.PlayerRepository.Create(new(player.ReceiverUsername, player.SenderToken));
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
