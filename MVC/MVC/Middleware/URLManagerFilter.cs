@@ -25,7 +25,7 @@ namespace MVC.Middleware
             {
                 var userId = _userManager.GetUserId(user);
 
-                var gameResponse = await _httpClient.GetAsync($"api/game/from/{userId}");
+                var gameResponse = await _httpClient.GetAsync($"api/game/{userId}");
                 if (gameResponse.IsSuccessStatusCode)
                 {
                     var token = await gameResponse.Content.ReadAsStringAsync();
@@ -44,9 +44,9 @@ namespace MVC.Middleware
                             context.Result = new RedirectToActionResult("Play", "Game", new { token });
                             return;
                         }
-                        else if (!(controller == "Game" && gameStatus == "0" && action == "Wait"))
+                        else if (!(controller == "Home" && gameStatus == "0" && action == "Wait"))
                         {
-                            context.Result = new RedirectToActionResult("Wait", "Game", new { token });
+                            context.Result = new RedirectToActionResult("Wait", "Home", new { token });
                             return;
                         }
                     }
@@ -54,8 +54,9 @@ namespace MVC.Middleware
                 else
                 {
                     var controller = context.RouteData.Values["controller"]?.ToString();
+                    var action = context.RouteData.Values["action"]?.ToString();
 
-                    if (!(controller == "Home" && controller == "Account"))
+                    if (!(controller == "Home" && controller == "Account") || (controller == "Home" && action == "Wait"))
                     {
                         context.Result = new RedirectToPageResult("Index", "Home");
                         return;

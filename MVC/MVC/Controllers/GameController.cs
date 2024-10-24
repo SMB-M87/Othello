@@ -17,33 +17,68 @@ namespace MVC.Controllers
             _httpClient.BaseAddress = new Uri("https://localhost:7023/");
         }
 
-        public IActionResult Wait(string token)
+        public async Task<IActionResult> Play()
         {
-            if (string.IsNullOrEmpty(token))
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.GetAsync($"api/game/{token}");
+
+            if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index", "Home");
+                var model = new GameView
+                {
+                    Opponent = await Opponent(token),
+                    Color = await Color(token),
+                    PlayersTurn = await PlayersTurn(token),
+                    Board = await Board(token)
+                };
+
+                return View(model);
             }
 
-            return View(model: token);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Delete(string token)
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/game/delete", token);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to delete game.");
-                return RedirectToAction("Wait", new { player = token });
-            }
-
+            ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
             return RedirectToAction("Index", "Home");
         }
 
-        public async Task<IActionResult> Play(string token)
+        private async Task<string> Opponent(string token)
         {
-            var response = await _httpClient.GetAsync($"api/game/{token}");
+            var response = await _httpClient.GetAsync($"api/game/opponent/{token}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<string>() ?? string.Empty;
+            }
+            return result;
+        }
+
+        private async Task<Color> Color(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/color/{token}");
+            Color result = Models.Color.None;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<Color>();
+            }
+            return result;
+        }
+
+        private async Task<Color> PlayersTurn(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/turn/{token}");
+            Color result = Models.Color.None;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<Color>();
+            }
+            return result;
+        }
+
+        private async Task<Color[,]> Board(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/board/{token}");
+            Color[,] result = new Models.Color[8,8];
 
             if (response.IsSuccessStatusCode)
             {
@@ -53,12 +88,14 @@ namespace MVC.Controllers
                     Converters = { new ColorArrayConverter() }
                 };
 
-                var gameResult = await response.Content.ReadFromJsonAsync<Game>(options);
-                return View(model: gameResult);
-            }
+                var deserializedResult = await response.Content.ReadFromJsonAsync<Color[,]>(options);
 
-            ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
-            return RedirectToAction("Result", "Home", new { token });
+                if (deserializedResult is not null)
+                {
+                    result = deserializedResult;
+                }
+            }
+            return result;
         }
     }
 }

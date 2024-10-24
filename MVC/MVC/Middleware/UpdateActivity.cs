@@ -1,5 +1,4 @@
-﻿using MVC.Models;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace MVC.Middleware
 {

@@ -1,20 +1,35 @@
-﻿@model MVC.Models.Game
+﻿@model MVC.Models.GameView
 
 <div class="d-flex justify-content-center">
     <h2>Game Details</h2>
 </div>
 
 <div class="d-flex justify-content-center">
-    <p>Game Token: @Model.Token</p>
+    <p>Opponent: @Model.Opponent</p>
 </div>
 <div class="d-flex justify-content-center">
-    <p>Player One: @Model.First</p>
+    <p>Color: @Model.Color</p>
 </div>
 <div class="d-flex justify-content-center">
-    <p>Player Two: @Model.Second</p>
+    <p>Turn: @Model.PlayersTurn </p>
 </div>
+
 <div class="d-flex justify-content-center">
-    <p>Status: @Model.Status</p>
+    <table class="table table-bordered" style="width: auto;">
+        @for (int row = 0; row < Model.Board.GetLength(0); row++)
+        {
+            <tr>
+                @for (int col = 0; col < Model.Board.GetLength(1); col++)
+                {
+                    var cell = Model.Board[row, col];
+                    var cellDisplay = cell == Color.None ? "" : cell.ToString();
+                    <td style="width: 50px; height: 50px; text-align: center; background-color:@(cell == Color.Black ? "black" : (cell == Color.White ? "white" : "lightgrey")); color: @(cell == Color.Black ? "white" : "black");">
+                        @cellDisplay
+                    </td>
+                }
+            </tr>
+        }
+    </table>
 </div>
 
 <script>

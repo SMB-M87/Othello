@@ -8,8 +8,10 @@ namespace API.Data
         void Create(Game game);
         List<GameDescription>? GetPendingGames();
         string? GetGameTokenByPlayersToken(string player_token);
+        string? GetOpponentByPlayersToken(string player_token);
         Color? GetPlayersTurnByPlayersToken(string player_token);
         Status? GetStatusByPlayersToken(string player_token);
+        Color? GetColorByPlayersToken(string player_token);
         Color[,]? GetBoardByPlayersToken(string player_token);
         bool JoinPlayer(PlayerRequest entry);
         (bool succeded, string? error) Move(GameMove action);

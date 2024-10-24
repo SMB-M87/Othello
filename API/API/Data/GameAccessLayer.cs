@@ -78,7 +78,7 @@ namespace API.Data
 
             if (games is not null)
             {
-                var pending = games.FindAll(game => game.Status == Status.Pending && game.Second == null).ToList();
+                var pending = games.FindAll(game => game.Status == Status.Pending && game.Second == null).OrderByDescending(g => g.Date).ToList();
 
                 if (pending is not null)
                 {
@@ -107,6 +107,19 @@ namespace API.Data
             return GetPlayersGame(player_token)?.Token;
         }
 
+        public string? GetOpponentByPlayersToken(string player_token)
+        {
+            var game = GetPlayersGame(player_token);
+
+            if (game == null)
+                return string.Empty;
+
+            if (game.First == player_token && game.Second is not null)
+                return GetName(game.Second);
+            else
+                return GetName(game.First);
+        }
+
         public Color? GetPlayersTurnByPlayersToken(string player_token)
         {
             return GetPlayersGame(player_token)?.PlayersTurn;
@@ -115,6 +128,19 @@ namespace API.Data
         public Status? GetStatusByPlayersToken(string player_token)
         {
             return GetPlayersGame(player_token)?.Status;
+        }
+
+        public Color? GetColorByPlayersToken(string player_token)
+        {
+            var game = GetPlayersGame(player_token);
+
+            if (game == null)
+                return Color.None;
+
+            if (game.First == player_token)
+                return game.FColor;
+            else
+                return game.SColor;
         }
 
         public Color[,]? GetBoardByPlayersToken(string player_token)

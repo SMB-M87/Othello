@@ -68,12 +68,12 @@
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OnlinePlayers)
                         {
-                            @if (!Model.Friends.Contains(player))
+                            @if (!Model.OnlineFriends.Contains(player) && !Model.OfflineFriends.Contains(player) && !Model.FriendRequests.Contains(player))
                             {
                                 <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                     <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                     <div>
-                                        @if (Model.Joinable.Contains(player))
+                                        @if (Model.JoinablePlayers.Contains(player))
                                         {
                                             <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                                 <input type="hidden" name="username" value="@player" />
@@ -83,7 +83,7 @@
                                             </form>
                                         }
 
-                                        @if (!Model.SentRequests.Contains(player))
+                                        @if (!Model.SentFriendRequests.Contains(player))
                                         {
                                             <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
                                                 <input type="hidden" name="username" value="@player" />
@@ -109,15 +109,16 @@
         <div class="col-md-3">
             <h3>Friends</h3>
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.Friends != null && Model.Friends.Count > 0)
+                @if (Model.OnlineFriends != null && Model.OnlineFriends.Count > 0)
                 {
+                    <span>Online</span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.Friends)
+                        @foreach (var player in Model.OnlineFriends)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    @if (Model.Joinable.Contains(player))
+                                    @if (Model.JoinablePlayers.Contains(player))
                                     {
                                         <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                             <input type="hidden" name="username" value="@player" />
@@ -138,26 +139,16 @@
                         }
                     </ul>
                 }
-                else
+                @if (Model.FriendRequests != null && Model.FriendRequests.Count > 0)
                 {
-                    <p>You have no friends added.</p>
-                }
-            </div>
-        </div>
-
-        <!-- Requests -->
-        <div class="col-md-3">
-            <h3>Requests</h3>
-            <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.Requests != null && Model.Requests.Count > 0)
-                {
+                    <span>Request</span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.Requests)
+                        @foreach (var player in Model.FriendRequests)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    @if (Model.Joinable.Contains(player.Username))
+                                    @if (Model.JoinablePlayers.Contains(player))
                                     {
                                         <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                             <input type="hidden" name="username" value="@player" />
@@ -184,9 +175,65 @@
                         }
                     </ul>
                 }
+                @if (Model.OfflineFriends != null && Model.OfflineFriends.Count > 0)
+                {
+                    <span>Offline</span>
+                    <ul style="list-style: none; padding-left: 0;">
+                        @foreach (var player in Model.OfflineFriends)
+                        {
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                <div>
+                                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
+                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+                else if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 && Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0)
+                {
+                    <p>You have no friends added.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Requests -->
+        <div class="col-md-3">
+            <h3>Game Requests</h3>
+            <div id="game-requests-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                @if (Model.GameRequests != null && Model.GameRequests.Count > 0)
+                {
+                    <ul style="list-style: none; padding-left: 0;">
+                        @foreach (var player in Model.GameRequests)
+                        {
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                <div>
+                                    <form method="post" asp-action="AcceptGameRequest" asp-controller="Home" style="display: inline;">
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
+                                            <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
+                                        </button>
+                                    </form>
+                                    <form method="post" asp-action="DeclineGameRequest" asp-controller="Home" style="display: inline;">
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
+                                            <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
                 else
                 {
-                    <p>No pending friend requests.</p>
+                    <p>No pending game requests.</p>
                 }
             </div>
         </div>
@@ -197,20 +244,20 @@
         <h3>Pending Games</h3>
     </div>
     <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-        @if (Model.PendingGames != null && Model.PendingGames.Count > 0)
+        @if (Model.Games != null && Model.Games.Count > 0)
         {
             <ul style="list-style: none; padding-left: 0;">
-                @foreach (var game in Model.PendingGames)
+                @foreach (var game in Model.Games)
                 {
-                    @if (game.Player != User.Identity.Name)
+                    @if (game.Username != User.Identity.Name)
                     {
                         <li style="margin-bottom: 10px;">
-                            <form method="post" asp-action="JoinGameToken" asp-controller="Home" style="display: block; text-align: left;">
-                                <input type="hidden" name="token" value="@game.Token" />
+                            <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
+                                <input type="hidden" name="username" value="@game.Username" />
                                 <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
                                     <div style="display: flex; justify-content: space-between;">
                                         <span style="margin-left: 20px;">@game.Description</span>
-                                        <span style="margin-right: 20px"><strong>@game.Player</strong> @game.Stats</span>
+                                        <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
                                     </div>
                                 </button>
                             </form>
@@ -231,6 +278,22 @@
             </button>
         </form>
     </div>
+
+    <script>
+        function refreshGameRequests() {
+            fetch('@Url.Action("DeleteGameInvites", "Home")', {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("game-requests-container").innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Refresh every 10 seconds
+        setInterval(refreshGameRequests, 10000);
+    </script>
 }
 else
 {

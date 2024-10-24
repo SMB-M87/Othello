@@ -69,6 +69,11 @@ namespace API.Data
                       .ValueGeneratedNever()
                       .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
+                entity.Property(e => e.Date)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
                 entity.Property(e => e.Board)
                     .HasConversion(
                         v => JsonSerializer.Serialize(v, new JsonSerializerOptions { Converters = { new ColorArrayConverter() } }),

@@ -25,13 +25,13 @@ namespace MVC.Middleware
                     var userId = userManager.GetUserId(user);
                     var httpClient = _httpClientFactory.CreateClient();
 
-                    var gameResponse = await httpClient.GetAsync($"https://localhost:7023/api/game/from/{userId}");
+                    var gameResponse = await httpClient.GetAsync($"https://localhost:7023/api/game/{userId}");
 
                     if (gameResponse.IsSuccessStatusCode)
                     {
                         var token = await gameResponse.Content.ReadAsStringAsync();
 
-                        var gameStatusResponse = await httpClient.GetAsync($"https://localhost:7023/api/game/status/{token}");
+                        var gameStatusResponse = await httpClient.GetAsync($"https://localhost:7023/api/game/status/{userId}");
 
                         if (gameStatusResponse.IsSuccessStatusCode)
                         {
@@ -43,14 +43,9 @@ namespace MVC.Middleware
                                 context.Response.Redirect($"/Game/Play?token={token}");
                                 return;
                             }
-                            else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/game/wait"))
+                            else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/home/wait"))
                             {
-                                context.Response.Redirect($"/Game/Wait?token={token}");
-                                return;
-                            }
-                            else
-                            {
-                                await _next(context);
+                                context.Response.Redirect($"/Home/Wait?token={token}");
                                 return;
                             }
                         }

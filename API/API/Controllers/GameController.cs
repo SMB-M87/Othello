@@ -48,6 +48,17 @@ namespace API.Controllers
             return Ok(respons);
         }
 
+        [HttpGet("opponent/{token}")]
+        public ActionResult<string> OpponentByPlayerToken(string token)
+        {
+            var respons = _repository.GameRepository.GetOpponentByPlayersToken(token);
+
+            if (respons is null)
+                return NotFound();
+
+            return Ok(respons);
+        }
+
         [HttpGet("turn/{token}")]
         public ActionResult<Color> TurnByToken(string token)
         {
@@ -70,8 +81,19 @@ namespace API.Controllers
             return Ok(respons);
         }
 
+        [HttpGet("color/{token}")]
+        public ActionResult<Status> ColorByToken(string token)
+        {
+            var respons = _repository.GameRepository.GetColorByPlayersToken(token);
+
+            if (respons is null)
+                return NotFound();
+
+            return Ok(respons);
+        }
+
         [HttpGet("board/{token}")]
-        public ActionResult<Status> BoardByToken(string token)
+        public ActionResult<Color[,]> BoardByToken(string token)
         {
             var respons = _repository.GameRepository.GetBoardByPlayersToken(token);
 

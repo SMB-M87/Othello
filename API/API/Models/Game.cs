@@ -30,6 +30,8 @@ namespace API.Models
         public string? Second { get; private set; }
         public Color SColor { get; private set; }
 
+        public DateTime Date { get; private set; }
+
         private Color[,] board;
         public Color[,] Board
         {
@@ -51,6 +53,7 @@ namespace API.Models
             FColor = Color.None;
             Second = null;
             SColor = Color.None;
+            Date = DateTime.MinValue;
             board = new Color[boardScope, boardScope];
         }
 
@@ -73,6 +76,8 @@ namespace API.Models
 
             Second = null;
             SColor = GetOpponentsColor(FColor);
+
+            Date = DateTime.UtcNow;
         }
 
         public Game(string token, string first, Color fcolor, string? second = null, Status game = Status.Pending, Color turn = Color.Black, string description = "I wanna play a game and don't have any requirements!")
@@ -94,6 +99,8 @@ namespace API.Models
 
             Second = second;
             SColor = GetOpponentsColor(FColor);
+
+            Date = DateTime.UtcNow;
         }
 
         private void SetPlayingStatus()
