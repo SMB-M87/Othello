@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 
 namespace MVC.Controllers
 {
@@ -108,6 +107,7 @@ namespace MVC.Controllers
             return View();
         }
 
+        [HttpPost]
         public async Task<IActionResult> Create(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
@@ -144,6 +144,7 @@ namespace MVC.Controllers
             return RedirectToAction("Wait", new { token });
         }
 
+        [HttpPost]
         public async Task<IActionResult> JoinGame(string username)
         {
             var request = new
@@ -163,9 +164,161 @@ namespace MVC.Controllers
             return RedirectToAction("Play", "Game");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SendFriendRequest(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptFriendRequest(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/accept", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeclineFriendRequest(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/decline", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteFriend(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/friend/delete", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendGameRequest(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/request/game", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptGameRequest(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/request/game/accept", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeclineGameRequest(string username)
+        {
+            var request = new
+            {
+                ReceiverUsername = username,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/player/request/game/decline", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteGameInvites()
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", _userManager.GetUserId(User));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+            }
+
+            var model = new HomeView
+            {
+                GameRequests = await GameRequests(_userManager.GetUserId(User))
+            };
+
+            return PartialView("_GameRequestsPartial", model);
+        }
+
+        [HttpDelete]
         public async Task<IActionResult> Delete(string token)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/game/delete", token);
+            var response = await _httpClient.PostAsJsonAsync($"api/game/delete/{token}", token);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -291,149 +444,6 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<List<GamePending>>() ?? new();
             }
             return result;
-        }
-
-        public async Task<IActionResult> SendFriendRequest(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> AcceptFriendRequest(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/accept", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> DeclineFriendRequest(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/decline", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> DeleteFriend(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/friend/delete", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> SendGameRequest(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/game", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> AcceptGameRequest(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/game/accept", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> DeclineGameRequest(string username)
-        {
-            var request = new
-            {
-                ReceiverUsername = username,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/game/decline", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> DeleteGameInvites()
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", _userManager.GetUserId(User));
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
-            }
-
-            var model = new HomeView
-            {
-                GameRequests = await GameRequests(_userManager.GetUserId(User))
-            };
-
-            return PartialView("_GameRequestsPartial", model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

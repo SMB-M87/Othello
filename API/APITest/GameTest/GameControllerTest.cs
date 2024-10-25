@@ -610,7 +610,7 @@ namespace APITest.GameTest
             var okResult = result.Result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
-            var results = okResult?.Value as List<GameDescription>;
+            var results = okResult?.Value as List<GamePending>;
 
             if (results is not null)
             {

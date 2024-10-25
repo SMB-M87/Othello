@@ -21,13 +21,13 @@
                         @foreach (var game in Model.MatchHistory)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
-                        background-color: @(User.Identity.Name == game.Winner ? "#d4edda" : User.Identity.Name == game.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
+                        background-color: @(game.Draw ? "#fff3cd" : User.Identity.Name == game.Winner ? "#d4edda" : "#f8d7da"); padding: 10px;">
 
-                                @if (User.Identity.Name == game.Winner)
+                                @if (game.Draw == false && User.Identity.Name == game.Winner)
                                 {
                                     <span>Won</span>
                                 }
-                                else if (User.Identity.Name == game.Loser)
+                                else if (game.Draw == false && User.Identity.Name == game.Loser)
                                 {
                                     <span>Lost</span>
                                 }
@@ -68,7 +68,7 @@
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OnlinePlayers)
                         {
-                            @if (!Model.OnlineFriends.Contains(player) && !Model.OfflineFriends.Contains(player) && !Model.FriendRequests.Contains(player))
+                            @if (!Model.OnlineFriends.Contains(player) && !Model.OfflineFriends.Contains(player))
                             {
                                 <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                     <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -83,7 +83,7 @@
                                             </form>
                                         }
 
-                                        @if (!Model.SentFriendRequests.Contains(player))
+                                        @if (!Model.SentFriendRequests.Contains(player) && !Model.FriendRequests.Contains(player))
                                         {
                                             <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
                                                 <input type="hidden" name="username" value="@player" />
@@ -111,7 +111,7 @@
             <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                 @if (Model.OnlineFriends != null && Model.OnlineFriends.Count > 0)
                 {
-                    <span>Online</span>
+                    <span><strong>Online:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OnlineFriends)
                         {
@@ -139,9 +139,30 @@
                         }
                     </ul>
                 }
+                @if (Model.OfflineFriends != null && Model.OfflineFriends.Count > 0)
+                {
+                    <span><strong>Offline:</strong></span>
+                    <ul style="list-style: none; padding-left: 0;">
+                        @foreach (var player in Model.OfflineFriends)
+                        {
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                <div>
+                                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                                        <input type="hidden" name="username" value="@player" />
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
+                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
                 @if (Model.FriendRequests != null && Model.FriendRequests.Count > 0)
                 {
-                    <span>Request</span>
+                    <span><strong>Request:</strong>
+                    </span>
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.FriendRequests)
                         {
@@ -175,27 +196,7 @@
                         }
                     </ul>
                 }
-                @if (Model.OfflineFriends != null && Model.OfflineFriends.Count > 0)
-                {
-                    <span>Offline</span>
-                    <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.OfflineFriends)
-                        {
-                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
-                                <div>
-                                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </li>
-                        }
-                    </ul>
-                }
-                else if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 && Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0)
+                @if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 && Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0)
                 {
                     <p>You have no friends added.</p>
                 }
@@ -290,9 +291,7 @@
             })
             .catch(error => console.error('Error:', error));
         }
-
-        // Refresh every 10 seconds
-        setInterval(refreshGameRequests, 10000);
+        setInterval(refreshGameRequests, 3000);
     </script>
 }
 else

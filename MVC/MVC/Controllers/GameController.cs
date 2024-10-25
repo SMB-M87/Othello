@@ -46,7 +46,7 @@ namespace MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadFromJsonAsync<string>() ?? string.Empty;
+                result = await response.Content.ReadAsStringAsync() ?? string.Empty;
             }
             return result;
         }

@@ -59,24 +59,25 @@
             <ul style="list-style: none; padding-left: 0;">
                 @foreach (var game in Model.MatchHistory)
                 {
-                    <li style="display: flex; justify-content: center; margin-bottom: 5px;
-                        background-color: @(User.Identity.Name == game.Winner ? "#d4edda" : User.Identity.Name == game.Loser ? "#f8d7da" : "#fff3cd"); padding: 10px;">
-                        @if (game.Winner == User.Identity.Name)
+                    <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;
+                        background-color: @(game.Draw ? "#fff3cd" : Model.Username == game.Winner ? "#d4edda" : "#f8d7da"); padding: 10px;">
+                        @if (game.Draw == false && game.Winner == Model.Username)
                         {
-                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Won against @game.Loser</a></p>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Won against @game.Loser</a></span>
                         }
-                        else if (game.Loser == User.Identity.Name)
+                        else if (game.Draw == false && game.Loser == Model.Username)
                         {
-                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Lost against @game.Winner</a></p>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Lost against @game.Winner</a></span>
                         }
-                        else if (game.Draw && game.Winner == User.Identity.Name)
+                        else if (game.Draw && game.Winner == Model.Username)
                         {
-                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Drew with @game.Loser</a></p>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Drew with @game.Loser</a></span>
                         }
                         else
                         {
-                            <p><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Drew with @game.Winner</a></p>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Drew with @game.Winner</a></span>
                         }
+                        <span>@game.Date.ToString("dd/MM/yyyy hh:mm tt")</span>
                     </li>
                 }
             </ul>

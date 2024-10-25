@@ -56,7 +56,7 @@ namespace MVC.Middleware
                     var controller = context.RouteData.Values["controller"]?.ToString();
                     var action = context.RouteData.Values["action"]?.ToString();
 
-                    if (!(controller == "Home" && controller == "Account") || (controller == "Home" && action == "Wait"))
+                    if (!(controller == "Home" && controller == "Account"))
                     {
                         context.Result = new RedirectToPageResult("Index", "Home");
                         return;

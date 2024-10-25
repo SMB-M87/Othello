@@ -92,8 +92,8 @@ namespace API.Controllers
             return Ok(sent);
         }
 
-        [HttpPut("activity")]
-        public ActionResult<HttpResponseMessage> Activity([FromBody] string token)
+        [HttpPost("activity/{token}")]
+        public ActionResult<HttpResponseMessage> Activity(string token)
         {
             var respons = _repository.PlayerRepository.UpdateActivity(token);
 
@@ -103,7 +103,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("request/friend")]
+        [HttpPost("request/friend")]
         public ActionResult<HttpResponseMessage> FriendRequest([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.FriendRequest(request.ReceiverUsername, request.SenderToken);
@@ -114,7 +114,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("request/friend/accept")]
+        [HttpPost("request/friend/accept")]
         public ActionResult<HttpResponseMessage> AcceptFriendRequest([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.AcceptFriendRequest(request.ReceiverUsername, request.SenderToken);
@@ -125,7 +125,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("request/friend/decline")]
+        [HttpPost("request/friend/decline")]
         public ActionResult<HttpResponseMessage> DeclineFriendRequest([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.DeclineFriendRequest(request.ReceiverUsername, request.SenderToken);
@@ -136,7 +136,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("request/game")]
+        [HttpPost("request/game")]
         public ActionResult<HttpResponseMessage> GameRequest([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.GameRequest(request.ReceiverUsername, request.SenderToken);
@@ -147,7 +147,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("request/game/accept")]
+        [HttpPost("request/game/accept")]
         public ActionResult<HttpResponseMessage> AcceptGameRequest([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.AcceptGameRequest(request.ReceiverUsername, request.SenderToken);
@@ -158,7 +158,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("request/game/decline")]
+        [HttpPost("request/game/decline")]
         public ActionResult<HttpResponseMessage> DeclineGameRequest([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.DeclineGameRequest(request.ReceiverUsername, request.SenderToken);
@@ -169,7 +169,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("friend/delete")]
+        [HttpPost("friend/delete")]
         public ActionResult<HttpResponseMessage> DeleteFriend([FromBody] PlayerRequest request)
         {
             var respons = _repository.PlayerRepository.DeleteFriend(request.ReceiverUsername, request.SenderToken);
@@ -180,8 +180,8 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("game/delete")]
-        public ActionResult<HttpResponseMessage> DeleteGameInvites([FromBody] string token)
+        [HttpPost("game/delete")]
+        public ActionResult<HttpResponseMessage> DeleteGameInvites(string token)
         {
             var respons = _repository.PlayerRepository.DeleteGameInvites(token);
 
@@ -191,8 +191,8 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpDelete("delete")]
-        public ActionResult<HttpResponseMessage> Delete([FromBody] string token)
+        [HttpDelete("delete/{token}")]
+        public ActionResult<HttpResponseMessage> Delete(string token)
         {
             var respons = _repository.PlayerRepository.Delete(token);
 

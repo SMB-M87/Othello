@@ -72,7 +72,7 @@ namespace API.Data
             return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
         }
 
-        public List<GameDescription>? GetPendingGames()
+        public List<GamePending>? GetPendingGames()
         {
             var games = GetGames();
 
@@ -82,7 +82,7 @@ namespace API.Data
 
                 if (pending is not null)
                 {
-                    List<GameDescription> result = new();
+                    List<GamePending> result = new();
 
                     foreach (Game game in pending)
                     {
@@ -93,7 +93,7 @@ namespace API.Data
                                             .Replace("Draws:", "D:")
                                             .Replace("\t\t", " ");
 
-                        GameDescription temp = new(game.Description, player, output);
+                        GamePending temp = new(game.Description, player, output);
                         result.Add(temp);
                     }
                     return result;

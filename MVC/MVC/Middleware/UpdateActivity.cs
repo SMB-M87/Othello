@@ -5,8 +5,8 @@ namespace MVC.Middleware
     public class UpdateActivity
     {
         private readonly RequestDelegate _next;
-        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<UpdateActivity> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public UpdateActivity(RequestDelegate next, IHttpClientFactory httpClientFactory, ILogger<UpdateActivity> logger)
         {
@@ -27,7 +27,7 @@ namespace MVC.Middleware
                     {
                         var httpClient = _httpClientFactory.CreateClient();
 
-                        var response = await httpClient.PostAsJsonAsync("https://localhost:7023/api/player/activity", userId);
+                        var response = await httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/activity/{userId}", userId);
 
                         if (!response.IsSuccessStatusCode)
                         {

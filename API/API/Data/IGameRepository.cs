@@ -6,7 +6,7 @@ namespace API.Data
     {
         bool Create(GameCreation game);
         void Create(Game game);
-        List<GameDescription>? GetPendingGames();
+        List<GamePending>? GetPendingGames();
         string? GetGameTokenByPlayersToken(string player_token);
         string? GetOpponentByPlayersToken(string player_token);
         Color? GetPlayersTurnByPlayersToken(string player_token);

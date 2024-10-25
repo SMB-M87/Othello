@@ -27,7 +27,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<GameDescription>> DescriptionsOfPendingGames()
+        public ActionResult<List<GamePending>> DescriptionsOfPendingGames()
         {
             var respons = _repository.GameRepository.GetPendingGames();
 
@@ -103,7 +103,7 @@ namespace API.Controllers
             return Ok(respons);
         }
 
-        [HttpPut("join")]
+        [HttpPost("join")]
         public ActionResult<HttpResponseMessage> Join([FromBody] PlayerRequest request)
         {
             var respons = _repository.GameRepository.JoinPlayer(request);
@@ -114,7 +114,7 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPut("move")]
+        [HttpPost("move")]
         public ActionResult<HttpResponseMessage> Move([FromBody] GameMove action)
         {
             var (succeded, error) = _repository.GameRepository.Move(action);
@@ -128,7 +128,7 @@ namespace API.Controllers
                 };
         }
 
-        [HttpPut("pass")]
+        [HttpPost("pass")]
         public ActionResult<HttpResponseMessage> Pass([FromBody] string player_token)
         {
             var respons = _repository.GameRepository.Pass(player_token, out string error_message);
@@ -150,7 +150,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPut("forfeit")]
+        [HttpPost("forfeit")]
         public ActionResult<HttpResponseMessage> Forfeit([FromBody] string player_token)
         {
             var respons = _repository.GameRepository.Forfeit(player_token);
