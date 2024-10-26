@@ -41,12 +41,12 @@ namespace MVC.Middleware
 
                         if (!(controller == "Game" && gameStatus == "1" && action == "Play"))
                         {
-                            context.Result = new RedirectToActionResult("Play", "Game", new { token });
+                            context.Result = new RedirectToPageResult("Play", "Game");
                             return;
                         }
-                        else if (gameStatus == "0" && controller != "Home" && (action != "Wait" || action != "Delete"))
+                        else if (gameStatus == "0" && controller != "Home" && (action != "Index" || action != "Delete"))
                         {
-                            context.Result = new RedirectToActionResult("Wait", "Home", new { userId });
+                            context.Result = new RedirectToPageResult("Index", "Home");
                             return;
                         }
                     }

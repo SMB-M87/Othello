@@ -241,45 +241,101 @@
     </div>
 
     <!-- Pending Games -->
-    <div class="text-center" style="margin-top: 20px;">
-        <h3>Pending Games</h3>
-    </div>
-    <div id="pending-games-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-        @if (Model.Games != null && Model.Games.Count > 0)
+    <div id="pending-games-container">
+        @if (!Model.Pending.InGame && Model.Pending.Session == "false")
         {
-            <ul style="list-style: none; padding-left: 0;">
-                @foreach (var game in Model.Games)
+            <div id="pending-title" class="text-center" style="margin-top: 20px;">
+                <h3>Pending Games</h3>
+            </div>
+            <div id="pending-games-section" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+                @if (Model.Pending != null && Model.Pending.Games.Count > 0)
                 {
-                    @if (game.Username != User.Identity.Name)
-                    {
-                        <li style="margin-bottom: 10px; background-color:lavender">
-                            <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="username" value="@game.Username" />
-                                <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="margin-left: 20px;">@game.Description</span>
-                                        <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
-                                    </div>
-                                </button>
-                            </form>
-                        </li>
-                    }
+                    <ul style="list-style: none; padding-left: 0;">
+                        @foreach (var game in Model.Pending.Games)
+                        {
+                            @if (game.Username != User.Identity.Name)
+                            {
+                                <li style="margin-bottom: 10px; background-color:lavender">
+                                    <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="username" value="@game.Username" />
+                                        <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
+                                            <div style="display: flex; justify-content: space-between;">
+                                                <span style="margin-left: 20px;">@game.Description</span>
+                                                <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
+                                            </div>
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                        }
+                    </ul>
                 }
-            </ul>
+                else
+                {
+                    <p>No pending game requests.</p>
+                }
+            </div>
+            <div id="pending-create-button" class="d-flex justify-content-center">
+                <form method="post" asp-action="Creation" asp-controller="Home" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
+                        New game
+                    </button>
+                </form>
+            </div>
         }
-        else
+
+        @if (Model.Pending is not null && !Model.Pending.InGame && Model.Pending.Session == "true")
         {
-            <p>No pending game requests.</p>
+            <div id="create-game-section">
+                <div class="text-center form-group d-flex justify-content-center" style="margin-top: 20px;">
+                    <h3>Description</h3>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <div style="display: flex; flex-direction: column; align-items: center;">
+                        <form style="width: 600px; padding: 10px;">
+                            <div class="form-group">
+                                <textarea name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
+                            </div>
+                        </form>
+                        <div style="display: flex; gap: 10px;">
+                            <form asp-action="Create" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="description" value="I wanna play a game and don't have any requirements!" />
+                                <button type="submit" class="btn btn-primary">Create</button>
+                            </form>
+                            <form asp-action="Cancel" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </div>
-    <div class="d-flex justify-content-center">
-        <form method="post" asp-action="Create" asp-controller="Home" style="display: inline;">
-            @Html.AntiForgeryToken()
-            <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
-                New game
-            </button>
-        </form>
+
+        @if (Model.Pending is not null && Model.Pending.InGame && Model.Pending.Status == "0")
+        {
+            <div class="text-center form-group d-flex justify-content-center" style="margin-top: 20px;">
+                <h3>Waiting for an Opponent...</h3>
+            </div>
+
+            <div id="loading" class="d-flex justify-content-center">
+                <img src="~/images/loading.gif" alt="Loading..." style="width:350px; height: auto;" />
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <p>Waiting for an opponent to join...</p>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <form asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        }
     </div>
 
     <script>
@@ -308,19 +364,52 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
 
-                    onlinePlayersContainer.innerHTML = doc.getElementById("online-players-container").innerHTML;
-                    friendsContainer.innerHTML = doc.getElementById("friends-container").innerHTML;
-                    gameRequestsContainer.innerHTML = doc.getElementById("game-requests-container").innerHTML;
-                    pendingGamesContainer.innerHTML = doc.getElementById("pending-games-container").innerHTML;
+                    onlinePlayersContainer.innerHTML = doc.getElementById("online-players-container");
+                    friendsContainer.innerHTML = doc.getElementById("friends-container");
+                    gameRequestsContainer.innerHTML = doc.getElementById("game-requests-container");
+                    pendingGamesContainer.innerHTML = doc.getElementById("pending-games-container");
 
-                    onlinePlayersContainer.scrollTop = onlinePlayersScrollPosition;
-                    friendsContainer.scrollTop = friendsScrollPosition;
-                    gameRequestsContainer.scrollTop = gameRequestsScrollPosition;
-                    pendingGamesContainer.scrollTop = pendingGamesScrollPosition;
+                    if (onlinePlayersContent) {
+                        onlinePlayersContainer.innerHTML = onlinePlayersContent.innerHTML;
+                    } else {
+                        console.error("online-players-container not found in partial view");
+                    }
+
+                    if (friendsContent) {
+                        friendsContainer.innerHTML = friendsContent.innerHTML;
+                    } else {
+                        console.error("friends-container not found in partial view");
+                    }
+
+                    if (gameRequestsContent) {
+                        gameRequestsContainer.innerHTML = gameRequestsContent.innerHTML;
+                    } else {
+                        console.error("game-requests-container not found in partial view");
+                    }
+
+                    if (pendingGamesContent) {
+                        pendingGamesContainer.innerHTML = pendingGamesContent.innerHTML;
+                    } else {
+                        console.error("pending-games-container not found in partial view");
+                    }
+
+                    requestAnimationFrame(() => {
+                        onlinePlayersContainer.scrollTop = onlinePlayersScrollPosition;
+                        friendsContainer.scrollTop = friendsScrollPosition;
+                        gameRequestsContainer.scrollTop = gameRequestsScrollPosition;
+                        pendingGamesContainer.scrollTop = pendingGamesScrollPosition;
+                    });
+
+                    var gameStatusElement = doc.getElementById('game-status');
+                    var gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
+
+                    if (gameStatus === '1') {
+                        window.location.href = '@Url.Action("Play", "Game")';
+                    }
                 })
                 .catch(error => console.error('Error:', error));
         }
-        setInterval(refreshContainers, 10000);
+        setInterval(refreshContainers, 5000);
     </script>
 }
 else

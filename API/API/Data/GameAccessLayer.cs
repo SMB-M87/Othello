@@ -111,7 +111,7 @@ namespace API.Data
         {
             var game = GetPlayersGame(token);
 
-            if (game == null)
+            if (game == null || game.Second is null)
                 return string.Empty;
 
             if (game.First == token && game.Second is not null)

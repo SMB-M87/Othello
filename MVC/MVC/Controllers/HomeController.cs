@@ -24,8 +24,18 @@ namespace MVC.Controllers
                 var token = _userManager.GetUserId(User);
                 var username = _userManager.GetUserName(User);
 
+                var session = HttpContext.Session.GetString("GameCreation");
+
                 var model = new HomeView
                 {
+                    Pending = new PendingView()
+                    {
+                        Session = session ?? "false",
+                        InGame = await InGame(token),
+                        Status = await Status(token),
+                        Games = await PendingGames()
+                    },
+
                     Stats = await Stats(username),
                     MatchHistory = await MatchHistory(username),
 
@@ -36,9 +46,7 @@ namespace MVC.Controllers
                     GameRequests = await GameRequests(token),
 
                     SentFriendRequests = await SentFriendRequests(token),
-                    SentGameRequests = await SentGameRequests(token),
-
-                    Games = await PendingGames(),
+                    SentGameRequests = await SentGameRequests(token)
                 };
 
                 return View(model);
@@ -77,21 +85,6 @@ namespace MVC.Controllers
             return View("Profile", model);
         }
 
-        public IActionResult Create()
-        {
-            return View("Create");
-        }
-
-        public IActionResult Wait(string token)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return RedirectToAction("Index");
-            }
-
-            return View(model: token);
-        }
-
         public IActionResult Privacy()
         {
             return View();
@@ -99,14 +92,24 @@ namespace MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public IActionResult Creation()
+        {
+            HttpContext.Session.SetString("GameCreation", "true");
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Cancel()
+        {
+            HttpContext.Session.SetString("GameCreation", "false");
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string description)
         {
-            if (string.IsNullOrWhiteSpace(description))
-            {
-                ModelState.AddModelError(string.Empty, "Description cannot be empty.");
-                return View("Create");
-            }
-
             var token = _userManager.GetUserId(User);
             var createGameRequest = new
             {
@@ -119,7 +122,7 @@ namespace MVC.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to create game.");
-                return View("Create");
+                return RedirectToAction("Index");
             }
 
             var game = await _httpClient.GetAsync($"api/game/{token}");
@@ -127,10 +130,10 @@ namespace MVC.Controllers
             if (!game.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to find game.");
-                return View("Create");
+                return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Wait", new { token });
+            HttpContext.Session.SetString("GameCreation", "false");
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -165,41 +168,28 @@ namespace MVC.Controllers
                 ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
             }
 
+            var session = HttpContext.Session.GetString("GameCreation");
+
             var model = new RefreshView
             {
+                Pending = new PendingView()
+                {
+                    Session = session ?? "false",
+                    InGame = await InGame(token),
+                    Status = await Status(token),
+                    Games = await PendingGames()
+                },
+
                 OnlinePlayers = await OnlinePlayers(),
                 Friends = await Friends(token),
+
                 FriendRequests = await FriendRequests(token),
                 GameRequests = await GameRequests(token),
-                SentFriendRequests = await SentFriendRequests(token),
-                SentGameRequests = await SentGameRequests(token),
-                Games = await PendingGames()
-            };
 
+                SentFriendRequests = await SentFriendRequests(token),
+                SentGameRequests = await SentGameRequests(token)
+            };
             return PartialView("_Partial", model);
-        }
-
-        public async Task<IActionResult> TestPartial()
-        {
-            var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
-            }
-
-            var model = new RefreshView
-            {
-                OnlinePlayers = await OnlinePlayers(),
-                Friends = await Friends(token),
-                FriendRequests = await FriendRequests(token),
-                GameRequests = await GameRequests(token),
-                SentFriendRequests = await SentFriendRequests(token),
-                SentGameRequests = await SentGameRequests(token),
-                Games = await PendingGames()
-            };
-            return View("_Partial", model);
         }
 
         [HttpPost]
@@ -371,55 +361,79 @@ namespace MVC.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to delete game.");
-                return RedirectToAction("Wait", new { token });
+                return RedirectToAction("Index");
             }
-
+            HttpContext.Session.SetString("GameCreation", "false");
             return RedirectToAction("Index");
         }
 
         private async Task<string> Stats(string username)
         {
-            var statsResponse = await _httpClient.GetAsync($"api/result/stats/{username}");
-            string stats = string.Empty;
+            var response = await _httpClient.GetAsync($"api/result/stats/{username}");
+            string result = string.Empty;
 
-            if (statsResponse.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                stats = await statsResponse.Content.ReadAsStringAsync();
+                result = await response.Content.ReadAsStringAsync();
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
             }
-            return stats;
+            return result;
         }
 
         private async Task<List<GameResult>> MatchHistory(string username)
         {
-            var historyResponse = await _httpClient.GetAsync($"api/result/history/{username}");
-            List<GameResult> history = new();
+            var response = await _httpClient.GetAsync($"api/result/history/{username}");
+            List<GameResult> result = new();
 
-            if (historyResponse.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                history = await historyResponse.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
+                result = await response.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
             }
-            return history;
+            return result;
+        }
+
+        private async Task<bool> InGame(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/{token}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync();
+            }
+            return result != string.Empty;
+        }
+
+        private async Task<string> Status(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/status/{token}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync();
+            }
+            return result;
         }
 
         private async Task<List<string>> OnlinePlayers()
         {
             var response = await _httpClient.GetAsync("api/player");
-            List<string> online = new();
+            List<string> result = new();
 
             if (response.IsSuccessStatusCode)
             {
-                online = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                online.Remove(_userManager.GetUserName(User));
+                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
+                result.Remove(_userManager.GetUserName(User));
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Unable to fetch online players.");
             }
-            return online;
+            return result;
         }
 
         private async Task<List<string>> Friends(string token)

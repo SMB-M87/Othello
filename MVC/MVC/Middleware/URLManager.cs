@@ -46,12 +46,12 @@ namespace MVC.Middleware
                             var currentPath = context.Request.Path.Value?.ToLower();
                             if (gameStatus == "1" && currentPath is not null && !currentPath.Contains("/game/play"))
                             {
-                                context.Response.Redirect($"/Game/Play?token={token}");
+                                context.Response.Redirect($"/Game/Play");
                                 return;
                             }
-                            else if (gameStatus == "0" && currentPath is not null && (!currentPath.Contains("/home/wait") && !currentPath.Contains("home/delete")))
+                            else if (gameStatus == "0" && currentPath is not null && (!currentPath.Contains("/home/index") && !currentPath.Contains("home/delete")))
                             {
-                                context.Response.Redirect($"/Home/Wait?token={userId}");
+                                context.Response.Redirect($"/Home/Index");
                                 return;
                             }
                         }
