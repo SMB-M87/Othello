@@ -44,7 +44,7 @@ namespace MVC.Middleware
                             context.Result = new RedirectToPageResult("Play", "Game");
                             return;
                         }
-                        else if (gameStatus == "0" && controller != "Home" && (action != "Index" || action != "Delete"))
+                        else if (gameStatus == "0" && controller != "Home" && action != "Index" && action != "Delete")
                         {
                             context.Result = new RedirectToPageResult("Index", "Home");
                             return;

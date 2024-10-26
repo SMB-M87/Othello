@@ -19,5 +19,6 @@
         public List<string> OnlineFriends => Friends.Intersect(OnlinePlayers).ToList();
         public List<string> OfflineFriends => Friends.Except(OnlinePlayers).ToList();
         public List<string> JoinablePlayers => Pending.Games.Select(g => g.Username).ToList();
+        public List<string> InvitablePlayers => OnlinePlayers.Except(Pending.Games.Select(g => g.Username)).ToList();
     }
 }

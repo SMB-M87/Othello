@@ -73,13 +73,25 @@
                                 <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
                                     <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                     <div>
-                                        @if (Model.JoinablePlayers.Contains(player))
+                                        @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
                                         {
                                             <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="username" value="@player" />
                                                 <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
                                                     <i class="fa fa-link" style="font-size: 18px;"></i>
+                                                </button>
+                                            </form>
+                                        }
+
+                                        @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
+                                       !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
+                                        {
+                                            <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="username" value="@player" />
+                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite">
+                                                    <i class="fa fa-envelope" style="font-size: 18px;"></i>
                                                 </button>
                                             </form>
                                         }
@@ -120,13 +132,25 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgreen">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    @if (Model.JoinablePlayers.Contains(player))
+                                    @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
                                     {
                                         <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="username" value="@player" />
                                             <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
                                                 <i class="fa fa-link" style="font-size: 18px;"></i>
+                                            </button>
+                                        </form>
+                                    }
+
+                                    @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
+                                   !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
+                                    {
+                                        <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="username" value="@player" />
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite">
+                                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
                                             </button>
                                         </form>
                                     }
@@ -205,8 +229,9 @@
         <div class="col-md-3">
             <h3>Game Requests</h3>
             <div id="game-requests-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.GameRequests != null && Model.GameRequests.Count > 0)
+                @if (!Model.Pending.InGame && Model.GameRequests != null && Model.GameRequests.Count > 0)
                 {
+                    <span><strong>From:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.GameRequests)
                         {
@@ -232,9 +257,28 @@
                         }
                     </ul>
                 }
-                else
+
+                @if (Model.Pending.InGame && Model.SentGameRequests != null && Model.SentGameRequests.Count > 0)
+                {
+                    <span><strong>To:</strong></span>
+                    <ul style="list-style: none; padding-left: 0;">
+                        @foreach (var player in Model.SentGameRequests)
+                        {
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                @if (!Model.Pending.InGame && Model.GameRequests != null && Model.GameRequests.Count <= 0)
                 {
                     <p>No pending game requests.</p>
+                }
+
+                @if (Model.Pending.InGame && Model.SentGameRequests != null && Model.SentGameRequests.Count <= 0)
+                {
+                    <p>No sent game requests.</p>
                 }
             </div>
         </div>
@@ -338,11 +382,11 @@
         }
     </div>
     <div id="session-status" data-session="@Model?.Pending?.Session"></div>
+    <div id="game-status" data-status="@Model?.Pending?.Status"></div>
 
     <script>
         function refreshContainers() {
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
-
             const sessionStatus = document.getElementById("session-status").dataset.session;
 
             const onlinePlayersContainer = document.getElementById("online-players-container");
@@ -386,6 +430,16 @@
                     const pendingGamesContent = doc.getElementById("pending-games-section");
                     if (pendingGamesContent && pendingGamesSection) {
                         pendingGamesSection.innerHTML = pendingGamesContent.innerHTML;
+                    }
+
+                    const gameStatusElement = document.getElementById("game-status");
+                    const gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
+                    console.log(gameStatus);
+
+                    if (sessionStatus != null && gameStatus != null &&
+                        sessionStatus === "false" && gameStatus === "1") {
+                        window.location.href = '@Url.Action("Play", "Game")';
+                        return;
                     }
 
                     requestAnimationFrame(() => {

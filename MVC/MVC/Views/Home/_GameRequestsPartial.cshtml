@@ -1,9 +1,10 @@
-﻿@model List<string>
+﻿@model RefreshView
 
-@if (Model != null && Model.Count > 0)
+@if (!Model.Pending.InGame && Model.GameRequests != null && Model.GameRequests.Count > 0)
 {
+    <span><strong>From:</strong></span>
     <ul style="list-style: none; padding-left: 0;">
-        @foreach (var player in Model)
+        @foreach (var player in Model.GameRequests)
         {
             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -27,7 +28,26 @@
         }
     </ul>
 }
-else
+
+@if (Model.Pending.InGame && Model.SentGameRequests != null && Model.SentGameRequests.Count > 0)
+{
+    <span><strong>To:</strong></span>
+    <ul style="list-style: none; padding-left: 0;">
+        @foreach (var player in Model.SentGameRequests)
+        {
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
+                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+            </li>
+        }
+    </ul>
+}
+
+@if (!Model.Pending.InGame && Model.GameRequests != null && Model.GameRequests.Count <= 0)
 {
     <p>No pending game requests.</p>
+}
+
+@if (Model.Pending.InGame && Model.SentGameRequests != null && Model.SentGameRequests.Count <= 0)
+{
+    <p>No sent game requests.</p>
 }

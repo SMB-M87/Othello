@@ -1,5 +1,6 @@
 ﻿using MVC.Models;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 
@@ -15,6 +16,11 @@ namespace MVC.Controllers
             _userManager = userManager;
             _httpClient = httpClientFactory.CreateClient();
             _httpClient.BaseAddress = new Uri("https://localhost:7023/");
+            _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+                NoStore = true
+            };
         }
 
         public async Task<IActionResult> Index()
@@ -410,7 +416,7 @@ namespace MVC.Controllers
         private async Task<string> Status(string token)
         {
             var response = await _httpClient.GetAsync($"api/game/status/{token}");
-            string result = string.Empty;
+            var result = string.Empty;
 
             if (response.IsSuccessStatusCode)
             {
