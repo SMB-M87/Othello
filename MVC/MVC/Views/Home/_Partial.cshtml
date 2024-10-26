@@ -1,0 +1,17 @@
+﻿@model RefreshView
+
+<div id="online-players-container">
+    @await Html.PartialAsync("_OnlinePlayersPartial", Model)
+</div>
+
+<div id="friends-container">
+    @await Html.PartialAsync("_FriendsPartial", Model)
+</div>
+
+<div id="game-requests-container">
+    @await Html.PartialAsync("_GameRequestsPartial", Model.GameRequests)
+</div>
+
+<div id="pending-games-container">
+    @await Html.PartialAsync("_PendingGamesPartial", Model.Games)
+</div>

@@ -10,7 +10,7 @@
         <h3>@Model.Stats</h3>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin-top: 20px;">
         <!-- Match History -->
         <div class="col-md-3">
             <h3>Match History</h3>
@@ -62,7 +62,7 @@
         <!-- Online Players -->
         <div class="col-md-3">
             <h3>Online</h3>
-            <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <div id="online-players-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                 @if (Model.OnlinePlayers != null && Model.OnlinePlayers.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
@@ -70,12 +70,13 @@
                         {
                             @if (!Model.OnlineFriends.Contains(player) && !Model.OfflineFriends.Contains(player))
                             {
-                                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
                                     <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                     <div>
                                         @if (Model.JoinablePlayers.Contains(player))
                                         {
                                             <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="username" value="@player" />
                                                 <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
                                                     <i class="fa fa-link" style="font-size: 18px;"></i>
@@ -86,6 +87,7 @@
                                         @if (!Model.SentFriendRequests.Contains(player) && !Model.FriendRequests.Contains(player))
                                         {
                                             <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="username" value="@player" />
                                                 <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
                                                     <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
@@ -108,19 +110,20 @@
         <!-- Friends -->
         <div class="col-md-3">
             <h3>Friends</h3>
-            <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <div id="friends-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
                 @if (Model.OnlineFriends != null && Model.OnlineFriends.Count > 0)
                 {
                     <span><strong>Online:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OnlineFriends)
                         {
-                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgreen">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
                                     @if (Model.JoinablePlayers.Contains(player))
                                     {
                                         <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+                                            @Html.AntiForgeryToken()
                                             <input type="hidden" name="username" value="@player" />
                                             <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
                                                 <i class="fa fa-link" style="font-size: 18px;"></i>
@@ -129,6 +132,7 @@
                                     }
 
                                     <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
                                             <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
@@ -145,10 +149,11 @@
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.OfflineFriends)
                         {
-                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgray">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
                                     <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
                                             <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
@@ -161,31 +166,24 @@
                 }
                 @if (Model.FriendRequests != null && Model.FriendRequests.Count > 0)
                 {
-                    <span><strong>Request:</strong>
+                    <span>
+                        <strong>Request:</strong>
                     </span>
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.FriendRequests)
                         {
-                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    @if (Model.JoinablePlayers.Contains(player))
-                                    {
-                                        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
-                                            <input type="hidden" name="username" value="@player" />
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
-                                                <i class="fa fa-link" style="font-size: 18px;"></i>
-                                            </button>
-                                        </form>
-                                    }
-
                                     <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
                                             <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
                                         </button>
                                     </form>
                                     <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
                                             <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
@@ -212,16 +210,18 @@
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.GameRequests)
                         {
-                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
                                     <form method="post" asp-action="AcceptGameRequest" asp-controller="Home" style="display: inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
                                             <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
                                         </button>
                                     </form>
                                     <form method="post" asp-action="DeclineGameRequest" asp-controller="Home" style="display: inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="username" value="@player" />
                                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
                                             <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
@@ -241,10 +241,10 @@
     </div>
 
     <!-- Pending Games -->
-    <div class="text-center">
+    <div class="text-center" style="margin-top: 20px;">
         <h3>Pending Games</h3>
     </div>
-    <div style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+    <div id="pending-games-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
         @if (Model.Games != null && Model.Games.Count > 0)
         {
             <ul style="list-style: none; padding-left: 0;">
@@ -252,8 +252,9 @@
                 {
                     @if (game.Username != User.Identity.Name)
                     {
-                        <li style="margin-bottom: 10px;">
+                        <li style="margin-bottom: 10px; background-color:lavender">
                             <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="username" value="@game.Username" />
                                 <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
                                     <div style="display: flex; justify-content: space-between;">
@@ -274,6 +275,7 @@
     </div>
     <div class="d-flex justify-content-center">
         <form method="post" asp-action="Create" asp-controller="Home" style="display: inline;">
+            @Html.AntiForgeryToken()
             <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
                 New game
             </button>
@@ -281,17 +283,44 @@
     </div>
 
     <script>
-        function refreshGameRequests() {
-            fetch('@Url.Action("DeleteGameInvites", "Home")', {
-                method: 'POST'
+        function refreshContainers() {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const onlinePlayersContainer = document.getElementById("online-players-container");
+            const friendsContainer = document.getElementById("friends-container");
+            const gameRequestsContainer = document.getElementById("game-requests-container");
+            const pendingGamesContainer = document.getElementById("pending-games-container");
+
+            const onlinePlayersScrollPosition = onlinePlayersContainer.scrollTop;
+            const friendsScrollPosition = friendsContainer.scrollTop;
+            const gameRequestsScrollPosition = gameRequestsContainer.scrollTop;
+            const pendingGamesScrollPosition = pendingGamesContainer.scrollTop;
+
+            fetch('@Url.Action("Partial", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json'
+                }
             })
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("game-requests-container").innerHTML = data;
-            })
-            .catch(error => console.error('Error:', error));
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+
+                    onlinePlayersContainer.innerHTML = doc.getElementById("online-players-container").innerHTML;
+                    friendsContainer.innerHTML = doc.getElementById("friends-container").innerHTML;
+                    gameRequestsContainer.innerHTML = doc.getElementById("game-requests-container").innerHTML;
+                    pendingGamesContainer.innerHTML = doc.getElementById("pending-games-container").innerHTML;
+
+                    onlinePlayersContainer.scrollTop = onlinePlayersScrollPosition;
+                    friendsContainer.scrollTop = friendsScrollPosition;
+                    gameRequestsContainer.scrollTop = gameRequestsScrollPosition;
+                    pendingGamesContainer.scrollTop = pendingGamesScrollPosition;
+                })
+                .catch(error => console.error('Error:', error));
         }
-        setInterval(refreshGameRequests, 3000);
+        setInterval(refreshContainers, 10000);
     </script>
 }
 else

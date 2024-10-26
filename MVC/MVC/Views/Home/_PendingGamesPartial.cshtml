@@ -1,0 +1,29 @@
+﻿@model List<GamePending>
+
+@if (Model != null && Model.Count > 0)
+{
+    <ul style="list-style: none; padding-left: 0;">
+        @foreach (var game in Model)
+        {
+            @if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated && game.Username != User.Identity.Name)
+            {
+                <li style="margin-bottom: 10px; background-color:lavender">
+                    <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="username" value="@game.Username" />
+                        <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="margin-left: 20px;">@game.Description</span>
+                                <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
+                            </div>
+                        </button>
+                    </form>
+                </li>
+            }
+        }
+    </ul>
+}
+else
+{
+    <p>No pending game requests.</p>
+}

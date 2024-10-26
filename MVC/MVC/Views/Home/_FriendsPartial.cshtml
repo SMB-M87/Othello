@@ -1,0 +1,89 @@
+﻿@model RefreshView
+
+@if (Model.OnlineFriends != null && Model.OnlineFriends.Count > 0)
+{
+    <span><strong>Online:</strong></span>
+    <ul style="list-style: none; padding-left: 0;">
+        @foreach (var player in Model.OnlineFriends)
+        {
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgreen">
+                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                <div>
+                    @if (Model.JoinablePlayers.Contains(player))
+                    {
+                        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="username" value="@player" />
+                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
+                                <i class="fa fa-link" style="font-size: 18px;"></i>
+                            </button>
+                        </form>
+                    }
+
+                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="username" value="@player" />
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
+                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                        </button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+}
+@if (Model.OfflineFriends != null && Model.OfflineFriends.Count > 0)
+{
+    <span><strong>Offline:</strong></span>
+    <ul style="list-style: none; padding-left: 0;">
+        @foreach (var player in Model.OfflineFriends)
+        {
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgray">
+                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                <div>
+                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="username" value="@player" />
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
+                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                        </button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+}
+@if (Model.FriendRequests != null && Model.FriendRequests.Count > 0)
+{
+    <span>
+        <strong>Request:</strong>
+    </span>
+    <ul style="list-style: none; padding-left: 0;">
+        @foreach (var player in Model.FriendRequests)
+        {
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
+                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                <div>
+                    <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="username" value="@player" />
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
+                            <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
+                        </button>
+                    </form>
+                    <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="username" value="@player" />
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
+                            <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
+                        </button>
+                    </form>
+                </div>
+            </li>
+        }
+    </ul>
+}
+@if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 && Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0)
+{
+    <p>You have no friends added.</p>
+}

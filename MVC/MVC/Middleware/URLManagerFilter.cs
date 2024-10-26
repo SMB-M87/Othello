@@ -44,9 +44,9 @@ namespace MVC.Middleware
                             context.Result = new RedirectToActionResult("Play", "Game", new { token });
                             return;
                         }
-                        else if (!(controller == "Home" && gameStatus == "0" && action == "Wait"))
+                        else if (gameStatus == "0" && controller != "Home" && (action != "Wait" || action != "Delete"))
                         {
-                            context.Result = new RedirectToActionResult("Wait", "Home", new { token });
+                            context.Result = new RedirectToActionResult("Wait", "Home", new { userId });
                             return;
                         }
                     }

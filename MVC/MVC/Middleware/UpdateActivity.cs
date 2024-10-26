@@ -27,7 +27,7 @@ namespace MVC.Middleware
                     {
                         var httpClient = _httpClientFactory.CreateClient();
 
-                        var response = await httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/activity/{userId}", userId);
+                        var response = await httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/activity", new { Token = userId });
 
                         if (!response.IsSuccessStatusCode)
                         {

@@ -102,50 +102,50 @@ namespace API.Data
             return null;
         }
 
-        public string? GetGameTokenByPlayersToken(string player_token)
+        public string? GetGameTokenByPlayersToken(string token)
         {
-            return GetPlayersGame(player_token)?.Token;
+            return GetPlayersGame(token)?.Token;
         }
 
-        public string? GetOpponentByPlayersToken(string player_token)
+        public string? GetOpponentByPlayersToken(string token)
         {
-            var game = GetPlayersGame(player_token);
+            var game = GetPlayersGame(token);
 
             if (game == null)
                 return string.Empty;
 
-            if (game.First == player_token && game.Second is not null)
+            if (game.First == token && game.Second is not null)
                 return GetName(game.Second);
             else
                 return GetName(game.First);
         }
 
-        public Color? GetPlayersTurnByPlayersToken(string player_token)
+        public Color? GetPlayersTurnByPlayersToken(string token)
         {
-            return GetPlayersGame(player_token)?.PlayersTurn;
+            return GetPlayersGame(token)?.PlayersTurn;
         }
 
-        public Status? GetStatusByPlayersToken(string player_token)
+        public Status? GetStatusByPlayersToken(string token)
         {
-            return GetPlayersGame(player_token)?.Status;
+            return GetPlayersGame(token)?.Status;
         }
 
-        public Color? GetColorByPlayersToken(string player_token)
+        public Color? GetColorByPlayersToken(string token)
         {
-            var game = GetPlayersGame(player_token);
+            var game = GetPlayersGame(token);
 
             if (game == null)
                 return Color.None;
 
-            if (game.First == player_token)
+            if (game.First == token)
                 return game.FColor;
             else
                 return game.SColor;
         }
 
-        public Color[,]? GetBoardByPlayersToken(string player_token)
+        public Color[,]? GetBoardByPlayersToken(string token)
         {
-            return GetPlayersGame(player_token)?.Board;
+            return GetPlayersGame(token)?.Board;
         }
 
         private bool PlayerInPendingGame(string token)
@@ -238,16 +238,16 @@ namespace API.Data
             return (false, "Move not possible");
         }
 
-        public bool Pass(string player_token, out string error_message)
+        public bool Pass(string token, out string error_message)
         {
-            var game = GetPlayersGame(player_token);
+            var game = GetPlayersGame(token);
             error_message = string.Empty;
 
-            if (game is not null && PlayerExists(player_token) && game.Second is not null)
+            if (game is not null && PlayerExists(token) && game.Second is not null)
             {
-                string player = player_token == game.First ? game.First : game.Second;
-                string challenger = player_token == game.First ? game.Second : game.First;
-                Color turn = player_token == game.First ? game.FColor : game.SColor;
+                string player = token == game.First ? game.First : game.Second;
+                string challenger = token == game.First ? game.Second : game.First;
+                Color turn = token == game.First ? game.FColor : game.SColor;
 
                 if (player != challenger && PlayerExists(challenger) &&
                     turn == game.PlayersTurn && game.Status == Status.Playing)
@@ -269,15 +269,15 @@ namespace API.Data
             return false;
         }
 
-        public bool Forfeit(string player_token)
+        public bool Forfeit(string token)
         {
-            var game = GetPlayersGame(player_token);
+            var game = GetPlayersGame(token);
 
-            if (game is not null && PlayerExists(player_token) && game.Second is not null)
+            if (game is not null && PlayerExists(token) && game.Second is not null)
             {
-                string player = player_token == game.First ? game.First : game.Second;
-                string challenger = player_token == game.First ? game.Second : game.First;
-                Color turn = player_token == game.First ? game.FColor : game.SColor;
+                string player = token == game.First ? game.First : game.Second;
+                string challenger = token == game.First ? game.Second : game.First;
+                Color turn = token == game.First ? game.FColor : game.SColor;
 
                 if (player != challenger && PlayerExists(challenger) &&
                     turn == game.PlayersTurn && game.Status == Status.Playing)
@@ -285,15 +285,15 @@ namespace API.Data
                     string winner;
                     string loser;
 
-                    if (game.First == player_token)
+                    if (game.First == token)
                     {
                         winner = game.Second;
-                        loser = player_token;
+                        loser = token;
                     }
                     else
                     {
                         winner = game.First;
-                        loser = player_token;
+                        loser = token;
                     }
                     GameResult result = new(game.Token, winner, loser)
                     {
@@ -312,12 +312,12 @@ namespace API.Data
             return false;
         }
 
-        public bool Delete(string player_token)
+        public bool Delete(string token)
         {
-            var game = GetPlayersGame(player_token);
+            var game = GetPlayersGame(token);
 
-            if (game is not null && PlayerExists(player_token) &&
-                PlayerInPendingGame(player_token) && player_token == game.First)
+            if (game is not null && PlayerExists(token) &&
+                PlayerInPendingGame(token) && token == game.First)
             {
                 _context.Games.Remove(game);
                 _context.SaveChanges();

@@ -15,6 +15,12 @@ namespace MVC.Middleware
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
         {
+/*            if (context.Request.Headers.ContainsKey("X-Bypass-Middleware"))
+            {
+                await _next(context);
+                return;
+            }*/
+
             using (var scope = serviceProvider.CreateScope())
             {
                 var user = context.User;
@@ -43,9 +49,9 @@ namespace MVC.Middleware
                                 context.Response.Redirect($"/Game/Play?token={token}");
                                 return;
                             }
-                            else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/home/wait"))
+                            else if (gameStatus == "0" && currentPath is not null && (!currentPath.Contains("/home/wait") && !currentPath.Contains("home/delete")))
                             {
-                                context.Response.Redirect($"/Home/Wait?token={token}");
+                                context.Response.Redirect($"/Home/Wait?token={userId}");
                                 return;
                             }
                         }

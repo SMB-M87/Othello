@@ -1,20 +1,22 @@
-﻿@model HomeView
+﻿@model List<string>
 
-@if (Model.GameRequests != null && Model.GameRequests.Count > 0)
+@if (Model != null && Model.Count > 0)
 {
     <ul style="list-style: none; padding-left: 0;">
-        @foreach (var player in Model.GameRequests)
+        @foreach (var player in Model)
         {
-            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                 <div>
                     <form method="post" asp-action="AcceptGameRequest" asp-controller="Home" style="display: inline;">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="username" value="@player" />
                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
                             <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
                         </button>
                     </form>
                     <form method="post" asp-action="DeclineGameRequest" asp-controller="Home" style="display: inline;">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="username" value="@player" />
                         <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
                             <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>

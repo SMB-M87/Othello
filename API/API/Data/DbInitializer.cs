@@ -132,6 +132,10 @@ namespace API.Data
                 {
                     new(Inquiry.Friend, "Burton"),
                     new(Inquiry.Friend, "Badbux"),
+                    new(Inquiry.Friend, "Cena"),
+                    new(Inquiry.Friend, "Burst"),
+                    new(Inquiry.Friend, "Ernst"),
+                    new(Inquiry.Friend, "Karen"),
                     new(Inquiry.Friend, "Sadbux")
                 }
             };

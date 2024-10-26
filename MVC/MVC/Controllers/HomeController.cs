@@ -24,31 +24,21 @@ namespace MVC.Controllers
                 var token = _userManager.GetUserId(User);
                 var username = _userManager.GetUserName(User);
 
-                List<string> online_players = await OnlinePlayers();
-                List<string> friends = await Friends(token);
-                List<string> online_friends = friends.Intersect(online_players).ToList();
-                List<string> offline_friends = friends.Except(online_friends).ToList();
-
-                List<GamePending> games = await PendingGames();
-                List<string> joinable_players = games.Select(g => g.Username).ToList();
-
                 var model = new HomeView
                 {
                     Stats = await Stats(username),
                     MatchHistory = await MatchHistory(username),
 
-                    OnlinePlayers = online_players,
-                    OnlineFriends = online_friends,
-                    OfflineFriends = offline_friends,
+                    OnlinePlayers = await OnlinePlayers(),
+                    Friends = await Friends(token),
 
                     FriendRequests = await FriendRequests(token),
                     GameRequests = await GameRequests(token),
 
                     SentFriendRequests = await SentFriendRequests(token),
                     SentGameRequests = await SentGameRequests(token),
-                    JoinablePlayers = joinable_players,
 
-                    Games = games,
+                    Games = await PendingGames(),
                 };
 
                 return View(model);
@@ -108,6 +98,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string description)
         {
             if (string.IsNullOrWhiteSpace(description))
@@ -116,10 +107,10 @@ namespace MVC.Controllers
                 return View("Create");
             }
 
-            var userToken = _userManager.GetUserId(User);
+            var token = _userManager.GetUserId(User);
             var createGameRequest = new
             {
-                Player = userToken,
+                PlayerToken = token,
                 Description = description
             };
 
@@ -131,7 +122,7 @@ namespace MVC.Controllers
                 return View("Create");
             }
 
-            var game = await _httpClient.GetAsync($"api/game/from/{userToken}");
+            var game = await _httpClient.GetAsync($"api/game/{token}");
 
             if (!game.IsSuccessStatusCode)
             {
@@ -139,12 +130,11 @@ namespace MVC.Controllers
                 return View("Create");
             }
 
-            var token = await game.Content.ReadAsStringAsync();
-
             return RedirectToAction("Wait", new { token });
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> JoinGame(string username)
         {
             var request = new
@@ -165,6 +155,55 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Partial()
+        {
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
+            }
+
+            var model = new RefreshView
+            {
+                OnlinePlayers = await OnlinePlayers(),
+                Friends = await Friends(token),
+                FriendRequests = await FriendRequests(token),
+                GameRequests = await GameRequests(token),
+                SentFriendRequests = await SentFriendRequests(token),
+                SentGameRequests = await SentGameRequests(token),
+                Games = await PendingGames()
+            };
+
+            return PartialView("_Partial", model);
+        }
+
+        public async Task<IActionResult> TestPartial()
+        {
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
+            }
+
+            var model = new RefreshView
+            {
+                OnlinePlayers = await OnlinePlayers(),
+                Friends = await Friends(token),
+                FriendRequests = await FriendRequests(token),
+                GameRequests = await GameRequests(token),
+                SentFriendRequests = await SentFriendRequests(token),
+                SentGameRequests = await SentGameRequests(token),
+                Games = await PendingGames()
+            };
+            return View("_Partial", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendFriendRequest(string username)
         {
             var request = new
@@ -177,13 +216,14 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+                ModelState.AddModelError(string.Empty, "Unable to send friend request.");
             }
 
             return RedirectToAction("Index");
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AcceptFriendRequest(string username)
         {
             var request = new
@@ -203,6 +243,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeclineFriendRequest(string username)
         {
             var request = new
@@ -222,6 +263,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteFriend(string username)
         {
             var request = new
@@ -234,13 +276,14 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+                ModelState.AddModelError(string.Empty, "Unable to delete friend.");
             }
 
             return RedirectToAction("Index");
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendGameRequest(string username)
         {
             var request = new
@@ -253,13 +296,14 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+                ModelState.AddModelError(string.Empty, "Unable to send game request.");
             }
 
             return RedirectToAction("Index");
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AcceptGameRequest(string username)
         {
             var request = new
@@ -279,6 +323,7 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeclineGameRequest(string username)
         {
             var request = new
@@ -291,7 +336,7 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+                ModelState.AddModelError(string.Empty, "Unable to decline game request.");
             }
 
             return RedirectToAction("Index");
@@ -300,30 +345,33 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteGameInvites()
         {
-            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", _userManager.GetUserId(User));
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
             }
 
             var model = new HomeView
             {
-                GameRequests = await GameRequests(_userManager.GetUserId(User))
+                GameRequests = await GameRequests(token)
             };
 
             return PartialView("_GameRequestsPartial", model);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(string token)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete()
         {
-            var response = await _httpClient.PostAsJsonAsync($"api/game/delete/{token}", token);
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/game/delete", new { Token = token });
 
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to delete game.");
-                return RedirectToAction("Wait", new { player = token });
+                return RedirectToAction("Wait", new { token });
             }
 
             return RedirectToAction("Index");

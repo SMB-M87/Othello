@@ -129,9 +129,9 @@ namespace API.Controllers
         }
 
         [HttpPost("pass")]
-        public ActionResult<HttpResponseMessage> Pass([FromBody] string player_token)
+        public ActionResult<HttpResponseMessage> Pass([FromBody] ID id)
         {
-            var respons = _repository.GameRepository.Pass(player_token, out string error_message);
+            var respons = _repository.GameRepository.Pass(id.Token, out string error_message);
 
             if (respons)
             {
@@ -151,9 +151,9 @@ namespace API.Controllers
         }
 
         [HttpPost("forfeit")]
-        public ActionResult<HttpResponseMessage> Forfeit([FromBody] string player_token)
+        public ActionResult<HttpResponseMessage> Forfeit([FromBody] ID id)
         {
-            var respons = _repository.GameRepository.Forfeit(player_token);
+            var respons = _repository.GameRepository.Forfeit(id.Token);
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -161,10 +161,10 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpDelete("delete")]
-        public ActionResult<HttpResponseMessage> Delete([FromBody] string player_token)
+        [HttpPost("delete")]
+        public ActionResult<HttpResponseMessage> Delete([FromBody] ID id)
         {
-            var respons = _repository.GameRepository.Delete(player_token);
+            var respons = _repository.GameRepository.Delete(id.Token);
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);

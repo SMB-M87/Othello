@@ -92,10 +92,10 @@ namespace API.Controllers
             return Ok(sent);
         }
 
-        [HttpPost("activity/{token}")]
-        public ActionResult<HttpResponseMessage> Activity(string token)
+        [HttpPost("activity")]
+        public ActionResult<HttpResponseMessage> Activity([FromBody] ID id)
         {
-            var respons = _repository.PlayerRepository.UpdateActivity(token);
+            var respons = _repository.PlayerRepository.UpdateActivity(id.Token);
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -181,9 +181,9 @@ namespace API.Controllers
         }
 
         [HttpPost("game/delete")]
-        public ActionResult<HttpResponseMessage> DeleteGameInvites(string token)
+        public ActionResult<HttpResponseMessage> DeleteGameInvites([FromBody] ID id)
         {
-            var respons = _repository.PlayerRepository.DeleteGameInvites(token);
+            var respons = _repository.PlayerRepository.DeleteGameInvites(id.Token);
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -191,10 +191,10 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpDelete("delete/{token}")]
-        public ActionResult<HttpResponseMessage> Delete(string token)
+        [HttpPost("delete")]
+        public ActionResult<HttpResponseMessage> Delete([FromBody] ID id)
         {
-            var respons = _repository.PlayerRepository.Delete(token);
+            var respons = _repository.PlayerRepository.Delete(id.Token);
 
             if (respons == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);

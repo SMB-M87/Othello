@@ -119,8 +119,8 @@ namespace MVC.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByNameAsync(Input.Username);
                     if (user != null)
                     {
-                        var playerStatusUrl = "https://localhost:7023/api/player/activity";
-                        var response = await _httpClient.PostAsJsonAsync(playerStatusUrl, user.Id);
+                        var token = _userManager.GetUserId(User);
+                        var response = await _httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/activity", new { Token = token });
                         if (!response.IsSuccessStatusCode)
                         {
                             // Handle potential API failure here
