@@ -346,11 +346,12 @@
             const friendsContainer = document.getElementById("friends-container");
             const gameRequestsContainer = document.getElementById("game-requests-container");
             const pendingGamesContainer = document.getElementById("pending-games-container");
+            const pendingGamesSection = document.getElementById("pending-games-section");
 
             const onlinePlayersScrollPosition = onlinePlayersContainer.scrollTop;
             const friendsScrollPosition = friendsContainer.scrollTop;
             const gameRequestsScrollPosition = gameRequestsContainer.scrollTop;
-            const pendingGamesScrollPosition = pendingGamesContainer.scrollTop;
+            const pendingGamesScrollPosition = pendingGamesSection.scrollTop;
 
             fetch('@Url.Action("Partial", "Home")', {
                 method: 'POST',
@@ -364,48 +365,17 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
 
-                    onlinePlayersContainer.innerHTML = doc.getElementById("online-players-container");
-                    friendsContainer.innerHTML = doc.getElementById("friends-container");
-                    gameRequestsContainer.innerHTML = doc.getElementById("game-requests-container");
-                    pendingGamesContainer.innerHTML = doc.getElementById("pending-games-container");
-
-                    if (onlinePlayersContent) {
-                        onlinePlayersContainer.innerHTML = onlinePlayersContent.innerHTML;
-                    } else {
-                        console.error("online-players-container not found in partial view");
-                    }
-
-                    if (friendsContent) {
-                        friendsContainer.innerHTML = friendsContent.innerHTML;
-                    } else {
-                        console.error("friends-container not found in partial view");
-                    }
-
-                    if (gameRequestsContent) {
-                        gameRequestsContainer.innerHTML = gameRequestsContent.innerHTML;
-                    } else {
-                        console.error("game-requests-container not found in partial view");
-                    }
-
-                    if (pendingGamesContent) {
-                        pendingGamesContainer.innerHTML = pendingGamesContent.innerHTML;
-                    } else {
-                        console.error("pending-games-container not found in partial view");
-                    }
+                    onlinePlayersContainer.innerHTML = doc.getElementById("online-players-container").innerHTML;
+                    friendsContainer.innerHTML = doc.getElementById("friends-container").innerHTML;
+                    gameRequestsContainer.innerHTML = doc.getElementById("game-requests-container").innerHTML;
+                    pendingGamesSection.innerHTML = doc.getElementById("pending-games-section").innerHTML;
 
                     requestAnimationFrame(() => {
                         onlinePlayersContainer.scrollTop = onlinePlayersScrollPosition;
                         friendsContainer.scrollTop = friendsScrollPosition;
                         gameRequestsContainer.scrollTop = gameRequestsScrollPosition;
-                        pendingGamesContainer.scrollTop = pendingGamesScrollPosition;
+                        pendingGamesSection.scrollTop = pendingGamesScrollPosition;
                     });
-
-                    var gameStatusElement = doc.getElementById('game-status');
-                    var gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
-
-                    if (gameStatus === '1') {
-                        window.location.href = '@Url.Action("Play", "Game")';
-                    }
                 })
                 .catch(error => console.error('Error:', error));
         }
