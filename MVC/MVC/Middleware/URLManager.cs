@@ -15,56 +15,65 @@ namespace MVC.Middleware
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.CreateScope())
+            var isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            if (!isAjaxRequest)
             {
-                var user = context.User;
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-                if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
+                using (var scope = serviceProvider.CreateScope())
                 {
-                    var userId = userManager.GetUserId(user);
-                    var httpClient = _httpClientFactory.CreateClient();
+                    var user = context.User;
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-                    var gameResponse = await httpClient.GetAsync($"https://localhost:7023/api/game/{userId}");
-
-                    if (gameResponse.IsSuccessStatusCode)
+                    if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
                     {
-                        var token = await gameResponse.Content.ReadAsStringAsync();
+                        var token = userManager.GetUserId(user);
+                        var httpClient = _httpClientFactory.CreateClient();
+                        var currentPath = context.Request.Path.Value?.ToLower();
+                        var response = await httpClient.GetAsync($"https://localhost:7023/api/game/status/{token}");
 
-                        var gameStatusResponse = await httpClient.GetAsync($"https://localhost:7023/api/game/status/{userId}");
-
-                        if (gameStatusResponse.IsSuccessStatusCode)
+                        if (response.IsSuccessStatusCode)
                         {
-                            var gameStatus = await gameStatusResponse.Content.ReadAsStringAsync();
+                            var result = await response.Content.ReadAsStringAsync();
 
-                            var currentPath = context.Request.Path.Value?.ToLower();
-                            if (gameStatus == "1" && currentPath is not null && !currentPath.Contains("/game/play"))
+                            if (result == "1" && currentPath is not null && !currentPath.Contains("/game/play"))
                             {
-                                context.Response.Redirect($"/Game/Play");
+                                context.Response.Redirect("/Game/Play");
                                 return;
                             }
-                            else if (gameStatus == "0" && currentPath is not null && !currentPath.Contains("/home/index") && !currentPath.Contains("home/delete") && 
-                                    !currentPath.Contains("home/sendgamerequest") && !currentPath.Contains("home/sendfriendrequest") && !currentPath.Contains("home/deletefriend") && 
-                                    !currentPath.Contains("home/acceptfriendrequest") && !currentPath.Contains("home/declinefriendrequest"))
+                            else if (result == "0" && currentPath is not null && !IsAllowedPath(currentPath))
+                            {
+                                context.Response.Redirect($"/Home/Index");
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (currentPath is not null && (!currentPath.Contains("/home") && !currentPath.Contains("/account")))
                             {
                                 context.Response.Redirect($"/Home/Index");
                                 return;
                             }
                         }
                     }
-                    else
-                    {
-                        var currentPath = context.Request.Path.Value?.ToLower();
-
-                        if (currentPath is not null && (!currentPath.Contains("/home") && !currentPath.Contains("/account")))
-                        {
-                            context.Response.Redirect($"/Home/Index");
-                            return;
-                        }
-                    }
                 }
             }
             await _next(context);
+        }
+
+        private bool IsAllowedPath(string path)
+        {
+            var allowedPaths = new[]
+            {
+                "/home/index",
+                "/home/delete",
+                "/home/sendgamerequest",
+                "/home/sendfriendrequest",
+                "/home/deletefriend",
+                "/home/acceptfriendrequest",
+                "/home/declinefriendrequest",
+                "/home/partial"
+            };
+            return allowedPaths.Any(path.Contains);
         }
     }
 }

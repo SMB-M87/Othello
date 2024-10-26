@@ -15,6 +15,3 @@
 <div id="pending-games-container">
     @await Html.PartialAsync("_PendingGamesPartial", Model.Pending)
 </div>
-
-<div id="session-status" data-session="@Model?.Pending?.Session"></div>
-<div id="game-status" data-status="@Model?.Pending?.Status"></div>

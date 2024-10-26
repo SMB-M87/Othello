@@ -380,9 +380,9 @@
                 </form>
             </div>
         }
-    </div>
     <div id="session-status" data-session="@Model?.Pending?.Session"></div>
     <div id="game-status" data-status="@Model?.Pending?.Status"></div>
+    </div>
 
     <script>
         function refreshContainers() {
@@ -404,13 +404,21 @@
                 method: 'POST',
                 headers: {
                     'RequestVerificationToken': antiForgeryToken,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest' 
                 }
             })
                 .then(response => response.text())
                 .then(data => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
+
+                    const gameStatusElement = doc.getElementById("game-status");
+                    const gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
+
+                    if (gameStatus === "1") {
+                        window.location.href = '/Game/Play';
+                    }
 
                     const onlinePlayersContent = doc.getElementById("online-players-container");
                     if (onlinePlayersContent && onlinePlayersContainer) {
@@ -430,16 +438,6 @@
                     const pendingGamesContent = doc.getElementById("pending-games-section");
                     if (pendingGamesContent && pendingGamesSection) {
                         pendingGamesSection.innerHTML = pendingGamesContent.innerHTML;
-                    }
-
-                    const gameStatusElement = document.getElementById("game-status");
-                    const gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
-                    console.log(gameStatus);
-
-                    if (sessionStatus != null && gameStatus != null &&
-                        sessionStatus === "false" && gameStatus === "1") {
-                        window.location.href = '@Url.Action("Play", "Game")';
-                        return;
                     }
 
                     requestAnimationFrame(() => {

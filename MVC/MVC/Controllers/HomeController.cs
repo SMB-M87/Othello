@@ -421,6 +421,11 @@ namespace MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 result = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Fetched Status: {result}");
+            }
+            else
+            {
+                Console.WriteLine("Failed to fetch Status.");
             }
             return result;
         }

@@ -24,7 +24,6 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-builder.Services.AddControllersWithViews(options => { options.Filters.Add<URLManagerFilter>(); });
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
@@ -52,9 +51,11 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseAuthorization();
+app.UseSession();
+
 app.UseMiddleware<URLManager>();
 app.UseMiddleware<UpdateActivity>();
-app.UseSession();
 
 app.UseEndpoints(endpoints =>
 {
