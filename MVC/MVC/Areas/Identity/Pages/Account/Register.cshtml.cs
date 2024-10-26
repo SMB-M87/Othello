@@ -140,8 +140,8 @@ namespace MVC.Areas.Identity.Pages.Account
 
                     var playerCreation = new
                     {
-                        Token = user.Id,
-                        Player = Input.Username
+                        ReceiverUsername = user.Id,
+                        SenderToken = Input.Username
                     };
 
                     var createPlayerResponse = await _httpClient.PostAsJsonAsync("https://localhost:7023/api/player/create/", playerCreation);
