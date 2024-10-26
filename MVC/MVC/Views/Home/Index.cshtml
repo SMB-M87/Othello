@@ -337,21 +337,24 @@
             </div>
         }
     </div>
+    <div id="session-status" data-session="@Model?.Pending?.Session"></div>
 
     <script>
         function refreshContainers() {
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+            const sessionStatus = document.getElementById("session-status").dataset.session;
+
             const onlinePlayersContainer = document.getElementById("online-players-container");
             const friendsContainer = document.getElementById("friends-container");
             const gameRequestsContainer = document.getElementById("game-requests-container");
             const pendingGamesContainer = document.getElementById("pending-games-container");
-            const pendingGamesSection = document.getElementById("pending-games-section");
+            const pendingGamesSection = sessionStatus === "false" ? document.getElementById("pending-games-section") : null;
 
-            const onlinePlayersScrollPosition = onlinePlayersContainer.scrollTop;
-            const friendsScrollPosition = friendsContainer.scrollTop;
-            const gameRequestsScrollPosition = gameRequestsContainer.scrollTop;
-            const pendingGamesScrollPosition = pendingGamesSection.scrollTop;
+            const onlinePlayersScrollPosition = onlinePlayersContainer ? onlinePlayersContainer.scrollTop : 0;
+            const friendsScrollPosition = friendsContainer ? friendsContainer.scrollTop : 0;
+            const gameRequestsScrollPosition = gameRequestsContainer ? gameRequestsContainer.scrollTop : 0;
+            const pendingGamesScrollPosition = pendingGamesSection ? pendingGamesSection.scrollTop : 0;
 
             fetch('@Url.Action("Partial", "Home")', {
                 method: 'POST',
@@ -365,16 +368,31 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(data, 'text/html');
 
-                    onlinePlayersContainer.innerHTML = doc.getElementById("online-players-container").innerHTML;
-                    friendsContainer.innerHTML = doc.getElementById("friends-container").innerHTML;
-                    gameRequestsContainer.innerHTML = doc.getElementById("game-requests-container").innerHTML;
-                    pendingGamesSection.innerHTML = doc.getElementById("pending-games-section").innerHTML;
+                    const onlinePlayersContent = doc.getElementById("online-players-container");
+                    if (onlinePlayersContent && onlinePlayersContainer) {
+                        onlinePlayersContainer.innerHTML = onlinePlayersContent.innerHTML;
+                    }
+
+                    const friendsContent = doc.getElementById("friends-container");
+                    if (friendsContent && friendsContainer) {
+                        friendsContainer.innerHTML = friendsContent.innerHTML;
+                    }
+
+                    const gameRequestsContent = doc.getElementById("game-requests-container");
+                    if (gameRequestsContent && gameRequestsContainer) {
+                        gameRequestsContainer.innerHTML = gameRequestsContent.innerHTML;
+                    }
+
+                    const pendingGamesContent = doc.getElementById("pending-games-section");
+                    if (pendingGamesContent && pendingGamesSection) {
+                        pendingGamesSection.innerHTML = pendingGamesContent.innerHTML;
+                    }
 
                     requestAnimationFrame(() => {
-                        onlinePlayersContainer.scrollTop = onlinePlayersScrollPosition;
-                        friendsContainer.scrollTop = friendsScrollPosition;
-                        gameRequestsContainer.scrollTop = gameRequestsScrollPosition;
-                        pendingGamesSection.scrollTop = pendingGamesScrollPosition;
+                        if (onlinePlayersContainer) onlinePlayersContainer.scrollTop = onlinePlayersScrollPosition;
+                        if (friendsContainer) friendsContainer.scrollTop = friendsScrollPosition;
+                        if (gameRequestsContainer) gameRequestsContainer.scrollTop = gameRequestsScrollPosition;
+                        if (pendingGamesSection) pendingGamesSection.scrollTop = pendingGamesScrollPosition;
                     });
                 })
                 .catch(error => console.error('Error:', error));
