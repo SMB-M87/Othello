@@ -68,47 +68,90 @@ namespace MVC.Controllers
             return PartialView("_Partial", model);
         }
 
+        /*        [HttpPost]
+                [ValidateAntiForgeryToken]
+                public async Task<IActionResult> Move([FromBody] GameMove move)
+                {
+                    var token = _userManager.GetUserId(User);
+                    var response = await _httpClient.PostAsJsonAsync("api/game/move", new { PlayerToken = token, move.Row, move.Column });
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        ModelState.AddModelError(string.Empty, "Unable to pass.");
+                    }
+                    return RedirectToAction("Play", "Home");
+                }*/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Move([FromBody] GameMove move)
+        public async Task<JsonResult> Move([FromBody] GameMove move)
         {
             var token = _userManager.GetUserId(User);
             var response = await _httpClient.PostAsJsonAsync("api/game/move", new { PlayerToken = token, move.Row, move.Column });
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to pass.");
+                return Json(new { success = false, message = "Unable to make the move." });
             }
-            return RedirectToAction("Play", "Home");
+
+            return Json(new { success = true, message = "Move successful." });
         }
 
+
+        /*        [HttpPost]
+                [ValidateAntiForgeryToken]
+                public async Task<IActionResult> Pass()
+                {
+                    var token = _userManager.GetUserId(User);
+                    var response = await _httpClient.PostAsJsonAsync("api/game/pass", new { Token = token });
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        ModelState.AddModelError(string.Empty, "Unable to pass.");
+                    }
+                    return RedirectToAction("Index", "Home");
+                }*/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pass()
+        public async Task<JsonResult> Pass()
         {
             var token = _userManager.GetUserId(User);
             var response = await _httpClient.PostAsJsonAsync("api/game/pass", new { Token = token });
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to pass.");
+                return Json(new { success = false, message = "Unable to pass." });
             }
-            return RedirectToAction("Index", "Home");
+
+            return Json(new { success = true, message = "Game passed successfully." });
         }
 
+        /*        [HttpPost]
+                [ValidateAntiForgeryToken]
+                public async Task<IActionResult> Forfeit()
+                {
+                    var token = _userManager.GetUserId(User);
+                    var response = await _httpClient.PostAsJsonAsync("api/game/forfeit", new { Token = token });
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        ModelState.AddModelError(string.Empty, "Unable to forfeit game.");
+                        return RedirectToAction("Play");
+                    }
+                    return RedirectToAction("Result", "Home");
+                }*/
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Forfeit()
+        public async Task<JsonResult> Forfeit()
         {
             var token = _userManager.GetUserId(User);
             var response = await _httpClient.PostAsJsonAsync("api/game/forfeit", new { Token = token });
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to forfeit game.");
-                return RedirectToAction("Play");
+                return Json(new { success = false, message = "Unable to forfeit game." });
             }
-            return RedirectToAction("Result", "Home");
+
+            return Json(new { success = true, message = "Game forfeited successfully." });
         }
 
         private async Task<string> Opponent(string token)

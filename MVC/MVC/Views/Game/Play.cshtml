@@ -46,6 +46,11 @@
 <div class="d-flex justify-content-center">
     <div style="display: flex; flex-direction: column; align-items: center;">
         <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn-primary" onclick="passGame()">Pass</button>
+            <button type="button" class="btn btn-danger" onclick="forfeitGame()">Forfeit</button>
+        </div>
+
+@*         <div style="display: flex; gap: 10px;">
             <form asp-action="Pass" asp-controller="Game" method="post">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-primary">Pass</button>
@@ -54,7 +59,7 @@
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn btn-danger">Forfeit</button>
             </form>
-        </div>
+        </div> *@
     </div>
 </div>
 
@@ -96,16 +101,60 @@
              },
              body: JSON.stringify(moveData)
          })
-         .then(response => {
-             if (response.ok) {
-                 console.log('Move successful');
-             } else {
-                 console.error('Move failed');
-             }
-             refreshContainers();
-         })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(data.message);
+                    refreshContainers();
+                } else {
+                    alert(data.message);
+                }
+            })
          .catch(error => console.error('Error:', error));
      }
+
+    function passGame() {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("Pass", "Game")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Game passed');
+                    refreshContainers();
+                } else {
+                    alert('Unable to pass');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function forfeitGame() {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("Forfeit", "Game")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '@Url.Action("Result", "Home")';
+                } else {
+                    alert('Unable to forfeit');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
 
     function refreshContainers() {
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;

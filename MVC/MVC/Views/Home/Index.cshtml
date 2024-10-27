@@ -291,7 +291,7 @@
             <div id="pending-title" class="text-center" style="margin-top: 20px;">
                 <h3>Pending Games</h3>
             </div>
-            <div id="pending-games-section" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+            <div id="pending-games-section" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-top: 10px;">
                 @if (Model.Partial.Pending != null && Model.Partial.Pending.Games.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
@@ -321,7 +321,7 @@
                 }
             </div>
             <div id="pending-create-button" class="d-flex justify-content-center">
-                <form method="post" asp-action="Creation" asp-controller="Home" style="display: inline;">
+                <form method="post" asp-action="Creation" asp-controller="Home" style="display: inline; margin-top: 10px;">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn" style="background-color: lightskyblue; cursor: pointer;">
                         New game
@@ -337,15 +337,13 @@
                     <h3>Description</h3>
                 </div>
                 <div class="d-flex justify-content-center">
-                    <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px;">
                         <form style="width: 600px; padding: 10px;">
                             <div class="form-group">
-                                <textarea id="descriptionText" name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">
-                                    I wanna play a game and don't have any requirements!
-                                </textarea>
+                                <textarea id="descriptionText" name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
                             </div>
                         </form>
-                        <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
                             <form asp-action="Create" method="post" onsubmit="updateHiddenInput()">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="description" id="hiddenDescription" />
@@ -368,14 +366,14 @@
             </div>
 
             <div id="loading" class="d-flex justify-content-center">
-                <img src="~/images/loading.gif" alt="Loading..." style="width:350px; height: auto;" />
+                <img src="~/images/loading.gif" alt="Loading..." style="width:350px; height: auto; margin-top: 10px;" />
             </div>
 
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center" style="margin-top: 10px;">
                 <p>Waiting for an opponent to join...</p>
             </div>
 
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center" style="margin-top: 10px;">
                 <form asp-action="Delete" method="post">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn btn-danger">Delete</button>
@@ -456,7 +454,7 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-        setInterval(refreshContainers, 5000);
+        setInterval(refreshContainers, 3000);
     </script>
 }
 else
