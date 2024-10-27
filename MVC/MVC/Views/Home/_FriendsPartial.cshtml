@@ -73,7 +73,10 @@
         }
     </ul>
 }
-@if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 && Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0)
+
+@if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 &&
+    Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0 &&
+    Model.FriendRequests != null && Model.FriendRequests.Count <= 0)
 {
     <p>You have no friends added.</p>
 }
