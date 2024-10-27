@@ -1,8 +1,8 @@
 ﻿using MVC.Models;
 using System.Text.Json;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Net.Http.Headers;
 
 namespace MVC.Controllers
 {
@@ -30,18 +30,83 @@ namespace MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var model = new GameView
+                var model = new Game
                 {
                     Opponent = await Opponent(token),
                     Color = await Color(token),
-                    PlayersTurn = await PlayersTurn(token),
-                    Board = await Board(token)
+
+                    Partial = new GamePartial
+                    {
+                        InGame = await InGame(token),
+                        PlayersTurn = await PlayersTurn(token),
+                        Board = await Board(token)
+                    }
                 };
 
                 return View(model);
             }
 
             ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Partial()
+        {
+            var token = _userManager.GetUserId(User);
+
+            var model = new GamePartial
+            {
+                InGame = await InGame(token),
+                PlayersTurn = await PlayersTurn(token),
+                Board = await Board(token)
+            };
+            return PartialView("_Partial", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Move(int row, int col)
+        {
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/game/pass", new { PlayerToken = token, Row = row, Column = col });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to pass.");
+                return RedirectToAction("Play");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Pass()
+        {
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/game/pass", new { Token = token });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to pass.");
+                return RedirectToAction("Play");
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Forfeit()
+        {
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/game/forfeit", new { Token = token });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to forfeit game.");
+                return RedirectToAction("Play");
+            }
             return RedirectToAction("Index", "Home");
         }
 
@@ -67,6 +132,19 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<Color>();
             }
             return result;
+        }
+
+        private async Task<bool> InGame(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/{token}");
+            var status = await _httpClient.GetAsync($"api/game/status/{token}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode && status.IsSuccessStatusCode)
+            {
+                result = await status.Content.ReadAsStringAsync();
+            }
+            return result == "1";
         }
 
         private async Task<Color> PlayersTurn(string token)

@@ -37,6 +37,17 @@ namespace API.Controllers
             return Ok(players);
         }
 
+        [HttpGet("gaming")]
+        public ActionResult<List<string>> PlayersInGame()
+        {
+            var players = _repository.PlayerRepository.GetPlayersInGame();
+
+            if (players is null)
+                return NotFound();
+
+            return Ok(players);
+        }
+
         [HttpGet("friends/{token}")]
         public ActionResult<List<string>> PlayerFriends(string token)
         {

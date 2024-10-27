@@ -1,6 +1,6 @@
 ﻿namespace MVC.Models
 {
-    public class PendingView
+    public class HomePending
     {
         public string Session { get; set; } = string.Empty;
         public bool InGame { get; set; }

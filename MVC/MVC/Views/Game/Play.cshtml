@@ -1,4 +1,4 @@
-﻿@model MVC.Models.GameView
+﻿@model MVC.Models.Game
 
 <div class="d-flex justify-content-center">
     <h2>Game Details</h2>
@@ -10,30 +10,95 @@
 <div class="d-flex justify-content-center">
     <p>Color: @Model.Color</p>
 </div>
-<div class="d-flex justify-content-center">
-    <p>Turn: @Model.PlayersTurn </p>
+<div id="players-turn-container" class="d-flex justify-content-center">
+    <p>Turn: @Model?.Partial.PlayersTurn </p>
+
 </div>
 
-<div class="d-flex justify-content-center">
+<div id="board-container" class="d-flex justify-content-center">
     <table class="table table-bordered" style="width: auto;">
-        @for (int row = 0; row < Model.Board.GetLength(0); row++)
+        @for (int row = 0; row < Model?.Partial.Board.GetLength(0); row++)
         {
             <tr>
-                @for (int col = 0; col < Model.Board.GetLength(1); col++)
+                @for (int col = 0; col < Model.Partial.Board.GetLength(1); col++)
                 {
-                    var cell = Model.Board[row, col];
+                    var cell = Model.Partial.Board[row, col];
                     var cellDisplay = cell == Color.None ? "" : cell.ToString();
-                    <td style="width: 50px; height: 50px; text-align: center; background-color:@(cell == Color.Black ? "black" : (cell == Color.White ? "white" : "lightgrey")); color: @(cell == Color.Black ? "white" : "black");">
-                        @cellDisplay
+                    <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
+                        data-row="@row"
+                        data-col="@col"
+                        onclick="cellClicked(this)">
+                        @if (cell == Color.None)
+                        {
+                            <i></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-circle" style="font-size: 30px; color: @(cell.ToString());" );"></i>
+                        }
                     </td>
                 }
             </tr>
         }
     </table>
+    <div id="game-status" data-status="@Model?.Partial.InGame"></div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div style="display: flex; gap: 10px;">
+            <form asp-action="Pass" asp-controller="Game" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary">Pass</button>
+            </form>
+            <form asp-action="Forfeit" asp-controller="Game" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Forfeit</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <script>
-    setTimeout(function () {
-        window.location.reload();
-    }, 3000);
+    function refreshContainers() {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const playersTurnContainer = document.getElementById("players-turn-container");
+            const boardContainer = document.getElementById("board-container");
+
+            fetch('@Url.Action("Partial", "Game")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+
+                    const gameStatusElement = doc.getElementById("game-status");
+                    const gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
+
+                    console.log(gameStatus);
+
+                    if (gameStatus === "False") {
+                        window.location.href = '/Home/Index';
+                    }
+
+                    const playersTurnContent = doc.getElementById("players-turn-container");
+                    if (playersTurnContent && playersTurnContainer) {
+                        playersTurnContainer.innerHTML = playersTurnContent.innerHTML;
+                    }
+
+                    const friendsContent = doc.getElementById("board-container");
+                    if (friendsContent && boardContainer) {
+                        boardContainer.innerHTML = friendsContent.innerHTML;
+                    }
+                })
+            .catch(error => console.error('Error:', error));
+            }
+            setInterval(refreshContainers, 1000);
 </script>

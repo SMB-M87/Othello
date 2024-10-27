@@ -1,4 +1,4 @@
-﻿@model MVC.Models.HomeView
+﻿@model MVC.Models.Home
 
 @{
     ViewData["Title"] = "Home Page";
@@ -63,17 +63,17 @@
         <div class="col-md-3">
             <h3>Online</h3>
             <div id="online-players-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.OnlinePlayers != null && Model.OnlinePlayers.Count > 0)
+                @if (Model.Partial.OnlinePlayers != null && Model.Partial.OnlinePlayers.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.OnlinePlayers)
+                        @foreach (var player in Model.Partial.OnlinePlayers)
                         {
-                            @if (!Model.OnlineFriends.Contains(player) && !Model.OfflineFriends.Contains(player))
+                            @if (!Model.Partial.OnlineFriends.Contains(player) && !Model.Partial.OfflineFriends.Contains(player))
                             {
                                 <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
                                     <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                     <div>
-                                        @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
+                                        @if (!Model.Partial.Pending.InGame && Model.Partial.JoinablePlayers.Contains(player))
                                         {
                                             <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                                 @Html.AntiForgeryToken()
@@ -84,8 +84,8 @@
                                             </form>
                                         }
 
-                                        @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
-                                       !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
+                                        @if (Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0" &&
+                                       !Model.Partial.SentGameRequests.Contains(player) && Model.Partial.InvitablePlayers.Contains(player))
                                         {
                                             <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
                                                 @Html.AntiForgeryToken()
@@ -96,7 +96,7 @@
                                             </form>
                                         }
 
-                                        @if (!Model.SentFriendRequests.Contains(player) && !Model.FriendRequests.Contains(player))
+                                        @if (!Model.Partial.SentFriendRequests.Contains(player) && !Model.Partial.FriendRequests.Contains(player))
                                         {
                                             <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
                                                 @Html.AntiForgeryToken()
@@ -123,16 +123,16 @@
         <div class="col-md-3">
             <h3>Friends</h3>
             <div id="friends-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.OnlineFriends != null && Model.OnlineFriends.Count > 0)
+                @if (Model.Partial.OnlineFriends != null && Model.Partial.OnlineFriends.Count > 0)
                 {
                     <span><strong>Online:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.OnlineFriends)
+                        @foreach (var player in Model.Partial.OnlineFriends)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgreen">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
+                                    @if (!Model.Partial.Pending.InGame && Model.Partial.JoinablePlayers.Contains(player))
                                     {
                                         <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
                                             @Html.AntiForgeryToken()
@@ -143,8 +143,8 @@
                                         </form>
                                     }
 
-                                    @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
-                                   !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
+                                    @if (Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0" &&
+                                   !Model.Partial.SentGameRequests.Contains(player) && Model.Partial.InvitablePlayers.Contains(player))
                                     {
                                         <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
                                             @Html.AntiForgeryToken()
@@ -167,11 +167,11 @@
                         }
                     </ul>
                 }
-                @if (Model.OfflineFriends != null && Model.OfflineFriends.Count > 0)
+                @if (Model.Partial.OfflineFriends != null && Model.Partial.OfflineFriends.Count > 0)
                 {
                     <span><strong>Offline:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.OfflineFriends)
+                        @foreach (var player in Model.Partial.OfflineFriends)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgray">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -188,13 +188,13 @@
                         }
                     </ul>
                 }
-                @if (Model.FriendRequests != null && Model.FriendRequests.Count > 0)
+                @if (Model.Partial.FriendRequests != null && Model.Partial.FriendRequests.Count > 0)
                 {
                     <span>
                         <strong>Request:</strong>
                     </span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.FriendRequests)
+                        @foreach (var player in Model.Partial.FriendRequests)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -218,7 +218,7 @@
                         }
                     </ul>
                 }
-                @if (Model.OnlineFriends != null && Model.OnlineFriends.Count <= 0 && Model.OfflineFriends != null && Model.OfflineFriends.Count <= 0)
+                @if (Model.Partial.OnlineFriends != null && Model.Partial.OnlineFriends.Count <= 0 && Model.Partial.OfflineFriends != null && Model.Partial.OfflineFriends.Count <= 0)
                 {
                     <p>You have no friends added.</p>
                 }
@@ -229,11 +229,11 @@
         <div class="col-md-3">
             <h3>Game Requests</h3>
             <div id="game-requests-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (!Model.Pending.InGame && Model.GameRequests != null && Model.GameRequests.Count > 0)
+                @if (!Model.Partial.Pending.InGame && Model.Partial.GameRequests != null && Model.Partial.GameRequests.Count > 0)
                 {
                     <span><strong>From:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.GameRequests)
+                        @foreach (var player in Model.Partial.GameRequests)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -258,11 +258,11 @@
                     </ul>
                 }
 
-                @if (Model.Pending.InGame && Model.SentGameRequests != null && Model.SentGameRequests.Count > 0)
+                @if (Model.Partial.Pending.InGame && Model.Partial.SentGameRequests != null && Model.Partial.SentGameRequests.Count > 0)
                 {
                     <span><strong>To:</strong></span>
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.SentGameRequests)
+                        @foreach (var player in Model.Partial.SentGameRequests)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -271,12 +271,12 @@
                     </ul>
                 }
 
-                @if (!Model.Pending.InGame && Model.GameRequests != null && Model.GameRequests.Count <= 0)
+                @if (!Model.Partial.Pending.InGame && Model.Partial.GameRequests != null && Model.Partial.GameRequests.Count <= 0)
                 {
                     <p>No pending game requests.</p>
                 }
 
-                @if (Model.Pending.InGame && Model.SentGameRequests != null && Model.SentGameRequests.Count <= 0)
+                @if (Model.Partial.Pending.InGame && Model.Partial.SentGameRequests != null && Model.Partial.SentGameRequests.Count <= 0)
                 {
                     <p>No sent game requests.</p>
                 }
@@ -286,16 +286,16 @@
 
     <!-- Pending Games -->
     <div id="pending-games-container">
-        @if (!Model.Pending.InGame && Model.Pending.Session == "false")
+        @if (!Model.Partial.Pending.InGame && Model.Partial.Pending.Session == "false")
         {
             <div id="pending-title" class="text-center" style="margin-top: 20px;">
                 <h3>Pending Games</h3>
             </div>
             <div id="pending-games-section" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.Pending != null && Model.Pending.Games.Count > 0)
+                @if (Model.Partial.Pending != null && Model.Partial.Pending.Games.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var game in Model.Pending.Games)
+                        @foreach (var game in Model.Partial.Pending.Games)
                         {
                             @if (game.Username != User.Identity.Name)
                             {
@@ -330,7 +330,7 @@
             </div>
         }
 
-        @if (Model.Pending is not null && !Model.Pending.InGame && Model.Pending.Session == "true")
+        @if (Model.Partial.Pending is not null && !Model.Partial.Pending.InGame && Model.Partial.Pending.Session == "true")
         {
             <div id="create-game-section">
                 <div class="text-center form-group d-flex justify-content-center" style="margin-top: 20px;">
@@ -359,7 +359,7 @@
             </div>
         }
 
-        @if (Model.Pending is not null && Model.Pending.InGame && Model.Pending.Status == "0")
+        @if (Model.Partial.Pending is not null && Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0")
         {
             <div class="text-center form-group d-flex justify-content-center" style="margin-top: 20px;">
                 <h3>Waiting for an Opponent...</h3>
@@ -380,8 +380,8 @@
                 </form>
             </div>
         }
-    <div id="session-status" data-session="@Model?.Pending?.Session"></div>
-    <div id="game-status" data-status="@Model?.Pending?.Status"></div>
+    <div id="session-status" data-session="@Model?.Partial.Pending?.Session"></div>
+    <div id="game-status" data-status="@Model?.Partial.Pending?.Status"></div>
     </div>
 
     <script>

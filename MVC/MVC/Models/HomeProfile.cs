@@ -1,6 +1,6 @@
 ﻿namespace MVC.Models
 {
-    public class ProfileView
+    public class HomeProfile
     {
         public string Username { get; set; } = null!;
         public string Stats { get; set; } = null!;

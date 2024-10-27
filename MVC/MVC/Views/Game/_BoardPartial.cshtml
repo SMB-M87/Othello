@@ -1,0 +1,29 @@
+﻿@model GamePartial
+
+<table class="table table-bordered" style="width: auto;">
+    @for (int row = 0; row < Model.Board.GetLength(0); row++)
+    {
+        <tr>
+            @for (int col = 0; col < Model.Board.GetLength(1); col++)
+            {
+                var cell = Model.Board[row, col];
+                var cellDisplay = cell == Color.None ? "" : cell.ToString();
+                <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
+                    data-row="@row"
+                    data-col="@col"
+                    onclick="cellClicked(this)">
+                    @if (cell == Color.None)
+                    {
+                        <i></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-circle" style="font-size: 30px; color: @(cell.ToString());" );"></i>
+                    }
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+<div id="game-status" data-status="@Model.InGame"></div>

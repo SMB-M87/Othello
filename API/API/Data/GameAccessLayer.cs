@@ -252,17 +252,39 @@ namespace API.Data
                 if (player != challenger && PlayerExists(challenger) &&
                     turn == game.PlayersTurn && game.Status == Status.Playing)
                 {
-                    try
+                    if (game.Finished())
                     {
-                        game.Pass();
+                        game.Finish();
+                        _context.Entry(game).Property(g => g.Status).IsModified = true;
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+
+                        Color win = game.WinningColor();
+                        string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
+                        string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
+                        bool draw = win == Color.None;
+                        GameResult result = new(game.Token, winner, loser, draw)
+                        {
+                            Date = DateTime.UtcNow
+                        };
+                        _context.Results.Add(result);
+                        _context.Games.Remove(game);
                         _context.SaveChanges();
                         return true;
                     }
-                    catch (InvalidGameOperationException ex)
+                    else
                     {
-                        error_message = ex.Message;
-                        return false;
+                        try
+                        {
+                            game.Pass();
+                            _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                            _context.SaveChanges();
+                            return true;
+                        }
+                        catch (InvalidGameOperationException ex)
+                        {
+                            error_message = ex.Message;
+                            return false;
+                        }
                     }
                 }
             }

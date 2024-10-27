@@ -37,9 +37,22 @@ namespace API.Data
             return _context.Players.ToList();
         }
 
+        private bool PlayerInGame(string token)
+        {
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
+            return game is not null;
+        }
+
         public List<string>? GetOnlinePlayers()
         {
             return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
+        }
+
+        public List<string>? GetPlayersInGame()
+        {
+            return GetPlayers()?.FindAll(player => PlayerInGame(player.Token)).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
         }
 
         public List<string>? GetFriends(string token)
@@ -168,14 +181,6 @@ namespace API.Data
             return false;
         }
 
-        private bool PlayerInGame(string token)
-        {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
-            return game is not null;
-        }
-
         private bool PlayerInPendingGame(string token)
         {
             var games = _context.Games.ToList();
@@ -300,6 +305,25 @@ namespace API.Data
                 }
                 _context.Entry(player).Property(p => p.Requests).IsModified = true;
                 _context.SaveChanges();
+
+                List<Player> players = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username && r.Type == Inquiry.Game)).ToList();
+
+                if (players is not null)
+                {
+                    foreach (Player gamer in players)
+                    {
+                        Request? request = gamer.Requests?.FirstOrDefault(r => r.Type == Inquiry.Game && 
+                                                                               r.Username == player.Username && 
+                                                                              (DateTime.UtcNow - r.Date).TotalSeconds >= 60);
+
+                        if (request != null)
+                        {
+                            gamer.Requests.Remove(request);
+                            _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                            _context.SaveChanges();
+                        }
+                    }
+                }
                 return true;
             }
             return false;

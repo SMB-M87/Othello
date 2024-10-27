@@ -30,29 +30,34 @@ namespace MVC.Controllers
                 var token = _userManager.GetUserId(User);
                 var username = _userManager.GetUserName(User);
 
+                DeleteGameInvites(token);
                 var session = HttpContext.Session.GetString("GameCreation");
 
-                var model = new HomeView
+                var model = new Home
                 {
-                    Pending = new PendingView()
-                    {
-                        Session = session ?? "false",
-                        InGame = await InGame(token),
-                        Status = await Status(token),
-                        Games = await PendingGames()
-                    },
-
                     Stats = await Stats(username),
                     MatchHistory = await MatchHistory(username),
 
-                    OnlinePlayers = await OnlinePlayers(),
-                    Friends = await Friends(token),
+                    Partial = new HomePartial
+                    {
+                        Pending = new HomePending()
+                        {
+                            Session = session ?? "false",
+                            InGame = await InGame(token),
+                            Status = await Status(token),
+                            Games = await PendingGames()
+                        },
 
-                    FriendRequests = await FriendRequests(token),
-                    GameRequests = await GameRequests(token),
+                        OnlinePlayers = await OnlinePlayers(),
+                        PlayersInGame = await PlayersInGame(),
+                        Friends = await Friends(token),
 
-                    SentFriendRequests = await SentFriendRequests(token),
-                    SentGameRequests = await SentGameRequests(token)
+                        FriendRequests = await FriendRequests(token),
+                        GameRequests = await GameRequests(token),
+
+                        SentFriendRequests = await SentFriendRequests(token),
+                        SentGameRequests = await SentGameRequests(token)
+                    }
                 };
 
                 return View(model);
@@ -78,7 +83,7 @@ namespace MVC.Controllers
             List<string> sentRequests = await SentFriendRequests(currentUsername);
             List<string> requests = await FriendRequests(currentUserId);
 
-            var model = new ProfileView
+            var model = new HomeProfile
             {
                 Stats = stats,
                 Username = username,
@@ -174,11 +179,12 @@ namespace MVC.Controllers
                 ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
             }
 
+            DeleteGameInvites(token);
             var session = HttpContext.Session.GetString("GameCreation");
 
-            var model = new RefreshView
+            var model = new HomePartial
             {
-                Pending = new PendingView()
+                Pending = new HomePending()
                 {
                     Session = session ?? "false",
                     InGame = await InGame(token),
@@ -187,6 +193,7 @@ namespace MVC.Controllers
                 },
 
                 OnlinePlayers = await OnlinePlayers(),
+                PlayersInGame = await PlayersInGame(),
                 Friends = await Friends(token),
 
                 FriendRequests = await FriendRequests(token),
@@ -339,25 +346,6 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteGameInvites()
-        {
-            var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
-            }
-
-            var model = new HomeView
-            {
-                GameRequests = await GameRequests(token)
-            };
-
-            return PartialView("_GameRequestsPartial", model);
-        }
-
-        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete()
         {
@@ -421,11 +409,6 @@ namespace MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 result = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Fetched Status: {result}");
-            }
-            else
-            {
-                Console.WriteLine("Failed to fetch Status.");
             }
             return result;
         }
@@ -433,6 +416,23 @@ namespace MVC.Controllers
         private async Task<List<string>> OnlinePlayers()
         {
             var response = await _httpClient.GetAsync("api/player");
+            List<string> result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
+                result.Remove(_userManager.GetUserName(User));
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Unable to fetch online players.");
+            }
+            return result;
+        }
+
+        private async Task<List<string>> PlayersInGame()
+        {
+            var response = await _httpClient.GetAsync("api/player/gaming");
             List<string> result = new();
 
             if (response.IsSuccessStatusCode)
@@ -517,6 +517,16 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<List<GamePending>>() ?? new();
             }
             return result;
+        }
+
+        private async void DeleteGameInvites(string token)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

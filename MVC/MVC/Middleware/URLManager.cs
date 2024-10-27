@@ -35,12 +35,12 @@ namespace MVC.Middleware
                         {
                             var result = await response.Content.ReadAsStringAsync();
 
-                            if (result == "1" && currentPath is not null && !currentPath.Contains("/game/play"))
+                            if (result == "1" && currentPath is not null && !PlayingAllowedPath(currentPath))
                             {
                                 context.Response.Redirect("/Game/Play");
                                 return;
                             }
-                            else if (result == "0" && currentPath is not null && !IsAllowedPath(currentPath))
+                            else if (result == "0" && currentPath is not null && !PendingAllowedPath(currentPath))
                             {
                                 context.Response.Redirect($"/Home/Index");
                                 return;
@@ -60,7 +60,19 @@ namespace MVC.Middleware
             await _next(context);
         }
 
-        private bool IsAllowedPath(string path)
+        private bool PlayingAllowedPath(string path)
+        {
+            var allowedPaths = new[]
+            {
+                "/game/play",
+                "/game/move",
+                "/game/pass",
+                "/game/forfeit"
+            };
+            return allowedPaths.Any(path.Contains);
+        }
+
+        private bool PendingAllowedPath(string path)
         {
             var allowedPaths = new[]
             {

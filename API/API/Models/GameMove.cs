@@ -4,22 +4,6 @@
     {
         public string PlayerToken { get; set; }
 
-        private int _column;
-        public int Column
-        {
-            get
-            {
-                return _column;
-            }
-            set
-            {
-                if (value >= 0 && value <= 7)
-                {
-                    _column = value;
-                }
-            }
-        }
-
         private int _row;
         public int Row
         {
@@ -32,6 +16,22 @@
                 if (value >= 0 && value <= 7)
                 {
                     _row = value;
+                }
+            }
+        }
+
+        private int _column;
+        public int Column
+        {
+            get
+            {
+                return _column;
+            }
+            set
+            {
+                if (value >= 0 && value <= 7)
+                {
+                    _column = value;
                 }
             }
         }
