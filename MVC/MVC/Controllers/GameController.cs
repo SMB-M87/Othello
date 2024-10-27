@@ -108,7 +108,7 @@ namespace MVC.Controllers
                 ModelState.AddModelError(string.Empty, "Unable to forfeit game.");
                 return RedirectToAction("Play");
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Result", "Home");
         }
 
         private async Task<string> Opponent(string token)
