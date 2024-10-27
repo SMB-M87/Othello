@@ -136,41 +136,40 @@ namespace MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string description)
+        public async Task<JsonResult> Create([FromBody] Text text)
         {
             var token = _userManager.GetUserId(User);
+
             var createGameRequest = new
             {
                 PlayerToken = token,
-                Description = description
+                Description = text.Body
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to create game.");
-                return RedirectToAction("Index");
+                return Json(new { success = false, message = "Unable to create game." });
             }
 
             var game = await _httpClient.GetAsync($"api/game/{token}");
 
             if (!game.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to find game.");
-                return RedirectToAction("Index");
+                return Json(new { success = false, message = "Game creation failed." });
             }
             HttpContext.Session.SetString("GameCreation", "false");
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Game created." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> JoinGame(string username)
+        public async Task<JsonResult> JoinGame([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -178,11 +177,9 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to join game.");
-                return RedirectToAction("Index");
+                return Json(new { success = false, message = "Unable to join game." });
             }
-
-            return RedirectToAction("Play", "Game");
+            return Json(new { success = true, message = "Game joined." });
         }
 
         [HttpPost]
@@ -224,11 +221,11 @@ namespace MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendFriendRequest(string username)
+        public async Task<JsonResult> SendFriendRequest([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -236,19 +233,18 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to send friend request.");
+                return Json(new { success = false, message = "Unable to send friend request." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Friend request sent." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AcceptFriendRequest(string username)
+        public async Task<JsonResult> AcceptFriendRequest([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -256,19 +252,18 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+                return Json(new { success = false, message = "Unable to accept friend request." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Friend request accepted." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeclineFriendRequest(string username)
+        public async Task<JsonResult> DeclineFriendRequest([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -276,19 +271,18 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to decline friend request.");
+                return Json(new { success = false, message = "Unable to decline friend request." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Friend request declined." });
         }
-
+ 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteFriend(string username)
+        public async Task<JsonResult> DeleteFriend([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -296,19 +290,18 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to delete friend.");
+                return Json(new { success = false, message = "Unable to delete friend." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Friend deleted." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendGameRequest(string username)
+        public async Task<JsonResult> SendGameRequest([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -316,19 +309,18 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to send game request.");
+                return Json(new { success = false, message = "Unable to send game request." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Game request sent." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AcceptGameRequest(string username)
+        public async Task<JsonResult> AcceptGameRequest([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -336,19 +328,18 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to accept friend request.");
+                return Json(new { success = false, message = "Unable to accept game request." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Game request accepted." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeclineGameRequest(string username)
+        public async Task<JsonResult> DeclineGameRequest([FromBody] Text player)
         {
             var request = new
             {
-                ReceiverUsername = username,
+                ReceiverUsername = player.Body,
                 SenderToken = _userManager.GetUserId(User)
             };
 
@@ -356,15 +347,14 @@ namespace MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                ModelState.AddModelError(string.Empty, "Unable to decline game request.");
+                return Json(new { success = false, message = "Unable to decline game request." });
             }
-
-            return RedirectToAction("Index");
+            return Json(new { success = true, message = "Game request declined." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete()
+        public async Task<IActionResult> DeleteGame()
         {
             var token = _userManager.GetUserId(User);
             var response = await _httpClient.PostAsJsonAsync("api/game/delete", new { Token = token });

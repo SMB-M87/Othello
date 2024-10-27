@@ -6,21 +6,15 @@
 
         @if (!Model.HasSentRequest && !Model.IsFriend && !Model.HasPendingRequest)
         {
-            <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
-                <input type="hidden" name="username" value="@Model.Username" />
-                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
-                    <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
-                </button>
-            </form>
+            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@Model.Username')">
+                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
+            </button>
         }
         else if (Model.IsFriend)
         {
-            <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                <input type="hidden" name="username" value="@Model.Username" />
-                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                    <i class="fas fa-trash-alt" style="font-size: 18px; color: red;"></i>
-                </button>
-            </form>
+            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend" onclick="deleteFriend('@Model.Username')">
+                <i class="fas fa-trash-alt" style="font-size: 18px; color: red;"></i>
+            </button>
         }
     </h2>
 </div>
@@ -33,19 +27,13 @@
     <div class="text-center" style="margin-top: 20px;">
         @if (Model.HasPendingRequest)
         {
-            <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
-                <input type="hidden" name="username" value="@Model.Username" />
-                <button type="submit" class="btn btn-success" style="font-size: 16px; line-height: 1;" title="Accept request">
-                    <i class="fas fa-check-circle" style="font-size: 24px;"></i>
-                </button>
-            </form>
+            <button type="submit" class="btn btn-success" style="font-size: 16px; line-height: 1;" title="Accept request" onclick="acceptFriendRequest('@Model.Username')">
+                <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+            </button>
 
-            <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
-                <input type="hidden" name="username" value="@Model.Username" />
-                <button type="submit" class="btn btn-danger" style="font-size: 16px; line-height: 1;" title="Decline request">
-                    <i class="fas fa-times-circle" style="font-size: 24px;"></i>
-                </button>
-            </form>
+            <button type="submit" class="btn btn-danger" style="font-size: 16px; line-height: 1;" title="Decline request" onclick="declineFriendRequest('@Model.Username')">
+                <i class="fas fa-times-circle" style="font-size: 24px;"></i>
+            </button>
         }
     </div>
 </div>
@@ -94,3 +82,97 @@ else
         <i class="fas fa-arrow-left"></i> Back
     </a>
 </div>
+
+<script>
+    function sendFriendRequest(username) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("SendFriendRequest", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function acceptFriendRequest(username) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("AcceptFriendRequest", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function declineFriendRequest(username) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("DeclineFriendRequest", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function deleteFriend(username) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("DeleteFriend", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
