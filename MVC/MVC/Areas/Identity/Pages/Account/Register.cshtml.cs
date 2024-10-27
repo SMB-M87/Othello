@@ -24,6 +24,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public RegisterModel(
             IEmailSender emailSender,
+            IConfiguration configuration,
             ILogger<RegisterModel> logger,
             IUserStore<IdentityUser> userStore,
             IHttpClientFactory httpClientFactory,
@@ -38,6 +39,8 @@ namespace MVC.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _httpClient = httpClientFactory.CreateClient();
+            var baseUrl = configuration["ApiSettings:BaseUrl"];
+            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
         }
 
         /// <summary>
@@ -113,8 +116,7 @@ namespace MVC.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var apiUrl = $"https://localhost:7023/api/player/check/{Input.Username}";
-                var response = await _httpClient.GetAsync(apiUrl);
+                var response = await _httpClient.GetAsync($"api/player/check/{Input.Username}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -144,7 +146,7 @@ namespace MVC.Areas.Identity.Pages.Account
                         SenderToken = Input.Username
                     };
 
-                    var createPlayerResponse = await _httpClient.PostAsJsonAsync("https://localhost:7023/api/player/create/", playerCreation);
+                    var createPlayerResponse = await _httpClient.PostAsJsonAsync("api/player/create/", playerCreation);
                     if (!createPlayerResponse.IsSuccessStatusCode)
                     {
                         ModelState.AddModelError(string.Empty, "An error occurred while creating the player in the API.");
@@ -181,7 +183,6 @@ namespace MVC.Areas.Identity.Pages.Account
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
             // If we got this far, something failed, redisplay form
             return Page();
         }

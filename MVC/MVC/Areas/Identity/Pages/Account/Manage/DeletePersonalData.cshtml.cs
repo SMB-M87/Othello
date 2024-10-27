@@ -17,6 +17,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public DeletePersonalDataModel(
+            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             UserManager<IdentityUser> userManager,
             ILogger<DeletePersonalDataModel> logger,
@@ -26,6 +27,8 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             _userManager = userManager;
             _signInManager = signInManager;
             _httpClient = httpClientFactory.CreateClient();
+            var baseUrl = configuration["ApiSettings:BaseUrl"];
+            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
         }
 
         /// <summary>
@@ -87,7 +90,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             }
 
             var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/delete", new { Token = token });
+            var response = await _httpClient.PostAsJsonAsync("api/player/delete", new { Token = token });
             var result = await _userManager.DeleteAsync(user);
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)

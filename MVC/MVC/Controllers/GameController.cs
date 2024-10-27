@@ -11,11 +11,14 @@ namespace MVC.Controllers
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public GameController(IHttpClientFactory httpClientFactory, UserManager<IdentityUser> userManager)
+        public GameController(IConfiguration configuration, 
+                              IHttpClientFactory httpClientFactory, 
+                              UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
             _httpClient = httpClientFactory.CreateClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7023/");
+            var baseUrl = configuration["ApiSettings:BaseUrl"];
+            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
             _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,

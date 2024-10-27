@@ -17,6 +17,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public LoginModel(
             ILogger<LoginModel> logger,
+            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager)
@@ -25,6 +26,8 @@ namespace MVC.Areas.Identity.Pages.Account
             _userManager = userManager;
             _signInManager = signInManager;
             _httpClient = httpClientFactory.CreateClient();
+            var baseUrl = configuration["ApiSettings:BaseUrl"];
+            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
         }
 
         /// <summary>
@@ -120,7 +123,7 @@ namespace MVC.Areas.Identity.Pages.Account
                     if (user != null)
                     {
                         var token = _userManager.GetUserId(User);
-                        var response = await _httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/activity", new { Token = token });
+                        var response = await _httpClient.PostAsJsonAsync("api/player/activity", new { Token = token });
                         if (!response.IsSuccessStatusCode)
                         {
                             // Handle potential API failure here
