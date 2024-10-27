@@ -14,16 +14,12 @@
                     @if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated && game.Username != User.Identity.Name)
                     {
                         <li style="margin-bottom: 10px; background-color:lavender">
-                            <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="username" value="@game.Username" />
-                                <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="margin-left: 20px;">@game.Description</span>
-                                        <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
-                                    </div>
-                                </button>
-                            </form>
+                            <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;" onclick="joinGame('@game.Username')">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="margin-left: 20px;">@game.Description</span>
+                                    <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
+                                </div>
+                            </button>
                         </li>
                     }
                 }
@@ -52,17 +48,11 @@
         </div>
         <div class="d-flex justify-content-center">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px;">
-                <form style="width: 600px; padding: 10px;">
-                    <div class="form-group">
-                        <textarea id="descriptionText" name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
-                    </div>
-                </form>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <form asp-action="Create" method="post" onsubmit="updateHiddenInput()">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="description" id="hiddenDescription" />
-                        <button type="submit" class="btn btn-primary">Create</button>
-                    </form>
+                <div class="form-group" style="width: 600px; padding: 10px;">
+                    <textarea id="descriptionText" name="description" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-primary" onclick="createGame()">Create</button>
                     <form asp-action="Cancel" method="post">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger">Cancel</button>
@@ -88,10 +78,7 @@
     </div>
 
     <div class="d-flex justify-content-center" style="margin-top: 10px;">
-        <form asp-action="Delete" method="post">
-            @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </form>
+        <button type="submit" class="btn btn-danger" onclick="deleteGame()">Delete</button>
     </div>
 }
 

@@ -12,36 +12,24 @@
                     <div>
                         @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
                         {
-                            <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="username" value="@player" />
-                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
-                                    <i class="fa fa-link" style="font-size: 18px;"></i>
-                                </button>
-                            </form>
+                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
+                                <i class="fa fa-link" style="font-size: 18px;"></i>
+                            </button>
                         }
 
                         @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
                             !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
                         {
-                            <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="username" value="@player" />
-                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite">
-                                    <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                                </button>
-                            </form>
+                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
+                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                            </button>
                         }
 
                         @if (!Model.SentFriendRequests.Contains(player) && !Model.FriendRequests.Contains(player))
                         {
-                            <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="username" value="@player" />
-                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
-                                    <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
-                                </button>
-                            </form>
+                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@player')">
+                                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
+                            </button>
                         }
                     </div>
                 </li>

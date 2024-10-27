@@ -135,54 +135,6 @@ namespace MVC.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<JsonResult> Create([FromBody] Text text)
-        {
-            var token = _userManager.GetUserId(User);
-
-            var createGameRequest = new
-            {
-                PlayerToken = token,
-                Description = text.Body
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return Json(new { success = false, message = "Unable to create game." });
-            }
-
-            var game = await _httpClient.GetAsync($"api/game/{token}");
-
-            if (!game.IsSuccessStatusCode)
-            {
-                return Json(new { success = false, message = "Game creation failed." });
-            }
-            HttpContext.Session.SetString("GameCreation", "false");
-            return Json(new { success = true, message = "Game created." });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<JsonResult> JoinGame([FromBody] Text player)
-        {
-            var request = new
-            {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/game/join", request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return Json(new { success = false, message = "Unable to join game." });
-            }
-            return Json(new { success = true, message = "Game joined." });
-        }
-
-        [HttpPost]
         public async Task<IActionResult> Partial()
         {
             var token = _userManager.GetUserId(User);
@@ -217,6 +169,69 @@ namespace MVC.Controllers
                 SentGameRequests = await SentGameRequests(token)
             };
             return PartialView("_Partial", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> CreateGame([FromBody] Text text)
+        {
+            var token = _userManager.GetUserId(User);
+
+            var createGameRequest = new
+            {
+                PlayerToken = token,
+                Description = text.Body
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to create game." });
+            }
+
+            var game = await _httpClient.GetAsync($"api/game/{token}");
+
+            if (!game.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Game creation failed." });
+            }
+            HttpContext.Session.SetString("GameCreation", "false");
+            return Json(new { success = true, message = "Game created." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> DeleteGame()
+        {
+            var token = _userManager.GetUserId(User);
+            var response = await _httpClient.PostAsJsonAsync("api/game/delete", new { Token = token });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to delete game." });
+            }
+            HttpContext.Session.SetString("GameCreation", "false");
+            return Json(new { success = true, message = "Game deleted." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> JoinGame([FromBody] Text player)
+        {
+            var request = new
+            {
+                ReceiverUsername = player.Body,
+                SenderToken = _userManager.GetUserId(User)
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/join", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to join game." });
+            }
+            return Json(new { success = true, message = "Game joined." });
         }
 
         [HttpPost]
@@ -350,22 +365,6 @@ namespace MVC.Controllers
                 return Json(new { success = false, message = "Unable to decline game request." });
             }
             return Json(new { success = true, message = "Game request declined." });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteGame()
-        {
-            var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync("api/game/delete", new { Token = token });
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to delete game.");
-                return RedirectToAction("Index");
-            }
-            HttpContext.Session.SetString("GameCreation", "false");
-            return RedirectToAction("Index");
         }
 
         private async Task<string> Stats(string username)

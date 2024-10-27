@@ -1,4 +1,5 @@
 ﻿@model MVC.Models.HomeProfile
+@Html.AntiForgeryToken()
 
 <div class="d-flex justify-content-center" style="font-size: 48px; margin-top: 20px;">
     <h2>
@@ -51,19 +52,19 @@
                         background-color: @(game.Draw ? "#fff3cd" : Model.Username == game.Winner ? "#d4edda" : "#f8d7da"); padding: 10px;">
                         @if (game.Draw == false && game.Winner == Model.Username)
                         {
-                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Won against @game.Loser</a></span>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner won against @game.Loser</a></span>
                         }
                         else if (game.Draw == false && game.Loser == Model.Username)
                         {
-                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Lost against @game.Winner</a></span>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser lost against @game.Winner</a></span>
                         }
                         else if (game.Draw && game.Winner == Model.Username)
                         {
-                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner Drew with @game.Loser</a></span>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Loser" style="text-decoration: none; color: inherit;">@game.Winner drew with @game.Loser</a></span>
                         }
                         else
                         {
-                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser Drew with @game.Winner</a></span>
+                            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Winner" style="text-decoration: none; color: inherit;">@game.Loser drew with @game.Winner</a></span>
                         }
                         <span>@game.Date.ToString("dd/MM/yyyy hh:mm tt")</span>
                     </li>

@@ -11,34 +11,22 @@
                 <div>
                     @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
                     {
-                        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="username" value="@player" />
-                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
-                                <i class="fa fa-link" style="font-size: 18px;"></i>
-                            </button>
-                        </form>
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
+                            <i class="fa fa-link" style="font-size: 18px;"></i>
+                        </button>
                     }
 
                     @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
                         !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
                     {
-                        <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="username" value="@player" />
-                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite">
-                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                            </button>
-                        </form>
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
+                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                        </button>
                     }
 
-                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="username" value="@player" />
-                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
-                        </button>
-                    </form>
+                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend" onclick="deleteFriend('@player')">
+                        <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                    </button>
                 </div>
             </li>
         }
@@ -54,13 +42,9 @@
             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgray">
                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                 <div>
-                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="username" value="@player" />
-                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
-                        </button>
-                    </form>
+                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend" onclick="deleteFriend('@player')">
+                        <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                    </button>
                 </div>
             </li>
         }
@@ -78,20 +62,12 @@
             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                 <div>
-                    <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="username" value="@player" />
-                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
-                            <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
-                        </button>
-                    </form>
-                    <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="username" value="@player" />
-                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
-                            <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
-                        </button>
-                    </form>
+                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request" onclick="acceptFriendRequest('@player')">
+                        <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
+                    </button>
+                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request" onclick="declineFriendRequest('@player')">
+                        <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
+                    </button>
                 </div>
             </li>
         }

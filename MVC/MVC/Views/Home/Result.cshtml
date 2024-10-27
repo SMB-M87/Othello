@@ -4,19 +4,19 @@
     <h3 style="background-color: @(Model.Result.Draw ? "#fff3cd" : Model.Username == Model.Result.Winner ? "#d4edda" : "#f8d7da"); padding: 10px;">
         @if (Model.Result.Draw == false && Model.Result.Winner == Model.Username)
         {
-            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Loser" style="text-decoration: none; color: inherit;">@Model.Result.Winner Won against @Model.Result.Loser</a></span>
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Loser" style="text-decoration: none; color: inherit;">@Model.Result.Winner won against @Model.Result.Loser</a></span>
         }
         else if (Model.Result.Draw == false && Model.Result.Loser == Model.Username)
         {
-            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Winner" style="text-decoration: none; color: inherit;">@Model.Result.Loser Lost against @Model.Result.Winner</a></span>
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Winner" style="text-decoration: none; color: inherit;">@Model.Result.Loser lost against @Model.Result.Winner</a></span>
         }
         else if (Model.Result.Draw && Model.Result.Winner == Model.Username)
         {
-            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Loser" style="text-decoration: none; color: inherit;">@Model.Result.Winner Drew with @Model.Result.Loser</a></span>
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Loser" style="text-decoration: none; color: inherit;">@Model.Result.Winner drew with @Model.Result.Loser</a></span>
         }
         else
         {
-            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Winner" style="text-decoration: none; color: inherit;">@Model.Result.Loser Drew with @Model.Result.Winner</a></span>
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Winner" style="text-decoration: none; color: inherit;">@Model.Result.Loser drew with @Model.Result.Winner</a></span>
         }
         <span>@Model.Result.Date.ToString("dd/MM/yyyy hh:mm tt")</span>
     </h3>

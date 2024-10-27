@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+@Html.AntiForgeryToken()
 
 @if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
 {
@@ -75,36 +76,24 @@
                                     <div>
                                         @if (!Model.Partial.Pending.InGame && Model.Partial.JoinablePlayers.Contains(player))
                                         {
-                                            <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="username" value="@player" />
-                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
-                                                    <i class="fa fa-link" style="font-size: 18px;"></i>
-                                                </button>
-                                            </form>
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
+                                                <i class="fa fa-link" style="font-size: 18px;"></i>
+                                            </button>
                                         }
 
                                         @if (Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0" &&
                                        !Model.Partial.SentGameRequests.Contains(player) && Model.Partial.InvitablePlayers.Contains(player))
                                         {
-                                            <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="username" value="@player" />
-                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite">
-                                                    <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                                                </button>
-                                            </form>
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
+                                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                                            </button>
                                         }
 
                                         @if (!Model.Partial.SentFriendRequests.Contains(player) && !Model.Partial.FriendRequests.Contains(player))
                                         {
-                                            <form method="post" asp-action="SendFriendRequest" asp-controller="Home" style="display: inline;">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="username" value="@player" />
-                                                <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request">
-                                                    <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
-                                                </button>
-                                            </form>
+                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@player')">
+                                                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
+                                            </button>
                                         }
                                     </div>
                                 </li>
@@ -134,34 +123,23 @@
                                 <div>
                                     @if (!Model.Partial.Pending.InGame && Model.Partial.JoinablePlayers.Contains(player))
                                     {
-                                        <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: inline;">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="username" value="@player" />
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game">
-                                                <i class="fa fa-link" style="font-size: 18px;"></i>
-                                            </button>
-                                        </form>
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
+                                            <i class="fa fa-link" style="font-size: 18px;"></i>
+                                        </button>
                                     }
 
                                     @if (Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0" &&
                                    !Model.Partial.SentGameRequests.Contains(player) && Model.Partial.InvitablePlayers.Contains(player))
                                     {
-                                        <form method="post" asp-action="SendGameRequest" asp-controller="Home" style="display: inline;">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="username" value="@player" />
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite">
-                                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                                            </button>
-                                        </form>
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
+                                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                                        </button>
                                     }
 
-                                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
-                                        </button>
-                                    </form>
+
+                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend" onclick="deleteFriend('@player')">
+                                        <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                                    </button>
                                 </div>
                             </li>
                         }
@@ -176,13 +154,9 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgray">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    <form method="post" asp-action="DeleteFriend" asp-controller="Home" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend">
-                                            <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
-                                        </button>
-                                    </form>
+                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Remove friend" onclick="deleteFriend('@player')">
+                                        <i class="fas fa-trash-alt" style="font-size: 18px; color: orangered;"></i>
+                                    </button>
                                 </div>
                             </li>
                         }
@@ -199,20 +173,12 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    <form method="post" asp-action="AcceptFriendRequest" asp-controller="Home" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
-                                            <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
-                                        </button>
-                                    </form>
-                                    <form method="post" asp-action="DeclineFriendRequest" asp-controller="Home" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
-                                            <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
-                                        </button>
-                                    </form>
+                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request" onclick="acceptFriendRequest('@player')">
+                                        <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
+                                    </button>
+                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request" onclick="declineFriendRequest('@player')">
+                                        <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
+                                    </button>
                                 </div>
                             </li>
                         }
@@ -238,20 +204,12 @@
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightgoldenrodyellow">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
                                 <div>
-                                    <form method="post" asp-action="AcceptGameRequest" asp-controller="Home" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request">
-                                            <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
-                                        </button>
-                                    </form>
-                                    <form method="post" asp-action="DeclineGameRequest" asp-controller="Home" style="display: inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@player" />
-                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request">
-                                            <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
-                                        </button>
-                                    </form>
+                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-right: 5px;" title="Accept request" onclick="acceptGameRequest('@player')">
+                                        <i class="fas fa-check-circle" style="font-size: 18px; color: forestgreen;"></i>
+                                    </button>
+                                    <button type="submit" class="btn btn-link p-0" style="font-size: 16px;" title="Decline request" onclick="declineGameRequest('@player')">
+                                        <i class="fas fa-times-circle" style="font-size: 18px; color: orangered;"></i>
+                                    </button>
                                 </div>
                             </li>
                         }
@@ -300,16 +258,12 @@
                             @if (game.Username != User.Identity.Name)
                             {
                                 <li style="margin-bottom: 10px; background-color:lavender">
-                                    <form method="post" asp-action="JoinGame" asp-controller="Home" style="display: block; text-align: left;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="username" value="@game.Username" />
-                                        <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;">
-                                            <div style="display: flex; justify-content: space-between;">
-                                                <span style="margin-left: 20px;">@game.Description</span>
-                                                <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
-                                            </div>
-                                        </button>
-                                    </form>
+                                    <button type="submit" class="btn" style="width: 100%; text-align: left; background-color: transparent; border: none; padding: 10px 15px; cursor: pointer;" onclick="joinGame('@game.Username')">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="margin-left: 20px;">@game.Description</span>
+                                            <span style="margin-right: 20px"><strong>@game.Username</strong> @game.Stats</span>
+                                        </div>
+                                    </button>
                                 </li>
                             }
                         }
@@ -338,17 +292,11 @@
                 </div>
                 <div class="d-flex justify-content-center">
                     <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px;">
-                        <form style="width: 600px; padding: 10px;">
-                            <div class="form-group">
-                                <textarea id="descriptionText" name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
-                            </div>
-                        </form>
-                        <div style="display: flex; gap: 10px; margin-top: 10px;">
-                            <form asp-action="Create" method="post" onsubmit="updateHiddenInput()">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="description" id="hiddenDescription" />
-                                <button type="submit" class="btn btn-primary">Create</button>
-                            </form>
+                        <div class="form-group" style="width: 600px; padding: 10px;">
+                            <textarea id="descriptionText" name="description" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary" onclick="createGame()">Create</button>
                             <form asp-action="Cancel" method="post">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger">Cancel</button>
@@ -374,20 +322,242 @@
             </div>
 
             <div class="d-flex justify-content-center" style="margin-top: 10px;">
-                <form asp-action="Delete" method="post">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+                <button type="submit" class="btn btn-danger" onclick="deleteGame()">Delete</button>
             </div>
         }
-    <div id="session-status" data-session="@Model?.Partial.Pending?.Session"></div>
-    <div id="game-status" data-status="@Model?.Partial.Pending?.Status"></div>
+        <div id="session-status" data-session="@Model?.Partial.Pending?.Session"></div>
+        <div id="game-status" data-status="@Model?.Partial.Pending?.Status"></div>
     </div>
 
     <script>
-        function updateHiddenInput() {
-            const descriptionText = document.getElementById('descriptionText').value;
-            document.getElementById('hiddenDescription').value = descriptionText;
+        function createGame() {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const description = document.getElementById('descriptionText').value;
+
+            fetch('@Url.Action("CreateGame", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: description })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deleteGame() {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("DeleteGame", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function joinGame(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("JoinGame", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '@Url.Action("Play", "Game")';
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function sendFriendRequest(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("SendFriendRequest", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function acceptFriendRequest(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("AcceptFriendRequest", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function declineFriendRequest(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("DeclineFriendRequest", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deleteFriend(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("DeleteFriend", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function sendGameRequest(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("SendGameRequest", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function acceptGameRequest(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("AcceptGameRequest", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function declineGameRequest(username) {
+            const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch('@Url.Action("DeclineGameRequest", "Home")', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken,
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ body: username })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        refreshContainers()
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         function refreshContainers() {
@@ -409,7 +579,7 @@
                 headers: {
                     'RequestVerificationToken': antiForgeryToken,
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest' 
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
             })
                 .then(response => response.text())
@@ -424,7 +594,7 @@
                         window.location.href = '/Game/Play';
                     }
 
-                    function updateIfDifferent(container, newContent, scollPosition) {
+                    function updateIfDifferent(container, newContent, scrollPosition) {
                         if (container && newContent && container.innerHTML !== newContent.innerHTML) {
                             container.innerHTML = newContent.innerHTML;
                             requestAnimationFrame(() => {
