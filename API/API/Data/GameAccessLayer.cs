@@ -219,7 +219,7 @@ namespace API.Data
                             string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
                             string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
                             bool draw = win == Color.None;
-                            GameResult result = new(game.Token, winner, loser, draw)
+                            GameResult result = new(game.Token, winner, loser, game.Board, draw)
                             {
                                 Date = DateTime.UtcNow
                             };
@@ -262,7 +262,7 @@ namespace API.Data
                         string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
                         string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
                         bool draw = win == Color.None;
-                        GameResult result = new(game.Token, winner, loser, draw)
+                        GameResult result = new(game.Token, winner, loser, game.Board, draw)
                         {
                             Date = DateTime.UtcNow
                         };
@@ -317,7 +317,7 @@ namespace API.Data
                         winner = game.First;
                         loser = token;
                     }
-                    GameResult result = new(game.Token, winner, loser)
+                    GameResult result = new(game.Token, winner, loser, game.Board)
                     {
                         Date = DateTime.UtcNow
                     };

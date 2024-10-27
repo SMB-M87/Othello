@@ -1,9 +1,9 @@
-﻿using API.Data;
+﻿using API.Controllers;
+using API.Data;
 using API.Models;
-using System.Net;
-using API.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace APITest.GameTest
 {
@@ -253,9 +253,9 @@ namespace APITest.GameTest
             _repository.GameRepository.Create(game11);
             _repository.GameRepository.Create(game12);
 
-            GameResult result0 = new("-3", "second", "third");
-            GameResult result1 = new("-2", "third", "second");
-            GameResult result2 = new("-1", "second", "third");
+            GameResult result0 = new("-3", "second", "third", game1.Board);
+            GameResult result1 = new("-2", "third", "second", game1.Board);
+            GameResult result2 = new("-1", "second", "third", game1.Board);
 
             _repository.ResultRepository.Create(result0);
             _repository.ResultRepository.Create(result1);
@@ -538,7 +538,7 @@ namespace APITest.GameTest
         [Test]
         public void Delete_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete("fourth");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new ID { Token = "fourth" });
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -578,7 +578,7 @@ namespace APITest.GameTest
         [Test]
         public void Delete_Playing_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete("second");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new ID { Token = "second" });
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -592,7 +592,7 @@ namespace APITest.GameTest
         {
             _repository.GameRepository.JoinPlayer(new("zero", "fifth"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Delete("fifth");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("fifth"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -810,7 +810,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayer_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("17");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("17"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -822,7 +822,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayer_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("15");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("15"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -870,7 +870,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_PlayersturnIncorrect_NotFound()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -882,7 +882,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayerNonExistant_NotFound()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -894,7 +894,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayerNonExistant_NotFound()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("nine");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("nine"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -906,7 +906,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_FirstPlayerPossibleMove_NoTFound()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("second");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -918,7 +918,7 @@ namespace APITest.GameTest
         [Test]
         public void Pass_SecondPlayerIncorrectColor_NotFound()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass("third");
+            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -936,7 +936,7 @@ namespace APITest.GameTest
                 Assert.That(actual: _repository.ResultRepository.GetPlayerStats("20"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
             });
 
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("19");
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("19"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -967,7 +967,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_StatusIncorrect_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("24");
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("24"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -979,7 +979,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_PlayersturnIncorrect_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("nonexistant");
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("nonexistant"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -991,7 +991,7 @@ namespace APITest.GameTest
         [Test]
         public void Forfeit_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit("24");
+            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("24"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)

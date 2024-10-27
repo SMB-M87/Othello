@@ -12,7 +12,6 @@
 </div>
 <div id="players-turn-container" class="d-flex justify-content-center">
     <p>Turn: @Model?.Partial.PlayersTurn </p>
-
 </div>
 
 <div id="board-container" class="d-flex justify-content-center">
@@ -131,7 +130,7 @@
                     const gameStatus = gameStatusElement ? gameStatusElement.dataset.status : null;
 
                     if (gameStatus === "False") {
-                        window.location.href = '/Home/Index';
+                        window.location.href = '@Url.Action("Result", "Home")';
                     }
 
                     const playersTurnContent = doc.getElementById("players-turn-container");

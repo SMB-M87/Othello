@@ -11,6 +11,18 @@ namespace API.Data
             _context = context;
         }
 
+        private GameResultView? Get(string token)
+        {
+            var respons = _context.Results.FirstOrDefault(s => s.Token == token);
+
+            if (respons is not null)
+            {
+                GameResultView result = new(GetName(respons.Winner) ?? string.Empty, GetName(respons.Loser) ?? string.Empty, respons.Draw, respons.Board, respons.Date);
+                return result;
+            }
+            return null;
+        }
+
         public bool Create(GameResult result)
         {
             var request = Get(result.Token);
@@ -30,21 +42,9 @@ namespace API.Data
             return false;
         }
 
-        public GameResultView? Get(string token)
-        {
-            var respons = _context.Results.FirstOrDefault(s => s.Token == token);
-
-            if (respons is not null)
-            {
-                GameResultView result = new(GetName(respons.Winner) ?? string.Empty, GetName(respons.Loser) ?? string.Empty, respons.Draw, respons.Date);
-                return result;
-            }
-            return null;
-        }
-
         private string? GetToken(string username)
         {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(username))?.Token;
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username))?.Token;
         }
 
         private List<GameResult> GetMatchHistory(string player_token)
@@ -91,7 +91,7 @@ namespace API.Data
 
                     foreach (var game in respons)
                     {
-                        GameResultView adding = new(GetName(game.Winner) ?? string.Empty, GetName(game.Loser) ?? string.Empty, game.Draw, game.Date);
+                        GameResultView adding = new(GetName(game.Winner) ?? string.Empty, GetName(game.Loser) ?? string.Empty, game.Draw, game.Board, game.Date);
                         results.Add(adding);
                     }
                 }

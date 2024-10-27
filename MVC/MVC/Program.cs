@@ -1,7 +1,7 @@
-using MVC.Data;
-using MVC.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MVC.Data;
+using MVC.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

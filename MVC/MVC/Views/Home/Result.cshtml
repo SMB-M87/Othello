@@ -1,0 +1,48 @@
+﻿@model GameOverview
+
+<div class="d-flex justify-content-center">
+    <h3 style="background-color: @(Model.Result.Draw ? "#fff3cd" : Model.Username == Model.Result.Winner ? "#d4edda" : "#f8d7da"); padding: 10px;">
+        @if (Model.Result.Draw == false && Model.Result.Winner == Model.Username)
+        {
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Loser" style="text-decoration: none; color: inherit;">@Model.Result.Winner Won against @Model.Result.Loser</a></span>
+        }
+        else if (Model.Result.Draw == false && Model.Result.Loser == Model.Username)
+        {
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Winner" style="text-decoration: none; color: inherit;">@Model.Result.Loser Lost against @Model.Result.Winner</a></span>
+        }
+        else if (Model.Result.Draw && Model.Result.Winner == Model.Username)
+        {
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Loser" style="text-decoration: none; color: inherit;">@Model.Result.Winner Drew with @Model.Result.Loser</a></span>
+        }
+        else
+        {
+            <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@Model.Result.Winner" style="text-decoration: none; color: inherit;">@Model.Result.Loser Drew with @Model.Result.Winner</a></span>
+        }
+        <span>@Model.Result.Date.ToString("dd/MM/yyyy hh:mm tt")</span>
+    </h3>
+</div>
+
+<div id="board-container" class="d-flex justify-content-center">
+    <table class="table table-bordered" style="width: auto;">
+        @for (int row = 0; row < Model?.Result.Board.GetLength(0); row++)
+        {
+            <tr>
+                @for (int col = 0; col < Model.Result.Board.GetLength(1); col++)
+                {
+                    var cell = Model.Result.Board[row, col];
+                    var cellDisplay = cell == Color.None ? "" : cell.ToString();
+                    <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");">
+                        @if (cell == Color.None)
+                        {
+                            <i></i>
+                        }
+                        else
+                        {
+                            <i class="fa fa-circle" style="font-size: 30px; color: @(cell.ToString());" );"></i>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+</div>

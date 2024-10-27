@@ -1,6 +1,6 @@
 ﻿using API.Models;
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 /*
  * Package Manager Console:
@@ -140,7 +140,16 @@ namespace API.Data
                       .ValueGeneratedNever()
                       .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
-                entity.Property(e => e.Date);
+                entity.Property(e => e.Board)
+                      .IsRequired()
+                      .HasConversion(
+                          v => JsonSerializer.Serialize(v, new JsonSerializerOptions { Converters = { new ColorArrayConverter() } }),
+                          v => JsonSerializer.Deserialize<Color[,]>(v, new JsonSerializerOptions { Converters = { new ColorArrayConverter() } }) ?? new Color[8, 8]
+                      )
+                      .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.Date)
+                      .IsRequired();
             });
 
             new DbInitializer(builder).Seed();

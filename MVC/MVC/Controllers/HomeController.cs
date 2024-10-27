@@ -1,8 +1,9 @@
-﻿using MVC.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using MVC.Models;
 using System.Diagnostics;
 using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 
 namespace MVC.Controllers
 {
@@ -12,13 +13,13 @@ namespace MVC.Controllers
         private readonly UserManager<IdentityUser> _userManager;
 
         public HomeController(IConfiguration configuration,
-                              IHttpClientFactory httpClientFactory, 
+                              IHttpClientFactory httpClientFactory,
                               UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
             _httpClient = httpClientFactory.CreateClient();
             var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
+            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
             _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,
@@ -97,6 +98,19 @@ namespace MVC.Controllers
             };
 
             return View("Profile", model);
+        }
+
+        public async Task<IActionResult> Result()
+        {
+            var username = _userManager.GetUserName(User);
+
+            var model = new GameOverview
+            {
+                Username = username,
+                Result = await MostRecentGame(username) ?? new()
+            };
+
+            return View("Result", model);
         }
 
         public IActionResult Privacy()
@@ -387,7 +401,13 @@ namespace MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadFromJsonAsync<List<GameResult>>() ?? new();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
             }
             return result;
         }
@@ -530,6 +550,26 @@ namespace MVC.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
             }
+        }
+
+        private async Task<GameResult?> MostRecentGame(string username)
+        {
+            var response = await _httpClient.GetAsync($"api/result/history/{username}");
+            List<GameResult> result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+            }
+
+            var closestGame = result.OrderBy(game => Math.Abs((DateTime.UtcNow - game.Date).Ticks)).FirstOrDefault();
+            return closestGame;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

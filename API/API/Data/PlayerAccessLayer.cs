@@ -312,15 +312,17 @@ namespace API.Data
                 {
                     foreach (Player gamer in players)
                     {
-                        Request? request = gamer.Requests?.FirstOrDefault(r => r.Type == Inquiry.Game && 
-                                                                               r.Username == player.Username && 
-                                                                              (DateTime.UtcNow - r.Date).TotalSeconds >= 60);
+                        Request? request = gamer.Requests?.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username && (DateTime.UtcNow - r.Date).TotalSeconds >= 60);
 
                         if (request != null)
                         {
-                            gamer.Requests.Remove(request);
-                            _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
-                            _context.SaveChanges();
+                            ICollection<Request>? requests = gamer.Requests;
+                            if (requests != null)
+                            {
+                                requests.Remove(request);
+                                _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                                _context.SaveChanges();
+                            }
                         }
                     }
                 }

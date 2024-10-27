@@ -1,9 +1,9 @@
-﻿using API.Data;
+﻿using API.Controllers;
+using API.Data;
 using API.Models;
-using System.Net;
-using API.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace APITest.PlayerTest
 {
@@ -120,9 +120,9 @@ namespace APITest.PlayerTest
             _repository.GameRepository.Create(game9);
             _repository.GameRepository.Create(game10);
 
-            GameResult result0 = new("-3", "second", "third");
-            GameResult result1 = new("-2", "third", "second");
-            GameResult result2 = new("-1", "second", "third");
+            GameResult result0 = new("-3", "second", "third", game1.Board);
+            GameResult result1 = new("-2", "third", "second", game1.Board);
+            GameResult result2 = new("-1", "second", "third", game1.Board);
 
             _repository.ResultRepository.Create(result0);
             _repository.ResultRepository.Create(result1);
@@ -164,7 +164,7 @@ namespace APITest.PlayerTest
         [Test]
         public void Delete_OK()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete("first");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("first"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -176,7 +176,7 @@ namespace APITest.PlayerTest
         [Test]
         public void Delete_BadRequest()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete("firsttt");
+            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("firsttt"));
             HttpResponseMessage? respons = result?.Value;
 
             if (respons is not null)
@@ -431,7 +431,7 @@ namespace APITest.PlayerTest
         [Test]
         public void DeleteGameInvites_OK()
         {
-            var result = _controller.DeleteGameInvites("13");
+            var result = _controller.DeleteGameInvites(new("13"));
 
             Assert.Multiple(() =>
             {
@@ -444,7 +444,7 @@ namespace APITest.PlayerTest
         [Test]
         public void DeleteGameInvites_BadRequest()
         {
-            var result = _controller.DeleteGameInvites("nonexistent");
+            var result = _controller.DeleteGameInvites(new("nonexistent"));
 
             Assert.Multiple(() =>
             {
@@ -457,7 +457,7 @@ namespace APITest.PlayerTest
         [Test]
         public void DeletePlayer_OK()
         {
-            var result = _controller.Delete("13");
+            var result = _controller.Delete(new("13"));
 
             Assert.Multiple(() =>
             {
@@ -470,7 +470,7 @@ namespace APITest.PlayerTest
         [Test]
         public void DeletePlayer_BadRequest()
         {
-            var result = _controller.Delete("nonexistent");
+            var result = _controller.Delete(new("nonexistent"));
 
             Assert.Multiple(() =>
             {

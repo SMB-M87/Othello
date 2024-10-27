@@ -80,9 +80,9 @@ namespace APITest.PlayerTest
             _repository.GameRepository.Create(game8);
             _repository.GameRepository.Create(game);
 
-            GameResult result0 = new("-3", "second", "third");
-            GameResult result1 = new("-2", "third", "second");
-            GameResult result2 = new("-1", "second", "third");
+            GameResult result0 = new("-3", "second", "third", game1.Board);
+            GameResult result1 = new("-2", "third", "second", game1.Board);
+            GameResult result2 = new("-1", "second", "third", game1.Board);
 
             _repository.ResultRepository.Create(result0);
             _repository.ResultRepository.Create(result1);

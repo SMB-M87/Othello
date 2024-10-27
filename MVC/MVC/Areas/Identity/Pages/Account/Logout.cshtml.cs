@@ -1,7 +1,7 @@
 ﻿#nullable disable
 
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace MVC.Areas.Identity.Pages.Account
@@ -25,7 +25,7 @@ namespace MVC.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _httpClient = httpClientFactory.CreateClient();
             var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
+            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)

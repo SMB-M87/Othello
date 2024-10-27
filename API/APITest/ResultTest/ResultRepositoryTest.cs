@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
+using static Azure.Core.HttpHeader;
 
 namespace APITest.ResultTest
 {
@@ -71,9 +72,9 @@ namespace APITest.ResultTest
             _repository.GameRepository.Create(game8);
             _repository.GameRepository.Create(game);
 
-            GameResult result0 = new("-3", "second", "third");
-            GameResult result1 = new("-2", "third", "second");
-            GameResult result2 = new("-1", "second", "third");
+            GameResult result0 = new("-3", "second", "third", game1.Board);
+            GameResult result1 = new("-2", "third", "second", game1.Board);
+            GameResult result2 = new("-1", "second", "third", game1.Board);
 
             _repository.ResultRepository.Create(result0);
             _repository.ResultRepository.Create(result1);
@@ -90,8 +91,9 @@ namespace APITest.ResultTest
         [Test]
         public void Create_Correct()
         {
+            Game game8 = new("eight", "bla", Color.Black, "nonexistant", Status.Playing, Color.White, "I search an advanced player!");
             int size = _context.Results.Count();
-            GameResult result = new("-4", "third", "second");
+            GameResult result = new("-4", "third", "second", game8.Board);
 
             _repository.ResultRepository.Create(result);
 
@@ -113,7 +115,8 @@ namespace APITest.ResultTest
         [Test]
         public void GetPlayerStats_Draw_Correct()
         {
-            GameResult result = new("-4", "second", "third", true);
+            Game game8 = new("eight", "bla", Color.Black, "nonexistant", Status.Playing, Color.White, "I search an advanced player!");
+            GameResult result = new("-4", "second", "third", game8.Board, true);
             _repository.ResultRepository.Create(result);
 
             var results = _repository.ResultRepository.GetPlayerStats("second");

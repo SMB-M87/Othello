@@ -1,8 +1,8 @@
-﻿using MVC.Models;
-using System.Text.Json;
-using System.Net.Http.Headers;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+using MVC.Models;
+using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace MVC.Controllers
 {
@@ -11,14 +11,14 @@ namespace MVC.Controllers
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public GameController(IConfiguration configuration, 
-                              IHttpClientFactory httpClientFactory, 
+        public GameController(IConfiguration configuration,
+                              IHttpClientFactory httpClientFactory,
                               UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
             _httpClient = httpClientFactory.CreateClient();
             var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(uriString: baseUrl ?? throw new ArgumentNullException(nameof(baseUrl)));
+            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
             _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
             {
                 NoCache = true,
@@ -163,7 +163,7 @@ namespace MVC.Controllers
         private async Task<Color[,]> Board(string token)
         {
             var response = await _httpClient.GetAsync($"api/game/board/{token}");
-            Color[,] result = new Models.Color[8,8];
+            Color[,] result = new Models.Color[8, 8];
 
             if (response.IsSuccessStatusCode)
             {
