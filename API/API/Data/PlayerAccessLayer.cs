@@ -306,24 +306,17 @@ namespace API.Data
                 _context.Entry(player).Property(p => p.Requests).IsModified = true;
                 _context.SaveChanges();
 
-                List<Player> players = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username && r.Type == Inquiry.Game)).ToList();
+                var players = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username && r.Type == Inquiry.Game)).ToList();
 
-                if (players is not null)
+                foreach (Player gamer in players)
                 {
-                    foreach (Player gamer in players)
-                    {
-                        Request? request = gamer.Requests?.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username && (DateTime.UtcNow - r.Date).TotalSeconds >= 60);
+                    var request = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username && (DateTime.UtcNow - r.Date).TotalSeconds >= 60);
 
-                        if (request != null)
-                        {
-                            ICollection<Request>? requests = gamer.Requests;
-                            if (requests != null)
-                            {
-                                requests.Remove(request);
-                                _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
-                                _context.SaveChanges();
-                            }
-                        }
+                    if (request != null)
+                    {
+                        gamer.Requests.Remove(request);
+                        _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                        _context.SaveChanges();
                     }
                 }
                 return true;

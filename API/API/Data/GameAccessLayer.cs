@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using System.Numerics;
 
 namespace API.Data
 {
@@ -24,11 +25,28 @@ namespace API.Data
             return game is not null;
         }
 
+        private Player? GetPlayer(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
+        }
+
         public bool Create(GameCreation game)
         {
             if (PlayerExists(game.PlayerToken) && !PlayerInGame(game.PlayerToken))
             {
                 _context.Games.Add(new(game.PlayerToken, game.Description));
+
+                var player = GetPlayer(game.PlayerToken);
+                if (player is not null)
+                {
+                    var gameRequests = player.Requests.Where(r => r.Type == Inquiry.Game).ToList();
+
+                    foreach (var request in gameRequests)
+                    {
+                        player.Requests.Remove(request);
+                    }
+                    _context.Entry(player).Property(p => p.Requests).IsModified = true;
+                }
                 _context.SaveChanges();
                 return true;
             }
@@ -338,10 +356,26 @@ namespace API.Data
         {
             var game = GetPlayersGame(token);
 
-            if (game is not null && PlayerExists(token) &&
-                PlayerInPendingGame(token) && token == game.First)
+            if (game is not null && PlayerExists(token) && PlayerInPendingGame(token) && token == game.First)
             {
                 _context.Games.Remove(game);
+
+                var player = GetPlayer(game.First);
+                if (player is not null)
+                {
+                    var playersWithGameRequests = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username && r.Type == Inquiry.Game)).ToList();
+
+                    foreach (var gamer in playersWithGameRequests)
+                    {
+                        var request = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username);
+
+                        if (request != null)
+                        {
+                            gamer.Requests.Remove(request);
+                            _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                        }
+                    }
+                }
                 _context.SaveChanges();
                 return true;
             }
