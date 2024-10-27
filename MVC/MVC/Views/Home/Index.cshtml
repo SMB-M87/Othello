@@ -340,13 +340,15 @@
                     <div style="display: flex; flex-direction: column; align-items: center;">
                         <form style="width: 600px; padding: 10px;">
                             <div class="form-group">
-                                <textarea name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">I wanna play a game and don't have any requirements!</textarea>
+                                <textarea id="descriptionText" name="description" class="form-control" required minlength="20" maxlength="120" style="width: 100%;">
+                                    I wanna play a game and don't have any requirements!
+                                </textarea>
                             </div>
                         </form>
                         <div style="display: flex; gap: 10px;">
-                            <form asp-action="Create" method="post">
+                            <form asp-action="Create" method="post" onsubmit="updateHiddenInput()">
                                 @Html.AntiForgeryToken()
-                                <input type="hidden" name="description" value="I wanna play a game and don't have any requirements!" />
+                                <input type="hidden" name="description" id="hiddenDescription" />
                                 <button type="submit" class="btn btn-primary">Create</button>
                             </form>
                             <form asp-action="Cancel" method="post">
@@ -385,6 +387,11 @@
     </div>
 
     <script>
+        function updateHiddenInput() {
+            const descriptionText = document.getElementById('descriptionText').value;
+            document.getElementById('hiddenDescription').value = descriptionText;
+        }
+
         function refreshContainers() {
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
             const sessionStatus = document.getElementById("session-status").dataset.session;
