@@ -20,6 +20,9 @@ The Othello MVC API project is designed to handle multiplayer Othello gameplay t
 ![Home](https://github.com/user-attachments/assets/1093800c-ec73-4d84-85bb-07b7d80d791f)
 ![Game](https://github.com/user-attachments/assets/3dd5b597-33e8-41da-abef-01aec1330e25)
 
+https://github.com/user-attachments/assets/cd82b5ac-4208-46d7-b9c4-bed346268145
+
+
 # Features
 - User Authentication: Players register and log in through the MVC application using ASP.NET Identity.  
 - Game Management: Players can create new Othello games or join existing ones.  
