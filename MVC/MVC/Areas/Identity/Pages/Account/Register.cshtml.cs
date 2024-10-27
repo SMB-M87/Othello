@@ -114,21 +114,22 @@ namespace MVC.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            var response = await _httpClient.GetAsync($"api/player/check/{Input.Username}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError(string.Empty, "Username is already taken.");
+                return Page();
+            }
+            else if (response.StatusCode != System.Net.HttpStatusCode.NotFound)
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while checking the username.");
+                return Page();
+            }
+
             if (ModelState.IsValid)
             {
-                var response = await _httpClient.GetAsync($"api/player/check/{Input.Username}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    ModelState.AddModelError(string.Empty, "Username is already taken.");
-                    return Page();
-                }
-                else if (response.StatusCode != System.Net.HttpStatusCode.NotFound)
-                {
-                    ModelState.AddModelError(string.Empty, "An error occurred while checking the username.");
-                    return Page();
-                }
-
                 var user = CreateUser();
 
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

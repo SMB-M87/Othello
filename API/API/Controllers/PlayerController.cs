@@ -48,6 +48,17 @@ namespace API.Controllers
             return Ok(players);
         }
 
+        [HttpGet("check/{username}")]
+        public ActionResult<bool> CheckUsername(string username)
+        {
+            bool exists = _repository.PlayerRepository.UsernameExists(username);
+
+            if (exists == false)
+                return NotFound();
+
+            return Ok(exists);
+        }
+
         [HttpGet("friends/{token}")]
         public ActionResult<List<string>> PlayerFriends(string token)
         {

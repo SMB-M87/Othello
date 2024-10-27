@@ -16,11 +16,6 @@ namespace API.Data
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token)) != null;
         }
 
-        private bool UsernameExists(string username)
-        {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
-        }
-
         public bool Create(Player player)
         {
             if (!TokenExists(player.Token) && !UsernameExists(player.Username))
@@ -53,6 +48,11 @@ namespace API.Data
         public List<string>? GetPlayersInGame()
         {
             return GetPlayers()?.FindAll(player => PlayerInGame(player.Token)).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
+        }
+
+        public bool UsernameExists(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
         }
 
         public List<string>? GetFriends(string token)
