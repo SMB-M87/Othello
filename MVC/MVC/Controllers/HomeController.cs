@@ -70,8 +70,13 @@ namespace MVC.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Profile(string username)
+        public async Task<IActionResult> Profile(string username = "")
         {
+            if (string.IsNullOrEmpty(username))
+            {
+                username = User != null && User.Identity != null && User.Identity.Name != null ? User.Identity.Name : string.Empty;
+            }
+
             if (string.IsNullOrEmpty(username))
             {
                 return RedirectToAction("Index", "Home");
