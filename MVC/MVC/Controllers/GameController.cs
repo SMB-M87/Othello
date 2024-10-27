@@ -67,17 +67,16 @@ namespace MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Move(int row, int col)
+        public async Task<IActionResult> Move([FromBody] GameMove move)
         {
             var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync("api/game/pass", new { PlayerToken = token, Row = row, Column = col });
+            var response = await _httpClient.PostAsJsonAsync("api/game/move", new { PlayerToken = token, move.Row, move.Column });
 
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to pass.");
-                return RedirectToAction("Play");
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Play", "Home");
         }
 
         [HttpPost]
@@ -90,7 +89,6 @@ namespace MVC.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError(string.Empty, "Unable to pass.");
-                return RedirectToAction("Play");
             }
             return RedirectToAction("Index", "Home");
         }
