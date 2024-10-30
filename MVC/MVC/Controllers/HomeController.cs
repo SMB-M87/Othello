@@ -105,17 +105,32 @@ namespace MVC.Controllers
             return View("Profile", model);
         }
 
-        public async Task<IActionResult> Result()
+        public async Task<IActionResult> Result(string token = "")
         {
-            var username = _userManager.GetUserName(User);
-
-            var model = new GameOverview
+            if (string.IsNullOrEmpty(token))
             {
-                Username = username,
-                Result = await MostRecentGame(username) ?? new()
-            };
+                var username = _userManager.GetUserName(User);
 
-            return View("Result", model);
+                var model = new GameOverview
+                {
+                    Username = username,
+                    Result = await MostRecentGame(username) ?? new()
+                };
+
+                return View("Result", model);
+            }
+            else
+            {
+                string[] parts = token.Split(' ');
+
+                var model = new GameOverview
+                {
+                    Username = parts[0],
+                    Result = await GetResult(parts[1]) ?? new()
+                };
+
+                return View("Result", model);
+            }
         }
 
         public IActionResult Privacy()
@@ -295,7 +310,7 @@ namespace MVC.Controllers
             }
             return Json(new { success = true, message = "Friend request declined." });
         }
- 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeleteFriend([FromBody] Text player)
@@ -564,6 +579,24 @@ namespace MVC.Controllers
 
             var lastGame = result.OrderBy(game => Math.Abs((DateTime.UtcNow - game.Date).Ticks)).FirstOrDefault();
             return lastGame;
+        }
+
+        private async Task<GameResult?> GetResult(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/result/{token}");
+            GameResult result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+            }
+            return result;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

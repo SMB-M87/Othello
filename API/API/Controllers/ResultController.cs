@@ -15,8 +15,19 @@ namespace API.Controllers
             _repository = repository;
         }
 
+        [HttpGet("{token}")]
+        public ActionResult<GameResult> GetResult(string token)
+        {
+            var respons = _repository.ResultRepository.Get(token);
+
+            if (respons is null)
+                return NotFound();
+
+            return Ok(respons);
+        }
+
         [HttpGet("history/{username}")]
-        public ActionResult<List<GameResultView>> MatchHistory(string username)
+        public ActionResult<List<GameResult>> MatchHistory(string username)
         {
             var respons = _repository.ResultRepository.GetPlayersMatchHistory(username);
 

@@ -102,7 +102,7 @@ namespace APITest.ResultTest
                 Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
                 var okResult = result.Result as OkObjectResult;
                 Assert.That(okResult, Is.Not.Null, "Result should not be null");
-                var results = okResult?.Value as List<GameResultView>;
+                var results = okResult?.Value as List<GameResult>;
                 Assert.That(results, Is.Not.Null, "Results should not be null");
                 Assert.That(results, Has.Count.EqualTo(3));
             });

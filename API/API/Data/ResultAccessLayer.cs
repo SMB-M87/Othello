@@ -11,14 +11,15 @@ namespace API.Data
             _context = context;
         }
 
-        private GameResultView? Get(string token)
+        public GameResult? Get(string token)
         {
             var respons = _context.Results.FirstOrDefault(s => s.Token == token);
 
             if (respons is not null)
             {
-                GameResultView result = new(GetName(respons.Winner) ?? string.Empty, GetName(respons.Loser) ?? string.Empty, respons.Draw, respons.Board, respons.Date);
-                return result;
+                respons.Winner = GetName(respons.Winner) ?? string.Empty;
+                respons.Loser = GetName(respons.Loser) ?? string.Empty;
+                return respons;
             }
             return null;
         }
@@ -76,14 +77,14 @@ namespace API.Data
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token))?.Username;
         }
 
-        public List<GameResultView>? GetPlayersMatchHistory(string username)
+        public List<GameResult>? GetPlayersMatchHistory(string username)
         {
             var token = GetToken(username);
 
             if (token is not null)
             {
                 var respons = GetMatchHistory(token);
-                List<GameResultView> results = new();
+                List<GameResult> results = new();
 
                 if (respons.Count > 0)
                 {
@@ -91,8 +92,9 @@ namespace API.Data
 
                     foreach (var game in respons)
                     {
-                        GameResultView adding = new(GetName(game.Winner) ?? string.Empty, GetName(game.Loser) ?? string.Empty, game.Draw, game.Board, game.Date);
-                        results.Add(adding);
+                        game.Winner = GetName(game.Winner) ?? string.Empty;
+                        game.Loser = GetName(game.Loser) ?? string.Empty;
+                        results.Add(game);
                     }
                 }
                 return results;

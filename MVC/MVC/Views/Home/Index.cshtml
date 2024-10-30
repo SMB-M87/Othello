@@ -48,7 +48,7 @@
                                 {
                                     <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@game.Draw" style="text-decoration: none; color: inherit;">@game.Draw</a></span>
                                 }
-                                <span>@game.Date.ToString("dd/MM/yyyy")</span>
+                                <span><a asp-controller="Home" asp-action="Result" asp-route-token="@(User.Identity.Name == game.Winner ? game.Winner : game.Loser) @game.Token" style="text-decoration: none; color: inherit;">@game.Date.ToString("dd/MM/yyyy")</a></span>
                             </li>
                         }
                     </ul>
