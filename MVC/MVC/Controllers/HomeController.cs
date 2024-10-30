@@ -562,8 +562,8 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
             }
 
-            var closestGame = result.OrderBy(game => Math.Abs((DateTime.UtcNow - game.Date).Ticks)).FirstOrDefault();
-            return closestGame;
+            var lastGame = result.OrderBy(game => Math.Abs((DateTime.UtcNow - game.Date).Ticks)).FirstOrDefault();
+            return lastGame;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

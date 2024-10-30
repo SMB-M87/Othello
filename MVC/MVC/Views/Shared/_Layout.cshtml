@@ -20,25 +20,17 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @*                     <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                    </ul> *@
                     <ul class="navbar-nav">
                         @if (User.IsInRole("administrator"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="Players">Admin Dashboard</a>
+                                <a class="nav-link" asp-controller="Admin" asp-action="Players">Dashboard</a>
                             </li>
                         }
                         @if (User.IsInRole("mediator"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Mediator" asp-action="Players">Mediator Panel</a>
+                                <a class="nav-link" asp-controller="Mediator" asp-action="Players">Panel</a>
                             </li>
                         }
                     </ul>
