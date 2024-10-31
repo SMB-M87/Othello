@@ -30,9 +30,14 @@ namespace API.Data
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
         }
 
+        private Player? GetPlayerToken(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
+        }
+
         public bool Create(GameCreation game)
         {
-            if (PlayerExists(game.PlayerToken) && !PlayerInGame(game.PlayerToken))
+            if (string.IsNullOrEmpty(game.Rematch) && PlayerExists(game.PlayerToken) && !PlayerInGame(game.PlayerToken))
             {
                 _context.Games.Add(new(game.PlayerToken, game.Description));
 
@@ -46,6 +51,29 @@ namespace API.Data
                         player.Requests.Remove(request);
                     }
                     _context.Entry(player).Property(p => p.Requests).IsModified = true;
+                }
+                _context.SaveChanges();
+                return true;
+            }
+            else if (game.Rematch != null && PlayerExists(game.PlayerToken) && !PlayerInGame(game.PlayerToken))
+            {
+                var player = GetPlayer(game.PlayerToken);
+                var opponent = GetPlayerToken(game.Rematch);
+
+                if (player is not null && opponent is not null)
+                {
+                    _context.Games.Add(new(game.PlayerToken, game.Description, opponent.Token));
+
+                    var gameRequests = player.Requests.Where(r => r.Type == Inquiry.Game).ToList();
+
+                    foreach (var request in gameRequests)
+                    {
+                        player.Requests.Remove(request);
+                    }
+                    _context.Entry(player).Property(p => p.Requests).IsModified = true;
+
+                    opponent.Requests.Add(new(Inquiry.Game, player.Username));
+                    _context.Entry(opponent).Property(p => p.Requests).IsModified = true;
                 }
                 _context.SaveChanges();
                 return true;
@@ -96,7 +124,7 @@ namespace API.Data
 
             if (games is not null)
             {
-                var pending = games.FindAll(game => game.Status == Status.Pending && game.Second == null).OrderByDescending(g => g.Date).ToList();
+                var pending = games.FindAll(game => game.Status == Status.Pending && game.Second == null && game.Rematch == null).OrderByDescending(g => g.Date).ToList();
 
                 if (pending is not null)
                 {

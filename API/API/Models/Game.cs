@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models
@@ -30,6 +31,8 @@ namespace API.Models
         public string? Second { get; private set; }
         public Color SColor { get; private set; }
 
+        [ForeignKey("Player")]
+        public string? Rematch { get; private set; }
         public DateTime Date { get; private set; }
 
         private Color[,] board;
@@ -53,11 +56,12 @@ namespace API.Models
             FColor = Color.None;
             Second = null;
             SColor = Color.None;
+            Rematch = null;
             Date = DateTime.MinValue;
             board = new Color[boardScope, boardScope];
         }
 
-        public Game(string first, string description = "I wanna play a game and don't have any requirements!")
+        public Game(string first, string description = "I wanna play a game and don't have any requirements!", string rematch = "")
         {
             Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()).Replace("/", "q").Replace("+", "r");
 
@@ -76,6 +80,11 @@ namespace API.Models
 
             Second = null;
             SColor = GetOpponentsColor(FColor);
+
+            if (string.IsNullOrEmpty(rematch))
+                Rematch = null;
+            else
+                Rematch = rematch;
 
             Date = DateTime.UtcNow;
         }

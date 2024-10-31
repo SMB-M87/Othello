@@ -211,6 +211,36 @@ namespace MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<JsonResult> RematchGame([FromBody] Text text)
+        {
+            var token = _userManager.GetUserId(User);
+
+            var createGameRequest = new
+            {
+                PlayerToken = token,
+                Description = $"Rematch against {text.Body}",
+                Rematch = text.Body
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to create game." });
+            }
+
+            var game = await _httpClient.GetAsync($"api/game/{token}");
+
+            if (!game.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Game creation failed." });
+            }
+            HttpContext.Session.SetString("GameCreation", "false");
+            return Json(new { success = true, message = "Game created." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeleteGame()
         {
             var token = _userManager.GetUserId(User);

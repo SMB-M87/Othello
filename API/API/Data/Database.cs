@@ -69,6 +69,12 @@ namespace API.Data
                       .ValueGeneratedNever()
                       .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
+                entity.HasOne<Player>()
+                      .WithMany()
+                      .HasForeignKey(e => e.Rematch)
+                      .HasPrincipalKey(p => p.Token)
+                      .OnDelete(DeleteBehavior.Restrict);
+
                 entity.Property(e => e.Date)
                       .IsRequired()
                       .ValueGeneratedNever()
