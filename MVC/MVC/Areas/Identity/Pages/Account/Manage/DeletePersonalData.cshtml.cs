@@ -17,7 +17,6 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public DeletePersonalDataModel(
-            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             UserManager<IdentityUser> userManager,
             ILogger<DeletePersonalDataModel> logger,
@@ -26,9 +25,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _httpClient = httpClientFactory.CreateClient();
-            var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         /// <summary>

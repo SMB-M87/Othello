@@ -26,9 +26,9 @@ namespace MVC.Middleware
                 if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
                 {
                     var token = userManager.GetUserId(user);
-                    var httpClient = _httpClientFactory.CreateClient();
+                    var httpClient = _httpClientFactory.CreateClient("ApiClient");
                     var currentPath = context.Request.Path.Value?.ToLower();
-                    var response = await httpClient.GetAsync($"https://localhost:7023/api/game/status/{token}");
+                    var response = await httpClient.GetAsync($"api/game/status/{token}");
 
                     if (response.IsSuccessStatusCode)
                     {

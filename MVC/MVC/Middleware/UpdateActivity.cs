@@ -18,6 +18,7 @@ namespace MVC.Middleware
         public async Task Invoke(HttpContext context)
         {
             var user = context.User;
+
             try
             {
                 if (user?.Identity != null && user.Identity.IsAuthenticated)
@@ -25,9 +26,9 @@ namespace MVC.Middleware
                     var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     if (userId != null)
                     {
-                        var httpClient = _httpClientFactory.CreateClient();
+                        var httpClient = _httpClientFactory.CreateClient("ApiClient");
 
-                        var response = await httpClient.PostAsJsonAsync($"https://localhost:7023/api/player/activity", new { Token = userId });
+                        var response = await httpClient.PostAsJsonAsync($"api/player/activity", new { Token = userId });
 
                         if (!response.IsSuccessStatusCode)
                         {

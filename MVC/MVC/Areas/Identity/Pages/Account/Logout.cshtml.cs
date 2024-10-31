@@ -15,7 +15,6 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public LogoutModel(
             ILogger<LoginModel> logger,
-            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager)
@@ -23,9 +22,7 @@ namespace MVC.Areas.Identity.Pages.Account
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _httpClient = httpClientFactory.CreateClient();
-            var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         public async Task<IActionResult> OnPost(string returnUrl = null)

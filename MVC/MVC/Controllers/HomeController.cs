@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using System.Diagnostics;
-using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace MVC.Controllers
@@ -12,19 +11,10 @@ namespace MVC.Controllers
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(IConfiguration configuration,
-                              IHttpClientFactory httpClientFactory,
-                              UserManager<IdentityUser> userManager)
+        public HomeController(IHttpClientFactory httpClientFactory, UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
-            _httpClient = httpClientFactory.CreateClient();
-            var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
-            _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-                NoStore = true
-            };
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         public async Task<IActionResult> Index()
@@ -63,10 +53,8 @@ namespace MVC.Controllers
                         SentGameRequests = await SentGameRequests(token)
                     }
                 };
-
                 return View(model);
             }
-
             return View();
         }
 
@@ -107,10 +95,18 @@ namespace MVC.Controllers
                 var model = new GameOverview
                 {
                     Username = username,
-                    Result = await MostRecentGame(username) ?? new()
+                    Result = await MostRecentGame(username) ?? new(),
+                    Rematch = true
                 };
 
-                return View("Result", model);
+                if (model.Result != null && model.Result.Board != null)
+                {
+                    return View("Result", model);
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
             }
             else
             {
@@ -119,9 +115,9 @@ namespace MVC.Controllers
                 var model = new GameOverview
                 {
                     Username = parts[0],
-                    Result = await GetResult(parts[1]) ?? new()
+                    Result = await GetResult(parts[1]) ?? new(),
+                    Rematch = false
                 };
-
                 return View("Result", model);
             }
         }

@@ -24,7 +24,6 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public RegisterModel(
             IEmailSender emailSender,
-            IConfiguration configuration,
             ILogger<RegisterModel> logger,
             IUserStore<IdentityUser> userStore,
             IHttpClientFactory httpClientFactory,
@@ -38,9 +37,7 @@ namespace MVC.Areas.Identity.Pages.Account
             _userManager = userManager;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
-            _httpClient = httpClientFactory.CreateClient();
-            var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         /// <summary>

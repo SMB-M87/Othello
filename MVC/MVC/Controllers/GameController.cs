@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
-using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace MVC.Controllers
@@ -11,19 +10,10 @@ namespace MVC.Controllers
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public GameController(IConfiguration configuration,
-                              IHttpClientFactory httpClientFactory,
-                              UserManager<IdentityUser> userManager)
+        public GameController(IHttpClientFactory httpClientFactory, UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
-            _httpClient = httpClientFactory.CreateClient();
-            var baseUrl = configuration["ApiSettings:BaseUrl"];
-            _httpClient.BaseAddress = new Uri(baseUrl ?? throw new ArgumentNullException(nameof(configuration), "BaseUrl setting is missing in configuration."));
-            _httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
-            {
-                NoCache = true,
-                NoStore = true
-            };
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         public async Task<IActionResult> Play()
