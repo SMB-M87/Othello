@@ -17,10 +17,15 @@ This is a backend-driven web application for a multiplayer Othello (Reversi) gam
 
 ## Project Overview
 The Othello MVC API project is designed to handle multiplayer Othello gameplay through a robust backend architecture. The application provides essential features for managing players, game sessions, and results. The REST API offers a suite of endpoints to facilitate game creation, player interaction, and game results tracking, while the MVC structure allows seamless interaction between the API and the client application.
-![Home](https://github.com/user-attachments/assets/1093800c-ec73-4d84-85bb-07b7d80d791f)
-![Game](https://github.com/user-attachments/assets/3dd5b597-33e8-41da-abef-01aec1330e25)
+![Home](https://github.com/user-attachments/assets/fc31057d-1049-44ca-8cfe-17278e7c79a9)
+![Profile](https://github.com/user-attachments/assets/1610bcf8-57a1-41e4-b256-baa5295e84bd)
+![Create](https://github.com/user-attachments/assets/eb30ed2b-da7c-4d1f-9ded-f60bb44ad50a)
+![Wait](https://github.com/user-attachments/assets/9d72f5e4-1093-4649-8759-5141b452180a)
+![Game](https://github.com/user-attachments/assets/ce26b7a8-3de6-4976-a9fc-ec9fbf80b86e)
+![Result](https://github.com/user-attachments/assets/73ac8731-eaf3-479f-9154-ddba564a0f68)
+![Rematch](https://github.com/user-attachments/assets/c31addf7-3aff-4dbb-acec-12f23779966a)
 
-https://github.com/user-attachments/assets/cd82b5ac-4208-46d7-b9c4-bed346268145
+https://github.com/user-attachments/assets/2c13e4e1-71aa-4575-a2ca-809c43da8e29
 
 
 # Features
