@@ -13,11 +13,7 @@
                     data-row="@row"
                     data-col="@col"
                     onclick="cellClicked(this)">
-                    @if (cell == Color.None)
-                    {
-                        <i></i>
-                    }
-                    else
+                    @if (cell != Color.None)
                     {
                         <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
                     }
