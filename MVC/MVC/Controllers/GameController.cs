@@ -32,7 +32,8 @@ namespace MVC.Controllers
                     {
                         InGame = await InGame(token),
                         PlayersTurn = await PlayersTurn(token),
-                        Board = await Board(token)
+                        Board = await Board(token),
+                        Time = await Time(token)
                     }
                 };
 
@@ -53,7 +54,8 @@ namespace MVC.Controllers
             {
                 InGame = await InGame(token),
                 PlayersTurn = await PlayersTurn(token),
-                Board = await Board(token)
+                Board = await Board(token),
+                Time = await Time(token)
             };
             return PartialView("_Partial", model);
         }
@@ -172,6 +174,18 @@ namespace MVC.Controllers
                 {
                     result = deserializedResult;
                 }
+            }
+            return result;
+        }
+
+        private async Task<string> Time(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/game/timer/{token}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync() ?? string.Empty;
             }
             return result;
         }

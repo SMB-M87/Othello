@@ -122,6 +122,7 @@ namespace API.Models
             if (Second == null)
             {
                 Second = secondPlayerToken;
+                Date = DateTime.UtcNow;
                 SetPlayingStatus();
             }
             else
@@ -138,7 +139,11 @@ namespace API.Models
 
         public void Pass()
         {
-            if (IsThereAPossibleMove(PlayersTurn))
+            DateTime now = DateTime.UtcNow;
+            DateTime end = Date.AddSeconds(30);
+            double remainingSeconds = (end - now).TotalSeconds;
+
+            if (Math.Floor(remainingSeconds) > 0 && IsThereAPossibleMove(PlayersTurn))
             {
                 throw new InvalidGameOperationException("You're not allowed to pass, you can still make a move!");
             }
@@ -191,6 +196,7 @@ namespace API.Models
                     FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(rowMove, columnMove, PlayersTurn, direction[i, 0], direction[i, 1]);
                 }
                 Board[rowMove, columnMove] = PlayersTurn;
+                Date = DateTime.UtcNow;
                 ChangeTurns();
             }
             else
@@ -245,6 +251,7 @@ namespace API.Models
                 PlayersTurn = Color.Black;
             else if (PlayersTurn == Color.Black)
                 PlayersTurn = Color.White;
+            Date = DateTime.UtcNow;
         }
 
         private static bool PositionInbetweenBoardLimits(int row, int column)

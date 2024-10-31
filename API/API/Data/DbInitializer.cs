@@ -178,7 +178,7 @@ namespace API.Data
             {
                 LastActivity = DateTime.UtcNow
             };
-            Player t22 = new("12ae08b8-85e2-47e2-aadf-3464a93ce526", "mediator") // Give own token
+            Player t22 = new("ff20c418-f1b0-4f16-b582-294be25c24ef", "mediator") // Give own token
             {
                 LastActivity = DateTime.UtcNow,
                 Friends = { "Karen", "Ernst", "John", "Identity", "Eltjo", "Tijn", "admin" },
@@ -189,7 +189,7 @@ namespace API.Data
                     new(Inquiry.Friend, "Rachel")
                 }
             };
-            Player t23 = new("2951f50b-a81e-4501-b2fd-510536a5936b", "admin") // Give own token
+            Player t23 = new("58a479fd-ae6f-4474-a147-68cbdb62c19b", "admin") // Give own token
             {
                 LastActivity = DateTime.UtcNow,
                 Friends = { "Karen", "Ernst", "John", "Identity", "Eltjo", "Tijn", "mediator" },

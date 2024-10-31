@@ -39,6 +39,23 @@
     </div>
 </div>
 
+<div id="timer-container" class="d-flex justify-content-center" style="margin-top: 10px;">
+    <div class="d-flex justify-content-center" style="margin-top: 10px;">
+        <p>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.Partial.PlayersTurn == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.Partial.PlayersTurn == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                @Model.Partial.Time sec
+            </span>
+        </p>
+    </div>
+</div>
+
 @if (Model.Color == Color.White)
 {
     <div class="d-flex justify-content-center" style="margin-top: 10px; gap: 20px;">
@@ -263,6 +280,7 @@ else
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
         const playersTurnContainer = document.getElementById("players-turn-container");
+        const timerContainer = document.getElementById("timer-container");
         const boardContainer = document.getElementById("board-container");
 
         fetch('@Url.Action("Partial", "Game")', {
@@ -288,6 +306,11 @@ else
                 const playersTurnContent = doc.getElementById("players-turn-container");
                 if (playersTurnContent && playersTurnContainer) {
                     playersTurnContainer.innerHTML = playersTurnContent.innerHTML;
+                }
+
+                const timerContent = doc.getElementById("timer-container");
+                if (timerContent && timerContainer) {
+                    timerContainer.innerHTML = timerContent.innerHTML;
                 }
 
                 const friendsContent = doc.getElementById("board-container");

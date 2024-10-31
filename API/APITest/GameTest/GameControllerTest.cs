@@ -704,7 +704,7 @@ namespace APITest.GameTest
             Assert.Multiple(() =>
             {
                 Assert.That(actual: _repository.ResultRepository.GetPlayerStats("14"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("fifth"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
+                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("five"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
             });
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
@@ -716,7 +716,7 @@ namespace APITest.GameTest
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _repository.ResultRepository.GetPlayerStats("14"), Is.EqualTo("Wins:0\t\tLosses:1\t\tDraws:0"));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("fifth"), Is.EqualTo("Wins:1\t\tLosses:0\t\tDraws:0"));
+                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("five"), Is.EqualTo("Wins:1\t\tLosses:0\t\tDraws:0"));
                 });
             }
             else

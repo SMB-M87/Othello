@@ -107,7 +107,7 @@ namespace APITest.ResultTest
         [Test]
         public void GetPlayerStats_Correct()
         {
-            var result = _repository.ResultRepository.GetPlayerStats("second");
+            var result = _repository.ResultRepository.GetPlayerStats("two");
 
             Assert.That(actual: result, Is.EqualTo(expected: "Wins:2\t\tLosses:1\t\tDraws:0"));
         }
@@ -119,7 +119,7 @@ namespace APITest.ResultTest
             GameResult result = new("-4", "second", "third", game8.Board, true);
             _repository.ResultRepository.Create(result);
 
-            var results = _repository.ResultRepository.GetPlayerStats("second");
+            var results = _repository.ResultRepository.GetPlayerStats("two");
 
             Assert.That(actual: results, Is.EqualTo(expected: "Wins:2\t\tLosses:1\t\tDraws:1"));
         }
@@ -135,7 +135,7 @@ namespace APITest.ResultTest
         [Test]
         public void GetPlayerMatchHistory_Correct()
         {
-            var result = _repository.ResultRepository.GetPlayersMatchHistory("second");
+            var result = _repository.ResultRepository.GetPlayersMatchHistory("two");
 
             if (result is not null)
                 Assert.That(actual: result, Has.Count.EqualTo(expected: 3));
@@ -146,7 +146,7 @@ namespace APITest.ResultTest
         [Test]
         public void GetPlayerMatchHistory_Empty_Correct()
         {
-            var result = _repository.ResultRepository.GetPlayersMatchHistory("first");
+            var result = _repository.ResultRepository.GetPlayersMatchHistory("one");
 
             if (result is not null)
                 Assert.That(actual: result, Has.Count.EqualTo(expected: 0));

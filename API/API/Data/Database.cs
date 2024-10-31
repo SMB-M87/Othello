@@ -76,9 +76,7 @@ namespace API.Data
                       .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(e => e.Date)
-                      .IsRequired()
-                      .ValueGeneratedNever()
-                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+                      .IsRequired();
 
                 entity.Property(e => e.Board)
                     .HasConversion(

@@ -95,7 +95,7 @@ namespace APITest.ResultTest
         [Test]
         public void MatchHistory_Correct()
         {
-            var result = _controller.MatchHistory("second");
+            var result = _controller.MatchHistory("two");
 
             Assert.Multiple(() =>
             {
@@ -111,7 +111,7 @@ namespace APITest.ResultTest
         [Test]
         public void PlayerStats_Correct()
         {
-            var result = _controller.PlayerStats("second");
+            var result = _controller.PlayerStats("two");
 
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
             var okResult = result.Result as OkObjectResult;

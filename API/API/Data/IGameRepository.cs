@@ -13,6 +13,7 @@ namespace API.Data
         Status? GetStatusByPlayersToken(string player_token);
         Color? GetColorByPlayersToken(string player_token);
         Color[,]? GetBoardByPlayersToken(string player_token);
+        string? GetTimerByPlayersToken(string player_token);
         bool JoinPlayer(PlayerRequest entry);
         (bool succeded, string? error) Move(GameMove action);
         bool Pass(string player_token, out string error_message);

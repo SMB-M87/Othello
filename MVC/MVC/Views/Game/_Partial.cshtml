@@ -4,6 +4,10 @@
     @await Html.PartialAsync("_PlayersTurnPartial", Model.PlayersTurn)
 </div>
 
+<div id="timer-container">
+    @await Html.PartialAsync("_TimePartial", Model)
+</div>
+
 <div id="board-container">
     @await Html.PartialAsync("_BoardPartial", Model)
 </div>

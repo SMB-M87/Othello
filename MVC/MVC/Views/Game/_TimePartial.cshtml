@@ -1,0 +1,16 @@
+﻿@model GamePartial
+
+<div class="d-flex justify-content-center" style="margin-top: 10px;">
+    <p>
+        <span class="player-color-indicator"
+              style="background-color: @(Model.PlayersTurn == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.PlayersTurn == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+            @Model.Time sec
+        </span>
+    </p>
+</div>

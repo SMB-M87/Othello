@@ -103,6 +103,17 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("timer/{token}")]
+        public ActionResult<string> TimerByToken(string token)
+        {
+            var response = _repository.GameRepository.GetTimerByPlayersToken(token);
+
+            if (response is null)
+                return NotFound();
+
+            return Ok(response);
+        }
+
         [HttpPost("join")]
         public ActionResult<HttpResponseMessage> Join([FromBody] PlayerRequest request)
         {

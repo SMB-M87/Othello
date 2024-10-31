@@ -1,5 +1,4 @@
 ﻿using API.Models;
-using System.Numerics;
 
 namespace API.Data
 {
@@ -194,6 +193,29 @@ namespace API.Data
             return GetPlayersGame(token)?.Board;
         }
 
+        public string? GetTimerByPlayersToken(string token)
+        {
+            var game = GetPlayersGame(token);
+            DateTime? last = game?.Date;
+            DateTime now = DateTime.UtcNow;
+
+            if (game is not null && last.HasValue)
+            {
+                DateTime end = last.Value.AddSeconds(30);
+                double remainingSeconds = (end - now).TotalSeconds;
+
+                if (remainingSeconds <= 0)
+                {
+                    game.Pass();
+                    _context.Entry(game).Property(g => g.Date).IsModified = true;
+                    _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                    _context.SaveChanges();
+                }
+                return $"{Math.Floor(remainingSeconds)}";
+            }
+            return string.Empty;
+        }
+
         private bool PlayerInPendingGame(string token)
         {
             var games = _context.Games.ToList();
@@ -230,6 +252,7 @@ namespace API.Data
                 game.SetSecondPlayer(request.SenderToken);
                 _context.Entry(game).Property(g => g.Status).IsModified = true;
                 _context.Entry(game).Property(g => g.Second).IsModified = true;
+                _context.Entry(game).Property(g => g.Date).IsModified = true;
                 _context.SaveChanges();
                 return true;
             }
@@ -254,6 +277,7 @@ namespace API.Data
                         game.MakeMove(action.Row, action.Column);
                         _context.Entry(game).Property(g => g.Board).IsModified = true;
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                        _context.Entry(game).Property(g => g.Date).IsModified = true;
 
                         if (game.Finished())
                         {
@@ -323,6 +347,7 @@ namespace API.Data
                         {
                             game.Pass();
                             _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                            _context.Entry(game).Property(g => g.Date).IsModified = true;
                             _context.SaveChanges();
                             return true;
                         }
