@@ -3,24 +3,46 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (User.IsInRole("administrator") || User.IsInRole("mediator"))
+        {
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dashboardDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dashboard
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dashboardDropdown">
+                    @if (User.IsInRole("administrator"))
+                    {
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Players">Players</a></li>
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Games">Games</a></li>
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Results">Results</a></li>
+                    }
+                    @if (User.IsInRole("mediator"))
+                    {
+                        <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Players">Players</a></li>
+                        <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Games">Games</a></li>
+                        <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Results">Results</a></li>
+                    }
+                </ul>
+            </li>
+        }
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
 </ul>

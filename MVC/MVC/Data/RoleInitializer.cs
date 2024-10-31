@@ -2,10 +2,6 @@
 
 namespace MVC.Data
 {
-    /*
-     * Install-Package Microsoft.AspNetCore.Authentication.JwtBearer
-     * Install-Package System.IdentityModel.Tokens.Jwt
-     */
     public class RoleInitializer
     {
         public static async Task InitializeAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
