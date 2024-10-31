@@ -13,13 +13,13 @@ namespace API.Data
 
         public GameResult? Get(string token)
         {
-            var respons = _context.Results.FirstOrDefault(s => s.Token == token);
+            var response = _context.Results.FirstOrDefault(s => s.Token == token);
 
-            if (respons is not null)
+            if (response is not null)
             {
-                respons.Winner = GetName(respons.Winner) ?? string.Empty;
-                respons.Loser = GetName(respons.Loser) ?? string.Empty;
-                return respons;
+                response.Winner = GetName(response.Winner) ?? string.Empty;
+                response.Loser = GetName(response.Loser) ?? string.Empty;
+                return response;
             }
             return null;
         }
@@ -83,14 +83,14 @@ namespace API.Data
 
             if (token is not null)
             {
-                var respons = GetMatchHistory(token);
+                var response = GetMatchHistory(token);
                 List<GameResult> results = new();
 
-                if (respons.Count > 0)
+                if (response.Count > 0)
                 {
-                    respons = respons.OrderByDescending(r => r.Date).ToList();
+                    response = response.OrderByDescending(r => r.Date).ToList();
 
-                    foreach (var game in respons)
+                    foreach (var game in response)
                     {
                         game.Winner = GetName(game.Winner) ?? string.Empty;
                         game.Loser = GetName(game.Loser) ?? string.Empty;

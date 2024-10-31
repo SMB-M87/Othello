@@ -130,10 +130,10 @@ namespace APITest.PlayerTest
         [Test]
         public void PlayerFriends_Correct()
         {
-            List<string>? respons = _repository.PlayerRepository.GetFriends("sixth");
+            List<string>? response = _repository.PlayerRepository.GetFriends("sixth");
 
-            if (respons is not null)
-                Assert.That(actual: respons, Does.Contain("eight"));
+            if (response is not null)
+                Assert.That(actual: response, Does.Contain("eight"));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -141,10 +141,10 @@ namespace APITest.PlayerTest
         [Test]
         public void Player_FriendRequest_Correct()
         {
-            List<string>? respons = _repository.PlayerRepository.GetFriendRequests("sixth");
+            List<string>? response = _repository.PlayerRepository.GetFriendRequests("sixth");
 
-            if (respons is not null)
-                Assert.That(actual: respons.Any(r => r == "five"), Is.True);
+            if (response is not null)
+                Assert.That(actual: response.Any(r => r == "five"), Is.True);
             else
                 Assert.Fail("Respons is null.");
         }

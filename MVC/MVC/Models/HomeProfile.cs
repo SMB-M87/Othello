@@ -8,5 +8,6 @@
         public bool HasSentRequest { get; set; }
         public bool HasPendingRequest { get; set; }
         public List<GameResult> MatchHistory { get; set; } = null!;
+        public string LastSeen { get; set; } = null!;
     }
 }

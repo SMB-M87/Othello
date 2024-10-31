@@ -141,10 +141,10 @@ namespace APITest.PlayerTest
         public void Create_OK()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Create(new("new", "newby"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -153,10 +153,10 @@ namespace APITest.PlayerTest
         public void Create_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Create(new("one", "one"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -165,10 +165,10 @@ namespace APITest.PlayerTest
         public void Delete_OK()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("first"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -177,10 +177,10 @@ namespace APITest.PlayerTest
         public void Delete_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("firsttt"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -194,10 +194,10 @@ namespace APITest.PlayerTest
             var okResult = result.Result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
-            var respons = okResult?.Value as List<string>;
+            var response = okResult?.Value as List<string>;
 
-            if (respons is not null)
-                Assert.That(actual: respons, Does.Contain("nine"));
+            if (response is not null)
+                Assert.That(actual: response, Does.Contain("nine"));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -211,10 +211,10 @@ namespace APITest.PlayerTest
             var okResult = result.Result as OkObjectResult;
             Assert.That(okResult, Is.Not.Null, "Result should not be null");
 
-            var respons = okResult?.Value as List<string>;
+            var response = okResult?.Value as List<string>;
 
-            if (respons is not null)
-                Assert.That(actual: respons.Any(r => r == "five"), Is.True);
+            if (response is not null)
+                Assert.That(actual: response.Any(r => r == "five"), Is.True);
             else
                 Assert.Fail("Respons is null.");
         }
@@ -270,13 +270,13 @@ namespace APITest.PlayerTest
         {
             PlayerRequest request = new("one", "second");
             ActionResult<HttpResponseMessage>? result = _controller.FriendRequest(request);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.True);
                 });
             }
@@ -289,13 +289,13 @@ namespace APITest.PlayerTest
         {
             _controller.FriendRequest(new("one", "second"));
             ActionResult<HttpResponseMessage>? result = _controller.AcceptFriendRequest(new("two", "first"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Friends, Does.Contain("two"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("two"))?.Friends, Does.Contain("one"));
@@ -311,13 +311,13 @@ namespace APITest.PlayerTest
             PlayerRequest request = new("one", "second");
             _controller.FriendRequest(request);
             ActionResult<HttpResponseMessage>? result = _controller.DeclineFriendRequest(new("two", "first"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("one"))?.Requests.Any(r => r.Username == "two" && r.Type == Inquiry.Friend), Is.False);
                 });
             }
@@ -329,13 +329,13 @@ namespace APITest.PlayerTest
         public void DeleteFriend_OK()
         {
             ActionResult<HttpResponseMessage>? result = _controller.DeleteFriend(new("eight", "sixth"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("six"))?.Friends, Does.Not.Contain("eight"));
                     Assert.That(actual: _context.Players.FirstOrDefault(p => p.Username.Equals("eight"))?.Friends, Does.Not.Contain("six"));
                 });

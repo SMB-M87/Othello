@@ -18,34 +18,34 @@ namespace API.Controllers
         [HttpGet("{token}")]
         public ActionResult<GameResult> GetResult(string token)
         {
-            var respons = _repository.ResultRepository.Get(token);
+            var response = _repository.ResultRepository.Get(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("history/{username}")]
         public ActionResult<List<GameResult>> MatchHistory(string username)
         {
-            var respons = _repository.ResultRepository.GetPlayersMatchHistory(username);
+            var response = _repository.ResultRepository.GetPlayersMatchHistory(username);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("stats/{username}")]
         public ActionResult<string> PlayerStats(string username)
         {
-            var respons = _repository.ResultRepository.GetPlayerStats(username);
+            var response = _repository.ResultRepository.GetPlayerStats(username);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
     }
 }

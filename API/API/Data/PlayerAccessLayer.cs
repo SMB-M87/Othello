@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using System.Numerics;
 
 namespace API.Data
 {
@@ -87,9 +88,54 @@ namespace API.Data
             return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Game)).Select(p => p.Username).ToList();
         }
 
+        public string? GetLastActivity(string username)
+        {
+            DateTime? lastActivity = GetPlayers()?.FirstOrDefault(p => p.Username == username)?.LastActivity;
+
+            if (lastActivity == null || lastActivity == DateTime.MinValue)
+            {
+                return "No recent activity";
+            }
+
+            TimeSpan timeSinceLastActivity = DateTime.UtcNow - lastActivity.Value;
+
+            if (timeSinceLastActivity.TotalMinutes < 1)
+                return "Just now";
+            else if (timeSinceLastActivity.TotalMinutes < 60)
+                return $"{Math.Floor(timeSinceLastActivity.TotalMinutes)} minutes ago";
+            else if (timeSinceLastActivity.TotalHours < 24)
+                return $"{Math.Floor(timeSinceLastActivity.TotalHours)} hours ago";
+            else if (timeSinceLastActivity.TotalDays < 7)
+                return $"{Math.Floor(timeSinceLastActivity.TotalDays)} days ago";
+            else if (timeSinceLastActivity.TotalDays < 30)
+                return $"{Math.Floor(timeSinceLastActivity.TotalDays / 7)} weeks ago";
+            else if (timeSinceLastActivity.TotalDays < 365)
+                return $"{Math.Floor(timeSinceLastActivity.TotalDays / 30)} months ago";
+            else
+                return $"{Math.Floor(timeSinceLastActivity.TotalDays / 365)} years ago";
+        }
+
         private Player? Get(string token)
         {
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
+        }
+
+        public bool IsFriend(string receiver_username, string sender_token)
+        {
+            var friends = GetFriends(sender_token);
+            return friends?.Contains(receiver_username) ?? false;
+        }
+
+        public bool HasFriendRequest(string receiver_username, string sender_token)
+        {
+            var friends = GetFriendRequests(sender_token);
+            return friends?.Contains(receiver_username) ?? false;
+        }
+
+        public bool HasSentFriendRequest(string receiver_username, string sender_token)
+        {
+            var friends = GetSentFriendRequests(sender_token);
+            return friends?.Contains(receiver_username) ?? false;
         }
 
         public bool UpdateActivity(string token)

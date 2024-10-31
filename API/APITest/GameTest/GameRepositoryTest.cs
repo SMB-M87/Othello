@@ -179,9 +179,9 @@ namespace APITest.GameTest
         {
             string playerToken = "first123456";
 
-            var respons = _repository.GameRepository.GetGameTokenByPlayersToken(playerToken);
+            var response = _repository.GameRepository.GetGameTokenByPlayersToken(playerToken);
 
-            Assert.That(respons, Is.Null);
+            Assert.That(response, Is.Null);
         }
     }
 }

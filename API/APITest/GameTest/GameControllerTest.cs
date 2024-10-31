@@ -277,13 +277,13 @@ namespace APITest.GameTest
             GameCreation create = new("26");
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("26"), Is.Not.Null);
                 });
             }
@@ -297,12 +297,12 @@ namespace APITest.GameTest
             GameCreation create = new("player");
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("player"), Is.Null);
                 });
             else
@@ -315,12 +315,12 @@ namespace APITest.GameTest
             GameCreation create = new("third");
 
             ActionResult<HttpResponseMessage>? result = _controller.Create(create);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("third"), Is.Not.Null);
                 });
             else
@@ -333,12 +333,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("two", "player");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("player"), Is.Null);
                 });
             else
@@ -351,12 +351,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("join", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
@@ -369,12 +369,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("zero", "fourth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fourth"), Is.Not.Null);
                 });
             else
@@ -387,12 +387,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("second", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
@@ -405,10 +405,10 @@ namespace APITest.GameTest
             PlayerRequest entry = new("zero", "first");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -419,12 +419,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("three", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
@@ -437,12 +437,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("four", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Not.Null);
                 });
             else
@@ -455,12 +455,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("fourth", "player");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("player"), Is.Null);
                 });
             else
@@ -473,12 +473,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("join", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
@@ -491,12 +491,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("first", "fourth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fourth"), Is.Not.Null);
                 });
             else
@@ -509,12 +509,12 @@ namespace APITest.GameTest
             PlayerRequest entry = new("second", "25");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("25"), Is.Null);
                 });
             else
@@ -527,10 +527,10 @@ namespace APITest.GameTest
             PlayerRequest entry = new("first", "first");
 
             ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -539,12 +539,12 @@ namespace APITest.GameTest
         public void Delete_OK()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new ID { Token = "fourth" });
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _repository.GameRepository.GetGameTokenByPlayersToken("fourth"), Is.Null);
                 });
             else
@@ -555,10 +555,10 @@ namespace APITest.GameTest
         public void Delete_Game_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("zero"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -567,10 +567,10 @@ namespace APITest.GameTest
         public void Delete_Player_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("sixteennnn"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -579,10 +579,10 @@ namespace APITest.GameTest
         public void Delete_Playing_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new ID { Token = "second" });
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -593,10 +593,10 @@ namespace APITest.GameTest
             _repository.GameRepository.JoinPlayer(new("zero", "fifth"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Delete(new("fifth"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -649,10 +649,10 @@ namespace APITest.GameTest
         public void GameByPlayerToken_Incorrect()
         {
             ActionResult<string>? result = _controller.GameTokenByPlayerToken("dsahg");
-            string? respons = result?.Value;
+            string? response = result?.Value;
 
-            if (respons is null)
-                Assert.That(actual: respons, Is.EqualTo(expected: null));
+            if (response is null)
+                Assert.That(actual: response, Is.EqualTo(expected: null));
             else
                 Assert.Fail("Respons is not null.");
         }
@@ -686,11 +686,11 @@ namespace APITest.GameTest
             GameMove action = new("second");
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             else
                 Assert.Fail("Respons is null.");
@@ -708,13 +708,13 @@ namespace APITest.GameTest
             });
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _repository.ResultRepository.GetPlayerStats("14"), Is.EqualTo("Wins:0\t\tLosses:1\t\tDraws:0"));
                     Assert.That(actual: _repository.ResultRepository.GetPlayerStats("fifth"), Is.EqualTo("Wins:1\t\tLosses:0\t\tDraws:0"));
                 });
@@ -729,10 +729,10 @@ namespace APITest.GameTest
             GameMove action = new(new("fourth"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -743,10 +743,10 @@ namespace APITest.GameTest
             GameMove action = new(new("zero"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -757,10 +757,10 @@ namespace APITest.GameTest
             GameMove action = new(new("nine"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -771,10 +771,10 @@ namespace APITest.GameTest
             GameMove action = new(new("third"));
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -785,10 +785,10 @@ namespace APITest.GameTest
             GameMove action = new("fourth");
 
             ActionResult<HttpResponseMessage>? result = _controller.Move(action);
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -811,10 +811,10 @@ namespace APITest.GameTest
         public void Pass_FirstPlayer_OK()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("17"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -823,10 +823,10 @@ namespace APITest.GameTest
         public void Pass_SecondPlayer_OK()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("15"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -835,10 +835,10 @@ namespace APITest.GameTest
         public void Pass_Game_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("fourth"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -847,10 +847,10 @@ namespace APITest.GameTest
         public void Pass_Player_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("first"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -859,10 +859,10 @@ namespace APITest.GameTest
         public void Pass_StatusIncorrect_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -871,10 +871,10 @@ namespace APITest.GameTest
         public void Pass_PlayersturnIncorrect_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -883,10 +883,10 @@ namespace APITest.GameTest
         public void Pass_FirstPlayerNonExistant_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -895,10 +895,10 @@ namespace APITest.GameTest
         public void Pass_SecondPlayerNonExistant_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("nine"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -907,10 +907,10 @@ namespace APITest.GameTest
         public void Pass_FirstPlayerPossibleMove_NoTFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -919,10 +919,10 @@ namespace APITest.GameTest
         public void Pass_SecondPlayerIncorrectColor_NotFound()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -937,13 +937,13 @@ namespace APITest.GameTest
             });
 
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("19"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
+            if (response is not null)
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(actual: _repository.ResultRepository.GetPlayerStats("20"), Is.EqualTo("Wins:1\t\tLosses:0\t\tDraws:0"));
                     Assert.That(actual: _repository.ResultRepository.GetPlayerStats("19"), Is.EqualTo("Wins:0\t\tLosses:1\t\tDraws:0"));
                 });
@@ -956,10 +956,10 @@ namespace APITest.GameTest
         public void Forfeit_Game_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("26"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -968,10 +968,10 @@ namespace APITest.GameTest
         public void Forfeit_StatusIncorrect_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("24"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -980,10 +980,10 @@ namespace APITest.GameTest
         public void Forfeit_PlayersturnIncorrect_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("nonexistant"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
@@ -992,10 +992,10 @@ namespace APITest.GameTest
         public void Forfeit_BadRequest()
         {
             ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("24"));
-            HttpResponseMessage? respons = result?.Value;
+            HttpResponseMessage? response = result?.Value;
 
-            if (respons is not null)
-                Assert.That(actual: respons.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }

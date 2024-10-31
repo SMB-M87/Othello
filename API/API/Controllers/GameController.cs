@@ -18,9 +18,9 @@ namespace API.Controllers
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] GameCreation game)
         {
-            var respons = _repository.GameRepository.Create(game);
+            var response = _repository.GameRepository.Create(game);
 
-            if (respons == true)
+            if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
@@ -29,86 +29,86 @@ namespace API.Controllers
         [HttpGet]
         public ActionResult<List<GamePending>> DescriptionsOfPendingGames()
         {
-            var respons = _repository.GameRepository.GetPendingGames();
+            var response = _repository.GameRepository.GetPendingGames();
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("{token}")]
         public ActionResult<string> GameTokenByPlayerToken(string token)
         {
-            var respons = _repository.GameRepository.GetGameTokenByPlayersToken(token);
+            var response = _repository.GameRepository.GetGameTokenByPlayersToken(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("opponent/{token}")]
         public ActionResult<string> OpponentByPlayerToken(string token)
         {
-            var respons = _repository.GameRepository.GetOpponentByPlayersToken(token);
+            var response = _repository.GameRepository.GetOpponentByPlayersToken(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("turn/{token}")]
         public ActionResult<Color> TurnByToken(string token)
         {
-            var respons = _repository.GameRepository.GetPlayersTurnByPlayersToken(token);
+            var response = _repository.GameRepository.GetPlayersTurnByPlayersToken(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("status/{token}")]
         public ActionResult<Status> StatusByToken(string token)
         {
-            var respons = _repository.GameRepository.GetStatusByPlayersToken(token);
+            var response = _repository.GameRepository.GetStatusByPlayersToken(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("color/{token}")]
         public ActionResult<Status> ColorByToken(string token)
         {
-            var respons = _repository.GameRepository.GetColorByPlayersToken(token);
+            var response = _repository.GameRepository.GetColorByPlayersToken(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpGet("board/{token}")]
         public ActionResult<Color[,]> BoardByToken(string token)
         {
-            var respons = _repository.GameRepository.GetBoardByPlayersToken(token);
+            var response = _repository.GameRepository.GetBoardByPlayersToken(token);
 
-            if (respons is null)
+            if (response is null)
                 return NotFound();
 
-            return Ok(respons);
+            return Ok(response);
         }
 
         [HttpPost("join")]
         public ActionResult<HttpResponseMessage> Join([FromBody] PlayerRequest request)
         {
-            var respons = _repository.GameRepository.JoinPlayer(request);
+            var response = _repository.GameRepository.JoinPlayer(request);
 
-            if (respons == true)
+            if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
@@ -131,9 +131,9 @@ namespace API.Controllers
         [HttpPost("pass")]
         public ActionResult<HttpResponseMessage> Pass([FromBody] ID id)
         {
-            var respons = _repository.GameRepository.Pass(id.Token, out string error_message);
+            var response = _repository.GameRepository.Pass(id.Token, out string error_message);
 
-            if (respons)
+            if (response)
             {
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
@@ -153,9 +153,9 @@ namespace API.Controllers
         [HttpPost("forfeit")]
         public ActionResult<HttpResponseMessage> Forfeit([FromBody] ID id)
         {
-            var respons = _repository.GameRepository.Forfeit(id.Token);
+            var response = _repository.GameRepository.Forfeit(id.Token);
 
-            if (respons == true)
+            if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
@@ -164,9 +164,9 @@ namespace API.Controllers
         [HttpPost("delete")]
         public ActionResult<HttpResponseMessage> Delete([FromBody] ID id)
         {
-            var respons = _repository.GameRepository.Delete(id.Token);
+            var response = _repository.GameRepository.Delete(id.Token);
 
-            if (respons == true)
+            if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);

@@ -82,24 +82,17 @@ namespace MVC.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            string stats = await Stats(username);
-            List<GameResult> matchHistory = await MatchHistory(username);
-
             string currentUserId = _userManager.GetUserId(User);
-            string currentUsername = _userManager.GetUserName(User);
-
-            List<string> friends = await Friends(currentUserId);
-            List<string> sentRequests = await SentFriendRequests(currentUsername);
-            List<string> requests = await FriendRequests(currentUserId);
 
             var model = new HomeProfile
             {
-                Stats = stats,
+                Stats = await Stats(username),
                 Username = username,
-                MatchHistory = matchHistory,
-                IsFriend = friends.Contains(username),
-                HasSentRequest = sentRequests.Contains(username),
-                HasPendingRequest = requests.Contains(username)
+                MatchHistory = await MatchHistory(username),
+                IsFriend = await IsFriend(username, currentUserId),
+                HasSentRequest = await HasSentRequest(username, currentUserId),
+                HasPendingRequest = await HasPendingRequest(username, currentUserId),
+                LastSeen = await LastSeen(username)
             };
 
             return View("Profile", model);
@@ -595,6 +588,60 @@ namespace MVC.Controllers
                 };
 
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+            }
+            return result;
+        }
+
+        private async Task<bool> IsFriend(string receiver_username, string sender_token)
+        {
+            var request = receiver_username + " " + sender_token;
+
+            var response = await _httpClient.GetAsync($"api/player/is/friend/{request}");
+            bool result = false;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<bool>();
+            }
+            return result;
+        }
+
+        private async Task<bool> HasSentRequest(string receiver_username, string sender_token)
+        {
+            var request = receiver_username + " " + sender_token;
+
+            var response = await _httpClient.GetAsync($"api/player/has/sent/friend/{request}");
+            bool result = false;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<bool>();
+            }
+            return result;
+        }
+
+        private async Task<bool> HasPendingRequest(string receiver_username, string sender_token)
+        {
+            var request = receiver_username + " " + sender_token;
+
+            var response = await _httpClient.GetAsync($"api/player/has/received/friend/{request}");
+            bool result = false;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<bool>();
+            }
+            return result;
+        }
+
+        private async Task<string> LastSeen(string username)
+        {
+            var response = await _httpClient.GetAsync($"api/player/last/seen/{username}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync() ?? string.Empty;
             }
             return result;
         }
