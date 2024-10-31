@@ -96,7 +96,8 @@ namespace MVC.Controllers
                 {
                     Username = username,
                     Result = await MostRecentGame(username) ?? new(),
-                    Rematch = true
+                    Rematch = true,
+                    Request = string.Empty
                 };
 
                 if (model.Result != null && model.Result.Board != null)
@@ -147,15 +148,8 @@ namespace MVC.Controllers
         public async Task<IActionResult> Partial()
         {
             var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
-            }
-
-            DeleteGameInvites(token);
             var session = HttpContext.Session.GetString("GameCreation");
+            DeleteGameInvites(token);
 
             var model = new HomePartial
             {
@@ -178,6 +172,18 @@ namespace MVC.Controllers
                 SentGameRequests = await SentGameRequests(token)
             };
             return PartialView("_Partial", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Rematch([FromBody] Text text)
+        {
+            var token = _userManager.GetUserId(User);
+
+            var model = new Text
+            {
+                Body = await Rematch(text.Body, token)
+            };
+            return PartialView("_Rematch", model);
         }
 
         [HttpPost]
@@ -668,6 +674,24 @@ namespace MVC.Controllers
             if (response.IsSuccessStatusCode)
             {
                 result = await response.Content.ReadAsStringAsync() ?? string.Empty;
+            }
+            return result;
+        }
+
+        private async Task<string> Rematch(string receiver_username, string sender_token)
+        {
+            var request = receiver_username + " " + sender_token;
+
+            var response = await _httpClient.GetAsync($"api/player/rematch/{request}");
+            string result = string.Empty;
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Unable to fetch rematch data.");
             }
             return result;
         }

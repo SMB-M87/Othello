@@ -138,6 +138,19 @@ namespace API.Data
             return friends?.Contains(receiver_username) ?? false;
         }
 
+        public string? GetRematch(string receiver_username, string sender_token)
+        {
+            var player = Get(sender_token);
+
+            if (player == null) return null;
+
+            var request = player.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == receiver_username);
+
+            if (request == null) return null;
+
+            return request.Username;
+        }
+
         public bool UpdateActivity(string token)
         {
             if (TokenExists(token))

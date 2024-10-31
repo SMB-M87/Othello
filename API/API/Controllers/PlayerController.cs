@@ -149,6 +149,18 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("rematch/{token}")]
+        public ActionResult<string> Rematch(string token)
+        {
+            string[] parts = token.Split(' ');
+            var response = _repository.PlayerRepository.GetRematch(parts[0], parts[1]);
+
+            if (response is null)
+                return NotFound();
+
+            return Ok(response);
+        }
+
         [HttpPost("activity")]
         public ActionResult<HttpResponseMessage> Activity([FromBody] ID id)
         {

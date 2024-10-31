@@ -47,12 +47,31 @@
     </table>
 </div>
 
-<div class="d-flex justify-content-center" style="margin-top: 15px;">
+<div class="d-flex justify-content-center" style="margin-top: 10px;">
     @if (Model != null && Model.Rematch)
     {
-        <button type="submit" class="btn btn-primary" title="Rematch" style="font-size: 24px;" onclick="createGame('@(Model.Result.Winner == Model.Username ? Model.Result.Loser : Model.Result.Winner)')">
-            <i class="fas fa-redo"></i>Rematch
-        </button>
+        <div id="game-rematch-container" class="d-flex flex-column align-items-center justify-content-center" style="text-align: center;">
+            @if (!string.IsNullOrEmpty(Model.Request))
+            {
+                <div class="text-center mb-2">
+                    <span><strong>Rematch requested</strong></span>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center" style="gap: 15px;">
+                    <button type="submit" class="btn btn-success" style="font-size: 20px; margin-right: 5px; line-height: 1;" title="Accept request" onclick="acceptGameRequest('@Model.Request')">
+                        <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+                    </button>
+                    <button type="submit" class="btn btn-danger" style="font-size: 20px; line-height: 1;" title="Decline request" onclick="declineGameRequest('@Model.Request')">
+                        <i class="fas fa-times-circle" style="font-size: 24px;"></i>
+                    </button>
+                </div>
+            }
+        </div>
+        <div id="rematch-button-container">
+            <button type="submit" class="btn btn-primary" title="Rematch" style="font-size: 24px;" onclick="createGame('@(Model.Result.Winner == Model.Username ? Model.Result.Loser : Model.Result.Winner)')">
+                <i class="fas fa-redo"></i>Rematch
+            </button>
+        </div>
     }
     else
     {
@@ -85,4 +104,78 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    function acceptGameRequest(username) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("AcceptGameRequest", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/Game/Play';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function declineGameRequest(username) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("DeclineGameRequest", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    refreshRematch()
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function refreshRematch() {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const gameRematchContainer = document.getElementById("game-rematch-container");
+        const rematchButtonContainer = document.getElementById("rematch-button-container");
+
+        fetch('@Url.Action("Rematch", "Home")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: '@(Model != null && Model.Result.Winner == Model.Username ? Model.Result.Loser : Model?.Result.Winner)' })
+        })
+            .then(response => response.text())
+            .then(data => {
+                gameRematchContainer.innerHTML = data;
+
+                if (gameRematchContainer.innerHTML.includes("Rematch requested")) {
+                    rematchButtonContainer.style.display = "none";
+                } else {
+                    rematchButtonContainer.style.display = "block";
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    setInterval(refreshRematch, 1000);
 </script>

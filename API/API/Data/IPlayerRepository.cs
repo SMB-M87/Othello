@@ -17,6 +17,7 @@ namespace API.Data
         bool IsFriend(string receiver_username, string sender_token);
         bool HasFriendRequest(string receiver_username, string sender_token);
         bool HasSentFriendRequest(string receiver_username, string sender_token);
+        string? GetRematch(string receiver_username, string sender_token);
         bool UpdateActivity(string token);
         bool FriendRequest(string receiver_username, string sender_token);
         bool AcceptFriendRequest(string receiver_username, string sender_token);

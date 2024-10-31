@@ -1,0 +1,19 @@
+﻿@model Text
+
+<div id="game-rematch-container" class="d-flex flex-column align-items-center justify-content-center" style="text-align: center;">
+    @if (!string.IsNullOrEmpty(Model.Body))
+    {
+        <div class="text-center mb-2">
+            <span><strong>Rematch requested</strong></span>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center" style="gap: 15px;">
+            <button type="submit" class="btn btn-success" style="font-size: 20px; margin-right: 5px; line-height: 1;" title="Accept request" onclick="acceptGameRequest('@Model.Body')">
+                <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+            </button>
+            <button type="submit" class="btn btn-danger" style="font-size: 20px; line-height: 1;" title="Decline request" onclick="declineGameRequest('@Model.Body')">
+                <i class="fas fa-times-circle" style="font-size: 24px;"></i>
+            </button>
+        </div>
+    }
+</div>
