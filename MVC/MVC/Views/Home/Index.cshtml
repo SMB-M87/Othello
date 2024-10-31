@@ -299,7 +299,7 @@
                         </div>
                         <div style="display: flex; gap: 10px;">
                             <button type="submit" class="btn btn-primary" onclick="createGame()">Create</button>
-                            <form asp-action="Cancel" method="post">
+                            <form id="cancelForm" asp-action="Cancel" method="post">
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger">Cancel</button>
                             </form>
@@ -335,6 +335,10 @@
         function createGame() {
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
             const description = document.getElementById('descriptionText').value;
+
+            if (description.length < 20 || description.length > 120) {
+                alert("Description must be between 20 and 120 characters.");
+            }
 
             fetch('@Url.Action("CreateGame", "Home")', {
                 method: 'POST',

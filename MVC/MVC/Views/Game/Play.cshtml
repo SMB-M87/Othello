@@ -1,19 +1,102 @@
 ﻿@model MVC.Models.Game
 @Html.AntiForgeryToken()
 
-<div class="d-flex justify-content-center">
-    <h2>Game Details</h2>
+<div class="d-flex justify-content-center" style="margin-top: 20px;">
+    <h2>Playing against <span style="font-weight: bold; color: #007bff;">@Model.Opponent</span></h2>
 </div>
 
-<div class="d-flex justify-content-center">
-    <p>Opponent: @Model.Opponent</p>
+<div class="d-flex justify-content-center" style="margin-top: 10px;">
+    <p>
+        <strong>Your Color:</strong>
+        <span class="player-color-indicator"
+              style="background-color: @(Model.Color == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.Color == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+            @Model.Color
+        </span>
+    </p>
 </div>
-<div class="d-flex justify-content-center">
-    <p>Color: @Model.Color</p>
+
+<div id="players-turn-container" class="d-flex justify-content-center" style="margin-top: 10px;">
+    <div class="d-flex justify-content-center" style="margin-top: 10px;">
+        <p>
+            <strong>Player's turn':</strong>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.Partial.PlayersTurn == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.Partial.PlayersTurn == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                @Model.Partial.PlayersTurn
+            </span>
+        </p>
+    </div>
 </div>
-<div id="players-turn-container" class="d-flex justify-content-center">
-    <p>Turn: @Model?.Partial.PlayersTurn </p>
-</div>
+
+@if (Model.Color == Color.White)
+{
+    <div class="d-flex justify-content-center" style="margin-top: 10px; gap: 20px;">
+        <p>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.Color == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.Color == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                <strong><span id="player-score">0</span></strong>
+            </span>
+        </p>
+        <p>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.Color == Color.White ? "#000000" : "#FFFFFF");
+                     color: @(Model.Color == Color.White ? "#FFFFFF" : "#000000");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                <strong><span id="opponent-score">0</span></strong>
+            </span>
+        </p>
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-center" style="margin-top: 10px; gap: 20px;">
+        <p>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.Color == Color.White ? "#000000" : "#FFFFFF");
+                     color: @(Model.Color == Color.White ? "#FFFFFF" : "#000000");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                <strong><span id="player-score">0</span></strong>
+            </span>
+        </p>
+        <p>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.Color == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.Color == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                <strong><span id="opponent-score">0</span></strong>
+            </span>
+        </p>
+    </div>
+}
 
 <div id="board-container" class="d-flex justify-content-center">
     <table class="table table-bordered" style="width: auto;">
@@ -24,6 +107,7 @@
                 {
                     var cell = Model.Partial.Board[row, col];
                     var cellDisplay = cell == Color.None ? "" : cell.ToString();
+                    var pieceClass = cell == Color.White ? "player-piece" : cell == Color.Black ? "opponent-piece" : "";
                     <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
                         data-row="@row"
                         data-col="@col"
@@ -34,7 +118,7 @@
                         }
                         else
                         {
-                            <i class="fa fa-circle" style="font-size: 30px; color: @(cell.ToString());" );"></i>
+                            <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
                         }
                     </td>
                 }
@@ -121,6 +205,18 @@
     }
 
     function forfeitGame() {
+        const playersTurnIndicator = document.querySelector("#players-turn-container .player-color-indicator");
+        const isPlayersTurn = playersTurnIndicator && playersTurnIndicator.textContent.trim() === "@Model?.Color";
+
+        if (!isPlayersTurn) {
+            alert("You can only forfeit on your turn.");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to forfeit the game?")) {
+            return;
+        }
+
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
         fetch('@Url.Action("Forfeit", "Game")', {
@@ -139,6 +235,28 @@
                 }
             })
             .catch(error => console.error('Error:', error));
+    }
+
+    function calculateScores() {
+        let playerScore = 0;
+        let opponentScore = 0;
+
+        const boardCells = document.querySelectorAll("#board-container td");
+
+        boardCells.forEach(cell => {
+            const piece = cell.querySelector("i");
+
+            if (piece) {
+                if (piece.classList.contains("player-piece")) {
+                    playerScore++;
+                } else if (piece.classList.contains("opponent-piece")) {
+                    opponentScore++;
+                }
+            }
+        });
+
+        document.getElementById("player-score").textContent = playerScore;
+        document.getElementById("opponent-score").textContent = opponentScore;
     }
 
     function refreshContainers() {
@@ -175,6 +293,7 @@
                 const friendsContent = doc.getElementById("board-container");
                 if (friendsContent && boardContainer) {
                     boardContainer.innerHTML = friendsContent.innerHTML;
+                    calculateScores();
                 }
             })
             .catch(error => console.error('Error:', error));
