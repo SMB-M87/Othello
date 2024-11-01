@@ -1,6 +1,12 @@
 ﻿@model List<Game>
 
 <h2>Games</h2>
+
+<form method="get" asp-action="Games">
+    <input type="text" name="searchQuery" placeholder="Search by token" value="@ViewData["SearchQuery"]" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>

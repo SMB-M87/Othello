@@ -54,15 +54,18 @@ namespace MVC.Controllers
             }
         }
 
-        public async Task<IActionResult> Players()
+        public async Task<IActionResult> Players(string searchQuery = "")
         {
             var model = await GetPlayers();
 
-            if (model is not null)
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.OrderByDescending(p => p.LastActivity).ToList();
+                model = model.Where(p => p.Username.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || p.Friends.Any(friend => friend.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
+                                      || p.Requests.Any(request => request.Username.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)))
+                             .ToList();
             }
-
+            model = model?.OrderByDescending(p => p.LastActivity).ToList();
             return View(model);
         }
 
@@ -78,27 +81,32 @@ namespace MVC.Controllers
             return RedirectToAction("Players");
         }
 
-        public async Task<IActionResult> Games()
+        public async Task<IActionResult> Games(string searchQuery = "")
         {
             var model = await GetGames();
 
-            if (model is not null)
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.OrderByDescending(g => g.Date).ToList();
+                model = model.Where(g => g.First.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || (g.Second is not null && g.Second.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
+                                      || (g.Rematch is not null && g.Rematch.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)))
+                             .ToList();
             }
-
+            model = model?.OrderByDescending(g => g.Date).ToList();
             return View(model);
         }
 
-        public async Task<IActionResult> Results()
+        public async Task<IActionResult> Results(string searchQuery = "")
         {
             var model = await GetResults();
 
-            if (model is not null)
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.OrderByDescending(r => r.Date).ToList();
+                model = model.Where(r => r.Winner.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || r.Loser.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                             .ToList();
             }
-
+            model = model?.OrderByDescending(r => r.Date).ToList();
             return View(model);
         }
 

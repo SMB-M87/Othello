@@ -1,6 +1,12 @@
 ﻿@model List<Player>
 
 <h2>Players</h2>
+
+<form method="get" asp-action="Players">
+    <input type="text" name="searchQuery" placeholder="Search by username" value="@ViewData["SearchQuery"]" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -16,7 +22,7 @@
         {
             <tr>
                 <td><a asp-action="Profile" asp-route-token="@player.Token" style="text-decoration: none; color: inherit;">@player.Token</a></td>
-                <td>@player.Username</td>
+                <td><a asp-action="Profile" asp-route-token="@player.Token" style="text-decoration: none; color: inherit;">@player.Username</a></td>
                 <td>@player.LastActivity</td>
                 <td>
                     @if (player.Friends.Count > 0)
