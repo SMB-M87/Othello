@@ -71,6 +71,8 @@ namespace APITest.PlayerTest
                 }
             };
 
+            Player delete = new("deleted", "Deleted");
+
             _repository.PlayerRepository.Create(one);
             _repository.PlayerRepository.Create(two);
             _repository.PlayerRepository.Create(three);
@@ -84,6 +86,7 @@ namespace APITest.PlayerTest
             _repository.PlayerRepository.Create(t11);
             _repository.PlayerRepository.Create(t12);
             _repository.PlayerRepository.Create(t13);
+            _repository.PlayerRepository.Create(delete);
 
 
             Game game0 = new("zero", one.Token);

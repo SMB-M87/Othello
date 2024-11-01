@@ -65,7 +65,7 @@ namespace MVC.Controllers
                 username = User != null && User.Identity != null && User.Identity.Name != null ? User.Identity.Name : string.Empty;
             }
 
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(username) || username == "Deleted")
             {
                 return RedirectToAction("Index", "Home");
             }

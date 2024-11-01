@@ -114,7 +114,7 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> PlayerDelete([FromBody] Text text)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/player/delete", new { Token = text.Body });
+            var response = await _httpClient.PostAsJsonAsync("api/player/delete", new { Token = text.Body });
 
             if (!response.IsSuccessStatusCode)
             {

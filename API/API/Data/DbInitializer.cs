@@ -200,8 +200,9 @@ namespace API.Data
                     new(Inquiry.Friend, "Rachel")
                 }
             };
+            Player delete = new("deleted", "Deleted");
 
-            _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten, eleven, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23);
+            _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten, eleven, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, delete);
 
             Game game0 = new("zero", one.Token, Color.Black);
 

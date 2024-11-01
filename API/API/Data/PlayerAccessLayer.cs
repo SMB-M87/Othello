@@ -388,6 +388,56 @@ namespace API.Data
 
             if (player is not null)
             {
+                var requestsToRemove = player.Requests.ToList();
+                foreach (Request request in requestsToRemove)
+                {
+                    player.Requests.Remove(request);
+                }
+
+                var friendsToRemove = player.Friends.ToList();
+                foreach (string friend in friendsToRemove)
+                {
+                    DeleteFriend(friend, player.Token);
+                }
+
+                var players = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username)).ToList();
+                
+                foreach (Player gamer in players)
+                {
+                    var requestFriend = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Friend && r.Username == player.Username);
+                    if (requestFriend != null)
+                    {
+                        gamer.Requests.Remove(requestFriend);
+                        _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                    }
+
+                    var requestGame = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username);
+
+                    if (requestGame != null)
+                    {
+                        gamer.Requests.Remove(requestGame);
+                        _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                    }
+                    _context.SaveChanges();
+                }
+
+                var results = _context.Results.ToList().FindAll(r => r.Winner == player.Token || r.Loser == player.Token).ToList();
+
+                foreach (GameResult result in results)
+                {
+                    if (result.Winner == player.Token)
+                    {
+                        result.Winner = "deleted";
+                        _context.Entry(result).Property(p => p.Winner).IsModified = true;
+                    }
+                    else
+                    {
+                        result.Loser = "deleted";
+                        _context.Entry(result).Property(p => p.Loser).IsModified = true;
+                    }
+                    _context.SaveChanges();
+                }
+
                 _context.Players.Remove(player);
                 _context.SaveChanges();
                 return true;
