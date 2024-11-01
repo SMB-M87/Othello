@@ -20,5 +20,6 @@ namespace API.Data
         bool Pass(string player_token, out string error_message);
         bool Forfeit(string player_token);
         bool Delete(string player_token);
+        bool PermDelete(string token);
     }
 }

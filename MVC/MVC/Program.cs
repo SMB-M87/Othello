@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC.Data;
@@ -12,6 +13,7 @@ builder.Logging.AddConsole();
 var connectionString = builder.Configuration.GetConnectionString("MVC");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -73,6 +75,8 @@ builder.Services.AddHttpClient("ApiClient", client =>
     };
     return handler;
 });
+
+builder.Services.AddSingleton<IEmailSender, NullEmailSender>();
 
 builder.Services.AddRazorPages();
 

@@ -28,15 +28,36 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("player/edit")]
-        public ActionResult<HttpResponseMessage> EditPlayer([FromBody] ID id)
+        [HttpGet("player/{token}")]
+        public ActionResult<List<Player>> GetPlayer(string token)
         {
-            var response = _repository.PlayerRepository.Delete(id.Token);
+            var response = _repository.PlayerRepository.Get(token);
 
-            if (response == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            if (response is null)
+                return NotFound();
+
+            List<Player> result = new()
+            {
+                response
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet("player/name/{username}")]
+        public ActionResult<List<Player>> GetPlayerByName(string username)
+        {
+            var response = _repository.PlayerRepository.GetByName(username);
+
+            if (response is null)
+                return NotFound();
+
+            List<Player> result = new()
+            {
+                response
+            };
+
+            return Ok(result);
         }
 
         [HttpPost("player/delete")]
@@ -61,21 +82,10 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("game/edit")]
-        public ActionResult<HttpResponseMessage> EditGame([FromBody] ID id)
-        {
-            var response = _repository.GameRepository.Delete(id.Token);
-
-            if (response == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-        }
-
         [HttpPost("game/delete")]
         public ActionResult<HttpResponseMessage> DeleteGame([FromBody] ID id)
         {
-            var response = _repository.GameRepository.Delete(id.Token);
+            var response = _repository.GameRepository.PermDelete(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -94,26 +104,15 @@ namespace API.Controllers
             return Ok(response);
         }
 
-/*        [HttpPost("result/edit")]
-        public ActionResult<HttpResponseMessage> EditResult([FromBody] ID id)
+        [HttpPost("result/delete")]
+        public ActionResult<HttpResponseMessage> DeleteResult([FromBody] ID id)
         {
-            var response = _repository.ResultRepository.Get(id.Token);
+            var response = _repository.ResultRepository.Delete(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
-
-        [HttpPost("result/delete")]
-        public ActionResult<HttpResponseMessage> DeleteResult([FromBody] ID id)
-        {
-            var response = _repository.ResultRepository.Get(id.Token);
-
-            if (response == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-        }*/
     }
 }

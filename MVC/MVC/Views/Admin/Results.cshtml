@@ -1,0 +1,62 @@
+﻿@model List<GameResult>
+@Html.AntiForgeryToken()
+
+<h2>Game Results</h2>
+
+<form method="get" asp-action="Results">
+    <input type="text" name="searchQuery" placeholder="Search by player token" value="@ViewData["SearchQuery"]" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Winner</th>
+            <th>Loser</th>
+            <th>Draw</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var result in Model)
+        {
+            <tr>
+                <td>@result.Token</td>
+                <td><a asp-action="Profile" asp-route-token="@result.Winner" style="text-decoration: none; color: inherit;">@result.Winner</a></td>
+                <td><a asp-action="Profile" asp-route-token="@result.Loser" style="text-decoration: none; color: inherit;">@result.Loser</a></td>
+                <td>@result.Draw</td>
+                <td>@result.Date</td>
+                <td>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="deleteResult('@result.Token')">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function deleteResult(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("ResultDelete", "Admin")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>

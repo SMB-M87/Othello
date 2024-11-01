@@ -1,12 +1,21 @@
 ﻿@model List<Player>
+@Html.AntiForgeryToken()
 
-<h2>Manage Players</h2>
+<h2>Players</h2>
+
+<form method="get" asp-action="Players">
+    <input type="text" name="searchQuery" placeholder="Search by token or username" value="@ViewData["SearchQuery"]" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
 
 <table class="table">
     <thead>
         <tr>
+            <th>Token</th>
             <th>Username</th>
-            <th>Last Active</th>
+            <th>Last Activity</th>
+            <th>Friends</th>
+            <th>Requests</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -14,13 +23,72 @@
         @foreach (var player in Model)
         {
             <tr>
-                <td>@player.Username</td>
+                <td><a asp-action="Profile" asp-route-token="@player.Token" style="text-decoration: none; color: inherit;">@player.Token</a></td>
+                <td><a asp-action="Profile" asp-route-token="@player.Token" style="text-decoration: none; color: inherit;">@player.Username</a></td>
                 <td>@player.LastActivity</td>
                 <td>
-                    <a asp-action="EditPlayer" asp-route-id="@player">Edit</a> |
-                    <a asp-action="DeletePlayer" asp-route-id="@player">Delete</a>
+                    @if (player.Friends.Count > 0)
+                    {
+                        @foreach (var friend in player.Friends)
+                        {
+                            <a asp-action="Profile" asp-route-token="@friend" style="text-decoration: none; color: inherit;">
+                                @friend
+                            </a>
+
+                            @(friend != player.Friends.Last() ? ", " : "")
+                        }
+                    }
+                    else
+                    {
+                        <span>empty</span>
+                    }
+                </td>
+                <td>
+                    @if (player.Requests.Count > 0)
+                    {
+                        @foreach (var request in player.Requests)
+                        {
+                            <a asp-action="Profile" asp-route-token="@request.Username" style="text-decoration: none; color: inherit;">
+                                @request.Username
+                            </a>
+
+                            @(request != player.Requests.Last() ? ", " : "")
+                        }
+                    }
+                    else
+                    {
+                        <span>empty</span>
+                    }
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="deletePlayer('@player.Token')">Delete</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    function deletePlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("PlayerDelete", "Admin")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>

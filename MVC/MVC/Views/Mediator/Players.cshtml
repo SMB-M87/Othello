@@ -3,7 +3,7 @@
 <h2>Players</h2>
 
 <form method="get" asp-action="Players">
-    <input type="text" name="searchQuery" placeholder="Search by username" value="@ViewData["SearchQuery"]" />
+    <input type="text" name="searchQuery" placeholder="Search by token or username" value="@ViewData["SearchQuery"]" />
     <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
@@ -42,11 +42,21 @@
                     }
                 </td>
                 <td>
-                    @foreach (var request in player.Requests)
+                    @if (player.Requests.Count > 0)
                     {
-                        <div><a asp-action="Profile" asp-route-token="@request.Username" style="text-decoration: none; color: inherit;">@request.Username</a> - @request.Type - @request.Date</div>
+                        @foreach (var request in player.Requests)
+                        {
+                            <a asp-action="Profile" asp-route-token="@request.Username" style="text-decoration: none; color: inherit;">
+                                @request.Username
+                            </a>
+
+                            @(request != player.Requests.Last() ? ", " : "")
+                        }
                     }
-                    @(player.Requests.Count <= 0 ? "empty" : "")
+                    else
+                    {
+                        <span>empty</span>
+                    }
                 </td>
             </tr>
         }

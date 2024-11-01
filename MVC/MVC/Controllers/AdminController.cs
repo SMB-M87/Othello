@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MVC.Controllers
 {
@@ -53,16 +55,17 @@ namespace MVC.Controllers
             }
         }
 
-
-        public async Task<IActionResult> Players()
+        public async Task<IActionResult> Players(string searchQuery = "")
         {
             var model = await GetPlayers();
 
-            if (model is not null)
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.OrderByDescending(p => p.LastActivity).ToList();
+                model = model.Where(p => p.Username.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || p.Token.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
+                             .ToList();
             }
-
+            model = model?.OrderByDescending(p => p.LastActivity).ToList();
             return View(model);
         }
 
@@ -72,77 +75,119 @@ namespace MVC.Controllers
 
             if (model is not null)
             {
-                return View(model);
+                return View("Profile", model);
             }
+
             return RedirectToAction("Players");
         }
 
-        public async Task<IActionResult> Games()
+        public async Task<IActionResult> Games(string searchQuery = "")
         {
             var model = await GetGames();
 
-            if (model is not null)
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.OrderByDescending(g => g.Date).ToList();
+                model = model.Where(g => g.First.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || (g.Second is not null && g.Second.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
+                                      || (g.Rematch is not null && g.Rematch.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)))
+                             .ToList();
             }
-
+            model = model?.OrderByDescending(g => g.Date).ToList();
             return View(model);
         }
 
-        public async Task<IActionResult> Results()
+        public async Task<IActionResult> Results(string searchQuery = "")
         {
             var model = await GetResults();
 
-            if (model is not null)
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.OrderByDescending(r => r.Date).ToList();
+                model = model.Where(r => r.Winner.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || r.Loser.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                             .ToList();
             }
-
+            model = model?.OrderByDescending(r => r.Date).ToList();
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> PlayerDelete([FromBody] Text text)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/admin/player/delete", new { Token = text.Body });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to delete player." });
+            }
+            return Json(new { success = true, message = "Player deleted." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> GameDelete([FromBody] Text text)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/admin/game/delete", new { Token = text.Body });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to delete game." });
+            }
+            return Json(new { success = true, message = "Game deleted." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> ResultDelete([FromBody] Text text)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/admin/result/delete", new { Token = text.Body});
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to delete result." });
+            }
+            return Json(new { success = true, message = "Result deleted." });
         }
 
         private async Task<List<Player>> GetPlayers()
         {
-            var response = await _httpClient.GetAsync("api/mediator/player");
+            var response = await _httpClient.GetAsync("api/admin/player");
             List<Player> result = new();
 
             if (response.IsSuccessStatusCode)
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
-
-                result = await response.Content.ReadFromJsonAsync<List<Player>>(options) ?? new();
+                result = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
             }
             return result;
         }
 
-        private async Task<Player> GetPlayer(string token)
+        private async Task<Player?> GetPlayer(string token)
         {
-            var response = await _httpClient.GetAsync($"api/mediator/player/{token}");
+            var response = await _httpClient.GetAsync($"api/admin/player/{token}");
             Player result = new();
 
             if (!response.IsSuccessStatusCode)
-                response = await _httpClient.GetAsync($"api/mediator/player/name/{token}");
+                response = await _httpClient.GetAsync($"api/admin/player/name/{token}");
 
             if (response.IsSuccessStatusCode)
             {
                 var options = new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
+                    Converters =
+                    {
+                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                    }
                 };
-
-                result = await response.Content.ReadFromJsonAsync<Player>(options) ?? new();
+                var resultList = await response.Content.ReadFromJsonAsync<List<Player>>(options);
+                result = resultList?.FirstOrDefault() ?? new();
             }
             return result;
         }
 
         private async Task<List<Game>> GetGames()
         {
-            var response = await _httpClient.GetAsync("api/mediator/game");
+            var response = await _httpClient.GetAsync("api/admin/game");
             List<Game> result = new();
 
             if (response.IsSuccessStatusCode)
@@ -160,7 +205,7 @@ namespace MVC.Controllers
 
         private async Task<List<GameResult>> GetResults()
         {
-            var response = await _httpClient.GetAsync("api/mediator/result");
+            var response = await _httpClient.GetAsync("api/admin/result");
             List<GameResult> result = new();
 
             if (response.IsSuccessStatusCode)

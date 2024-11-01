@@ -106,5 +106,18 @@ namespace API.Data
             }
             return null;
         }
+
+        public bool Delete(string token)
+        {
+            var result = Get(token);
+
+            if (result is not null)
+            {
+                _context.Results.Remove(result);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }

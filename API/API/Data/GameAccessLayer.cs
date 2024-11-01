@@ -434,5 +434,23 @@ namespace API.Data
             }
             return false;
         }
+
+        private Game? Get(string token)
+        {
+            return _context.Games.FirstOrDefault(g => g.Token.Equals(token));
+        }
+
+        public bool PermDelete(string token)
+        {
+            var game = Get(token);
+
+            if (game is not null)
+            {
+                _context.Games.Remove(game);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }

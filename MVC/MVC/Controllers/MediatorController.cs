@@ -61,8 +61,7 @@ namespace MVC.Controllers
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 model = model.Where(p => p.Username.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)
-                                      || p.Friends.Any(friend => friend.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
-                                      || p.Requests.Any(request => request.Username.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)))
+                                      || p.Token.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
                              .ToList();
             }
             model = model?.OrderByDescending(p => p.LastActivity).ToList();
