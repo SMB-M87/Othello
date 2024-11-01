@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using System.Numerics;
 
 namespace API.Data
 {
@@ -21,6 +22,7 @@ namespace API.Data
             if (!TokenExists(player.Token) && !UsernameExists(player.Username))
             {
                 _context.Players.Add(player);
+                UpdateActivity(player.Token);
                 _context.SaveChanges();
                 return true;
             }
@@ -183,6 +185,7 @@ namespace API.Data
                 !sender.Requests.Any(p => p.Username == receiver.Username && p.Type == Inquiry.Friend))
             {
                 receiver.Requests.Add(new(Inquiry.Friend, sender.Username));
+                UpdateActivity(sender_token);
                 _context.Entry(receiver).Property(g => g.Requests).IsModified = true;
                 _context.SaveChanges();
                 return true;
@@ -208,6 +211,7 @@ namespace API.Data
 
                     sender.Requests.Remove(request);
                     sender.Friends.Add(receiver.Username);
+                    UpdateActivity(sender_token);
                     _context.Entry(sender).Property(p => p.Friends).IsModified = true;
                     _context.Entry(sender).Property(p => p.Requests).IsModified = true;
                     _context.SaveChanges();
@@ -231,6 +235,7 @@ namespace API.Data
                 if (request is not null)
                 {
                     sender.Requests.Remove(request);
+                    UpdateActivity(sender_token);
                     _context.Entry(sender).Property(p => p.Requests).IsModified = true;
                     _context.SaveChanges();
                     return true;
@@ -258,6 +263,7 @@ namespace API.Data
                 !receiver.Requests.Any(p => p.Username == sender.Username && p.Type == Inquiry.Game))
             {
                 receiver.Requests.Add(new(Inquiry.Game, sender.Username));
+                UpdateActivity(sender_token);
                 _context.Entry(receiver).Property(p => p.Requests).IsModified = true;
                 _context.SaveChanges();
                 return true;
@@ -276,6 +282,8 @@ namespace API.Data
                 if (game is not null)
                 {
                     game.SetSecondPlayer(sender_token);
+                    UpdateActivity(game.First);
+                    UpdateActivity(sender_token);
                     _context.Entry(game).Property(g => g.Status).IsModified = true;
                     _context.Entry(game).Property(g => g.Second).IsModified = true;
                     _context.SaveChanges();
@@ -322,6 +330,7 @@ namespace API.Data
                 if (request is not null)
                 {
                     sender.Requests.Remove(request);
+                    UpdateActivity(sender_token);
                     _context.Entry(sender).Property(p => p.Requests).IsModified = true;
                     _context.SaveChanges();
                     return true;
@@ -338,6 +347,7 @@ namespace API.Data
             if (receiver is not null && sender is not null)
             {
                 sender.Friends.Remove(receiver.Username);
+                UpdateActivity(sender_token);
                 _context.Entry(sender).Property(p => p.Friends).IsModified = true;
                 receiver.Friends.Remove(sender.Username);
                 _context.Entry(receiver).Property(p => p.Friends).IsModified = true;
@@ -377,6 +387,7 @@ namespace API.Data
                         _context.SaveChanges();
                     }
                 }
+                UpdateActivity(token);
                 return true;
             }
             return false;

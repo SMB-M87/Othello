@@ -21,7 +21,10 @@ namespace API.Controllers
             var response = _repository.GameRepository.Create(game);
 
             if (response == true)
+            {
+                _repository.PlayerRepository.UpdateActivity(game.PlayerToken);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
@@ -120,7 +123,10 @@ namespace API.Controllers
             var response = _repository.GameRepository.JoinPlayer(request);
 
             if (response == true)
+            {
+                _repository.PlayerRepository.UpdateActivity(request.SenderToken);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
@@ -131,7 +137,10 @@ namespace API.Controllers
             var (succeded, error) = _repository.GameRepository.Move(action);
 
             if (succeded)
+            {
+                _repository.PlayerRepository.UpdateActivity(action.PlayerToken);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
@@ -146,6 +155,7 @@ namespace API.Controllers
 
             if (response)
             {
+                _repository.PlayerRepository.UpdateActivity(id.Token);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else if (!string.IsNullOrEmpty(error_message))
@@ -167,7 +177,10 @@ namespace API.Controllers
             var response = _repository.GameRepository.Forfeit(id.Token);
 
             if (response == true)
+            {
+                _repository.PlayerRepository.UpdateActivity(id.Token);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
@@ -178,7 +191,10 @@ namespace API.Controllers
             var response = _repository.GameRepository.Delete(id.Token);
 
             if (response == true)
+            {
+                _repository.PlayerRepository.UpdateActivity(id.Token);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+            }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }

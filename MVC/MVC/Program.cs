@@ -111,7 +111,6 @@ app.UseAuthorization();
 app.UseSession();
 
 app.UseMiddleware<URLManager>();
-app.UseMiddleware<UpdateActivity>();
 
 app.UseEndpoints(endpoints =>
 {
