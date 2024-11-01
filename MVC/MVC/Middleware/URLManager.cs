@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MVC.Models;
 
 namespace MVC.Middleware
 {
@@ -47,7 +48,19 @@ namespace MVC.Middleware
                     }
                     else
                     {
-                        if (currentPath is not null && (!currentPath.Contains("/home") && !currentPath.Contains("/account")))
+                        if (user.IsInRole(Roles.Administrator) && currentPath is not null && 
+                           !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/admin"))
+                        {
+                            context.Response.Redirect($"/Home/Index");
+                            return;
+                        }
+                        else if (user.IsInRole(Roles.Mediator) && currentPath is not null && 
+                            !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mediator"))
+                        {
+                            context.Response.Redirect($"/Home/Index");
+                            return;
+                        }
+                        else if (user.IsInRole(Roles.Player) && currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
                         {
                             context.Response.Redirect($"/Home/Index");
                             return;

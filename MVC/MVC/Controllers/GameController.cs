@@ -23,7 +23,7 @@ namespace MVC.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var model = new Game
+                var model = new GamePlay
                 {
                     Opponent = await Opponent(token),
                     Color = await Color(token),

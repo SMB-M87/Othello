@@ -1,0 +1,26 @@
+﻿@model List<Player>
+
+<h2>Manage Players</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Last Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@player.Username</td>
+                <td>@player.LastActivity</td>
+                <td>
+                    <a asp-action="EditPlayer" asp-route-id="@player">Edit</a> |
+                    <a asp-action="DeletePlayer" asp-route-id="@player">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,6 +1,8 @@
 using API.Controllers;
 using API.Data;
 using API.Models;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,8 @@ builder.Services
     .AddTransient<GameController>()
     .AddTransient<ResultController>()
     .AddTransient<PlayerController>()
+    .AddTransient<MediatorController>()
+    .AddTransient<AdminController>()
     .AddControllers()
     .AddJsonOptions(options =>
     {
@@ -25,15 +29,22 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowedOriginsPolicy", builder =>
+builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+    .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
-        builder.WithOrigins("https://yourmvcapp.com")
-               .AllowAnyHeader()
-               .AllowAnyMethod();
+        options.Cookie.Name = ".AspNet.SharedAuthCookie";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+        options.Cookie.Domain = "localhost";
+        options.Cookie.Path = "/";
     });
-});
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
+    .SetApplicationName("Othello");
 
 var app = builder.Build();
 
@@ -46,8 +57,6 @@ else
 {
     app.UseHsts();
 
-    app.UseCors("AllowedOriginsPolicy");
-
     app.Use(async (context, next) =>
     {
         context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
@@ -58,6 +67,8 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

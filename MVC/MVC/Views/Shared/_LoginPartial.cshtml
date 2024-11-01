@@ -5,20 +5,20 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (User.IsInRole("administrator") || User.IsInRole("mediator"))
+        @if (User.IsInRole(Roles.Administrator) || User.IsInRole(Roles.Mediator))
         {
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="dashboardDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Dashboard
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dashboardDropdown">
-                    @if (User.IsInRole("administrator"))
+                    @if (User.IsInRole(Roles.Administrator))
                     {
                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Players">Players</a></li>
                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Games">Games</a></li>
                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Results">Results</a></li>
                     }
-                    @if (User.IsInRole("mediator"))
+                    @if (User.IsInRole(Roles.Mediator))
                     {
                         <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Players">Players</a></li>
                         <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Games">Games</a></li>

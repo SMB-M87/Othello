@@ -6,6 +6,7 @@ namespace API.Data
     {
         bool Create(GameResult result);
         GameResult? Get(string token);
+        List<GameResult> GetResults();
         string? GetPlayerStats(string player_token);
         List<GameResult>? GetPlayersMatchHistory(string player_token);
     }

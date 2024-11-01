@@ -1,0 +1,26 @@
+﻿@model List<GameResult>
+
+<h2>Game Results</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Winner</th>
+            <th>Loser</th>
+            <th>Draw</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var result in Model)
+        {
+            <tr>
+                <td>@result.Token</td>
+                <td>@result.Winner</td>
+                <td>@result.Loser</td>
+                <td>@result.Draw</td>
+                <td>@result.Date</td>
+            </tr>
+        }
+    </tbody>
+</table>

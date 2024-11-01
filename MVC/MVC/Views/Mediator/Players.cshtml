@@ -1,0 +1,33 @@
+﻿@model List<Player>
+
+<h2>Players</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Username</th>
+            <th>Last Activity</th>
+            <th>Friends</th>
+            <th>Requests</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@player.Token</td>
+                <td>@player.Username</td>
+                <td>@player.LastActivity</td>
+                <td>
+                    @string.Join(", ", player.Friends)
+                </td>
+                <td>
+                    @foreach (var request in player.Requests)
+                    {
+                        <div>@request.Username - @request.Type - @request.Date</div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

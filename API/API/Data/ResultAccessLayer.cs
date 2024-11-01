@@ -24,6 +24,11 @@ namespace API.Data
             return null;
         }
 
+        public List<GameResult> GetResults()
+        {
+            return _context.Results.ToList();
+        }
+
         public bool Create(GameResult result)
         {
             var request = Get(result.Token);

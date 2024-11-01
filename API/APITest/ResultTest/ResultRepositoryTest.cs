@@ -1,7 +1,6 @@
 ﻿using API.Data;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
-using static Azure.Core.HttpHeader;
 
 namespace APITest.ResultTest
 {

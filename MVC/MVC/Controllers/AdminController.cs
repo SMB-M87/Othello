@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MVC.Models;
 
 namespace MVC.Controllers
 {
-    [Authorize(Roles = "administrator")]
+    [Authorize(Roles = Roles.Administrator)]
     public class AdminController : Controller
     {
         private readonly HttpClient _httpClient;

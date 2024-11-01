@@ -1,0 +1,36 @@
+﻿@model List<Game>
+
+<h2>Games</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Players Turn</th>
+            <th>First Player</th>
+            <th>First Player Color</th>
+            <th>Second Player</th>
+            <th>Second Player Color</th>
+            <th>Rematch</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Model)
+        {
+            <tr>
+                <td>@game.Token</td>
+                <td>@game.Description</td>
+                <td>@game.Status</td>
+                <td>@game.PlayersTurn</td>
+                <td>@game.First</td>
+                <td>@game.FColor</td>
+                <td>@game.Second</td>
+                <td>@game.SColor</td>
+                <td>@game.Rematch</td>
+                <td>@game.Date</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -14,6 +14,7 @@ namespace API.Data
         List<string>? GetSentFriendRequests(string token);
         List<string>? GetSentGameRequests(string token);
         string? GetLastActivity(string username);
+        List<Player> GetPlayers();
         bool IsFriend(string receiver_username, string sender_token);
         bool HasFriendRequest(string receiver_username, string sender_token);
         bool HasSentFriendRequest(string receiver_username, string sender_token);

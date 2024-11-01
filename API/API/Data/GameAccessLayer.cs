@@ -89,7 +89,7 @@ namespace API.Data
             }
         }
 
-        private List<Game>? GetGames()
+        public List<Game> GetGames()
         {
             return _context.Games.ToList();
         }

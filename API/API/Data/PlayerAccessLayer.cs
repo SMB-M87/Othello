@@ -1,5 +1,4 @@
 ﻿using API.Models;
-using System.Numerics;
 
 namespace API.Data
 {
@@ -28,7 +27,7 @@ namespace API.Data
             return false;
         }
 
-        private List<Player>? GetPlayers()
+        public List<Player> GetPlayers()
         {
             return _context.Players.ToList();
         }

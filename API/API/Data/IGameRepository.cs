@@ -14,6 +14,7 @@ namespace API.Data
         Color? GetColorByPlayersToken(string player_token);
         Color[,]? GetBoardByPlayersToken(string player_token);
         string? GetTimerByPlayersToken(string player_token);
+        List<Game> GetGames();
         bool JoinPlayer(PlayerRequest entry);
         (bool succeded, string? error) Move(GameMove action);
         bool Pass(string player_token, out string error_message);
