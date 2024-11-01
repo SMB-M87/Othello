@@ -114,7 +114,7 @@ namespace API.Data
                 return $"{Math.Floor(timeSinceLastActivity.TotalDays / 365)} years ago";
         }
 
-        private Player? Get(string token)
+        public Player? Get(string token)
         {
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
         }
@@ -167,14 +167,14 @@ namespace API.Data
             return false;
         }
 
-        private Player? GetByUsername(string username)
+        public Player? GetByName(string username)
         {
             return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
         }
 
         public bool FriendRequest(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
 
             if (receiver is not null && sender is not null &&
@@ -192,7 +192,7 @@ namespace API.Data
 
         public bool AcceptFriendRequest(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
 
             if (receiver is not null && sender is not null &&
@@ -219,7 +219,7 @@ namespace API.Data
 
         public bool DeclineFriendRequest(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
 
             if (receiver is not null && sender is not null &&
@@ -248,7 +248,7 @@ namespace API.Data
 
         public bool GameRequest(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
             DateTime now = DateTime.UtcNow;
 
@@ -287,7 +287,7 @@ namespace API.Data
 
         public bool AcceptGameRequest(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
             DateTime now = DateTime.UtcNow;
 
@@ -311,7 +311,7 @@ namespace API.Data
 
         public bool DeclineGameRequest(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
 
             if (receiver is not null && sender is not null &&
@@ -332,7 +332,7 @@ namespace API.Data
 
         public bool DeleteFriend(string receiver_username, string sender_token)
         {
-            var receiver = GetByUsername(receiver_username);
+            var receiver = GetByName(receiver_username);
             var sender = Get(sender_token);
 
             if (receiver is not null && sender is not null)

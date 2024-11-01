@@ -15,17 +15,32 @@
         @foreach (var player in Model)
         {
             <tr>
-                <td>@player.Token</td>
+                <td><a asp-action="Profile" asp-route-token="@player.Token" style="text-decoration: none; color: inherit;">@player.Token</a></td>
                 <td>@player.Username</td>
                 <td>@player.LastActivity</td>
                 <td>
-                    @string.Join(", ", player.Friends)
+                    @if (player.Friends.Count > 0)
+                    {
+                        @foreach (var friend in player.Friends)
+                        {
+                            <a asp-action="Profile" asp-route-token="@friend" style="text-decoration: none; color: inherit;">
+                                @friend
+                            </a>
+
+                            @(friend != player.Friends.Last() ? ", " : "")
+                        }
+                    }
+                    else
+                    {
+                        <span>empty</span>
+                    }
                 </td>
                 <td>
                     @foreach (var request in player.Requests)
                     {
-                        <div>@request.Username - @request.Type - @request.Date</div>
+                        <div><a asp-action="Profile" asp-route-token="@request.Username" style="text-decoration: none; color: inherit;">@request.Username</a> - @request.Type - @request.Date</div>
                     }
+                    @(player.Requests.Count <= 0 ? "empty" : "")
                 </td>
             </tr>
         }

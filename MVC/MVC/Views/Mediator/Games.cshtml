@@ -7,11 +7,11 @@
             <th>Token</th>
             <th>Description</th>
             <th>Status</th>
-            <th>Players Turn</th>
-            <th>First Player</th>
-            <th>First Player Color</th>
-            <th>Second Player</th>
-            <th>Second Player Color</th>
+            <th>Turn</th>
+            <th>First</th>
+            <th>FColor</th>
+            <th>Second</th>
+            <th>SColor</th>
             <th>Rematch</th>
             <th>Date</th>
         </tr>
@@ -24,11 +24,33 @@
                 <td>@game.Description</td>
                 <td>@game.Status</td>
                 <td>@game.PlayersTurn</td>
-                <td>@game.First</td>
+                <td><a asp-action="Profile" asp-route-token="@game.First" style="text-decoration: none; color: inherit;">@game.First</a></td>
                 <td>@game.FColor</td>
-                <td>@game.Second</td>
+                <td>
+                    @if (game.Second != null)
+                    {
+                        <a asp-action="Profile" asp-route-token="@game.Second" style="text-decoration: none; color: inherit;">
+                            @game.Second
+                        </a>
+                    }
+                    else
+                    {
+                        <span>null</span>
+                    }
+                </td>
                 <td>@game.SColor</td>
-                <td>@game.Rematch</td>
+                <td>
+                    @if (game.Rematch != null)
+                    {
+                        <a asp-action="Profile" asp-route-token="@game.Rematch" style="text-decoration: none; color: inherit;">
+                            @game.Rematch
+                        </a>
+                    }
+                    else
+                    {
+                        <span>null</span>
+                    }
+                </td>
                 <td>@game.Date</td>
             </tr>
         }

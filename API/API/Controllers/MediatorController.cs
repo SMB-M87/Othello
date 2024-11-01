@@ -28,6 +28,38 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("player/{token}")]
+        public ActionResult<List<Player>> GetPlayer(string token)
+        {
+            var response = _repository.PlayerRepository.Get(token);
+
+            if (response is null)
+                return NotFound();
+
+            List<Player> result = new()
+            {
+                response
+            };
+
+            return Ok(result);
+        }
+
+        [HttpGet("player/name/{username}")]
+        public ActionResult<List<Player>> GetPlayerByName(string username)
+        {
+            var response = _repository.PlayerRepository.GetByName(username);
+
+            if (response is null)
+                return NotFound();
+
+            List<Player> result = new()
+            {
+                response
+            };
+
+            return Ok(result);
+        }
+
         [HttpGet("game")]
         public ActionResult<List<Game>> GetGames()
         {
