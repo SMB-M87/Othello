@@ -70,6 +70,33 @@ namespace API.Data
                 SentGameRequests = GetSentGameRequests(token) ?? new()
             };
 
+            if (game != null && game.Rematch != null)
+            {
+                var player = GetPlayer(game.Rematch);
+                var creator = GetPlayer(token);
+
+                if (player is not null && creator is not null && !player.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game))
+                {
+                    _context.Games.Remove(game);
+
+                    var playersWithGameRequests = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game)).ToList();
+
+                    foreach (var gamer in playersWithGameRequests)
+                    {
+                        var request = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == creator.Username);
+
+                        if (request != null)
+                        {
+                            gamer.Requests.Remove(request);
+                            _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                        }
+                    }
+                    model.Pending.InGame = false;
+                    model.Pending.Status = string.Empty;
+                    _context.SaveChanges();
+                }
+            }
+
             return model;
         }
 
@@ -87,6 +114,11 @@ namespace API.Data
             };
 
             return profile;
+        }
+
+        private Player? GetPlayer(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token == token);
         }
 
         private string? GetPlayersName(string token)

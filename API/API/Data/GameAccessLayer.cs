@@ -1,6 +1,4 @@
 ﻿using API.Models;
-using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace API.Data
 {

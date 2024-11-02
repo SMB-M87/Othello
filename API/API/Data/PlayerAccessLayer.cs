@@ -1,5 +1,4 @@
 ﻿using API.Models;
-using System.Numerics;
 
 namespace API.Data
 {
@@ -283,7 +282,7 @@ namespace API.Data
                 }
 
                 var players = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username)).ToList();
-                
+
                 foreach (Player gamer in players)
                 {
                     var requestFriend = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Friend && r.Username == player.Username);

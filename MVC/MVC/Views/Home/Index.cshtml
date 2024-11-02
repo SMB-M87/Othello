@@ -570,6 +570,7 @@
             const onlinePlayersContainer = document.getElementById("online-players-container");
             const friendsContainer = document.getElementById("friends-container");
             const gameRequestsContainer = document.getElementById("game-requests-container");
+            const pendingGamesContainer = document.getElementById("pending-games-container");
             const pendingGamesSection = sessionStatus === "false" ? document.getElementById("pending-games-section") : null;
 
             const onlinePlayersScrollPosition = onlinePlayersContainer ? onlinePlayersContainer.scrollTop : 0;
@@ -600,15 +601,19 @@
                     function updateIfDifferent(container, newContent, scrollPosition) {
                         if (container && newContent && container.innerHTML !== newContent.innerHTML) {
                             container.innerHTML = newContent.innerHTML;
-                            requestAnimationFrame(() => {
-                                container.scrollTop = scrollPosition;
-                            });
+
+                            if (scrollPosition != null) {
+                                requestAnimationFrame(() => {
+                                    container.scrollTop = scrollPosition;
+                                });
+                            }
                         }
                     }
 
                     updateIfDifferent(onlinePlayersContainer, doc.getElementById("online-players-container"), onlinePlayersScrollPosition);
                     updateIfDifferent(friendsContainer, doc.getElementById("friends-container"), friendsScrollPosition);
                     updateIfDifferent(gameRequestsContainer, doc.getElementById("game-requests-container"), gameRequestsScrollPosition);
+                    updateIfDifferent(pendingGamesContainer, doc.getElementById("pending-games-container"), null);
                     updateIfDifferent(pendingGamesSection, doc.getElementById("pending-games-section"), pendingGamesScrollPosition);
                 })
                 .catch(error => console.error('Error:', error));
