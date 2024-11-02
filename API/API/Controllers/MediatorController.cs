@@ -60,6 +60,17 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("game/{token}")]
+        public ActionResult<List<Game>> GetGame(string token)
+        {
+            var response = _repository.GameRepository.Get(token);
+
+            if (response is null)
+                return NotFound();
+
+            return Ok(response);
+        }
+
         [HttpGet("game")]
         public ActionResult<List<Game>> GetGames()
         {

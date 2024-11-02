@@ -4,23 +4,12 @@ namespace API.Data
 {
     public interface IPlayerRepository
     {
-        bool Create(Player player);
-        List<string>? GetOnlinePlayers();
-        List<string>? GetPlayersInGame();
-        bool UsernameExists(string username);
-        List<string>? GetFriends(string token);
-        List<string>? GetFriendRequests(string token);
-        List<string>? GetGameRequests(string token);
-        List<string>? GetSentFriendRequests(string token);
-        List<string>? GetSentGameRequests(string token);
-        string? GetLastActivity(string username);
-        List<Player> GetPlayers();
         Player? Get(string token);
         Player? GetByName(string username);
-        bool IsFriend(string receiver_username, string sender_token);
-        bool HasFriendRequest(string receiver_username, string sender_token);
-        bool HasSentFriendRequest(string receiver_username, string sender_token);
         string? GetRematch(string receiver_username, string sender_token);
+        bool UsernameExists(string username);
+        List<Player> GetPlayers();
+        bool Create(Player player);
         bool UpdateActivity(string token);
         bool FriendRequest(string receiver_username, string sender_token);
         bool AcceptFriendRequest(string receiver_username, string sender_token);

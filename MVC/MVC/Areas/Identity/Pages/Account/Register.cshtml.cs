@@ -112,7 +112,7 @@ namespace MVC.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var response = await _httpClient.GetAsync($"api/player/check/{Input.Username}");
+            var response = await _httpClient.GetAsync($"api/player/{Input.Username}");
 
             if (response.IsSuccessStatusCode)
             {

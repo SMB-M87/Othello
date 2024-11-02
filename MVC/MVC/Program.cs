@@ -33,6 +33,7 @@ builder.Services.AddHttpClient();
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.Name = ".AspNet.SharedAuthCookie";
+    //options.Cookie.Name = ".AspNet.AuthCopy";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Lax;
@@ -44,16 +45,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Identity/Account/Logout";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 });
-
-/*builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.Name = ".YourAppName.Copy.Auth";
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.SlidingExpiration = true;
-    options.LoginPath = "/Account/Login";
-    options.LogoutPath = "/Account/Logout";
-});*/
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))

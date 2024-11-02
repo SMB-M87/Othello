@@ -15,6 +15,39 @@ namespace API.Controllers
             _repository = repository;
         }
 
+        [HttpGet("{token}")]
+        public ActionResult<Status> StatusByToken(string token)
+        {
+            var response = _repository.GameRepository.GetStatusByPlayersToken(token);
+
+            if (response is null)
+                return NotFound();
+
+            return Ok(response);
+        }
+
+        [HttpGet("view/{token}")]
+        public ActionResult<GamePlay> View(string token)
+        {
+            var response = _repository.GameRepository.GetView(token);
+
+            if (response is null)
+                return NotFound();
+
+            return Ok(response);
+        }
+
+        [HttpGet("partial/{token}")]
+        public ActionResult<GamePartial> Partial(string token)
+        {
+            var response = _repository.GameRepository.GetPartial(token);
+
+            if (response is null)
+                return NotFound();
+
+            return Ok(response);
+        }
+
         [HttpPost("create")]
         public ActionResult<HttpResponseMessage> Create([FromBody] GameCreation game)
         {
@@ -27,94 +60,6 @@ namespace API.Controllers
             }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-        }
-
-        [HttpGet]
-        public ActionResult<List<GamePending>> DescriptionsOfPendingGames()
-        {
-            var response = _repository.GameRepository.GetPendingGames();
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("{token}")]
-        public ActionResult<string> GameTokenByPlayerToken(string token)
-        {
-            var response = _repository.GameRepository.GetGameTokenByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("opponent/{token}")]
-        public ActionResult<string> OpponentByPlayerToken(string token)
-        {
-            var response = _repository.GameRepository.GetOpponentByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("turn/{token}")]
-        public ActionResult<Color> TurnByToken(string token)
-        {
-            var response = _repository.GameRepository.GetPlayersTurnByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("status/{token}")]
-        public ActionResult<Status> StatusByToken(string token)
-        {
-            var response = _repository.GameRepository.GetStatusByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("color/{token}")]
-        public ActionResult<Status> ColorByToken(string token)
-        {
-            var response = _repository.GameRepository.GetColorByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("board/{token}")]
-        public ActionResult<Color[,]> BoardByToken(string token)
-        {
-            var response = _repository.GameRepository.GetBoardByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("timer/{token}")]
-        public ActionResult<string> TimerByToken(string token)
-        {
-            var response = _repository.GameRepository.GetTimerByPlayersToken(token);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
         }
 
         [HttpPost("join")]

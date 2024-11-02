@@ -23,7 +23,7 @@
         @foreach (var result in Model)
         {
             <tr>
-                <td>@result.Token</td>
+                <td><a asp-action="ResultView" asp-route-token="@result.Token" style="text-decoration: none; color: inherit;">@result.Token</a></td>
                 <td><a asp-action="Profile" asp-route-token="@result.Winner" style="text-decoration: none; color: inherit;">@result.Winner</a></td>
                 <td><a asp-action="Profile" asp-route-token="@result.Loser" style="text-decoration: none; color: inherit;">@result.Loser</a></td>
                 <td>@result.Draw</td>
@@ -39,6 +39,10 @@
 <script>
     function deleteResult(token) {
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        if (!confirm("Are you sure you want to delete the result?")) {
+            return;
+        }
 
         fetch('@Url.Action("ResultDelete", "Admin")', {
             method: 'POST',

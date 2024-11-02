@@ -96,14 +96,6 @@ namespace APITest.GameTest
             _repository.GameRepository.Create(game10);
             _repository.GameRepository.Create(game11);
             _repository.GameRepository.Create(game12);
-
-            GameResult result0 = new("-3", "second", "third", game1.Board);
-            GameResult result1 = new("-2", "third", "second", game1.Board);
-            GameResult result2 = new("-1", "second", "third", game1.Board);
-
-            _repository.ResultRepository.Create(result0);
-            _repository.ResultRepository.Create(result1);
-            _repository.ResultRepository.Create(result2);
         }
 
         [TearDown]
@@ -149,14 +141,14 @@ namespace APITest.GameTest
         [Test]
         public void Update_Correct()
         {
-            Assert.That(actual: _repository.GameRepository.GetPlayersTurnByPlayersToken("12"), Is.EqualTo(expected: Color.Black));
+            Assert.That(actual: _repository.GameRepository?.GetPlayersGame("12")?.PlayersTurn, Is.EqualTo(expected: Color.Black));
 
             _repository.GameRepository.Move(new("12", 2, 3));
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.GetPlayersTurnByPlayersToken("12"), Is.EqualTo(expected: Color.White));
-                Assert.That(actual: _repository.GameRepository.GetBoardByPlayersToken("12")?[2, 3], Is.EqualTo(expected: Color.Black));
+                Assert.That(actual: _repository.GameRepository.GetPlayersGame("12")?.PlayersTurn, Is.EqualTo(expected: Color.White));
+                Assert.That(actual: _repository.GameRepository.GetPlayersGame("12")?.Board?[2, 3], Is.EqualTo(expected: Color.Black));
             });
         }
 
@@ -179,7 +171,7 @@ namespace APITest.GameTest
         {
             string playerToken = "first123456";
 
-            var response = _repository.GameRepository.GetGameTokenByPlayersToken(playerToken);
+            var response = _repository.GameRepository.GetPlayersGame(playerToken);
 
             Assert.That(response, Is.Null);
         }

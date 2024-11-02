@@ -16,7 +16,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<GameResult> GetResult(string token)
+        public ActionResult<GameResult> Get(string token)
         {
             var response = _repository.ResultRepository.Get(token);
 
@@ -26,21 +26,10 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("history/{username}")]
-        public ActionResult<List<GameResult>> MatchHistory(string username)
+        [HttpGet("last/{player_token}")]
+        public ActionResult<GameResult> GetLast(string player_token)
         {
-            var response = _repository.ResultRepository.GetPlayersMatchHistory(username);
-
-            if (response is null)
-                return NotFound();
-
-            return Ok(response);
-        }
-
-        [HttpGet("stats/{username}")]
-        public ActionResult<string> PlayerStats(string username)
-        {
-            var response = _repository.ResultRepository.GetPlayerStats(username);
+            var response = _repository.ResultRepository.GetLast(player_token);
 
             if (response is null)
                 return NotFound();

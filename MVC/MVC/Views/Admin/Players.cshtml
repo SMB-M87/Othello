@@ -61,6 +61,7 @@
                     }
                 </td>
                 <td>
+                    <button type="submit" class="btn btn-primary btn-sm" onclick="editPlayer('@player.Token')">Refresh</button>
                     <button type="submit" class="btn btn-danger btn-sm" onclick="deletePlayer('@player.Token')">Delete</button>
                 </td>
             </tr>
@@ -69,8 +70,35 @@
 </table>
 
 <script>
+    function editPlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("PlayerEdit", "Admin")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     function deletePlayer(token) {
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        if (!confirm("Are you sure you want to delete the player?")) {
+            return;
+        }
 
         fetch('@Url.Action("PlayerDelete", "Admin")', {
             method: 'POST',

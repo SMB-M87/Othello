@@ -64,40 +64,37 @@
         <div class="col-md-3">
             <h3>Online</h3>
             <div id="online-players-container" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
-                @if (Model.Partial.OnlinePlayers != null && Model.Partial.OnlinePlayers.Count > 0)
+                @if (Model.Partial.Online != null && Model.Partial.Online.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
                         @foreach (var player in Model.Partial.OnlinePlayers)
                         {
-                            @if (!Model.Partial.OnlineFriends.Contains(player) && !Model.Partial.OfflineFriends.Contains(player))
-                            {
-                                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
-                                    <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
-                                    <div>
-                                        @if (!Model.Partial.Pending.InGame && Model.Partial.JoinablePlayers.Contains(player))
-                                        {
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
-                                                <i class="fa fa-link" style="font-size: 18px;"></i>
-                                            </button>
-                                        }
+                            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
+                                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                                <div>
+                                    @if (!Model.Partial.Pending.InGame && Model.Partial.JoinablePlayers.Contains(player))
+                                    {
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
+                                            <i class="fa fa-link" style="font-size: 18px;"></i>
+                                        </button>
+                                    }
 
-                                        @if (Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0" &&
-                                       !Model.Partial.SentGameRequests.Contains(player) && Model.Partial.InvitablePlayers.Contains(player))
-                                        {
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
-                                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                                            </button>
-                                        }
+                                    @if (Model.Partial.Pending.InGame && Model.Partial.Pending.Status == "0" &&
+                                   !Model.Partial.SentGameRequests.Contains(player) && Model.Partial.InvitablePlayers.Contains(player))
+                                    {
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
+                                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                                        </button>
+                                    }
 
-                                        @if (!Model.Partial.SentFriendRequests.Contains(player) && !Model.Partial.FriendRequests.Contains(player))
-                                        {
-                                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@player')">
-                                                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
-                                            </button>
-                                        }
-                                    </div>
-                                </li>
-                            }
+                                    @if (!Model.Partial.SentFriendRequests.Contains(player) && !Model.Partial.FriendRequests.Contains(player))
+                                    {
+                                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@player')">
+                                            <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </li>
                         }
                     </ul>
                 }
@@ -184,9 +181,9 @@
                         }
                     </ul>
                 }
-                @if (Model.Partial.OnlineFriends != null && Model.Partial.OnlineFriends.Count <= 0 && 
-                     Model.Partial.OfflineFriends != null && Model.Partial.OfflineFriends.Count <= 0 && 
-                     Model.Partial.FriendRequests != null && Model.Partial.FriendRequests.Count <= 0)
+                @if (Model.Partial.OnlineFriends != null && Model.Partial.OnlineFriends.Count <= 0 &&
+               Model.Partial.OfflineFriends != null && Model.Partial.OfflineFriends.Count <= 0 &&
+               Model.Partial.FriendRequests != null && Model.Partial.FriendRequests.Count <= 0)
                 {
                     <p>You have no friends added.</p>
                 }
@@ -616,7 +613,7 @@
                 })
                 .catch(error => console.error('Error:', error));
         }
-        setInterval(refreshContainers, 1000);
+        setInterval(refreshContainers, 5000);
     </script>
 }
 else

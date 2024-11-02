@@ -95,6 +95,18 @@ namespace MVC.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> GameView(string token)
+        {
+            var model = await GetGame(token);
+
+            if (model is not null)
+            {
+                return View("GameView", model);
+            }
+
+            return RedirectToAction("Games");
+        }
+
         public async Task<IActionResult> Results(string searchQuery = "")
         {
             var model = await GetResults();
@@ -107,6 +119,18 @@ namespace MVC.Controllers
             }
             model = model?.OrderByDescending(r => r.Date).ToList();
             return View(model);
+        }
+
+        public async Task<IActionResult> ResultView(string token)
+        {
+            var model = await GetResult(token);
+
+            if (model is not null)
+            {
+                return View("ResultView", model);
+            }
+
+            return RedirectToAction("Results");
         }
 
         private async Task<List<Player>> GetPlayers()
@@ -163,6 +187,24 @@ namespace MVC.Controllers
             return result;
         }
 
+        private async Task<Game> GetGame(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/mediator/game/{token}");
+            Game result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<Game>(options) ?? new();
+            }
+            return result;
+        }
+
         private async Task<List<GameResult>> GetResults()
         {
             var response = await _httpClient.GetAsync("api/mediator/result");
@@ -177,6 +219,24 @@ namespace MVC.Controllers
                 };
 
                 result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+            }
+            return result;
+        }
+
+        private async Task<GameResult> GetResult(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/result/{token}");
+            GameResult result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
             }
             return result;
         }

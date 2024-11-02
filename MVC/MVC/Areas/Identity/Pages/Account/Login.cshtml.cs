@@ -10,21 +10,13 @@ namespace MVC.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly HttpClient _httpClient;
         private readonly ILogger<LoginModel> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public LoginModel(
-            ILogger<LoginModel> logger,
-            IHttpClientFactory httpClientFactory,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+        public LoginModel(ILogger<LoginModel> logger, SignInManager<IdentityUser> signInManager)
         {
             _logger = logger;
-            _userManager = userManager;
             _signInManager = signInManager;
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         /// <summary>
@@ -113,21 +105,6 @@ namespace MVC.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
-
-                    // Retrieve the User ID from UserManager
-                    var user = await _userManager.FindByNameAsync(Input.Username);
-                    if (user != null)
-                    {
-                        var token = _userManager.GetUserId(User);
-                        var response = await _httpClient.PostAsJsonAsync("api/player/activity", new { Token = token });
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            // Handle potential API failure here
-                            _logger.LogError("Failed to update player status in API.");
-                        }
-                    }
-
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -19,27 +19,25 @@ namespace MVC.Controllers
         public async Task<IActionResult> Play()
         {
             var token = _userManager.GetUserId(User);
-            var response = await _httpClient.GetAsync($"api/game/{token}");
+            var response = await GetView(token);
 
-            if (response.IsSuccessStatusCode)
+            if (response.Partial.InGame == true)
             {
                 var model = new GamePlay
                 {
-                    Opponent = await Opponent(token),
-                    Color = await Color(token),
+                    Opponent = response.Opponent,
+                    Color = response.Color,
 
                     Partial = new GamePartial
                     {
-                        InGame = await InGame(token),
-                        PlayersTurn = await PlayersTurn(token),
-                        Board = await Board(token),
-                        Time = await Time(token)
+                        InGame = response.Partial.InGame,
+                        PlayersTurn = response.Partial.PlayersTurn,
+                        Board = response.Partial.Board,
+                        Time = response.Partial.Time
                     }
                 };
-
                 return View(model);
             }
-
             ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
             return RedirectToAction("Index", "Home");
         }
@@ -49,13 +47,14 @@ namespace MVC.Controllers
         public async Task<IActionResult> Partial()
         {
             var token = _userManager.GetUserId(User);
+            var response = await GetPartial(token);
 
             var model = new GamePartial
             {
-                InGame = await InGame(token),
-                PlayersTurn = await PlayersTurn(token),
-                Board = await Board(token),
-                Time = await Time(token)
+                InGame = response.InGame,
+                PlayersTurn = response.PlayersTurn,
+                Board = response.Board,
+                Time = response.Time
             };
             return PartialView("_Partial", model);
         }
@@ -106,59 +105,10 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game forfeited successfully." });
         }
 
-        private async Task<string> Opponent(string token)
+        private async Task<GamePlay> GetView(string token)
         {
-            var response = await _httpClient.GetAsync($"api/game/opponent/{token}");
-            string result = string.Empty;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync() ?? string.Empty;
-            }
-            return result;
-        }
-
-        private async Task<Color> Color(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/game/color/{token}");
-            Color result = Models.Color.None;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<Color>();
-            }
-            return result;
-        }
-
-        private async Task<bool> InGame(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/game/{token}");
-            var status = await _httpClient.GetAsync($"api/game/status/{token}");
-            string result = string.Empty;
-
-            if (response.IsSuccessStatusCode && status.IsSuccessStatusCode)
-            {
-                result = await status.Content.ReadAsStringAsync();
-            }
-            return result == "1";
-        }
-
-        private async Task<Color> PlayersTurn(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/game/turn/{token}");
-            Color result = Models.Color.None;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<Color>();
-            }
-            return result;
-        }
-
-        private async Task<Color[,]> Board(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/game/board/{token}");
-            Color[,] result = new Models.Color[8, 8];
+            var response = await _httpClient.GetAsync($"api/game/view/{token}");
+            GamePlay result = new();
 
             if (response.IsSuccessStatusCode)
             {
@@ -168,24 +118,39 @@ namespace MVC.Controllers
                     Converters = { new ColorArrayConverter() }
                 };
 
-                var deserializedResult = await response.Content.ReadFromJsonAsync<Color[,]>(options);
+                var deserializedResult = await response.Content.ReadFromJsonAsync<GamePlay>(options);
 
                 if (deserializedResult is not null)
                 {
                     result = deserializedResult;
                 }
             }
+            else
+            {
+                result.Partial.InGame = false;
+            }
             return result;
         }
 
-        private async Task<string> Time(string token)
+        private async Task<GamePartial> GetPartial(string token)
         {
-            var response = await _httpClient.GetAsync($"api/game/timer/{token}");
-            string result = string.Empty;
+            var response = await _httpClient.GetAsync($"api/game/partial/{token}");
+            GamePartial result = new();
 
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadAsStringAsync() ?? string.Empty;
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                var deserializedResult = await response.Content.ReadFromJsonAsync<GamePartial>(options);
+
+                if (deserializedResult is not null)
+                {
+                    result = deserializedResult;
+                }
             }
             return result;
         }

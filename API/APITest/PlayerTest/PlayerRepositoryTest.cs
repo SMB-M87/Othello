@@ -79,14 +79,6 @@ namespace APITest.PlayerTest
             _repository.GameRepository.Create(game7);
             _repository.GameRepository.Create(game8);
             _repository.GameRepository.Create(game);
-
-            GameResult result0 = new("-3", "second", "third", game1.Board);
-            GameResult result1 = new("-2", "third", "second", game1.Board);
-            GameResult result2 = new("-1", "second", "third", game1.Board);
-
-            _repository.ResultRepository.Create(result0);
-            _repository.ResultRepository.Create(result1);
-            _repository.ResultRepository.Create(result2);
         }
 
         [TearDown]
@@ -125,28 +117,6 @@ namespace APITest.PlayerTest
                 Assert.That(actual: _context.Players.Count(), Is.Not.EqualTo(expected: size));
                 Assert.That(actual: _context.Players.Count(), Is.EqualTo(expected: size - 1));
             });
-        }
-
-        [Test]
-        public void PlayerFriends_Correct()
-        {
-            List<string>? response = _repository.PlayerRepository.GetFriends("sixth");
-
-            if (response is not null)
-                Assert.That(actual: response, Does.Contain("eight"));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Player_FriendRequest_Correct()
-        {
-            List<string>? response = _repository.PlayerRepository.GetFriendRequests("sixth");
-
-            if (response is not null)
-                Assert.That(actual: response.Any(r => r == "five"), Is.True);
-            else
-                Assert.Fail("Respons is null.");
         }
 
         [Test]

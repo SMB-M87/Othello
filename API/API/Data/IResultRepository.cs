@@ -4,11 +4,10 @@ namespace API.Data
 {
     public interface IResultRepository
     {
-        bool Create(GameResult result);
         GameResult? Get(string token);
-        List<GameResult> GetResults();
+        GameResult? GetLast(string player_token);
         string? GetPlayerStats(string player_token);
-        List<GameResult>? GetPlayersMatchHistory(string player_token);
+        List<GameResult> GetResults();
         bool Delete(string token);
     }
 }

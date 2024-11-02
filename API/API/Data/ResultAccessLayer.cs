@@ -17,52 +17,34 @@ namespace API.Data
 
             if (response is not null)
             {
-                response.Winner = GetName(response.Winner) ?? string.Empty;
-                response.Loser = GetName(response.Loser) ?? string.Empty;
+                response.Winner = GetPlayersName(response.Winner) ?? string.Empty;
+                response.Loser = GetPlayersName(response.Loser) ?? string.Empty;
                 return response;
             }
             return null;
         }
 
-        public List<GameResult> GetResults()
+        public GameResult? GetLast(string player_token)
         {
-            return _context.Results.ToList();
-        }
+            var response = GetMatchHistory(player_token);
 
-        public bool Create(GameResult result)
-        {
-            var request = Get(result.Token);
-
-            if (request is null)
+            if (response is not null)
             {
-                result.Date = DateTime.UtcNow;
-                _context.Results.Add(result);
+                GameResult? result = response.OrderBy(game => Math.Abs((DateTime.UtcNow - game.Date).Ticks)).FirstOrDefault();
 
-                var game = _context.Games.FirstOrDefault(s => s.Token.Equals(result.Token));
-                if (game != null)
-                    _context.Games.Remove(game);
-
-                _context.SaveChanges();
-                return true;
+                if (result is not null)
+                {
+                    result.Winner = GetPlayersName(result.Winner) ?? string.Empty;
+                    result.Loser = GetPlayersName(result.Loser) ?? string.Empty;
+                }
+                return result;
             }
-            return false;
-        }
-
-        private string? GetToken(string username)
-        {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username))?.Token;
-        }
-
-        private List<GameResult> GetMatchHistory(string player_token)
-        {
-            return _context.Results
-                .Where(s => s.Winner == player_token || s.Loser == player_token)
-                .ToList();
+            return null;
         }
 
         public string? GetPlayerStats(string username)
         {
-            var token = GetToken(username);
+            var token = GetPlayersToken(username);
 
             if (token is not null)
             {
@@ -70,41 +52,16 @@ namespace API.Data
 
                 int wins = results.Count(r => r.Winner == token && r.Draw == false);
                 int losses = results.Count(r => r.Loser == token && r.Draw == false);
-                int draws = results.Count(r => (r.Winner.Contains(token) || r.Loser.Contains(token)) && r.Draw == true);
+                int draws = results.Count(r => (r.Winner == token || r.Loser == token) && r.Draw == true);
 
                 return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
             }
             return null;
         }
 
-        private string? GetName(string token)
+        public List<GameResult> GetResults()
         {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(token))?.Username;
-        }
-
-        public List<GameResult>? GetPlayersMatchHistory(string username)
-        {
-            var token = GetToken(username);
-
-            if (token is not null)
-            {
-                var response = GetMatchHistory(token);
-                List<GameResult> results = new();
-
-                if (response.Count > 0)
-                {
-                    response = response.OrderByDescending(r => r.Date).ToList();
-
-                    foreach (var game in response)
-                    {
-                        game.Winner = GetName(game.Winner) ?? string.Empty;
-                        game.Loser = GetName(game.Loser) ?? string.Empty;
-                        results.Add(game);
-                    }
-                }
-                return results;
-            }
-            return null;
+            return _context.Results.ToList();
         }
 
         public bool Delete(string token)
@@ -118,6 +75,23 @@ namespace API.Data
                 return true;
             }
             return false;
+        }
+
+        private string? GetPlayersToken(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username == username)?.Token;
+        }
+
+        private string? GetPlayersName(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token == token)?.Username;
+        }
+
+        private List<GameResult> GetMatchHistory(string player_token)
+        {
+            return _context.Results
+                .Where(s => s.Winner == player_token || s.Loser == player_token)
+                .ToList();
         }
     }
 }

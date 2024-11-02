@@ -96,18 +96,55 @@ namespace MVC.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> GameView(string token)
+        {
+            var model = await GetGame(token);
+
+            if (model is not null)
+            {
+                return View("GameView", model);
+            }
+
+            return RedirectToAction("Games");
+        }
+
         public async Task<IActionResult> Results(string searchQuery = "")
         {
             var model = await GetResults();
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                model = model.Where(r => r.Winner.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
-                                      || r.Loser.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                model = model.Where(r => r.Winner.Equals(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                      || r.Loser.Equals(searchQuery, StringComparison.OrdinalIgnoreCase))
                              .ToList();
             }
             model = model?.OrderByDescending(r => r.Date).ToList();
             return View(model);
+        }
+
+        public async Task<IActionResult> ResultView(string token)
+        {
+            var model = await GetResult(token);
+
+            if (model is not null)
+            {
+                return View("ResultView", model);
+            }
+
+            return RedirectToAction("Results");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> PlayerEdit([FromBody] Text text)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/player/activity", new { Token = text.Body });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Unable to update last activity player." });
+            }
+            return Json(new { success = true, message = "Player last activity updated." });
         }
 
         [HttpPost]
@@ -203,6 +240,24 @@ namespace MVC.Controllers
             return result;
         }
 
+        private async Task<Game> GetGame(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/admin/game/{token}");
+            Game result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<Game>(options) ?? new();
+            }
+            return result;
+        }
+
         private async Task<List<GameResult>> GetResults()
         {
             var response = await _httpClient.GetAsync("api/admin/result");
@@ -217,6 +272,24 @@ namespace MVC.Controllers
                 };
 
                 result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+            }
+            return result;
+        }
+
+        private async Task<GameResult> GetResult(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/result/{token}");
+            GameResult result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
             }
             return result;
         }

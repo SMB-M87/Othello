@@ -1,0 +1,61 @@
+﻿@model Game
+
+<div class="d-flex justify-content-center">
+    <h2>Game Details @Model.Token</h2>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="game-info">
+        <p><strong>Description:</strong> @Model.Description</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+        <p>
+            <strong>Player 1:</strong>
+            <a asp-action="Profile" asp-route-token="@Model.First" style="text-decoration: none; color: inherit;">
+                @Model.First (@Model.FColor)
+            </a>
+        </p>
+        <p>
+            <strong>Player 2:</strong>
+            @(Model.Second != null
+                ? Html.Raw($"<a asp-action='Profile' asp-route-token='{Model.Second}' style='text-decoration: none; color: inherit;'>{Model.Second} ({Model.SColor})</a>")
+                : "Waiting for opponent")
+        </p>
+        <p><strong>Current Turn:</strong> @Model.PlayersTurn</p>
+        <p><strong>Date:</strong> @Model.Date.ToString("dd/MM/yyyy HH:mm tt")</p>
+        <p><strong>Rematch:</strong> @(Model.Rematch ?? "Not requested")</p>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center">
+    <h3>Board</h3>
+</div>
+<div id="board-container" class="d-flex justify-content-center">
+    <table class="table table-bordered" style="width: auto;">
+        @for (int row = 0; row < Model?.Board.GetLength(0); row++)
+        {
+            <tr>
+                @for (int col = 0; col < Model.Board.GetLength(1); col++)
+                {
+                    var cell = Model.Board[row, col];
+                    var cellDisplay = cell == Color.None ? "" : cell.ToString();
+                    var pieceClass = cell == Color.White ? "player-piece" : cell == Color.Black ? "opponent-piece" : "";
+                    <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
+                        data-row="@row"
+                        data-col="@col"
+                        onclick="cellClicked(this)">
+                        @if (cell != Color.None)
+                        {
+                            <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="d-flex justify-content-center">
+    <a href="javascript:history.back()" class="btn btn-link" title="Go back" style="font-size: 24px; color: black;">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>

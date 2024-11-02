@@ -1,4 +1,6 @@
 ﻿using API.Models;
+using Microsoft.Extensions.Logging;
+using System.Reflection;
 
 namespace API.Data
 {
@@ -11,27 +13,132 @@ namespace API.Data
             _context = context;
         }
 
-        private bool PlayerExists(string token)
+        public Game? Get(string token)
         {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(token)) != null;
+            return _context.Games.FirstOrDefault(g => g.Token.Equals(token));
         }
 
-        private bool PlayerInGame(string token)
+        public Game? GetPlayersGame(string player_token)
         {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
-            return game is not null;
+            var games = GetGames();
+            var game = games!.FirstOrDefault(s => s.First.Equals(player_token) && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(player_token) && s.Status != Status.Finished);
+
+            return game;
         }
 
-        private Player? GetPlayer(string token)
+        public Status? GetStatusByPlayersToken(string token)
         {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
+            return GetPlayersGame(token)?.Status;
         }
 
-        private Player? GetPlayerToken(string username)
+        public List<Game> GetGames()
         {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
+            return _context.Games.ToList();
+        }
+
+        public GamePlay GetView(string token)
+        {
+            var game = GetPlayersGame(token);
+
+            if (game != null && game.Second != null)
+            {
+                var first = GetPlayer(game.First);
+                var second = GetPlayer(game.Second);
+
+                var model = new GamePlay
+                {
+                    Opponent = game.Second == null || first == null || second == null ? string.Empty : game.Second == token ? first.Username : second.Username,
+                    Color = game.Second == null ? Color.None : game.Second == token ? game.SColor : game.FColor,
+                    Partial = new GamePartial()
+                    {
+                        InGame = game.Status == Status.Playing,
+                        PlayersTurn = game.PlayersTurn,
+                        Board = game.Board,
+                        Time = GetTimerByPlayersToken(token)
+                    }
+                };
+                return model;
+            }
+            else
+            {
+                var model = new GamePlay
+                {
+                    Opponent = string.Empty,
+                    Color = Color.None,
+                    Partial = new GamePartial()
+                    {
+                        InGame = false,
+                        PlayersTurn = Color.None,
+                        Board = new Color[8, 8],
+                        Time = string.Empty
+                    }
+                };
+                return model;
+            }
+        }
+
+        public GamePartial GetPartial(string token)
+        {
+            var game = GetPlayersGame(token);
+
+            if (game != null && game.Second != null)
+            {
+                var model = new GamePartial()
+                {
+                    InGame = game.Status == Status.Playing,
+                    PlayersTurn = game.PlayersTurn,
+                    Board = game.Board,
+                    Time = GetTimerByPlayersToken(token)
+                };
+
+                var first = GetPlayer(game.First);
+                var second = GetPlayer(game.Second);
+
+                if (first != null && second != null)
+                {
+                    if ((DateTime.UtcNow - first.LastActivity).TotalSeconds >= 100)
+                    {
+                        GameResult result = new(game.Token, game.Second, game.First, game.Board)
+                        {
+                            Date = DateTime.UtcNow
+                        };
+                        _context.Results.Add(result);
+                        _context.Games.Remove(game);
+
+                        game.Finish();
+                        _context.Entry(game).Property(g => g.Status).IsModified = true;
+                        _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                        _context.SaveChanges();
+                    }
+                    else if ((DateTime.UtcNow - second.LastActivity).TotalSeconds >= 100)
+                    {
+                        GameResult result = new(game.Token, game.First, game.Second, game.Board)
+                        {
+                            Date = DateTime.UtcNow
+                        };
+                        _context.Results.Add(result);
+                        _context.Games.Remove(game);
+
+                        game.Finish();
+                        _context.Entry(game).Property(g => g.Status).IsModified = true;
+                        _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                        _context.SaveChanges();
+                    }
+                }
+                return model;
+            }
+            else
+            {
+                var model = new GamePartial()
+                {
+                    InGame = false,
+                    PlayersTurn = Color.None,
+                    Board = new Color[8, 8],
+                    Time = string.Empty
+                };
+                return model;
+            }
         }
 
         public bool Create(GameCreation game)
@@ -87,154 +194,6 @@ namespace API.Data
                 _context.Games.Add(game);
                 _context.SaveChanges();
             }
-        }
-
-        public List<Game> GetGames()
-        {
-            return _context.Games.ToList();
-        }
-
-        private string? GetName(string token)
-        {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(token))?.Username;
-        }
-
-        private List<GameResult> GetMatchHistory(string token)
-        {
-            return _context.Results
-                .Where(s => s.Winner == token || s.Loser == token)
-                .ToList();
-        }
-
-        private string? GetPlayerStats(string token)
-        {
-            List<GameResult> results = GetMatchHistory(token);
-
-            int wins = results.Count(r => r.Winner == token && r.Draw == false);
-            int losses = results.Count(r => r.Loser == token && r.Draw == false);
-            int draws = results.Count(r => (r.Winner.Contains(token) || r.Loser.Contains(token)) && r.Draw == true);
-
-            return $"Wins:{wins}\t\tLosses:{losses}\t\tDraws:{draws}";
-        }
-
-        public List<GamePending>? GetPendingGames()
-        {
-            var games = GetGames();
-
-            if (games is not null)
-            {
-                var pending = games.FindAll(game => game.Status == Status.Pending && game.Second == null && game.Rematch == null).OrderByDescending(g => g.Date).ToList();
-
-                if (pending is not null)
-                {
-                    List<GamePending> result = new();
-
-                    foreach (Game game in pending)
-                    {
-                        var player = GetName(game.First) ?? string.Empty;
-                        var stat = GetPlayerStats(game.First) ?? string.Empty;
-                        string output = stat.Replace("Wins:", "W:")
-                                            .Replace("Losses:", "L:")
-                                            .Replace("Draws:", "D:")
-                                            .Replace("\t\t", " ");
-
-                        GamePending temp = new(game.Description, player, output);
-                        result.Add(temp);
-                    }
-                    return result;
-                }
-            }
-            return null;
-        }
-
-        public string? GetGameTokenByPlayersToken(string token)
-        {
-            return GetPlayersGame(token)?.Token;
-        }
-
-        public string? GetOpponentByPlayersToken(string token)
-        {
-            var game = GetPlayersGame(token);
-
-            if (game == null || game.Second is null)
-                return string.Empty;
-
-            if (game.First == token && game.Second is not null)
-                return GetName(game.Second);
-            else
-                return GetName(game.First);
-        }
-
-        public Color? GetPlayersTurnByPlayersToken(string token)
-        {
-            return GetPlayersGame(token)?.PlayersTurn;
-        }
-
-        public Status? GetStatusByPlayersToken(string token)
-        {
-            return GetPlayersGame(token)?.Status;
-        }
-
-        public Color? GetColorByPlayersToken(string token)
-        {
-            var game = GetPlayersGame(token);
-
-            if (game == null)
-                return Color.None;
-
-            if (game.First == token)
-                return game.FColor;
-            else
-                return game.SColor;
-        }
-
-        public Color[,]? GetBoardByPlayersToken(string token)
-        {
-            return GetPlayersGame(token)?.Board;
-        }
-
-        public string? GetTimerByPlayersToken(string token)
-        {
-            var game = GetPlayersGame(token);
-            DateTime? last = game?.Date;
-            DateTime now = DateTime.UtcNow;
-
-            if (game is not null && last.HasValue)
-            {
-                DateTime end = last.Value.AddSeconds(30);
-                double remainingSeconds = (end - now).TotalSeconds;
-
-                if (remainingSeconds <= 0)
-                {
-                    game.Pass();
-                    _context.Entry(game).Property(g => g.Date).IsModified = true;
-                    _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-                    _context.SaveChanges();
-                }
-                return $"{Math.Floor(remainingSeconds)}";
-            }
-            return string.Empty;
-        }
-
-        private bool PlayerInPendingGame(string token)
-        {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Second is null && s.Status == Status.Pending);
-            return game is not null;
-        }
-
-        private string? GetToken(string username)
-        {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username))?.Token;
-        }
-
-        private Game? GetPlayersGame(string token)
-        {
-            var games = GetGames();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
-
-            return game;
         }
 
         public bool JoinPlayer(PlayerRequest request)
@@ -435,11 +394,6 @@ namespace API.Data
             return false;
         }
 
-        private Game? Get(string token)
-        {
-            return _context.Games.FirstOrDefault(g => g.Token.Equals(token));
-        }
-
         public bool PermDelete(string token)
         {
             var game = Get(token);
@@ -451,6 +405,64 @@ namespace API.Data
                 return true;
             }
             return false;
+        }
+
+        private Player? GetPlayer(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token == token);
+        }
+
+        private Player? GetPlayerToken(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username == username);
+        }
+
+        private string? GetToken(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username == username)?.Token;
+        }
+
+        private bool PlayerExists(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token == token) != null;
+        }
+
+        private string GetTimerByPlayersToken(string token)
+        {
+            var game = GetPlayersGame(token);
+            DateTime? last = game?.Date;
+            DateTime now = DateTime.UtcNow;
+
+            if (game is not null && last.HasValue)
+            {
+                DateTime end = last.Value.AddSeconds(30);
+                double remainingSeconds = (end - now).TotalSeconds;
+
+                if (remainingSeconds <= 0)
+                {
+                    game.Pass();
+                    _context.Entry(game).Property(g => g.Date).IsModified = true;
+                    _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                    _context.SaveChanges();
+                }
+                return $"{Math.Floor(remainingSeconds)}";
+            }
+            return string.Empty;
+        }
+
+        private bool PlayerInPendingGame(string token)
+        {
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First == token && s.Second is null && s.Status == Status.Pending);
+            return game is not null;
+        }
+
+        private bool PlayerInGame(string token)
+        {
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First == token && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second == token && s.Status != Status.Finished);
+            return game is not null;
         }
     }
 }

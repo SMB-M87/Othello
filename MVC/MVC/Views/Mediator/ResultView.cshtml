@@ -1,0 +1,98 @@
+﻿@model GameResult
+
+<div class="d-flex justify-content-center">
+    <h2>Game Result @Model.Token</h2>
+</div>
+
+<div class="d-flex justify-content-center">
+    <h3 style="background-color: @(Model.Draw ? "#fff3cd" : "#d4edda"); padding: 10px;">
+        @if (!Model.Draw)
+        {
+            <span><a asp-action="Profile" asp-route-token="@Model.Winner">@Model.Winner</a> won against <a asp-action="Profile" asp-route-token="@Model.Loser">@Model.Loser</a></span>
+        }
+        else
+        {
+            <span><a asp-action="Profile" asp-route-token="@Model.Winner">@Model.Winner</a> drew with <a asp-action="Profile" asp-route-token="@Model.Loser">@Model.Loser</a></span>
+        }
+        <span>on @Model.Date.ToString("dd/MM/yyyy HH:mm tt")</span>
+    </h3>
+</div>
+
+<div class="d-flex justify-content-center" style="margin-top: 15px; gap: 20px;">
+    <p>
+        <span class="player-color-indicator"
+              style="background-color: #FFFFFF;
+                     color: #000000;
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+            <strong><span id="white-score">0</span></strong>
+        </span>
+    </p>
+    <p>
+        <span class="player-color-indicator"
+              style="background-color: #000000;
+                     color: #FFFFFF;
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+            <strong><span id="black-score">0</span></strong>
+        </span>
+    </p>
+</div>
+
+<div id="board-container" class="d-flex justify-content-center">
+    <table class="table table-bordered" style="width: auto; margin-top: 10px">
+        @for (int row = 0; row < Model?.Board.GetLength(0); row++)
+        {
+            <tr>
+                @for (int col = 0; col < Model.Board.GetLength(1); col++)
+                {
+                    var cell = Model.Board[row, col];
+                    var cellDisplay = cell == Color.None ? "" : cell.ToString();
+                    var pieceClass = cell == Color.White ? "white-piece" : cell == Color.Black ? "black-piece" : "";
+                    <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");">
+                        @if (cell != Color.None)
+                        {
+                            <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+
+<div class="d-flex justify-content-center">
+    <a href="javascript:history.back()" class="btn btn-link" title="Go back" style="font-size: 24px; color: black;">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<script>
+    function calculateScores() {
+        let whiteScore = 0;
+        let blackScore = 0;
+
+        const boardCells = document.querySelectorAll("#board-container td");
+
+        boardCells.forEach(cell => {
+            const piece = cell.querySelector("i");
+
+            if (piece) {
+                if (piece.classList.contains("white-piece")) {
+                    whiteScore++;
+                } else if (piece.classList.contains("black-piece")) {
+                    blackScore++;
+                }
+            }
+        });
+        document.getElementById("white-score").textContent = whiteScore;
+        document.getElementById("black-score").textContent = blackScore;
+    }
+    window.onload = calculateScores;
+</script>

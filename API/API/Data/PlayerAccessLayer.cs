@@ -12,131 +12,14 @@ namespace API.Data
             _context = context;
         }
 
-        private bool TokenExists(string token)
-        {
-            return _context.Players.FirstOrDefault(s => s.Token.Equals(token)) != null;
-        }
-
-        public bool Create(Player player)
-        {
-            if (!TokenExists(player.Token) && !UsernameExists(player.Username))
-            {
-                _context.Players.Add(player);
-                UpdateActivity(player.Token);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
-        }
-
-        public List<Player> GetPlayers()
-        {
-            return _context.Players.ToList();
-        }
-
-        private bool PlayerInGame(string token)
-        {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
-            return game is not null;
-        }
-
-        public List<string>? GetOnlinePlayers()
-        {
-            return GetPlayers()?.FindAll(player => (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
-        }
-
-        public List<string>? GetPlayersInGame()
-        {
-            return GetPlayers()?.FindAll(player => PlayerInGame(player.Token)).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
-        }
-
-        public bool UsernameExists(string username)
-        {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
-        }
-
-        public List<string>? GetFriends(string token)
-        {
-            return Get(token)?.Friends.OrderBy(friend => friend).ToList();
-        }
-
-        public List<string>? GetFriendRequests(string token)
-        {
-            return Get(token)?.Requests.Where(r => r.Type == Inquiry.Friend).OrderBy(r => r.Username).Select(p => p.Username).ToList();
-        }
-
-        public List<string>? GetGameRequests(string token)
-        {
-            return Get(token)?.Requests?.Where(r => r.Type == Inquiry.Game).OrderByDescending(r => r.Date).Select(p => p.Username).ToList();
-        }
-
-        private string? GetName(string token)
-        {
-            return Get(token)?.Username;
-        }
-
-        public List<string>? GetSentFriendRequests(string token)
-        {
-            string? username = GetName(token);
-            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Friend)).Select(p => p.Username).ToList();
-        }
-
-        public List<string>? GetSentGameRequests(string token)
-        {
-            string? username = GetName(token);
-            return GetPlayers()?.FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Game)).Select(p => p.Username).ToList();
-        }
-
-        public string? GetLastActivity(string username)
-        {
-            DateTime? lastActivity = GetPlayers()?.FirstOrDefault(p => p.Username == username)?.LastActivity;
-
-            if (lastActivity == null || lastActivity == DateTime.MinValue)
-            {
-                return "No recent activity";
-            }
-
-            TimeSpan timeSinceLastActivity = DateTime.UtcNow - lastActivity.Value;
-
-            if (timeSinceLastActivity.TotalMinutes < 1)
-                return "Just now";
-            else if (timeSinceLastActivity.TotalMinutes < 60)
-                return $"{Math.Floor(timeSinceLastActivity.TotalMinutes)} minutes ago";
-            else if (timeSinceLastActivity.TotalHours < 24)
-                return $"{Math.Floor(timeSinceLastActivity.TotalHours)} hours ago";
-            else if (timeSinceLastActivity.TotalDays < 7)
-                return $"{Math.Floor(timeSinceLastActivity.TotalDays)} days ago";
-            else if (timeSinceLastActivity.TotalDays < 30)
-                return $"{Math.Floor(timeSinceLastActivity.TotalDays / 7)} weeks ago";
-            else if (timeSinceLastActivity.TotalDays < 365)
-                return $"{Math.Floor(timeSinceLastActivity.TotalDays / 30)} months ago";
-            else
-                return $"{Math.Floor(timeSinceLastActivity.TotalDays / 365)} years ago";
-        }
-
         public Player? Get(string token)
         {
             return _context.Players.FirstOrDefault(s => s.Token.Equals(token));
         }
 
-        public bool IsFriend(string receiver_username, string sender_token)
+        public Player? GetByName(string username)
         {
-            var friends = GetFriends(sender_token);
-            return friends?.Contains(receiver_username) ?? false;
-        }
-
-        public bool HasFriendRequest(string receiver_username, string sender_token)
-        {
-            var friends = GetFriendRequests(sender_token);
-            return friends?.Contains(receiver_username) ?? false;
-        }
-
-        public bool HasSentFriendRequest(string receiver_username, string sender_token)
-        {
-            var friends = GetSentFriendRequests(sender_token);
-            return friends?.Contains(receiver_username) ?? false;
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
         }
 
         public string? GetRematch(string receiver_username, string sender_token)
@@ -150,6 +33,28 @@ namespace API.Data
             if (request == null) return null;
 
             return request.Username;
+        }
+
+        public bool UsernameExists(string username)
+        {
+            return _context.Players.FirstOrDefault(s => s.Username.Equals(username)) != null;
+        }
+
+        public List<Player> GetPlayers()
+        {
+            return _context.Players.ToList();
+        }
+
+        public bool Create(Player player)
+        {
+            if (!TokenExists(player.Token) && !UsernameExists(player.Username))
+            {
+                _context.Players.Add(player);
+                UpdateActivity(player.Token);
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public bool UpdateActivity(string token)
@@ -167,11 +72,6 @@ namespace API.Data
                 }
             }
             return false;
-        }
-
-        public Player? GetByName(string username)
-        {
-            return _context.Players.FirstOrDefault(s => s.Username.Equals(username));
         }
 
         public bool FriendRequest(string receiver_username, string sender_token)
@@ -244,13 +144,6 @@ namespace API.Data
             return false;
         }
 
-        private bool PlayerInPendingGame(string token)
-        {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Second is null && s.Status == Status.Pending);
-            return game is not null;
-        }
-
         public bool GameRequest(string receiver_username, string sender_token)
         {
             var receiver = GetByName(receiver_username);
@@ -267,28 +160,6 @@ namespace API.Data
                 _context.Entry(receiver).Property(p => p.Requests).IsModified = true;
                 _context.SaveChanges();
                 return true;
-            }
-            return false;
-        }
-
-        private bool JoinPlayersGame(string receiver_token, string sender_token)
-        {
-            List<Game>? games = _context.Games.ToList();
-
-            if (games.Count > 0)
-            {
-                var game = games!.FirstOrDefault(s => s.First.Equals(receiver_token) && s.Status != Status.Finished);
-
-                if (game is not null)
-                {
-                    game.SetSecondPlayer(sender_token);
-                    UpdateActivity(game.First);
-                    UpdateActivity(sender_token);
-                    _context.Entry(game).Property(g => g.Status).IsModified = true;
-                    _context.Entry(game).Property(g => g.Second).IsModified = true;
-                    _context.SaveChanges();
-                    return true;
-                }
             }
             return false;
         }
@@ -454,6 +325,48 @@ namespace API.Data
                 return true;
             }
             return false;
+        }
+
+        private bool PlayerInGame(string token)
+        {
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
+            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
+            return game is not null;
+        }
+
+        private bool PlayerInPendingGame(string token)
+        {
+            var games = _context.Games.ToList();
+            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Second is null && s.Status == Status.Pending);
+            return game is not null;
+        }
+
+        private bool JoinPlayersGame(string receiver_token, string sender_token)
+        {
+            List<Game>? games = _context.Games.ToList();
+
+            if (games.Count > 0)
+            {
+                var game = games!.FirstOrDefault(s => s.First.Equals(receiver_token) && s.Status != Status.Finished);
+
+                if (game is not null)
+                {
+                    game.SetSecondPlayer(sender_token);
+                    UpdateActivity(game.First);
+                    UpdateActivity(sender_token);
+                    _context.Entry(game).Property(g => g.Status).IsModified = true;
+                    _context.Entry(game).Property(g => g.Second).IsModified = true;
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool TokenExists(string token)
+        {
+            return _context.Players.FirstOrDefault(s => s.Token == token) != null;
         }
     }
 }

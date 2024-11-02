@@ -123,13 +123,6 @@ namespace APITest.PlayerTest
             _repository.GameRepository.Create(game9);
             _repository.GameRepository.Create(game10);
 
-            GameResult result0 = new("-3", "second", "third", game1.Board);
-            GameResult result1 = new("-2", "third", "second", game1.Board);
-            GameResult result2 = new("-1", "second", "third", game1.Board);
-
-            _repository.ResultRepository.Create(result0);
-            _repository.ResultRepository.Create(result1);
-            _repository.ResultRepository.Create(result2);
             _controller = new PlayerController(_repository);
         }
 
@@ -186,86 +179,6 @@ namespace APITest.PlayerTest
                 Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Player_Friends_Correct()
-        {
-            var result = _controller.PlayerFriends("sixth");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-
-            var response = okResult?.Value as List<string>;
-
-            if (response is not null)
-                Assert.That(actual: response, Does.Contain("nine"));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Player_FriendRequests_OK()
-        {
-            var result = _controller.PlayerFriendRequests("sixth");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult, Is.Not.Null, "Result should not be null");
-
-            var response = okResult?.Value as List<string>;
-
-            if (response is not null)
-                Assert.That(actual: response.Any(r => r == "five"), Is.True);
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Player_FriendRequests_NotFound()
-        {
-            var result = _controller.PlayerFriendRequests("nonexistant");
-
-            Assert.That(result.Result, Is.InstanceOf<NotFoundResult>(), "Expected NotFound result");
-        }
-
-        [Test]
-        public void Player_GameRequests_OK()
-        {
-            var result = _controller.PlayerGameRequests("sixth");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult?.Value, Is.EqualTo(new List<string> { "one" }));
-        }
-
-        [Test]
-        public void Player_GameRequests_NotFound()
-        {
-            var result = _controller.PlayerGameRequests("nonexistant");
-
-            Assert.That(result.Result, Is.InstanceOf<NotFoundResult>(), "Expected NotFound result");
-        }
-
-        [Test]
-        public void Player_SentFriendRequests_OK()
-        {
-            var result = _controller.PlayerSentFriendRequests("seven");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult?.Value, Is.EqualTo(new List<string> { "six" }));
-        }
-
-        [Test]
-        public void Get_SentGameRequests_OK()
-        {
-            var result = _controller.GetSentGameRequests("first");
-
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>(), "Expected OK result");
-            var okResult = result.Result as OkObjectResult;
-            Assert.That(okResult?.Value, Is.EqualTo(new List<string> { "six" }));
         }
 
         [Test]

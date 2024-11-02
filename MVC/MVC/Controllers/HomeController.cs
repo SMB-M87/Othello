@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using NuGet.Common;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -22,35 +23,33 @@ namespace MVC.Controllers
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
                 var token = _userManager.GetUserId(User);
-                var username = _userManager.GetUserName(User);
-
-                DeleteGameInvites(token);
                 var session = HttpContext.Session.GetString("GameCreation");
+                var response = await GetView(token);
 
                 var model = new Home
                 {
-                    Stats = await Stats(username),
-                    MatchHistory = await MatchHistory(username),
+                    Stats = response.Stats,
+                    MatchHistory = response.MatchHistory,
 
                     Partial = new HomePartial
                     {
                         Pending = new HomePending()
                         {
                             Session = session ?? "false",
-                            InGame = await InGame(token),
-                            Status = await Status(token),
-                            Games = await PendingGames()
+                            InGame = response.Partial.Pending.InGame,
+                            Status = response.Partial.Pending.Status,
+                            Games = response.Partial.Pending.Games
                         },
 
-                        OnlinePlayers = await OnlinePlayers(),
-                        PlayersInGame = await PlayersInGame(),
-                        Friends = await Friends(token),
+                        OnlinePlayers = response.Partial.OnlinePlayers,
+                        PlayersInGame = response.Partial.PlayersInGame,
+                        Friends = response.Partial.Friends,
 
-                        FriendRequests = await FriendRequests(token),
-                        GameRequests = await GameRequests(token),
+                        FriendRequests = response.Partial.FriendRequests,
+                        GameRequests = response.Partial.GameRequests,
 
-                        SentFriendRequests = await SentFriendRequests(token),
-                        SentGameRequests = await SentGameRequests(token)
+                        SentFriendRequests = response.Partial.SentFriendRequests,
+                        SentGameRequests = response.Partial.SentGameRequests,
                     }
                 };
                 return View(model);
@@ -62,7 +61,7 @@ namespace MVC.Controllers
         {
             if (string.IsNullOrEmpty(username))
             {
-                username = User != null && User.Identity != null && User.Identity.Name != null ? User.Identity.Name : string.Empty;
+                username = _userManager.GetUserName(User);
             }
 
             if (string.IsNullOrEmpty(username) || username == "Deleted")
@@ -71,16 +70,17 @@ namespace MVC.Controllers
             }
 
             string currentUserId = _userManager.GetUserId(User);
+            var response = await GetProfile($"{username} {currentUserId}");
 
             var model = new HomeProfile
             {
-                Stats = await Stats(username),
+                Stats = response.Stats,
                 Username = username,
-                MatchHistory = await MatchHistory(username),
-                IsFriend = await IsFriend(username, currentUserId),
-                HasSentRequest = await HasSentRequest(username, currentUserId),
-                HasPendingRequest = await HasPendingRequest(username, currentUserId),
-                LastSeen = await LastSeen(username)
+                MatchHistory = response.MatchHistory,
+                IsFriend = response.IsFriend,
+                HasSentRequest = response.HasSentRequest,
+                HasPendingRequest = response.HasPendingRequest,
+                LastSeen = response.LastSeen
             };
 
             return View("Profile", model);
@@ -91,11 +91,12 @@ namespace MVC.Controllers
             if (string.IsNullOrEmpty(token))
             {
                 var username = _userManager.GetUserName(User);
+                var current_user_id = _userManager.GetUserId(User);
 
                 var model = new GameOverview
                 {
                     Username = username,
-                    Result = await MostRecentGame(username) ?? new(),
+                    Result = await MostRecentGame(current_user_id) ?? new(),
                     Rematch = true,
                     Request = string.Empty
                 };
@@ -149,27 +150,27 @@ namespace MVC.Controllers
         {
             var token = _userManager.GetUserId(User);
             var session = HttpContext.Session.GetString("GameCreation");
-            DeleteGameInvites(token);
+            var response = await GetPartial(token);
 
             var model = new HomePartial
             {
                 Pending = new HomePending()
                 {
                     Session = session ?? "false",
-                    InGame = await InGame(token),
-                    Status = await Status(token),
-                    Games = await PendingGames()
+                    InGame = response.Pending.InGame,
+                    Status = response.Pending.Status,
+                    Games = response.Pending.Games
                 },
 
-                OnlinePlayers = await OnlinePlayers(),
-                PlayersInGame = await PlayersInGame(),
-                Friends = await Friends(token),
+                OnlinePlayers = response.OnlinePlayers,
+                PlayersInGame = response.PlayersInGame,
+                Friends = response.Friends,
 
-                FriendRequests = await FriendRequests(token),
-                GameRequests = await GameRequests(token),
+                FriendRequests = response.FriendRequests,
+                GameRequests = response.GameRequests,
 
-                SentFriendRequests = await SentFriendRequests(token),
-                SentGameRequests = await SentGameRequests(token)
+                SentFriendRequests = response.SentFriendRequests,
+                SentGameRequests = response.SentGameRequests,
             };
             return PartialView("_Partial", model);
         }
@@ -412,26 +413,10 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game request declined." });
         }
 
-        private async Task<string> Stats(string username)
+        private async Task<Home> GetView(string token)
         {
-            var response = await _httpClient.GetAsync($"api/result/stats/{username}");
-            string result = string.Empty;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Unable to fetch player stats.");
-            }
-            return result;
-        }
-
-        private async Task<List<GameResult>> MatchHistory(string username)
-        {
-            var response = await _httpClient.GetAsync($"api/result/history/{username}");
-            List<GameResult> result = new();
+            var response = await _httpClient.GetAsync($"api/home/view/{token}");
+            Home result = new();
 
             if (response.IsSuccessStatusCode)
             {
@@ -441,155 +426,20 @@ namespace MVC.Controllers
                     Converters = { new ColorArrayConverter() }
                 };
 
-                result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+                var deserializedResult = await response.Content.ReadFromJsonAsync<Home>(options);
+
+                if (deserializedResult is not null)
+                {
+                    result = deserializedResult;
+                }
             }
             return result;
         }
 
-        private async Task<bool> InGame(string token)
+        private async Task<HomePartial> GetPartial(string token)
         {
-            var response = await _httpClient.GetAsync($"api/game/{token}");
-            string result = string.Empty;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync();
-            }
-            return result != string.Empty;
-        }
-
-        private async Task<string> Status(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/game/status/{token}");
-            var result = string.Empty;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync();
-            }
-            return result;
-        }
-
-        private async Task<List<string>> OnlinePlayers()
-        {
-            var response = await _httpClient.GetAsync("api/player");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                result.Remove(_userManager.GetUserName(User));
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Unable to fetch online players.");
-            }
-            return result;
-        }
-
-        private async Task<List<string>> PlayersInGame()
-        {
-            var response = await _httpClient.GetAsync("api/player/gaming");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-                result.Remove(_userManager.GetUserName(User));
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Unable to fetch online players.");
-            }
-            return result;
-        }
-
-        private async Task<List<string>> Friends(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/player/friends/{token}");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-            }
-            return result;
-        }
-
-        private async Task<List<string>> FriendRequests(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/player/requests/friend/{token}");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-            }
-            return result;
-        }
-
-        private async Task<List<string>> GameRequests(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/player/requests/game/{token}");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-            }
-            return result;
-        }
-
-        private async Task<List<string>> SentFriendRequests(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/player/sent/friend/{token}");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-            }
-            return result;
-        }
-
-        private async Task<List<string>> SentGameRequests(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/player/sent/game/{token}");
-            List<string> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<string>>() ?? new();
-            }
-            return result;
-        }
-
-        private async Task<List<GamePending>> PendingGames()
-        {
-            var response = await _httpClient.GetAsync("api/game");
-            List<GamePending> result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<List<GamePending>>() ?? new();
-            }
-            return result;
-        }
-
-        private async void DeleteGameInvites(string token)
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/player/game/delete", new { Token = token });
-
-            if (!response.IsSuccessStatusCode)
-            {
-                ModelState.AddModelError(string.Empty, "Unable to delete game requests.");
-            }
-        }
-
-        private async Task<GameResult?> MostRecentGame(string username)
-        {
-            var response = await _httpClient.GetAsync($"api/result/history/{username}");
-            List<GameResult> result = new();
+            var response = await _httpClient.GetAsync($"api/home/partial/{token}");
+            HomePartial result = new();
 
             if (response.IsSuccessStatusCode)
             {
@@ -599,11 +449,55 @@ namespace MVC.Controllers
                     Converters = { new ColorArrayConverter() }
                 };
 
-                result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
-            }
+                var deserializedResult = await response.Content.ReadFromJsonAsync<HomePartial>(options);
 
-            var lastGame = result.OrderBy(game => Math.Abs((DateTime.UtcNow - game.Date).Ticks)).FirstOrDefault();
-            return lastGame;
+                if (deserializedResult is not null)
+                {
+                    result = deserializedResult;
+                }
+            }
+            return result;
+        }
+
+        private async Task<HomeProfile> GetProfile(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/home/profile/{token}");
+            HomeProfile result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                var deserializedResult = await response.Content.ReadFromJsonAsync<HomeProfile>(options);
+
+                if (deserializedResult is not null)
+                {
+                    result = deserializedResult;
+                }
+            }
+            return result;
+        }
+
+        private async Task<GameResult> MostRecentGame(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/result/last/{token}");
+            GameResult result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    Converters = { new ColorArrayConverter() }
+                };
+
+                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+            }
+            return result;
         }
 
         private async Task<GameResult?> GetResult(string token)
@@ -620,60 +514,6 @@ namespace MVC.Controllers
                 };
 
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
-            }
-            return result;
-        }
-
-        private async Task<bool> IsFriend(string receiver_username, string sender_token)
-        {
-            var request = receiver_username + " " + sender_token;
-
-            var response = await _httpClient.GetAsync($"api/player/is/friend/{request}");
-            bool result = false;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<bool>();
-            }
-            return result;
-        }
-
-        private async Task<bool> HasSentRequest(string receiver_username, string sender_token)
-        {
-            var request = receiver_username + " " + sender_token;
-
-            var response = await _httpClient.GetAsync($"api/player/has/sent/friend/{request}");
-            bool result = false;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<bool>();
-            }
-            return result;
-        }
-
-        private async Task<bool> HasPendingRequest(string receiver_username, string sender_token)
-        {
-            var request = receiver_username + " " + sender_token;
-
-            var response = await _httpClient.GetAsync($"api/player/has/received/friend/{request}");
-            bool result = false;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadFromJsonAsync<bool>();
-            }
-            return result;
-        }
-
-        private async Task<string> LastSeen(string username)
-        {
-            var response = await _httpClient.GetAsync($"api/player/last/seen/{username}");
-            string result = string.Empty;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync() ?? string.Empty;
             }
             return result;
         }

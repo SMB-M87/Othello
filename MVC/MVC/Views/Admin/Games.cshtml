@@ -28,7 +28,7 @@
         @foreach (var game in Model)
         {
             <tr>
-                <td>@game.Token</td>
+                <td><a asp-action="GameView" asp-route-token="@game.Token" style="text-decoration: none; color: inherit;">@game.Token</a></td>
                 <td>@game.Description</td>
                 <td>@game.Status</td>
                 <td>@game.PlayersTurn</td>
@@ -71,6 +71,10 @@
 <script>
     function deleteGame(token) {
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        if (!confirm("Are you sure you want to delete the game?")) {
+            return;
+        }
 
         fetch('@Url.Action("GameDelete", "Admin")', {
             method: 'POST',

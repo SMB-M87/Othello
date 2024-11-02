@@ -29,7 +29,7 @@ namespace MVC.Middleware
                     var token = userManager.GetUserId(user);
                     var httpClient = _httpClientFactory.CreateClient("ApiClient");
                     var currentPath = context.Request.Path.Value?.ToLower();
-                    var response = await httpClient.GetAsync($"api/game/status/{token}");
+                    var response = await httpClient.GetAsync($"api/game/{token}");
 
                     if (response.IsSuccessStatusCode)
                     {

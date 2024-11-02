@@ -1,39 +1,36 @@
 ﻿@model HomePartial
 
-@if (Model.OnlinePlayers != null && Model.OnlinePlayers.Count > 0)
+@if (Model.Online != null && Model.Online.Count > 0)
 {
     <ul style="list-style: none; padding-left: 0;">
         @foreach (var player in Model.OnlinePlayers)
         {
-            @if (!Model.OnlineFriends.Contains(player) && !Model.OfflineFriends.Contains(player))
-            {
-                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
-                    <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
-                    <div>
-                        @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
-                        {
-                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
-                                <i class="fa fa-link" style="font-size: 18px;"></i>
-                            </button>
-                        }
+            <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
+                <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
+                <div>
+                    @if (!Model.Pending.InGame && Model.JoinablePlayers.Contains(player))
+                    {
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Join Game" onclick="joinGame('@player')">
+                            <i class="fa fa-link" style="font-size: 18px;"></i>
+                        </button>
+                    }
 
-                        @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
-                            !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
-                        {
-                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
-                                <i class="fa fa-envelope" style="font-size: 18px;"></i>
-                            </button>
-                        }
+                    @if (Model.Pending.InGame && Model.Pending.Status == "0" &&
+                   !Model.SentGameRequests.Contains(player) && Model.InvitablePlayers.Contains(player))
+                    {
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; line-height: 1;" title="Invite" onclick="sendGameRequest('@player')">
+                            <i class="fa fa-envelope" style="font-size: 18px;"></i>
+                        </button>
+                    }
 
-                        @if (!Model.SentFriendRequests.Contains(player) && !Model.FriendRequests.Contains(player))
-                        {
-                            <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@player')">
-                                <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
-                            </button>
-                        }
-                    </div>
-                </li>
-            }
+                    @if (!Model.SentFriendRequests.Contains(player) && !Model.FriendRequests.Contains(player))
+                    {
+                        <button type="submit" class="btn btn-link p-0" style="font-size: 16px; margin-left: 5px;" title="Friend request" onclick="sendFriendRequest('@player')">
+                            <i class="fas fa-plus-circle" style="font-size: 18px;"></i>
+                        </button>
+                    }
+                </div>
+            </li>
         }
     </ul>
 }
