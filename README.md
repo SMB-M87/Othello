@@ -17,15 +17,27 @@ This is a backend-driven web application for a multiplayer Othello (Reversi) gam
 
 ## Project Overview
 The Othello MVC API project is designed to handle multiplayer Othello gameplay through a robust backend architecture. The application provides essential features for managing players, game sessions, and results. The REST API offers a suite of endpoints to facilitate game creation, player interaction, and game results tracking, while the MVC structure allows seamless interaction between the API and the client application.
-![Home](https://github.com/user-attachments/assets/fc31057d-1049-44ca-8cfe-17278e7c79a9)
-![Profile](https://github.com/user-attachments/assets/1610bcf8-57a1-41e4-b256-baa5295e84bd)
-![Create](https://github.com/user-attachments/assets/eb30ed2b-da7c-4d1f-9ded-f60bb44ad50a)
-![Wait](https://github.com/user-attachments/assets/9d72f5e4-1093-4649-8759-5141b452180a)
-![Game](https://github.com/user-attachments/assets/ce26b7a8-3de6-4976-a9fc-ec9fbf80b86e)
-![Result](https://github.com/user-attachments/assets/73ac8731-eaf3-479f-9154-ddba564a0f68)
-![Rematch](https://github.com/user-attachments/assets/c31addf7-3aff-4dbb-acec-12f23779966a)
+![Unauthenticated](https://github.com/user-attachments/assets/d019d59d-2dd9-44fd-b990-5a49f23663c1)
+![Registration](https://github.com/user-attachments/assets/1075be61-2112-476c-9f7d-c16d69a8d05a)
+![Home](https://github.com/user-attachments/assets/8f2fd601-b916-4978-9b7b-46b55feccac7)
+![Create](https://github.com/user-attachments/assets/91dcb072-a52b-4436-9dd3-6e29cbf274f5)
+![Wait](https://github.com/user-attachments/assets/0a50b714-2e81-4f41-8dae-041dae74d7f8)
+![Game](https://github.com/user-attachments/assets/af22cd5e-6e60-4ca3-bfc4-49faafd629de)
+![Result](https://github.com/user-attachments/assets/32d26c27-ebf6-4813-b1be-8cd460d1fec4)
+![Rematch](https://github.com/user-attachments/assets/e1347d79-4306-489f-9192-cca762854942)
+![Profile](https://github.com/user-attachments/assets/336cd202-f2a7-4cbf-b2f0-3ce57e6a26da)
+![ProfileAcceptDecline](https://github.com/user-attachments/assets/f86ecc20-4d8f-46b1-a781-445dc89b0d05)
+![ProfileNoFriend](https://github.com/user-attachments/assets/f830db27-ba8d-4f18-8588-6e790c67071d)
+![Dashboard](https://github.com/user-attachments/assets/0755cc3e-338d-42ee-8295-0a9f4ff444ff)
+![Players](https://github.com/user-attachments/assets/ee7516f4-242b-4757-9c5a-7fb93494b1ef)
+![PlayersDetail](https://github.com/user-attachments/assets/71b43652-a18a-4d74-abfa-0f6e773de5a2)
+![Games](https://github.com/user-attachments/assets/41a6def5-3ea5-4427-a260-3570ac92b074)
+![GameDetail](https://github.com/user-attachments/assets/9f574836-9d27-404d-b535-0d711979c464)
+![Results](https://github.com/user-attachments/assets/31a011e3-2a6b-4e82-8130-b9de0d194b78)
+![ResultDetail](https://github.com/user-attachments/assets/faded18b-f9df-4fc1-b358-8904243216eb)
+![Privacy](https://github.com/user-attachments/assets/2672b668-744e-43bd-8808-e7e7ed486970)
 
-https://github.com/user-attachments/assets/2c13e4e1-71aa-4575-a2ca-809c43da8e29
+https://github.com/user-attachments/assets/379a3a77-7a70-4bb7-9359-d31cc58dcbd0
 
 
 # Features
