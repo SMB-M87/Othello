@@ -269,19 +269,75 @@ namespace API.Data
 
             if (player is not null)
             {
+                var allPlayers = _context.Players.ToList();
+                var game = _context.Games.FirstOrDefault(s => s.Second != null && s.Second == token || s.First == token);
+
+                if (game is not null)
+                {
+                    if (game.Second is not null)
+                    {
+                        string winner;
+                        string loser;
+
+                        if (game.First == token)
+                        {
+                            winner = game.Second;
+                            loser = "deleted";
+                        }
+                        else
+                        {
+                            winner = game.First;
+                            loser = "deleted";
+                        }
+                        GameResult result = new(game.Token, winner, loser, game.Board)
+                        {
+                            Date = DateTime.UtcNow
+                        };
+                        _context.Results.Add(result);
+                        _context.Games.Remove(game);
+                    }
+                    else
+                    {
+                        _context.Games.Remove(game);
+                        var playersWithGameRequests = allPlayers.Where(p => p.Requests.Any(r => r.Username == player.Username && r.Type == Inquiry.Game)).ToList();
+
+                        foreach (var gamer in playersWithGameRequests)
+                        {
+                            var request = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username);
+
+                            if (request != null)
+                            {
+                                gamer.Requests.Remove(request);
+                                _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                            }
+                        }
+                    }
+                }
+                _context.SaveChanges();
+
                 var requestsToRemove = player.Requests.ToList();
                 foreach (Request request in requestsToRemove)
                 {
                     player.Requests.Remove(request);
                 }
+                _context.SaveChanges();
 
                 var friendsToRemove = player.Friends.ToList();
                 foreach (string friend in friendsToRemove)
                 {
-                    DeleteFriend(friend, player.Token);
-                }
+                    var receiver = GetByName(friend);
 
-                var players = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == player.Username)).ToList();
+                    if (receiver is not null)
+                    {
+                        player.Friends.Remove(receiver.Username);
+                        _context.Entry(player).Property(p => p.Friends).IsModified = true;
+                        receiver.Friends.Remove(player.Username);
+                        _context.Entry(receiver).Property(p => p.Friends).IsModified = true;
+                    }
+                }
+                _context.SaveChanges();
+
+                var players = allPlayers.Where(p => p.Requests.Any(r => r.Username == player.Username)).ToList();
 
                 foreach (Player gamer in players)
                 {
@@ -299,10 +355,11 @@ namespace API.Data
                         gamer.Requests.Remove(requestGame);
                         _context.Entry(gamer).Property(p => p.Requests).IsModified = true;
                     }
-                    _context.SaveChanges();
                 }
+                _context.SaveChanges();
 
-                var results = _context.Results.ToList().FindAll(r => r.Winner == player.Token || r.Loser == player.Token).ToList();
+                var allResults = _context.Results.ToList();
+                var results = allResults.Where(s => s.Winner == token || s.Loser == token).ToList();
 
                 foreach (GameResult result in results)
                 {
@@ -316,8 +373,8 @@ namespace API.Data
                         result.Loser = "deleted";
                         _context.Entry(result).Property(p => p.Loser).IsModified = true;
                     }
-                    _context.SaveChanges();
                 }
+                _context.SaveChanges();
 
                 _context.Players.Remove(player);
                 _context.SaveChanges();
@@ -328,16 +385,14 @@ namespace API.Data
 
         private bool PlayerInGame(string token)
         {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
+            var game = _context.Games.FirstOrDefault(s => s.First.Equals(token) && s.Status != Status.Finished);
+            game ??= _context.Games.FirstOrDefault(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
             return game is not null;
         }
 
         private bool PlayerInPendingGame(string token)
         {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First.Equals(token) && s.Second is null && s.Status == Status.Pending);
+            var game = _context.Games.FirstOrDefault(s => s.First.Equals(token) && s.Second == null && s.Status == Status.Pending);
             return game is not null;
         }
 

@@ -3,7 +3,7 @@
 @if (Model.Online != null && Model.Online.Count > 0)
 {
     <ul style="list-style: none; padding-left: 0;">
-        @foreach (var player in Model.OnlinePlayers)
+        @foreach (var player in Model.Online)
         {
             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>

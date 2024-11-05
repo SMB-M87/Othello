@@ -167,6 +167,10 @@ else
     function deleteFriend(username) {
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
+        if (!confirm("Are you sure you want to delete this friendship?")) {
+            return;
+        }
+
         fetch('@Url.Action("DeleteFriend", "Home")', {
             method: 'POST',
             headers: {

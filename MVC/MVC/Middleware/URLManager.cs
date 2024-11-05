@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MVC.Models;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace MVC.Middleware
 {
@@ -8,7 +9,9 @@ namespace MVC.Middleware
         private readonly RequestDelegate _next;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public URLManager(RequestDelegate next, IHttpClientFactory httpClientFactory)
+        public URLManager(
+            RequestDelegate next,
+            IHttpClientFactory httpClientFactory)
         {
             _next = next;
             _httpClientFactory = httpClientFactory;
@@ -16,15 +19,26 @@ namespace MVC.Middleware
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
         {
+            var user = context.User;
             var isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
-            if (!isAjaxRequest)
-            {
-                using var scope = serviceProvider.CreateScope();
-                var user = context.User;
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            using var scope = serviceProvider.CreateScope();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var signInManager = scope.ServiceProvider.GetRequiredService<SignInManager<IdentityUser>>();
 
-                if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
+            if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                var userId = userManager.GetUserId(user);
+                var existingUser = await userManager.FindByIdAsync(userId);
+
+                if (existingUser == null)
+                {
+                    await signInManager.SignOutAsync();
+                    context.Response.Redirect("/Home/Index");
+                    return;
+                }
+
+                if (!isAjaxRequest)
                 {
                     var token = userManager.GetUserId(user);
                     var httpClient = _httpClientFactory.CreateClient("ApiClient");
@@ -48,13 +62,13 @@ namespace MVC.Middleware
                     }
                     else
                     {
-                        if (user.IsInRole(Roles.Administrator) && currentPath is not null && 
+                        if (user.IsInRole(Roles.Administrator) && currentPath is not null &&
                            !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/admin"))
                         {
                             context.Response.Redirect($"/Home/Index");
                             return;
                         }
-                        else if (user.IsInRole(Roles.Mediator) && currentPath is not null && 
+                        else if (user.IsInRole(Roles.Mediator) && currentPath is not null &&
                             !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mediator"))
                         {
                             context.Response.Redirect($"/Home/Index");

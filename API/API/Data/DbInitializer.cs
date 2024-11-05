@@ -221,7 +221,7 @@ namespace API.Data
             Game game3 = new("three", six.Token, Color.Black, null, Status.Pending, Color.White, "I search an advanced player!");
             Game game4 = new("four", seven.Token, Color.Black, null, Status.Pending, Color.White, "میں ایک کھیل کھیلنا چاہتا ہوں اور کوئی ضرورت نہیں ہے!");
             Game game5 = new("six", eight.Token, Color.Black, null, Status.Pending, Color.White, "Θέλω να παίξω ένα παιχνίδι και δεν έχω απαιτήσεις!!!");
-            Game g6 = new("seven", nine.Token, Color.Black, null, Status.Pending, Color.White, "Je veux jouer une partie contre un élite!!!");
+            Game g6 = new("seven", t17.Token, Color.Black, null, Status.Pending, Color.White, "Je veux jouer une partie contre un élite!!!");
             Game g7 = new("eight", nine.Token, Color.Black, null, Status.Pending, Color.White, "أريد أن ألعب لعبة وليس لدي أي متطلبات!");
             Game g8 = new("nine", ten.Token, Color.Black, null, Status.Pending, Color.White, "I search an advanced player to play more than one game against!");
             Game g9 = new("ten", t12.Token, Color.Black, null, Status.Pending, Color.White, "אני רוצה לשחק משחק ואין לי שום דרישות!");

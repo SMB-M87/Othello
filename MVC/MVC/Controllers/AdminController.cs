@@ -12,13 +12,16 @@ namespace MVC.Controllers
     public class AdminController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IHttpContextAccessor? _httpContextAccessor;
 
         public AdminController(
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
+            UserManager<IdentityUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {
+            _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
 
             var baseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new Exception("BaseUrl setting is missing in configuration.");
@@ -151,13 +154,30 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> PlayerDelete([FromBody] Text text)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/player/delete", new { Token = text.Body });
-
-            if (!response.IsSuccessStatusCode)
+            var user = await _userManager.FindByIdAsync(text.Body);
+            if (user == null)
             {
-                return Json(new { success = false, message = "Unable to delete player." });
+                return Json(new { success = false, message = "User not found in Identity database." });
             }
-            return Json(new { success = true, message = "Player deleted." });
+            else
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/player/delete", new { Token = text.Body });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to delete player." });
+                }
+
+                var identityResult = await _userManager.DeleteAsync(user);
+                if (!identityResult.Succeeded)
+                {
+                    return Json(new { success = false, message = "Failed to delete user from Identity database." });
+                }
+
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                return Json(new { success = true, message = "Player and associated Identity user deleted successfully." });
+            }
         }
 
         [HttpPost]
@@ -177,7 +197,7 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> ResultDelete([FromBody] Text text)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/result/delete", new { Token = text.Body});
+            var response = await _httpClient.PostAsJsonAsync("api/admin/result/delete", new { Token = text.Body });
 
             if (!response.IsSuccessStatusCode)
             {

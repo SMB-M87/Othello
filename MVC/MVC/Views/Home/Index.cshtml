@@ -67,7 +67,7 @@
                 @if (Model.Partial.Online != null && Model.Partial.Online.Count > 0)
                 {
                     <ul style="list-style: none; padding-left: 0;">
-                        @foreach (var player in Model.Partial.OnlinePlayers)
+                        @foreach (var player in Model.Partial.Online)
                         {
                             <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; background-color:lightblue">
                                 <span><a asp-controller="Home" asp-action="Profile" asp-route-username="@player" style="text-decoration: none; color: inherit;">@player</a></span>
@@ -473,6 +473,10 @@
 
         function deleteFriend(username) {
             const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            if (!confirm("Are you sure you want to delete this friendship?")) {
+                return;
+            }
 
             fetch('@Url.Action("DeleteFriend", "Home")', {
                 method: 'POST',
