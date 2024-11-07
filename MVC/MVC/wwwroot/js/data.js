@@ -11,7 +11,7 @@ Game.Data = (function () {
   };
 
   let stateMap = {
-    environment: "development",
+    environment: "development"
   };
 
   // private functions

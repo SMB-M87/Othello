@@ -37,10 +37,10 @@ describe("Game Module", function () {
 
     // Initialize Game module
     Game.init(function () {
-      expect(console.log).toHaveBeenCalledWith("Game module started from url: https://www.s1164087/game/");
-      expect(console.log).toHaveBeenCalledWith("Data module started from url: https://www.s1164087/game/data");
-      expect(console.log).toHaveBeenCalledWith("Model module started from url: https://www.s1164087/game/model");
-      expect(console.log).toHaveBeenCalledWith("Othello module started from url: https://www.s1164087/game/othello");
+      expect(console.log).toHaveBeenCalledWith("Game module started from url: https://www.s1164087/api/game/");
+      expect(console.log).toHaveBeenCalledWith("Data module started from url: https://www.s1164087/api/game/data");
+      expect(console.log).toHaveBeenCalledWith("Model module started from url: https://www.s1164087/api/game/model");
+      expect(console.log).toHaveBeenCalledWith("Othello module started from url: https://www.s1164087/api/game/othello");
       done();
     });
   });

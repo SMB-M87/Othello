@@ -40,7 +40,7 @@ const Game = (function (url) {
   return {
     init: init,
   };
-})("https://www.s1164087/game/");
+})("https://www.s1164087/api/game/");
 
 $(() => {
   function afterInit() {
