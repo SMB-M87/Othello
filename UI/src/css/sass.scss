@@ -1,0 +1,39 @@
+$primary-color: green;
+$border-color: black;
+
+$white-pawn: white;
+$black-pawn: black;
+
+.grid{
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  background-color: $primary-color;
+  border-color: $border-color;
+}
+
+.column{
+  width: 50px;
+  height: 50px;
+  background-color: $primary-color;
+  border-color: $border-color;
+  outline: solid;
+  border-width: 5px;
+}
+
+.white-pawn{
+  margin: 12.5px;
+  height: 25px;
+  width: 25px;
+  background-color: $white-pawn;
+  border-radius: 50%;
+  border-color: $border-color;
+}
+
+.black-pawn{
+  margin: 12.5px;
+  height: 25px;
+  width: 25px;
+  background-color: $black-pawn;
+  border-radius: 50%;
+  border-color: $border-color;
+}
