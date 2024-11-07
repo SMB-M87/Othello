@@ -2,11 +2,11 @@ const serverProjectPath = "../MVC/MVC/wwwroot";
 
 const files = {
   jsOrder: [
-    "js/feedbackWidget.js",
-    "js/game.js",
-    "js/data.js",
-    "js/model.js",
-    "js/othello.js",
+    "src/js/feedbackWidget.js",
+    "src/js/game.js",
+    "src/js/data.js",
+    "src/js/model.js",
+    "src/js/othello.js",
   ],
   js: ["src/js/*.js"],
   css: ["src/css/*.scss"],
