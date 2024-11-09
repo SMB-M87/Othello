@@ -14,6 +14,8 @@ namespace API.Models
         [Required]
         public bool Draw { get; private set; }
         [Required]
+        public bool Forfeit { get; private set; }
+        [Required]
         public Color[,] Board { get; private set; }
         [Required]
         public DateTime Date { get; set; }
@@ -24,16 +26,18 @@ namespace API.Models
             Winner = string.Empty;
             Loser = string.Empty;
             Draw = false;
+            Forfeit = false;
             Board = new Color[,] { };
             Date = DateTime.MinValue;
         }
 
-        public GameResult(string token, string winner, string loser, Color[,] board, bool draw = false)
+        public GameResult(string token, string winner, string loser, Color[,] board, bool draw = false, bool forfeit = false)
         {
             Token = token;
             Winner = winner;
             Loser = loser;
             Draw = draw;
+            Forfeit = forfeit;
             Board = board;
             Date = DateTime.UtcNow;
         }

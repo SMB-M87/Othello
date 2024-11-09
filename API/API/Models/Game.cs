@@ -111,11 +111,6 @@ namespace API.Models
             Date = DateTime.UtcNow;
         }
 
-        private void SetPlayingStatus()
-        {
-            Status = Status.Playing;
-        }
-
         public void SetSecondPlayer(string secondPlayerToken)
         {
             if (Second == null)
@@ -130,10 +125,35 @@ namespace API.Models
             }
         }
 
-        public void Finish()
+        public bool IsThereAPossibleMove(Color color)
         {
-            Status = Status.Finished;
-            PlayersTurn = Color.None;
+            if (color == Color.None)
+                throw new InvalidGameOperationException("None is not a valid color!");
+
+            for (int rowMove = 0; rowMove < boardScope; rowMove++)
+            {
+                for (int columnMove = 0; columnMove < boardScope; columnMove++)
+                {
+                    if (PossibleMove(rowMove, columnMove, color))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool PossibleMove(int rowMove, int columnMove)
+        {
+            if (!PositionInbetweenBoardLimits(rowMove, columnMove))
+                throw new InvalidGameOperationException($"Move ({rowMove},{columnMove}) is outside the board!");
+
+            return PossibleMove(rowMove, columnMove, PlayersTurn);
+        }
+
+        public bool Finished()
+        {
+            return !(IsThereAPossibleMove(PlayersTurn) && IsThereAPossibleMove(GetOpponentsColor(PlayersTurn)));
         }
 
         public void Pass()
@@ -152,9 +172,22 @@ namespace API.Models
             }
         }
 
-        public bool Finished()
+        public void MakeMove(int rowMove, int columnMove)
         {
-            return !(IsThereAPossibleMove(PlayersTurn) && IsThereAPossibleMove(GetOpponentsColor(PlayersTurn)));
+            if (Status == Status.Playing && PossibleMove(rowMove, columnMove))
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(rowMove, columnMove, PlayersTurn, direction[i, 0], direction[i, 1]);
+                }
+                Board[rowMove, columnMove] = PlayersTurn;
+                Date = DateTime.UtcNow;
+                ChangeTurns();
+            }
+            else
+            {
+                throw new InvalidGameOperationException($"Move ({rowMove},{columnMove}) is not possible!");
+            }
         }
 
         public Color WinningColor()
@@ -178,30 +211,15 @@ namespace API.Models
             return Color.None;
         }
 
-        public bool PossibleMove(int rowMove, int columnMove)
+        public void Finish()
         {
-            if (!PositionInbetweenBoardLimits(rowMove, columnMove))
-                throw new InvalidGameOperationException($"Move ({rowMove},{columnMove}) is outside the board!");
-
-            return PossibleMove(rowMove, columnMove, PlayersTurn);
+            Status = Status.Finished;
+            PlayersTurn = Color.None;
         }
 
-        public void MakeMove(int rowMove, int columnMove)
+        private void SetPlayingStatus()
         {
-            if (Status == Status.Playing && PossibleMove(rowMove, columnMove))
-            {
-                for (int i = 0; i < 8; i++)
-                {
-                    FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(rowMove, columnMove, PlayersTurn, direction[i, 0], direction[i, 1]);
-                }
-                Board[rowMove, columnMove] = PlayersTurn;
-                Date = DateTime.UtcNow;
-                ChangeTurns();
-            }
-            else
-            {
-                throw new InvalidGameOperationException($"Move ({rowMove},{columnMove}) is not possible!");
-            }
+            Status = Status.Playing;
         }
 
         private static Color GetOpponentsColor(Color color)
@@ -212,24 +230,6 @@ namespace API.Models
                 return Color.White;
             else
                 return Color.None;
-        }
-
-        private bool IsThereAPossibleMove(Color color)
-        {
-            if (color == Color.None)
-                throw new InvalidGameOperationException("None is not a valid color!");
-
-            for (int rowMove = 0; rowMove < boardScope; rowMove++)
-            {
-                for (int columnMove = 0; columnMove < boardScope; columnMove++)
-                {
-                    if (PossibleMove(rowMove, columnMove, color))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         private bool PossibleMove(int rowMove, int columnMove, Color color)

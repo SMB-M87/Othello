@@ -10,10 +10,13 @@
         Status Status { get; }
         Color[,] Board { get; set; }
         Color PlayersTurn { get; }
-        Color WinningColor();
+        void SetSecondPlayer(string secondPlayerToken);
+        bool IsThereAPossibleMove(Color color);
         bool PossibleMove(int rowMove, int columnMove);
-        void MakeMove(int rowMove, int columnMove);
-        void Pass();
         bool Finished();
+        void Pass();
+        void MakeMove(int rowMove, int columnMove);
+        Color WinningColor();
+        void Finish();
     }
 }

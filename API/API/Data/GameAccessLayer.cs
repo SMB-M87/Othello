@@ -52,6 +52,7 @@ namespace API.Data
                     {
                         InGame = game.Status == Status.Playing,
                         PlayersTurn = game.PlayersTurn,
+                        PossibleMove = !game.Finished(),
                         Board = game.Board,
                         Time = GetTimerByPlayersToken(token)
                     }
@@ -86,6 +87,7 @@ namespace API.Data
                 {
                     InGame = game.Status == Status.Playing,
                     PlayersTurn = game.PlayersTurn,
+                    PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                     Board = game.Board,
                     Time = GetTimerByPlayersToken(token)
                 };
@@ -97,7 +99,7 @@ namespace API.Data
                 {
                     if ((DateTime.UtcNow - first.LastActivity).TotalSeconds >= 100)
                     {
-                        GameResult result = new(game.Token, game.Second, game.First, game.Board)
+                        GameResult result = new(game.Token, game.Second, game.First, game.Board, false, true)
                         {
                             Date = DateTime.UtcNow
                         };
@@ -111,7 +113,7 @@ namespace API.Data
                     }
                     else if ((DateTime.UtcNow - second.LastActivity).TotalSeconds >= 100)
                     {
-                        GameResult result = new(game.Token, game.First, game.Second, game.Board)
+                        GameResult result = new(game.Token, game.First, game.Second, game.Board, false, true)
                         {
                             Date = DateTime.UtcNow
                         };
@@ -132,6 +134,7 @@ namespace API.Data
                 {
                     InGame = false,
                     PlayersTurn = Color.None,
+                    PossibleMove = false,
                     Board = new Color[8, 8],
                     Time = string.Empty
                 };
@@ -345,7 +348,7 @@ namespace API.Data
                         winner = game.First;
                         loser = token;
                     }
-                    GameResult result = new(game.Token, winner, loser, game.Board)
+                    GameResult result = new(game.Token, winner, loser, game.Board, false, true)
                     {
                         Date = DateTime.UtcNow
                     };
