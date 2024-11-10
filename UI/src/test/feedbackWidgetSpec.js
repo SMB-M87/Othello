@@ -35,15 +35,15 @@ describe("FeedbackWidget", function () {
     expect($("#feedback-widget").css("display")).toBe("block");
     expect($("#feedback-widget").hasClass("alert-success")).toBe(true);
     expect($("#feedback-widget span").text()).toBe("Success - Fusion is near.");
-    
+
     setTimeout(() => {
       try {
-          expect($("#feedback-widget").css("display")).toBe("none");
-          done(); // Signal completion of the test
+        expect($("#feedback-widget").css("display")).toBe("none");
+        done(); // Signal completion of the test
       } catch (error) {
-          done.fail(error); // Fail the test if an error occurs
+        done.fail(error); // Fail the test if an error occurs
       }
-  }, 17000); // 15 seconds + a small buffer
+    }, 17000); // 15 seconds + a small buffer
   });
 
   // 3. Display the feedback widget with a danger alert
@@ -51,20 +51,21 @@ describe("FeedbackWidget", function () {
     feedbackWidget.show("Subcritical reactor!!!", "Danger");
     expect($("#feedback-widget").css("display")).toBe("block");
     expect($("#feedback-widget").hasClass("alert-danger")).toBe(true);
-    expect($("#feedback-widget span").text()).toBe(
-      "Danger - Subcritical reactor!!!"
-    );
+    expect($("#feedback-widget span").text()).toBe("Danger - Subcritical reactor!!!");
   });
 
   // 4. Hide the feedback widget when close button is clicked
-  it("should hide the feedback widget when the close button is clicked", function () {
+  it("should hide the feedback widget when the close button is clicked", function (done) {
     feedbackWidget.show("Some message", "Info");
     $(".feedback-widget__close").trigger("click");
-    expect($("#feedback-widget").css("display")).toBe("block");
 
     setTimeout(() => {
-      expect($("#feedback-widget").css("display")).toBe("none");
-      done();
+      try {
+        expect($("#feedback-widget").css("display")).toBe("none");
+        done(); // Signal completion of the test
+      } catch (error) {
+        done.fail(error); // Fail the test if an error occurs
+      }
     }, 2000);
   });
 
