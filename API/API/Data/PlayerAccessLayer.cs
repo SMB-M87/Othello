@@ -257,7 +257,6 @@ namespace API.Data
                         _context.SaveChanges();
                     }
                 }
-                UpdateActivity(token);
                 return true;
             }
             return false;

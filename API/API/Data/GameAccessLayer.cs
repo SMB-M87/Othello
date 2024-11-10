@@ -52,7 +52,8 @@ namespace API.Data
                     {
                         InGame = game.Status == Status.Playing,
                         PlayersTurn = game.PlayersTurn,
-                        PossibleMove = !game.Finished(),
+                        IsPlayersTurn = token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
+                        PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                         Board = game.Board,
                         Time = GetTimerByPlayersToken(token)
                     }
@@ -69,6 +70,8 @@ namespace API.Data
                     {
                         InGame = false,
                         PlayersTurn = Color.None,
+                        IsPlayersTurn = false,
+                        PossibleMove = false,
                         Board = new Color[8, 8],
                         Time = string.Empty
                     }
@@ -87,6 +90,7 @@ namespace API.Data
                 {
                     InGame = game.Status == Status.Playing,
                     PlayersTurn = game.PlayersTurn,
+                    IsPlayersTurn = token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                     Board = game.Board,
                     Time = GetTimerByPlayersToken(token)
@@ -134,6 +138,7 @@ namespace API.Data
                 {
                     InGame = false,
                     PlayersTurn = Color.None,
+                    IsPlayersTurn = false,
                     PossibleMove = false,
                     Board = new Color[8, 8],
                     Time = string.Empty

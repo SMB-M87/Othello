@@ -18,6 +18,7 @@ namespace API.Controllers
         [HttpGet("view/{token}")]
         public ActionResult<Home> View(string token)
         {
+            _repository.PlayerRepository.UpdateActivity(token);
             _repository.PlayerRepository.DeleteGameInvites(token);
             var response = _repository.HomeRepository.GetView(token);
 

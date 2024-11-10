@@ -70,7 +70,7 @@ namespace API.Data
                 SentGameRequests = GetSentGameRequests(token) ?? new()
             };
 
-            if (game != null && game.Rematch != null)
+            if (game != null && game.Rematch != null && game.Second == null)
             {
                 var player = GetPlayer(game.Rematch);
                 var creator = GetPlayer(token);

@@ -69,11 +69,16 @@ namespace API.Controllers
 
             if (response == true)
             {
-                _repository.PlayerRepository.UpdateActivity(request.SenderToken);
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                var player = _repository.PlayerRepository.GetByName(request.ReceiverUsername);
+
+                if (player is not null)
+                {
+                    _repository.PlayerRepository.UpdateActivity(player.Token);
+                    _repository.PlayerRepository.UpdateActivity(request.SenderToken);
+                    return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                }
             }
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
         [HttpPost("move")]
