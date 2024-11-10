@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Othello</title>
+    <link rel="stylesheet" href="css/style.css" />
 
     <!-- Latest compiled and minified CSS -->
     <link
@@ -22,12 +23,12 @@
 
     <!--link afkomstig van https://cdnjs.com/libraries/jquery/-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
-
+    
     <!-- Latest compiled and minified JavaScript -->
     <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-      crossorigin="anonymous"
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+    integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"
     ></script>
 
     <!-- build:js -->
@@ -40,33 +41,16 @@
   </head>
 
   <body>
-    <div
-      id="feedback-widget"
-      class=""
-      role="alert"
-      style="display: block"
-    ></div>
-
-    <button
-      id="feedback-widget-succes-button"
-      type="button"
-      value="Fusion is near."
-    >
-      Good Luck
-    </button>
-    <button
-      id="feedback-widget-hide-button"
-      type="button"
-      value="For the fallout..."
-    >
-      Hide
-    </button>
-    <button
-      id="feedback-widget-danger-button"
-      type="button"
-      value="Subcritical reactor!!!"
-    >
-      Danger
-    </button>
+    <section id="feedback-section" aria-label="Feedback Widget">
+      <article id="feedback-widget" role="alert" style="display: block"></article>
+      <footer id="feedback-section__buttons">
+        <button id="move-button" class="feedback-section__button feedback-section__button--succes">Move</button>
+        <button id="move-button-fail" class="feedback-section__button feedback-section__button--danger">Move Fail</button>
+        <button id="pass-button" class="feedback-section__button feedback-section__button--succes">Pass</button>
+        <button id="pass-button-fail" class="feedback-section__button feedback-section__button--danger">Pass Fail</button>
+        <button id="forfeit-button" class="feedback-section__button feedback-section__button--succes">Forfeit</button>
+        <button id="forfeit-button-fail" class="feedback-section__button feedback-section__button--danger">Forfeit Fail</button>
+      </footer>
+    </section>
   </body>
 </html>

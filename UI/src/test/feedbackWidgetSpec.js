@@ -8,18 +8,21 @@ describe("FeedbackWidget", function () {
   let feedbackWidget;
 
   beforeAll(function (done) {
+    // Spy on window.alert to suppress actual alerts in tests
+    spyOn(window, "alert").and.stub();
+
     // Add DOM elements dynamically for testing
     $("body").append(
       '<div id="feedback-widget" class="" role="alert" style="display: none;"></div>'
     );
     $("body").append(
-      '<button id="feedback-widget-succes-button" type="button" value="Fusion is near.">Good Luck</button>'
+      '<button id="feedback-widget-succes-button" type="button" value="Fusion is near.">Success</button>'
     );
     $("body").append(
       '<button id="feedback-widget-hide-button" type="button" value="For the fallout...">Hide</button>'
     );
     $("body").append(
-      '<button id="feedback-widget-danger-button" type="button" value="Subcritical reactor!!!">Danger</button>'
+      '<button id="feedback-widget-fail-button" type="button" value="Subcritical reactor!!!">Fail</button>'
     );
 
     feedbackWidget = new FeedbackWidget("feedback-widget");
@@ -41,20 +44,18 @@ describe("FeedbackWidget", function () {
 
   // 2. Display the feedback widget with success alert
   it("should show the feedback widget with success alert", function () {
-    feedbackWidget.show("Fusion is near.", "Good Luck");
+    feedbackWidget.show("Fusion is near.", "Success");
     expect($("#feedback-widget").css("display")).toBe("block");
     expect($("#feedback-widget").attr("class")).toBe("alert alert-success");
-    expect($("#feedback-widget").text()).toBe("Good Luck - Fusion is near.");
+    expect($("#feedback-widget").text()).toBe("Success - Fusion is near.");
   });
 
-  // 3. Display the feedback widget with danger alert
+  // 3. Display the feedback widget with Fail alert
   it("should show the feedback widget with danger alert", function () {
-    feedbackWidget.show("Subcritical reactor!!!", "Danger");
+    feedbackWidget.show("Subcritical reactor!!!", "Fail");
     expect($("#feedback-widget").css("display")).toBe("block");
     expect($("#feedback-widget").attr("class")).toBe("alert alert-danger");
-    expect($("#feedback-widget").text()).toBe(
-      "Danger - Subcritical reactor!!!"
-    );
+    expect($("#feedback-widget").text()).toBe("Fail - Subcritical reactor!!!");
   });
 
   // 4. Hide the feedback widget (when show is called with empty params)
@@ -66,17 +67,17 @@ describe("FeedbackWidget", function () {
 
   // 5. Logging functionality
   it("should log a message to localStorage", function () {
-    feedbackWidget.show("Fusion is near.", "Good Luck");
+    feedbackWidget.show("Fusion is near.", "Success");
     let storedData = JSON.parse(localStorage.getItem("feedback_widget"));
     expect(storedData.messages.length).toBe(1);
-    expect(storedData.messages[0].type).toBe("Good Luck");
+    expect(storedData.messages[0].type).toBe("Success");
     expect(storedData.messages[0].message).toBe("Fusion is near.");
   });
 
   // 6. Log only the 10 most recent messages
   it("should store only the last 10 messages in the log", function () {
     for (let i = 1; i <= 12; i++) {
-      feedbackWidget.show("Message " + i, "Good Luck");
+      feedbackWidget.show("Message " + i, "Success");
     }
     let storedData = JSON.parse(localStorage.getItem("feedback_widget"));
     expect(storedData.messages.length).toBe(10);
@@ -86,7 +87,7 @@ describe("FeedbackWidget", function () {
 
   // 7. Remove all logs from localStorage
   it("should clear all logs from localStorage when removeLog is called", function () {
-    feedbackWidget.show("Fusion is near.", "Good Luck");
+    feedbackWidget.show("Fusion is near.", "Success");
     feedbackWidget.removeLog();
     expect(localStorage.getItem("feedback_widget")).toBe(null);
   });
@@ -94,11 +95,11 @@ describe("FeedbackWidget", function () {
   // 8. Verify history output in console (requires console.log mock for accurate testing)
   it("should output history of messages in the console", function () {
     spyOn(console, "log");
-    feedbackWidget.show("Fusion is near.", "Good Luck");
-    feedbackWidget.show("Subcritical reactor!!!", "Danger");
+    feedbackWidget.show("Fusion is near.", "Success");
+    feedbackWidget.show("Subcritical reactor!!!", "Fail");
     feedbackWidget.history();
     expect(console.log).toHaveBeenCalledWith(
-      "Danger - Subcritical reactor!!! \nGood Luck - Fusion is near. \n"
+      "Fail - Subcritical reactor!!! \nSuccess - Fusion is near. \n"
     );
   });
 

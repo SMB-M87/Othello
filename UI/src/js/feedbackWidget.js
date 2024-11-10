@@ -1,89 +1,100 @@
 class FeedbackWidget {
-    constructor(elementId) {
-        this._elementId = elementId;
+  constructor(elementId) {
+    this._elementId = elementId;
+    this._timeout = null;
+  }
+
+  get elementId() {
+    //getter, set keyword voor setter methode
+    return this._elementId;
+  }
+
+  show(message, type, autoDismiss = true) {
+    const widgetElement = $("#" + this._elementId);
+    const closeButton = $('<button class="feedback-widget__close">×</button>');
+
+    // Clear previous message and close button
+    widgetElement
+      .empty()
+      .append(closeButton)
+      .append(`<span>${type} - ${message}</span>`);
+    widgetElement.attr("class", `alert alert-${type.toLowerCase()}`);
+    widgetElement.css("display", "block");
+
+    // Handle auto-dismiss after 15 seconds or clear any prior timeouts
+    if (autoDismiss) {
+      if (this._timeout) clearTimeout(this._timeout);
+      this._timeout = setTimeout(() => this.hide(), 15000);
     }
 
-    get elementId() { //getter, set keyword voor setter methode
-        return this._elementId;
-    }
+    // Attach close button click event to hide the widget
+    closeButton.on("click", () => this.hide());
 
-    show(string, element) {
-        let alert = "";
+    // Log the message
+    this.log({ message, type });
+  }
 
-        if(element === 'Good Luck'){
-            alert = 'alert alert-success';
-            $("#feedback-widget").text(element+" - "+string);
-            $("#feedback-widget").css("display", "block");
-        } else if (element === 'Danger'){
-            alert = 'alert alert-danger';
-            $("#feedback-widget").text(element+" - "+string);
-            $("#feedback-widget").css("display", "block");
-        } else {
-            alert = 'alert alert-reset';
-            $("#feedback-widget").text("");
-            $("#feedback-widget").css("display", "none");
-            window.alert(element+" - For the fallout...");
-        }
-        $('#feedback-widget').attr('class', alert);
+  // Hide the feedback widget
+  hide() {
+    $("#" + this._elementId)
+      .css("display", "none")
+      .empty()
+      .attr("class", "");
+    if (this._timeout) clearTimeout(this._timeout);
+  }
 
-        if (string && element) {
-            this.log({
-                message: string,
-                type: element
-            });
-        }
-    }
+  log(message) {
+    const logData = JSON.parse(localStorage.getItem("feedback_widget")) || {
+      messages: [],
+    };
+    logData.messages.unshift(message);
+    if (logData.messages.length > 10) logData.messages.pop();
+    localStorage.setItem("feedback_widget", JSON.stringify(logData));
+  }
 
-    log(message){
-        if(localStorage.getItem("feedback_widget") === null ){
-            let store = {
-                messages: [message]
-            }
-            localStorage.setItem('feedback_widget', JSON.stringify(store));
-        } else {
-            let store = JSON.parse(localStorage.getItem('feedback_widget'));
-            store.messages.unshift(message)
+  removeLog() {
+    localStorage.removeItem("feedback_widget");
+    console.clear();
+  }
 
-            if(store.messages.length > 10) store.messages.pop();
-
-            localStorage.setItem('feedback_widget', JSON.stringify(store))
-        }
-    }
-
-    removeLog(){
-        localStorage.removeItem('feedback_widget');
-        console.clear();
-    }
-
-    history(){
-        let store = JSON.parse(localStorage.getItem('feedback_widget'));
-
-        let string="";
-        store.messages.forEach(element => {
-            string = string + element.type + " - " + element.message + " \n"
-        });
-
-        console.clear();
-        console.log(string);
-    }
-};
+  history() {
+    const storedData = JSON.parse(localStorage.getItem("feedback_widget"));
+    let history = storedData?.messages.map((msg) => `${msg.type} - ${msg.message}`).join("\n") || "No history.";
+    console.clear();
+    console.log(history);
+  }
+}
 
 $(function () {
-    let feedbackWidget = new FeedbackWidget("feedback-widget");
+    const feedbackWidget = new FeedbackWidget("feedback-widget");
 
-    $("#feedback-widget-succes-button").on("click", function () {
-        feedbackWidget.show(document.getElementById("feedback-widget-succes-button").value, document.getElementById("feedback-widget-succes-button").innerText);
-        feedbackWidget.history();
+    $("#move-button").on("click", function () {
+      feedbackWidget.show("You have made a move, wait on your opponent to make his.", "Success");
+      feedbackWidget.history();
     });
-
-    $("#feedback-widget-hide-button").on("click", function () {
-        feedbackWidget.show(document.getElementById("feedback-widget-hide-button").value, document.getElementById("feedback-widget-hide-button").innerText);
-        feedbackWidget.removeLog();
+  
+    $("#move-button-fail").on("click", function () {
+      feedbackWidget.show("You can't make a move.", "Danger");
+      feedbackWidget.history();
     });
-
-    $("#feedback-widget-danger-button").on("click", function () {
-        feedbackWidget.show(document.getElementById("feedback-widget-danger-button").value, document.getElementById("feedback-widget-danger-button").innerText);
-        feedbackWidget.history();
+  
+    $("#pass-button").on("click", function () {
+      feedbackWidget.show("You have successfully passed your turn, wait on your opponent to make a move.", "Success");
+      feedbackWidget.history();
+    });
+  
+    $("#pass-button-fail").on("click", function () {
+      feedbackWidget.show("You can't pass your turn.", "Danger");
+      feedbackWidget.history();
+    });
+  
+    $("#forfeit-button").on("click", function () {
+      feedbackWidget.show("You have successfully forfeited the game.", "Success");
+      feedbackWidget.history();
+    });
+  
+    $("#forfeit-button-fail").on("click", function () {
+      feedbackWidget.show("It's not your turn, you can't forfeit yet. Wait on your opponent to make his move.", "Danger");
+      feedbackWidget.history();
     });
 });
-
