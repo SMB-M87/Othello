@@ -15,6 +15,8 @@
 /* Feedback Message Container */
 #feedback-widget {
   background-color: #f9f9f9;
+  display: none;
+  opacity: 0;
   border-radius: 8px;
   padding: 20px;
   position: relative;
@@ -24,6 +26,7 @@
   text-align: center;
   margin-bottom: 15px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.5s ease-in-out;
 }
 
 .feedback-widget__close {
@@ -40,6 +43,21 @@
 
 .feedback-widget__close:hover {
   color: #333;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+#feedback-widget.hide-animation {
+  animation: slideUp 0.5s forwards;
 }
 
 /* Buttons Section */
@@ -81,4 +99,22 @@
 
 .feedback-section__button--danger:hover {
   background-color: #c82333;
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Wobble animation class */
+.wobble {
+  animation: wobble 0.5s ease-in-out;
 }

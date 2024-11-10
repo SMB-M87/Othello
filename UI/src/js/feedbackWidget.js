@@ -21,6 +21,12 @@ class FeedbackWidget {
     widgetElement.attr("class", `alert alert-${type.toLowerCase()}`);
     widgetElement.css("display", "block");
 
+    // Display the widget and start the fade-in effect
+    widgetElement.css("display", "block");
+    setTimeout(() => {
+      widgetElement.css("opacity", "1");
+    }, 10); // Slight delay to trigger CSS transition
+
     // Handle auto-dismiss after 15 seconds or clear any prior timeouts
     if (autoDismiss) {
       if (this._timeout) clearTimeout(this._timeout);
@@ -36,10 +42,20 @@ class FeedbackWidget {
 
   // Hide the feedback widget
   hide() {
-    $("#" + this._elementId)
-      .css("display", "none")
-      .empty()
-      .attr("class", "");
+    const widgetElement = $("#" + this._elementId);
+
+    // Add the hide-animation class to start the slide-up animation
+    widgetElement.addClass("hide-animation");
+
+    // After the animation ends, hide the widget completely
+    setTimeout(() => {
+      widgetElement
+        .css("display", "none")
+        .removeClass("hide-animation")
+        .empty()
+        .attr("class", "");
+    }, 500); // Match this duration with the CSS animation duration
+
     if (this._timeout) clearTimeout(this._timeout);
   }
 
@@ -59,42 +75,59 @@ class FeedbackWidget {
 
   history() {
     const storedData = JSON.parse(localStorage.getItem("feedback_widget"));
-    let history = storedData?.messages.map((msg) => `${msg.type} - ${msg.message}`).join("\n") || "No history.";
+    let history =
+      storedData?.messages
+        .map((msg) => `${msg.type} - ${msg.message}`)
+        .join("\n") || "No history.";
     console.clear();
     console.log(history);
   }
 }
 
 $(function () {
-    const feedbackWidget = new FeedbackWidget("feedback-widget");
+  const feedbackWidget = new FeedbackWidget("feedback-widget");
 
-    $("#move-button").on("click", function () {
-      feedbackWidget.show("You have made a move, wait on your opponent to make his.", "Success");
-      feedbackWidget.history();
-    });
-  
-    $("#move-button-fail").on("click", function () {
-      feedbackWidget.show("You can't make a move.", "Danger");
-      feedbackWidget.history();
-    });
-  
-    $("#pass-button").on("click", function () {
-      feedbackWidget.show("You have successfully passed your turn, wait on your opponent to make a move.", "Success");
-      feedbackWidget.history();
-    });
-  
-    $("#pass-button-fail").on("click", function () {
-      feedbackWidget.show("You can't pass your turn.", "Danger");
-      feedbackWidget.history();
-    });
-  
-    $("#forfeit-button").on("click", function () {
-      feedbackWidget.show("You have successfully forfeited the game.", "Success");
-      feedbackWidget.history();
-    });
-  
-    $("#forfeit-button-fail").on("click", function () {
-      feedbackWidget.show("It's not your turn, you can't forfeit yet. Wait on your opponent to make his move.", "Danger");
-      feedbackWidget.history();
-    });
+  $("#move-button").on("click", function () {
+    feedbackWidget.show(
+      "You have successfully made a move, wait on your opponent to make his.",
+      "Success"
+    );
+    feedbackWidget.history();
+    resetWobble();
+  });
+
+  $("#pass-button").on("click", function () {
+    feedbackWidget.show(
+      "You have successfully passed your turn, wait on your opponent to make a move.",
+      "Success"
+    );
+    feedbackWidget.history();
+    resetWobble();
+  });
+
+  $("#forfeit-button").on("click", function () {
+    feedbackWidget.show("You have successfully forfeited the game.", "Success");
+    feedbackWidget.history();
+    resetWobble();
+  });
+
+  // Start wobble animation after 2 seconds
+  function startWobble() {
+    wobbleInterval = setInterval(() => {
+      $("#move-button").addClass("wobble");
+      setTimeout(() => {
+        $("#move-button").removeClass("wobble");
+      }, 500); // Duration of the wobble animation
+    }, 2000); // Repeat every 2 seconds
+  }
+
+  // Reset wobble animation
+  function resetWobble() {
+    clearInterval(wobbleInterval);
+    $("#move-button").removeClass("wobble");
+    setTimeout(startWobble, 2000); // Restart after 2 seconds of inactivity
+  }
+
+  // Start the wobble animation after initial 2 seconds
+  setTimeout(startWobble, 2000);
 });
