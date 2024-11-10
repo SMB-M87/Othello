@@ -54,7 +54,7 @@
 @if (Model.MatchHistory != null && Model.MatchHistory.Count > 0 && User is not null && User.Identity is not null)
 {
     <div class="d-flex justify-content-center">
-        <div class="col-md-6" style="height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        <div class="col-md-6" style="min-height: 200px; max-height: 600px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
             <ul style="list-style: none; padding-left: 0;">
                 @foreach (var game in Model.MatchHistory)
                 {

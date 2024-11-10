@@ -1,13 +1,13 @@
 ﻿@model GamePartial
 
-<div id="players-turn-container">
-    @await Html.PartialAsync("_PlayersTurnPartial", Model.PlayersTurn)
-</div>
-
-<div id="timer-container">
-    @await Html.PartialAsync("_TimePartial", Model)
-</div>
-
 <div id="board-container">
     @await Html.PartialAsync("_BoardPartial", Model)
+</div>
+
+<div id="players-turn-container">
+    @await Html.PartialAsync("_PlayersTurnPartial", Model)
+</div>
+
+<div id="buttons-container">
+    @await Html.PartialAsync("_ButtonsPartial", Model)
 </div>

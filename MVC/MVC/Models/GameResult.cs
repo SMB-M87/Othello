@@ -6,6 +6,7 @@
         public string Winner { get; set; } = null!;
         public string Loser { get; set; } = null!;
         public bool Draw { get; set; }
+        public bool Forfeit { get; set; }
         public Color[,] Board { get; set; } = null!;
         public DateTime Date { get; set; }
     }

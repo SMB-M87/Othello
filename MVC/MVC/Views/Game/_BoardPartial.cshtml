@@ -8,7 +8,7 @@
             {
                 var cell = Model.Board[row, col];
                 var cellDisplay = cell == Color.None ? "" : cell.ToString();
-                var pieceClass = cell == Color.White ? "player-piece" : cell == Color.Black ? "opponent-piece" : "";
+                var pieceClass = cell == Color.White ? "white-piece" : cell == Color.Black ? "black-piece" : "";
                 <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
                     data-row="@row"
                     data-col="@col"

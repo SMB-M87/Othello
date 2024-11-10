@@ -1,17 +1,26 @@
-﻿@model Color
+﻿@model GamePartial
 
 <div class="d-flex justify-content-center" style="margin-top: 10px;">
     <p>
-        <strong>Player's turn':</strong>
         <span class="player-color-indicator"
-              style="background-color: @(Model == Color.White ? "#FFFFFF" : "#000000");
-                     color: @(Model == Color.White ? "#000000" : "#FFFFFF");
+              style="background-color: @(Model.IsPlayersTurn ? "lightgreen" : "lightcoral");
+                     color: @(Model.IsPlayersTurn ? "#006400" : "#8B0000");
                      padding: 5px 10px;
                      border-radius: 5px;
                      border: 1px solid #ddd;
                      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                      display: inline-block;">
-            @Model
+            <strong>@(Model.IsPlayersTurn ? "Make your move within" : "Wait on opponent's move for")</strong>
+            <span class="player-color-indicator"
+                  style="background-color: @(Model.PlayersTurn == Color.White ? "#FFFFFF" : "#000000");
+                     color: @(Model.PlayersTurn == Color.White ? "#000000" : "#FFFFFF");
+                     padding: 5px 10px;
+                     border-radius: 5px;
+                     border: 1px solid #ddd;
+                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                     display: inline-block;">
+                @Model.Time sec
+            </span>
         </span>
     </p>
 </div>

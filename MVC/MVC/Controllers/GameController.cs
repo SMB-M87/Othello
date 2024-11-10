@@ -32,6 +32,8 @@ namespace MVC.Controllers
                     {
                         InGame = response.Partial.InGame,
                         PlayersTurn = response.Partial.PlayersTurn,
+                        IsPlayersTurn = response.Partial.IsPlayersTurn,
+                        PossibleMove = response.Partial.PossibleMove,
                         Board = response.Partial.Board,
                         Time = response.Partial.Time
                     }
@@ -53,6 +55,8 @@ namespace MVC.Controllers
             {
                 InGame = response.InGame,
                 PlayersTurn = response.PlayersTurn,
+                IsPlayersTurn = response.IsPlayersTurn,
+                PossibleMove = response.PossibleMove,
                 Board = response.Board,
                 Time = response.Time
             };
