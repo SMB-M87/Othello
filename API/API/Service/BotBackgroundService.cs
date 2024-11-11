@@ -17,7 +17,10 @@
                 using (var scope = _services.CreateScope())
                 {
                     var botService = scope.ServiceProvider.GetRequiredService<BotService>();
+                    await botService.CreateGamesAsync();
                     await botService.AcceptFriendRequestsAsync();
+                    await botService.SendGameRequestsAsync();
+                    await botService.UpdateActivityBotAsync();
                 }
 
                 await Task.Delay(_interval, stoppingToken);

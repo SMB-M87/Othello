@@ -41,20 +41,6 @@ namespace API.Data
 
             _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten, eleven, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, delete);
 
-            Game game0 = new("zero", one.Token, Color.Black, null, Status.Pending, Color.Black);
-            Game game1 = new("one", two.Token, Color.White, null, Status.Pending, Color.Black, "I search an advanced player!");
-            Game game2 = new("two", four.Token, Color.Black, null, Status.Pending, Color.White, "I want to player more than one game against the same adversary.");
-            Game game3 = new("three", six.Token, Color.White, null, Status.Pending, Color.White, "I search an advanced player!");
-            Game game4 = new("four", seven.Token, Color.Black, null, Status.Pending, Color.Black, "میں ایک کھیل کھیلنا چاہتا ہوں اور کوئی ضرورت نہیں ہے!");
-            Game game5 = new("six", eight.Token, Color.White, null, Status.Pending, Color.White, "Θέλω να παίξω ένα παιχνίδι και δεν έχω απαιτήσεις!!!");
-            Game g6 = new("seven", t17.Token, Color.Black, null, Status.Pending, Color.White, "Je veux jouer une partie contre un élite!!!");
-            Game g7 = new("eight", nine.Token, Color.White, null, Status.Pending, Color.White, "أريد أن ألعب لعبة وليس لدي أي متطلبات!");
-            Game g8 = new("nine", ten.Token, Color.Black, null, Status.Pending, Color.Black, "I search an advanced player to play more than one game against!");
-            Game g9 = new("ten", t12.Token, Color.White, null, Status.Pending, Color.White, "אני רוצה לשחק משחק ואין לי שום דרישות!");
-            Game g10 = new("t11", t13.Token, Color.Black, null, Status.Pending, Color.White, "I want to player more than one game against the same adversary.");
-
-            _builder.Entity<Game>().HasData(game0, game1, game2, game3, game4, game5, g6, g7, g8, g9, g10);
-
             Color[,] board =
             {
                 { Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black, Color.Black },
