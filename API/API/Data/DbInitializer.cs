@@ -14,217 +14,43 @@ namespace API.Data
 
         public void Seed()
         {
-            Player one = new("karen", "Karen")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Ernst", "John", "Cena", "Burst", "Burton", "admin", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Tijn"),
-                    new(Inquiry.Friend, "Eltjo"),
-                    new(Inquiry.Friend, "Lambert")
-                }
-            };
-            Player two = new("ernst", "Ernst")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "John", "Karen", "Burton", "admin", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Burton"),
-                    new(Inquiry.Friend, "Burst"),
-                    new(Inquiry.Friend, "Eltjo")
-                }
-            };
-            Player three = new("john", "John")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Ernst", "Karen", "Cena", "admin", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Tijn"),
-                    new(Inquiry.Friend, "Eltjo"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player four = new("eltjo", "Eltjo")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Tijn", "Identity", "Briar", "Lambert", "admin", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Karen"),
-                    new(Inquiry.Friend, "Ernst"),
-                    new(Inquiry.Friend, "John")
-                }
-            };
-            Player five = new("tijn", "Tijn")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Eltjo", "Identity", "Briar", "Lambert", "admin", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Karen"),
-                    new(Inquiry.Friend, "Lambert"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player six = new("cena", "Cena")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "John", "Karen", "Burst" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Eltjo"),
-                    new(Inquiry.Friend, "Tijn"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player seven = new("burst", "Burst")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Cena", "Karen" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Eltjo"),
-                    new(Inquiry.Friend, "Tijn"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player eight = new("burton", "Burton")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Ernst", "Karen" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Eltjo"),
-                    new(Inquiry.Friend, "Tijn"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player nine = new("briar", "Briar")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Eltjo", "Tijn" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Cena"),
-                    new(Inquiry.Friend, "Burton"),
-                    new(Inquiry.Friend, "Ernst")
-                }
-            };
-            Player ten = new("lambert", "Lambert")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Eltjo", "Tijn" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Burton"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player eleven = new("identity", "Identity")
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Eltjo", "Tijn", "admin", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Burton"),
-                    new(Inquiry.Friend, "Lambert"),
-                    new(Inquiry.Friend, "Cena"),
-                    new(Inquiry.Friend, "Burst"),
-                    new(Inquiry.Friend, "Ernst"),
-                    new(Inquiry.Friend, "Karen"),
-                    new(Inquiry.Friend, "Briar")
-                }
-            };
-            Player t12 = new("salie", "Salie")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t13 = new("pipo", "Pipo")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t14 = new("gissa", "Gissa")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t15 = new("hidde", "Hidde")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t16 = new("noga", "Noga")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t17 = new("nastrovia", "Nastrovia")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t18 = new("pedro", "Pedro")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t19 = new("ahmed", "Ahmed")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t20 = new("nadege", "Nadege")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t21 = new("rachel", "Rachel")
-            {
-                LastActivity = DateTime.UtcNow
-            };
-            Player t22 = new("ff20c418-f1b0-4f16-b582-294be25c24ef", "mediator") // Give own token
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Karen", "Ernst", "John", "Identity", "Eltjo", "Tijn", "admin" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Burton"),
-                    new(Inquiry.Friend, "Briar"),
-                    new(Inquiry.Friend, "Rachel")
-                }
-            };
-            Player t23 = new("58a479fd-ae6f-4474-a147-68cbdb62c19b", "admin") // Give own token
-            {
-                LastActivity = DateTime.UtcNow,
-                Friends = { "Karen", "Ernst", "John", "Identity", "Eltjo", "Tijn", "mediator" },
-                Requests = new List<Request>
-                {
-                    new(Inquiry.Friend, "Burton"),
-                    new(Inquiry.Friend, "Briar"),
-                    new(Inquiry.Friend, "Rachel")
-                }
-            };
+            Player one = new("karen", "Karen", true);
+            Player two = new("ernst", "Ernst", true);
+            Player three = new("john", "John", true);
+            Player four = new("eltjo", "Eltjo", true);
+            Player five = new("tijn", "Tijn", true);
+            Player six = new("cena", "Cena", true);
+            Player seven = new("burst", "Burst", true);
+            Player eight = new("burton", "Burton", true);
+            Player nine = new("briar", "Briar", true);
+            Player ten = new("lambert", "Lambert", true);
+            Player eleven = new("identity", "Identity", true);
+            Player t12 = new("salie", "Salie", true);
+            Player t13 = new("pipo", "Pipo", true);
+            Player t14 = new("gissa", "Gissa", true);
+            Player t15 = new("hidde", "Hidde", true);
+            Player t16 = new("noga", "Noga", true);
+            Player t17 = new("nastrovia", "Nastrovia", true);
+            Player t18 = new("pedro", "Pedro", true);
+            Player t19 = new("ahmed", "Ahmed", true);
+            Player t20 = new("nadege", "Nadege", true);
+            Player t21 = new("rachel", "Rachel", true);
+            Player t22 = new("ff20c418-f1b0-4f16-b582-294be25c24ef", "mediator"); // Give own identity mediator token
+            Player t23 = new("58a479fd-ae6f-4474-a147-68cbdb62c19b", "admin"); // Give own identity admin token
             Player delete = new("deleted", "Deleted");
 
             _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten, eleven, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, delete);
 
-            Game game0 = new("zero", one.Token, Color.Black);
-
-            Game game1 = new("one", two.Token, Color.Black, three.Token, Status.Playing, Color.Black, "I search an advanced player!");
-
-            Game game2 = new("two", four.Token, Color.Black, five.Token, Status.Playing, Color.White, "I want to player more than one game against the same adversary.");
-            game2.Board[0, 0] = Color.Black;
-            game2.Board[1, 0] = Color.Black;
-            game2.Board[0, 1] = Color.White;
-            game2.Board[0, 2] = Color.White;
-            game2.Board[3, 3] = Color.None;
-            game2.Board[3, 4] = Color.None;
-            game2.Board[4, 4] = Color.None;
-            game2.Board[4, 3] = Color.None;
-
-            Game game3 = new("three", six.Token, Color.Black, null, Status.Pending, Color.White, "I search an advanced player!");
-            Game game4 = new("four", seven.Token, Color.Black, null, Status.Pending, Color.White, "میں ایک کھیل کھیلنا چاہتا ہوں اور کوئی ضرورت نہیں ہے!");
-            Game game5 = new("six", eight.Token, Color.Black, null, Status.Pending, Color.White, "Θέλω να παίξω ένα παιχνίδι και δεν έχω απαιτήσεις!!!");
+            Game game0 = new("zero", one.Token, Color.Black, null, Status.Pending, Color.Black);
+            Game game1 = new("one", two.Token, Color.White, null, Status.Pending, Color.Black, "I search an advanced player!");
+            Game game2 = new("two", four.Token, Color.Black, null, Status.Pending, Color.White, "I want to player more than one game against the same adversary.");
+            Game game3 = new("three", six.Token, Color.White, null, Status.Pending, Color.White, "I search an advanced player!");
+            Game game4 = new("four", seven.Token, Color.Black, null, Status.Pending, Color.Black, "میں ایک کھیل کھیلنا چاہتا ہوں اور کوئی ضرورت نہیں ہے!");
+            Game game5 = new("six", eight.Token, Color.White, null, Status.Pending, Color.White, "Θέλω να παίξω ένα παιχνίδι και δεν έχω απαιτήσεις!!!");
             Game g6 = new("seven", t17.Token, Color.Black, null, Status.Pending, Color.White, "Je veux jouer une partie contre un élite!!!");
-            Game g7 = new("eight", nine.Token, Color.Black, null, Status.Pending, Color.White, "أريد أن ألعب لعبة وليس لدي أي متطلبات!");
-            Game g8 = new("nine", ten.Token, Color.Black, null, Status.Pending, Color.White, "I search an advanced player to play more than one game against!");
-            Game g9 = new("ten", t12.Token, Color.Black, null, Status.Pending, Color.White, "אני רוצה לשחק משחק ואין לי שום דרישות!");
+            Game g7 = new("eight", nine.Token, Color.White, null, Status.Pending, Color.White, "أريد أن ألعب لعبة وليس لدي أي متطلبات!");
+            Game g8 = new("nine", ten.Token, Color.Black, null, Status.Pending, Color.Black, "I search an advanced player to play more than one game against!");
+            Game g9 = new("ten", t12.Token, Color.White, null, Status.Pending, Color.White, "אני רוצה לשחק משחק ואין לי שום דרישות!");
             Game g10 = new("t11", t13.Token, Color.Black, null, Status.Pending, Color.White, "I want to player more than one game against the same adversary.");
 
             _builder.Entity<Game>().HasData(game0, game1, game2, game3, game4, game5, g6, g7, g8, g9, g10);

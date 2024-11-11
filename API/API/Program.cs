@@ -49,6 +49,8 @@ builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
     .SetApplicationName("Othello");
 
+builder.Services.AddScoped<BotService>();
+builder.Services.AddHostedService<BotBackgroundService>();
 builder.Services.AddHostedService<InactiveGameService>();
 
 var app = builder.Build();
