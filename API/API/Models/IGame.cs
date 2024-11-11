@@ -1,6 +1,6 @@
 ﻿namespace API.Models
 {
-    public enum Color { None = 0, White = 1, Black = 2 };
+    public enum Color { None = 0, White = 1, Black = 2, PossibleMove = 3 };
     public enum Status { Pending = 0, Playing = 1, Finished = 2 };
 
     public interface IGame

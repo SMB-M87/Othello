@@ -85,6 +85,16 @@ namespace API.Models
             else
                 Rematch = rematch;
 
+            for (int row = 0; row < boardScope; row++)
+            {
+                for (int column = 0; column < boardScope; column++)
+                {
+                    if (PossibleMove(row, column, PlayersTurn))
+                    {
+                        Board[row, column] = Color.PossibleMove;
+                    }
+                }
+            }
             Date = DateTime.UtcNow;
         }
 
@@ -169,6 +179,21 @@ namespace API.Models
             else
             {
                 ChangeTurns();
+
+                for (int row = 0; row < boardScope; row++)
+                {
+                    for (int column = 0; column < boardScope; column++)
+                    {
+                        if (Board[row, column] == Color.PossibleMove)
+                        {
+                            Board[row, column] = Color.None;
+                        }
+                        if (PossibleMove(row, column, PlayersTurn))
+                        {
+                            Board[row, column] = Color.PossibleMove;
+                        }
+                    }
+                }
             }
         }
 
@@ -181,8 +206,23 @@ namespace API.Models
                     FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(rowMove, columnMove, PlayersTurn, direction[i, 0], direction[i, 1]);
                 }
                 Board[rowMove, columnMove] = PlayersTurn;
-                Date = DateTime.UtcNow;
                 ChangeTurns();
+
+                for (int row = 0; row < boardScope; row++)
+                {
+                    for (int column = 0; column < boardScope; column++)
+                    {
+                        if (Board[row, column] == Color.PossibleMove)
+                        {
+                            Board[row, column] = Color.None;
+                        }
+                        if (PossibleMove(row, column, PlayersTurn))
+                        {
+                            Board[row, column] = Color.PossibleMove;
+                        }
+                    }
+                }
+                Date = DateTime.UtcNow;
             }
             else
             {
@@ -213,6 +253,17 @@ namespace API.Models
 
         public void Finish()
         {
+            for (int row = 0; row < boardScope; row++)
+            {
+                for (int column = 0; column < boardScope; column++)
+                {
+                    if (Board[row, column] == Color.PossibleMove)
+                    {
+                        Board[row, column] = Color.None;
+                    }
+                }
+            }
+
             Status = Status.Finished;
             PlayersTurn = Color.None;
         }
@@ -260,7 +311,7 @@ namespace API.Models
 
         private bool IsPlaceOnBoardFree(int rowMove, int columnMove)
         {
-            return PositionInbetweenBoardLimits(rowMove, columnMove) && Board[rowMove, columnMove] == Color.None;
+            return PositionInbetweenBoardLimits(rowMove, columnMove) && (Board[rowMove, columnMove] == Color.None || Board[rowMove, columnMove] == Color.PossibleMove);
         }
 
         private bool PawnToEncloseInSpecifiedDirection(int rowMove, int columnMove, Color colorPlayer, int rowDirection, int columnDirection)

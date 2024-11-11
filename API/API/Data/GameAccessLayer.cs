@@ -50,12 +50,12 @@ namespace API.Data
                     Color = game.Second == null ? Color.None : game.Second == token ? game.SColor : game.FColor,
                     Partial = new GamePartial()
                     {
+                        Time = GetTimerByPlayersToken(token),
                         InGame = game.Status == Status.Playing,
                         PlayersTurn = game.PlayersTurn,
                         IsPlayersTurn = token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                         PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                        Board = game.Board,
-                        Time = GetTimerByPlayersToken(token)
+                        Board = game.Board
                     }
                 };
                 return model;
@@ -88,12 +88,12 @@ namespace API.Data
             {
                 var model = new GamePartial()
                 {
+                    Time = GetTimerByPlayersToken(token),
                     InGame = game.Status == Status.Playing,
                     PlayersTurn = game.PlayersTurn,
                     IsPlayersTurn = token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                    Board = game.Board,
-                    Time = GetTimerByPlayersToken(token)
+                    Board = game.Board
                 };
 
                 var first = GetPlayer(game.First);
@@ -103,6 +103,7 @@ namespace API.Data
                 {
                     if ((DateTime.UtcNow - first.LastActivity).TotalSeconds >= 100)
                     {
+                        game.Finish();
                         GameResult result = new(game.Token, game.Second, game.First, game.Board, false, true)
                         {
                             Date = DateTime.UtcNow
@@ -110,13 +111,13 @@ namespace API.Data
                         _context.Results.Add(result);
                         _context.Games.Remove(game);
 
-                        game.Finish();
                         _context.Entry(game).Property(g => g.Status).IsModified = true;
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                         _context.SaveChanges();
                     }
                     else if ((DateTime.UtcNow - second.LastActivity).TotalSeconds >= 100)
                     {
+                        game.Finish();
                         GameResult result = new(game.Token, game.First, game.Second, game.Board, false, true)
                         {
                             Date = DateTime.UtcNow
@@ -124,7 +125,6 @@ namespace API.Data
                         _context.Results.Add(result);
                         _context.Games.Remove(game);
 
-                        game.Finish();
                         _context.Entry(game).Property(g => g.Status).IsModified = true;
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                         _context.SaveChanges();
@@ -342,6 +342,7 @@ namespace API.Data
                 {
                     string winner;
                     string loser;
+                    game.Finish();
 
                     if (game.First == token)
                     {
@@ -360,7 +361,6 @@ namespace API.Data
                     _context.Results.Add(result);
                     _context.Games.Remove(game);
 
-                    game.Finish();
                     _context.Entry(game).Property(g => g.Status).IsModified = true;
                     _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                     _context.SaveChanges();
@@ -449,6 +449,7 @@ namespace API.Data
                     game.Pass();
                     _context.Entry(game).Property(g => g.Date).IsModified = true;
                     _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                    _context.Entry(game).Property(g => g.Board).IsModified = true;
                     _context.SaveChanges();
                 }
                 return $"{Math.Floor(remainingSeconds)}";
