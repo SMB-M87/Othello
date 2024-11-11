@@ -1,6 +1,7 @@
 using API.Controllers;
 using API.Data;
 using API.Models;
+using API.Service;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,8 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
     .SetApplicationName("Othello");
+
+builder.Services.AddHostedService<InactiveGameService>();
 
 var app = builder.Build();
 

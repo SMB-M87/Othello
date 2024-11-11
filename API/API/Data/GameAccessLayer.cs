@@ -96,40 +96,6 @@ namespace API.Data
                     Board = game.Board
                 };
 
-                var first = GetPlayer(game.First);
-                var second = GetPlayer(game.Second);
-
-                if (first != null && second != null)
-                {
-                    if ((DateTime.UtcNow - first.LastActivity).TotalSeconds >= 100)
-                    {
-                        game.Finish();
-                        GameResult result = new(game.Token, game.Second, game.First, game.Board, false, true)
-                        {
-                            Date = DateTime.UtcNow
-                        };
-                        _context.Results.Add(result);
-                        _context.Games.Remove(game);
-
-                        _context.Entry(game).Property(g => g.Status).IsModified = true;
-                        _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-                        _context.SaveChanges();
-                    }
-                    else if ((DateTime.UtcNow - second.LastActivity).TotalSeconds >= 100)
-                    {
-                        game.Finish();
-                        GameResult result = new(game.Token, game.First, game.Second, game.Board, false, true)
-                        {
-                            Date = DateTime.UtcNow
-                        };
-                        _context.Results.Add(result);
-                        _context.Games.Remove(game);
-
-                        _context.Entry(game).Property(g => g.Status).IsModified = true;
-                        _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-                        _context.SaveChanges();
-                    }
-                }
                 return model;
             }
             else
