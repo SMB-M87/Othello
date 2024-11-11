@@ -7,16 +7,22 @@
             @for (int col = 0; col < Model.Board.GetLength(1); col++)
             {
                 var cell = Model.Board[row, col];
-                var cellDisplay = cell == Color.None ? "" : cell.ToString();
                 var pieceClass = cell == Color.White ? "white-piece" : cell == Color.Black ? "black-piece" : "";
-                <td style="width: 50px; height: 50px; text-align: center; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
+                <td style="width: 50px; height: 50px; background-color:@((row + col) % 2 == 0 ? "lawngreen" : "limegreen");"
                     data-row="@row"
                     data-col="@col"
                     onclick="cellClicked(this)">
-                    @if (cell != Color.None)
-                    {
-                        <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
-                    }
+
+                    <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+                        @if (cell != Color.None && cell != Color.PossibleMove)
+                        {
+                            <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
+                        }
+                        else if (Model.IsPlayersTurn && cell == Color.PossibleMove)
+                        {
+                            <div style="width: 30px; height: 30px; border: 2px solid @Model.PlayersTurn.ToString(); border-radius: 50%; background-color: transparent; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);"></div>
+                        }
+                    </div>
                 </td>
             }
         </tr>
