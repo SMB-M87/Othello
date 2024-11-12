@@ -3,12 +3,12 @@ using API.Models;
 
 namespace API.Service
 {
-    public class InactiveGameService : BackgroundService
+    public class CleanUpService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(15);
 
-        public InactiveGameService(IServiceProvider serviceProvider)
+        public CleanUpService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -20,11 +20,33 @@ namespace API.Service
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<Database>();
+                    await DeleteGameInvites(context);
                     await CheckAndForfeitInactiveGames(context);
                 }
 
                 await Task.Delay(_checkInterval, stoppingToken);
             }
+        }
+
+        private static async Task DeleteGameInvites(Database context)
+        {
+            var activePlayers = context.Players
+                    .AsEnumerable()
+                    .Where(p => p.Requests.Any(r => r.Type == Inquiry.Game)).ToList();
+
+            foreach (var player in activePlayers)
+            {
+                var expiredRequests = player.Requests
+                    .Where(request => request.Type == Inquiry.Game && (DateTime.UtcNow - request.Date).TotalSeconds >= 60)
+                    .ToList();
+
+                foreach (var expiredRequest in expiredRequests)
+                {
+                    player.Requests.Remove(expiredRequest);
+                }
+                context.Entry(player).Property(p => p.Requests).IsModified = true;
+            }
+            await context.SaveChangesAsync();
         }
 
         private static async Task CheckAndForfeitInactiveGames(Database context)
@@ -41,20 +63,19 @@ namespace API.Service
                     if (first != null && second != null)
                     {
                         double first_timer = (DateTime.UtcNow - first.LastActivity).TotalSeconds;
-                        double second_timer = (DateTime.UtcNow - first.LastActivity).TotalSeconds;
+                        double second_timer = (DateTime.UtcNow - second.LastActivity).TotalSeconds;
 
-                        if (game.PlayersTurn != game.FColor && first_timer >= 100)
+                        if (first_timer >= 70)
                         {
                             ForfeitGame(game, game.Second, game.First, context);
                         }
-                        else if (game.PlayersTurn != game.SColor && second_timer >= 100)
+                        else if (second_timer >= 70)
                         {
                             ForfeitGame(game, game.First, game.Second, context);
                         }
                     }
                 }
             }
-
             await context.SaveChangesAsync();
         }
 

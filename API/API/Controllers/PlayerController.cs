@@ -137,17 +137,6 @@ namespace API.Controllers
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
-        [HttpPost("game/delete")]
-        public ActionResult<HttpResponseMessage> DeleteGameInvites([FromBody] ID id)
-        {
-            var response = _repository.PlayerRepository.DeleteGameInvites(id.Token);
-
-            if (response == true)
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
-            else
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-        }
-
         [HttpPost("delete")]
         public ActionResult<HttpResponseMessage> Delete([FromBody] ID id)
         {

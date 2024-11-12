@@ -105,7 +105,7 @@ namespace API.Migrations
                         {
                             Token = "-2",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3566),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5961),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -115,7 +115,7 @@ namespace API.Migrations
                         {
                             Token = "-1",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3567),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5962),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -125,7 +125,7 @@ namespace API.Migrations
                         {
                             Token = "2",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3563),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5958),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -135,7 +135,7 @@ namespace API.Migrations
                         {
                             Token = "1",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3564),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5960),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -145,7 +145,7 @@ namespace API.Migrations
                         {
                             Token = "0",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3565),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5961),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -155,7 +155,7 @@ namespace API.Migrations
                         {
                             Token = "-3",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3568),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5964),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ernst",
@@ -165,7 +165,7 @@ namespace API.Migrations
                         {
                             Token = "-4",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3569),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5965),
                             Draw = false,
                             Forfeit = false,
                             Loser = "karen",
@@ -175,7 +175,7 @@ namespace API.Migrations
                         {
                             Token = "-5",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3569),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5966),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -185,7 +185,7 @@ namespace API.Migrations
                         {
                             Token = "-6",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3570),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5966),
                             Draw = false,
                             Forfeit = false,
                             Loser = "karen",
@@ -195,7 +195,7 @@ namespace API.Migrations
                         {
                             Token = "-7",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3606),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5967),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burst",
@@ -205,7 +205,7 @@ namespace API.Migrations
                         {
                             Token = "-8",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3607),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5968),
                             Draw = false,
                             Forfeit = false,
                             Loser = "cena",
@@ -215,7 +215,7 @@ namespace API.Migrations
                         {
                             Token = "-9",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3608),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5968),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -225,7 +225,7 @@ namespace API.Migrations
                         {
                             Token = "-10",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3608),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5969),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -235,7 +235,7 @@ namespace API.Migrations
                         {
                             Token = "-11",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3609),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5969),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ernst",
@@ -245,7 +245,7 @@ namespace API.Migrations
                         {
                             Token = "-12",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3609),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5970),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -255,7 +255,7 @@ namespace API.Migrations
                         {
                             Token = "-13",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3610),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5971),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -265,7 +265,7 @@ namespace API.Migrations
                         {
                             Token = "-14",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3612),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5971),
                             Draw = false,
                             Forfeit = false,
                             Loser = "karen",
@@ -275,7 +275,7 @@ namespace API.Migrations
                         {
                             Token = "-0",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3567),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5963),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -285,7 +285,7 @@ namespace API.Migrations
                         {
                             Token = "-15",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3612),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5972),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ernst",
@@ -295,7 +295,7 @@ namespace API.Migrations
                         {
                             Token = "-16",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3613),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5972),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -305,7 +305,7 @@ namespace API.Migrations
                         {
                             Token = "-17",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3613),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5973),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ernst",
@@ -315,7 +315,7 @@ namespace API.Migrations
                         {
                             Token = "-18",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3614),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5973),
                             Draw = false,
                             Forfeit = false,
                             Loser = "karen",
@@ -325,7 +325,7 @@ namespace API.Migrations
                         {
                             Token = "-19",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3615),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5974),
                             Draw = false,
                             Forfeit = false,
                             Loser = "cena",
@@ -335,7 +335,7 @@ namespace API.Migrations
                         {
                             Token = "-32",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3622),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5982),
                             Draw = true,
                             Forfeit = false,
                             Loser = "pedro",
@@ -345,7 +345,7 @@ namespace API.Migrations
                         {
                             Token = "-20",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3615),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5975),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burton",
@@ -355,7 +355,7 @@ namespace API.Migrations
                         {
                             Token = "-21",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3616),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5975),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -365,7 +365,7 @@ namespace API.Migrations
                         {
                             Token = "-22",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3616),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5976),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -375,7 +375,7 @@ namespace API.Migrations
                         {
                             Token = "-23",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3617),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5977),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burst",
@@ -385,7 +385,7 @@ namespace API.Migrations
                         {
                             Token = "-24",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3617),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5977),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -395,7 +395,7 @@ namespace API.Migrations
                         {
                             Token = "-31",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3622),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5982),
                             Draw = true,
                             Forfeit = false,
                             Loser = "nastrovia",
@@ -405,7 +405,7 @@ namespace API.Migrations
                         {
                             Token = "-25",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3618),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5978),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burton",
@@ -415,7 +415,7 @@ namespace API.Migrations
                         {
                             Token = "-26",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3619),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5978),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -425,7 +425,7 @@ namespace API.Migrations
                         {
                             Token = "-27",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3619),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5979),
                             Draw = true,
                             Forfeit = false,
                             Loser = "pipo",
@@ -435,7 +435,7 @@ namespace API.Migrations
                         {
                             Token = "-28",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3620),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5980),
                             Draw = true,
                             Forfeit = false,
                             Loser = "gissa",
@@ -445,7 +445,7 @@ namespace API.Migrations
                         {
                             Token = "-29",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3620),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5980),
                             Draw = false,
                             Forfeit = false,
                             Loser = "hidde",
@@ -455,7 +455,7 @@ namespace API.Migrations
                         {
                             Token = "-30",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3621),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5981),
                             Draw = false,
                             Forfeit = false,
                             Loser = "noga",
@@ -465,7 +465,7 @@ namespace API.Migrations
                         {
                             Token = "-33",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3623),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5983),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ahmed",
@@ -475,7 +475,7 @@ namespace API.Migrations
                         {
                             Token = "-34",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3623),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5984),
                             Draw = false,
                             Forfeit = false,
                             Loser = "nadege",
@@ -485,7 +485,7 @@ namespace API.Migrations
                         {
                             Token = "-35",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3624),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5985),
                             Draw = true,
                             Forfeit = false,
                             Loser = "rachel",
@@ -495,7 +495,7 @@ namespace API.Migrations
                         {
                             Token = "-36",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3624),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5989),
                             Draw = true,
                             Forfeit = false,
                             Loser = "salie",
@@ -505,7 +505,7 @@ namespace API.Migrations
                         {
                             Token = "-37",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3625),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5990),
                             Draw = false,
                             Forfeit = false,
                             Loser = "hidde",
@@ -515,7 +515,7 @@ namespace API.Migrations
                         {
                             Token = "-38",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3626),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5991),
                             Draw = false,
                             Forfeit = false,
                             Loser = "pedro",
@@ -525,7 +525,7 @@ namespace API.Migrations
                         {
                             Token = "-39",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3626),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5992),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ahmed",
@@ -535,7 +535,7 @@ namespace API.Migrations
                         {
                             Token = "-40",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3627),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5993),
                             Draw = false,
                             Forfeit = false,
                             Loser = "rachel",
@@ -545,7 +545,7 @@ namespace API.Migrations
                         {
                             Token = "-41",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3627),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5994),
                             Draw = true,
                             Forfeit = false,
                             Loser = "pipo",
@@ -555,7 +555,7 @@ namespace API.Migrations
                         {
                             Token = "-42",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3628),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5995),
                             Draw = false,
                             Forfeit = false,
                             Loser = "nastrovia",
@@ -565,7 +565,7 @@ namespace API.Migrations
                         {
                             Token = "-43",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3629),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5997),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ahmed",
@@ -575,7 +575,7 @@ namespace API.Migrations
                         {
                             Token = "-44",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3629),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5997),
                             Draw = false,
                             Forfeit = false,
                             Loser = "noga",
@@ -585,7 +585,7 @@ namespace API.Migrations
                         {
                             Token = "-45",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3630),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5998),
                             Draw = false,
                             Forfeit = false,
                             Loser = "salie",
@@ -595,7 +595,7 @@ namespace API.Migrations
                         {
                             Token = "-46",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3630),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5999),
                             Draw = true,
                             Forfeit = false,
                             Loser = "pipo",
@@ -605,7 +605,7 @@ namespace API.Migrations
                         {
                             Token = "-47",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3631),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6000),
                             Draw = false,
                             Forfeit = false,
                             Loser = "gissa",
@@ -615,7 +615,7 @@ namespace API.Migrations
                         {
                             Token = "-48",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3631),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6000),
                             Draw = true,
                             Forfeit = false,
                             Loser = "hidde",
@@ -625,7 +625,7 @@ namespace API.Migrations
                         {
                             Token = "-49",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3632),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6001),
                             Draw = false,
                             Forfeit = false,
                             Loser = "noga",
@@ -635,7 +635,7 @@ namespace API.Migrations
                         {
                             Token = "-50",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3633),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6001),
                             Draw = false,
                             Forfeit = false,
                             Loser = "nastrovia",
@@ -645,7 +645,7 @@ namespace API.Migrations
                         {
                             Token = "-51",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3633),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6002),
                             Draw = true,
                             Forfeit = false,
                             Loser = "pedro",
@@ -655,7 +655,7 @@ namespace API.Migrations
                         {
                             Token = "-52",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3634),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6003),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ahmed",
@@ -665,7 +665,7 @@ namespace API.Migrations
                         {
                             Token = "-53",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3634),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6003),
                             Draw = false,
                             Forfeit = false,
                             Loser = "nadege",
@@ -675,7 +675,7 @@ namespace API.Migrations
                         {
                             Token = "-54",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3635),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6004),
                             Draw = true,
                             Forfeit = false,
                             Loser = "rachel",
@@ -685,7 +685,7 @@ namespace API.Migrations
                         {
                             Token = "-55",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3636),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6005),
                             Draw = false,
                             Forfeit = false,
                             Loser = "salie",
@@ -695,7 +695,7 @@ namespace API.Migrations
                         {
                             Token = "-56",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3636),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6006),
                             Draw = false,
                             Forfeit = false,
                             Loser = "ernst",
@@ -705,7 +705,7 @@ namespace API.Migrations
                         {
                             Token = "-57",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3637),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6006),
                             Draw = true,
                             Forfeit = false,
                             Loser = "john",
@@ -715,7 +715,7 @@ namespace API.Migrations
                         {
                             Token = "-58",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3637),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6008),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -725,7 +725,7 @@ namespace API.Migrations
                         {
                             Token = "-59",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3638),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6008),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burst",
@@ -735,7 +735,7 @@ namespace API.Migrations
                         {
                             Token = "-60",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3638),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6009),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burton",
@@ -745,7 +745,7 @@ namespace API.Migrations
                         {
                             Token = "-61",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3639),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6009),
                             Draw = true,
                             Forfeit = false,
                             Loser = "briar",
@@ -755,7 +755,7 @@ namespace API.Migrations
                         {
                             Token = "-62",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3640),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6010),
                             Draw = false,
                             Forfeit = false,
                             Loser = "identity",
@@ -765,7 +765,7 @@ namespace API.Migrations
                         {
                             Token = "-63",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3640),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6010),
                             Draw = true,
                             Forfeit = false,
                             Loser = "lambert",
@@ -775,7 +775,7 @@ namespace API.Migrations
                         {
                             Token = "-64",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3641),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6011),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -785,7 +785,7 @@ namespace API.Migrations
                         {
                             Token = "-65",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3642),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6012),
                             Draw = true,
                             Forfeit = false,
                             Loser = "cena",
@@ -795,7 +795,7 @@ namespace API.Migrations
                         {
                             Token = "-66",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3642),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6012),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -805,7 +805,7 @@ namespace API.Migrations
                         {
                             Token = "-67",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3643),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6013),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burton",
@@ -815,7 +815,7 @@ namespace API.Migrations
                         {
                             Token = "-68",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3643),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6013),
                             Draw = true,
                             Forfeit = false,
                             Loser = "lambert",
@@ -825,7 +825,7 @@ namespace API.Migrations
                         {
                             Token = "-69",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3644),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6014),
                             Draw = false,
                             Forfeit = false,
                             Loser = "gissa",
@@ -835,7 +835,7 @@ namespace API.Migrations
                         {
                             Token = "-70",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3644),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6015),
                             Draw = true,
                             Forfeit = false,
                             Loser = "ernst",
@@ -845,7 +845,7 @@ namespace API.Migrations
                         {
                             Token = "-71",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3645),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6015),
                             Draw = false,
                             Forfeit = false,
                             Loser = "john",
@@ -855,7 +855,7 @@ namespace API.Migrations
                         {
                             Token = "-72",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3646),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6016),
                             Draw = false,
                             Forfeit = false,
                             Loser = "eltjo",
@@ -865,7 +865,7 @@ namespace API.Migrations
                         {
                             Token = "-73",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3646),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6016),
                             Draw = true,
                             Forfeit = false,
                             Loser = "burst",
@@ -875,7 +875,7 @@ namespace API.Migrations
                         {
                             Token = "-74",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3647),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6017),
                             Draw = false,
                             Forfeit = false,
                             Loser = "briar",
@@ -885,7 +885,7 @@ namespace API.Migrations
                         {
                             Token = "-75",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3648),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6017),
                             Draw = false,
                             Forfeit = false,
                             Loser = "tijn",
@@ -895,7 +895,7 @@ namespace API.Migrations
                         {
                             Token = "-76",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3648),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6018),
                             Draw = false,
                             Forfeit = false,
                             Loser = "lambert",
@@ -905,7 +905,7 @@ namespace API.Migrations
                         {
                             Token = "-77",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3649),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6019),
                             Draw = true,
                             Forfeit = false,
                             Loser = "cena",
@@ -915,7 +915,7 @@ namespace API.Migrations
                         {
                             Token = "-78",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3649),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6021),
                             Draw = false,
                             Forfeit = false,
                             Loser = "burton",
@@ -925,7 +925,7 @@ namespace API.Migrations
                         {
                             Token = "-79",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3650),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6022),
                             Draw = true,
                             Forfeit = false,
                             Loser = "noga",
@@ -935,7 +935,7 @@ namespace API.Migrations
                         {
                             Token = "-80",
                             Board = "[[2,2,2,2,2,2,2,2],[1,1,1,1,2,2,2,1],[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1],[1,1,1,1,2,1,2,2],[1,1,2,1,2,1,2,2],[1,2,2,2,1,2,1,2],[2,2,2,2,2,2,2,2]]",
-                            Date = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3650),
+                            Date = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(6022),
                             Draw = false,
                             Forfeit = false,
                             Loser = "pedro",
@@ -948,12 +948,12 @@ namespace API.Migrations
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("Bot")
+                        .HasColumnType("int");
+
                     b.Property<string>("Friends")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsBot")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastActivity")
                         .HasColumnType("datetime2");
@@ -977,216 +977,216 @@ namespace API.Migrations
                         new
                         {
                             Token = "karen",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3414),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5608),
                             Requests = "[]",
                             Username = "Karen"
                         },
                         new
                         {
                             Token = "ernst",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3417),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5613),
                             Requests = "[]",
                             Username = "Ernst"
                         },
                         new
                         {
                             Token = "john",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3418),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5614),
                             Requests = "[]",
                             Username = "John"
                         },
                         new
                         {
                             Token = "eltjo",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3419),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5615),
                             Requests = "[]",
                             Username = "Eltjo"
                         },
                         new
                         {
                             Token = "tijn",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3420),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5616),
                             Requests = "[]",
                             Username = "Tijn"
                         },
                         new
                         {
                             Token = "cena",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3420),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5617),
                             Requests = "[]",
                             Username = "Cena"
                         },
                         new
                         {
                             Token = "burst",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3421),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5618),
                             Requests = "[]",
                             Username = "Burst"
                         },
                         new
                         {
                             Token = "burton",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3422),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5618),
                             Requests = "[]",
                             Username = "Burton"
                         },
                         new
                         {
                             Token = "briar",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3423),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5620),
                             Requests = "[]",
                             Username = "Briar"
                         },
                         new
                         {
                             Token = "lambert",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3423),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5621),
                             Requests = "[]",
                             Username = "Lambert"
                         },
                         new
                         {
                             Token = "identity",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3424),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5622),
                             Requests = "[]",
                             Username = "Identity"
                         },
                         new
                         {
                             Token = "salie",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3425),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5623),
                             Requests = "[]",
                             Username = "Salie"
                         },
                         new
                         {
                             Token = "pipo",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3426),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5623),
                             Requests = "[]",
                             Username = "Pipo"
                         },
                         new
                         {
                             Token = "gissa",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3426),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5624),
                             Requests = "[]",
                             Username = "Gissa"
                         },
                         new
                         {
                             Token = "hidde",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3427),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5626),
                             Requests = "[]",
                             Username = "Hidde"
                         },
                         new
                         {
                             Token = "noga",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3428),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5626),
                             Requests = "[]",
                             Username = "Noga"
                         },
                         new
                         {
                             Token = "nastrovia",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3428),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5724),
                             Requests = "[]",
                             Username = "Nastrovia"
                         },
                         new
                         {
                             Token = "pedro",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3429),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5726),
                             Requests = "[]",
                             Username = "Pedro"
                         },
                         new
                         {
                             Token = "ahmed",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3430),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5727),
                             Requests = "[]",
                             Username = "Ahmed"
                         },
                         new
                         {
                             Token = "nadege",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3431),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5728),
                             Requests = "[]",
                             Username = "Nadege"
                         },
                         new
                         {
                             Token = "rachel",
+                            Bot = 1,
                             Friends = "[]",
-                            IsBot = true,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3431),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5728),
                             Requests = "[]",
                             Username = "Rachel"
                         },
                         new
                         {
                             Token = "ff20c418-f1b0-4f16-b582-294be25c24ef",
+                            Bot = 0,
                             Friends = "[]",
-                            IsBot = false,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3432),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5729),
                             Requests = "[]",
                             Username = "mediator"
                         },
                         new
                         {
                             Token = "58a479fd-ae6f-4474-a147-68cbdb62c19b",
+                            Bot = 0,
                             Friends = "[]",
-                            IsBot = false,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3433),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5730),
                             Requests = "[]",
                             Username = "admin"
                         },
                         new
                         {
                             Token = "deleted",
+                            Bot = 0,
                             Friends = "[]",
-                            IsBot = false,
-                            LastActivity = new DateTime(2024, 11, 11, 20, 6, 21, 94, DateTimeKind.Utc).AddTicks(3434),
+                            LastActivity = new DateTime(2024, 11, 11, 22, 43, 8, 644, DateTimeKind.Utc).AddTicks(5731),
                             Requests = "[]",
                             Username = "Deleted"
                         });

@@ -345,32 +345,6 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void DeleteGameInvites_OK()
-        {
-            var result = _controller.DeleteGameInvites(new("13"));
-
-            Assert.Multiple(() =>
-            {
-                var httpResponse = result.Value as HttpResponseMessage;
-                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
-                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
-            });
-        }
-
-        [Test]
-        public void DeleteGameInvites_BadRequest()
-        {
-            var result = _controller.DeleteGameInvites(new("nonexistent"));
-
-            Assert.Multiple(() =>
-            {
-                var httpResponse = result.Value as HttpResponseMessage;
-                Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
-                Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
-            });
-        }
-
-        [Test]
         public void DeletePlayer_OK()
         {
             var result = _controller.Delete(new("13"));

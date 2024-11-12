@@ -18,7 +18,6 @@ namespace API.Data
         bool AcceptGameRequest(string receiver_username, string sender_token);
         bool DeclineGameRequest(string receiver_username, string sender_token);
         bool DeleteFriend(string receiver_username, string sender_token);
-        bool DeleteGameInvites(string token);
         bool Delete(string token);
     }
 }

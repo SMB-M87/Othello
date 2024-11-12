@@ -32,6 +32,8 @@ namespace API.Service
             "Looking for a serious player to improve my skills."
         };
 
+        private static readonly Random _random = new();
+
         public BotService(Database context)
         {
             _context = context;
@@ -39,8 +41,7 @@ namespace API.Service
 
         public async Task CreateGamesAsync()
         {
-            var bots = await _context.Players.Where(p => p.IsBot).ToListAsync();
-            Random random = new();
+            var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
 
             foreach (var bot in bots)
             {
@@ -50,9 +51,11 @@ namespace API.Service
 
                     if (!hasPendingGame)
                     {
-                        var game = new Game(bot.Token, GameDescriptions[random.Next(GameDescriptions.Count)]);
+                        bot.Bot = _random.Next(1, 3);
+                        var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
 
                         _context.Games.Add(game);
+                        _context.Entry(bot).Property(p => p.Bot).IsModified = true;
                     }
                 }
             }
@@ -61,7 +64,7 @@ namespace API.Service
 
         public async Task AcceptFriendRequestsAsync()
         {
-            var bots = await _context.Players.Where(p => p.IsBot).ToListAsync();
+            var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
 
             foreach (var bot in bots)
             {
@@ -90,7 +93,7 @@ namespace API.Service
 
         public async Task SendGameRequestsAsync()
         {
-            var bots = await _context.Players.Where(p => p.IsBot).ToListAsync();
+            var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
 
             foreach (var bot in bots)
             {
@@ -121,9 +124,42 @@ namespace API.Service
             await _context.SaveChangesAsync();
         }
 
+        public async Task MakeMovesAsync()
+        {
+            var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
+
+            foreach (var bot in bots)
+            {
+                var game = await _context.Games.FirstOrDefaultAsync(g => g.PlayersTurn == g.FColor && g.Status == Status.Playing && g.First == bot.Token);
+
+                if (game != null && game.Second != null)
+                {
+                    if (game.IsThereAPossibleMove(game.FColor))
+                    {
+                        var possibleMoves = GetPossibleMoves(game.Board);
+
+                        var move = ChooseBotMove(possibleMoves, bot, game.Board, game.FColor);
+
+                        game.MakeMove(move.Row, move.Column);
+                    }
+                    else
+                    {
+                        game.Pass();
+                    }
+                    _context.Entry(game).Property(g => g.Board).IsModified = true;
+                    _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                    _context.Entry(game).Property(g => g.Date).IsModified = true;
+
+                    bot.LastActivity = DateTime.UtcNow;
+                    _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
+
         public async Task UpdateActivityBotAsync()
         {
-            var bots = await _context.Players.Where(p => p.IsBot).ToListAsync();
+            var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
 
             foreach (var bot in bots)
             {
@@ -134,6 +170,112 @@ namespace API.Service
                 }
             }
             await _context.SaveChangesAsync();
+        }
+
+        private static List<GameMove> GetPossibleMoves(Color[,] board)
+        {
+            var possibleMoves = new List<GameMove>();
+
+            for (int row = 0; row < board.GetLength(0); row++)
+            {
+                for (int col = 0; col < board.GetLength(1); col++)
+                {
+                    if (board[row, col] == Color.PossibleMove)
+                    {
+                        possibleMoves.Add(new("", row, col));
+                    }
+                }
+            }
+            return possibleMoves;
+        }
+
+        private static GameMove ChooseBotMove(List<GameMove> possibleMoves, Player bot, Color[,] board, Color colorPlayer)
+        {
+            if (bot.Bot == 2)
+            {
+                GameMove? bestMove = null;
+                int maxFlipped = -1;
+
+                foreach (var move in possibleMoves)
+                {
+                    int flipped = SimulateMoveAndCountFlipped(move, colorPlayer, board);
+
+                    if (flipped > maxFlipped)
+                    {
+                        maxFlipped = flipped;
+                        bestMove = move;
+                    }
+                }
+                return bestMove ?? possibleMoves[_random.Next(possibleMoves.Count)];
+            }
+            else
+            {
+                return possibleMoves[_random.Next(possibleMoves.Count)];
+            }
+        }
+
+        private static int SimulateMoveAndCountFlipped(GameMove move, Color colorPlayer, Color[,] board)
+        {
+            int flipped = 0;
+            int[,] direction = new int[8, 2] {
+                                {  0,  1 },         // right
+                                {  0, -1 },         // left
+                                {  1,  0 },         // bottom
+                                { -1,  0 },         // top
+                                {  1,  1 },         // bottom right
+                                {  1, -1 },         // bottom left
+                                { -1,  1 },         // top right
+                                { -1, -1 } };       // top left
+            Color colorOpponent = colorPlayer == Color.White ? Color.Black : Color.White;
+
+            for (int i = 0; i < 8; i++)
+            {
+                flipped += FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(move.Row, move.Column, colorPlayer, colorOpponent, direction[i, 0], direction[i, 1], board);
+            }
+            return flipped;
+        }
+
+        private static int FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(int rowMove, int columnMove, Color colorPlayer, Color colorOpponent, int rowDirection, int columnDirection, Color[,] board)
+        {
+            int row, column;
+            int pawnFlipped = 0;
+            var simulatedBoard = (Color[,])board.Clone();
+
+            if (PawnToEncloseInSpecifiedDirection(rowMove, columnMove, colorPlayer, colorOpponent, rowDirection, columnDirection, simulatedBoard))
+            {
+                row = rowMove + rowDirection;
+                column = columnMove + columnDirection;
+
+                while (row >= 0 && row < 8 && column >= 0 && column < 8 && simulatedBoard[row, column] == colorOpponent)
+                {
+                    simulatedBoard[row, column] = colorPlayer;
+                    row += rowDirection;
+                    column += columnDirection;
+                    pawnFlipped++;
+                }
+            }
+            return pawnFlipped;
+        }
+
+        private static bool PawnToEncloseInSpecifiedDirection(int rowMove, int columnMove, Color colorPlayer, Color colorOpponent, int rowDirection, int columnDirection, Color[,] board)
+        {
+            int row, column;
+
+            if (!((rowMove >= 0 && rowMove < 8 && columnMove >= 0 && columnMove < 8) && (board[rowMove, columnMove] == Color.None || board[rowMove, columnMove] == Color.PossibleMove)))
+                return false;
+
+            row = rowMove + rowDirection;
+            column = columnMove + columnDirection;
+
+            int NumberOfAdjacentPawnsOfOpponent = 0;
+
+            while ((row >= 0 && row < 8 && column >= 0 && column < 8) && board[row, column] == colorOpponent)
+            {
+                row += rowDirection;
+                column += columnDirection;
+                NumberOfAdjacentPawnsOfOpponent++;
+            }
+            return (row >= 0 && row < 8 && column >= 0 && column < 8) && board[row, column] == colorPlayer && NumberOfAdjacentPawnsOfOpponent > 0;
         }
     }
 }

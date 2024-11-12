@@ -14,7 +14,7 @@ namespace API.Models
         public ICollection<string> Friends { get; set; }
         public ICollection<Request> Requests { get; set; }
 
-        public bool IsBot { get; set; }
+        public int Bot { get; set; }
 
         public Player()
         {
@@ -23,17 +23,17 @@ namespace API.Models
             LastActivity = DateTime.MinValue;
             Friends = new List<string>();
             Requests = new List<Request>();
-            IsBot = false;
+            Bot = 0;
         }
 
-        public Player(string token, string username, bool isBot = false)
+        public Player(string token, string username, int isBot = 0)
         {
             Token = token;
             Username = username;
             LastActivity = DateTime.UtcNow;
             Friends = new List<string>();
             Requests = new List<Request>();
-            IsBot = isBot;
+            Bot = isBot;
         }
     }
 }

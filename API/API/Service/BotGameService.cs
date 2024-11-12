@@ -1,11 +1,11 @@
 ﻿namespace API.Service
 {
-    public class BotBackgroundService : BackgroundService
+    public class BotGameService : BackgroundService
     {
         private readonly IServiceProvider _services;
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(1);
 
-        public BotBackgroundService(IServiceProvider services)
+        public BotGameService(IServiceProvider services)
         {
             _services = services;
         }
@@ -17,10 +17,7 @@
                 using (var scope = _services.CreateScope())
                 {
                     var botService = scope.ServiceProvider.GetRequiredService<BotService>();
-                    await botService.CreateGamesAsync();
-                    await botService.AcceptFriendRequestsAsync();
-                    await botService.SendGameRequestsAsync();
-                    await botService.UpdateActivityBotAsync();
+                    await botService.MakeMovesAsync();
                 }
 
                 await Task.Delay(_interval, stoppingToken);

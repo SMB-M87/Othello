@@ -209,24 +209,6 @@ namespace API.Data
                         _context.Entry(game).Property(g => g.Board).IsModified = true;
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                         _context.Entry(game).Property(g => g.Date).IsModified = true;
-
-                        if (game.Finished())
-                        {
-                            game.Finish();
-                            _context.Entry(game).Property(g => g.Status).IsModified = true;
-                            _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-
-                            Color win = game.WinningColor();
-                            string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
-                            string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
-                            bool draw = win == Color.None;
-                            GameResult result = new(game.Token, winner, loser, game.Board, draw)
-                            {
-                                Date = DateTime.UtcNow
-                            };
-                            _context.Results.Add(result);
-                            _context.Games.Remove(game);
-                        }
                         _context.SaveChanges();
                         return (true, null);
                     }
@@ -253,40 +235,18 @@ namespace API.Data
                 if (player != challenger && PlayerExists(challenger) &&
                     turn == game.PlayersTurn && game.Status == Status.Playing)
                 {
-                    if (game.Finished())
+                    try
                     {
-                        game.Finish();
-                        _context.Entry(game).Property(g => g.Status).IsModified = true;
+                        game.Pass();
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-
-                        Color win = game.WinningColor();
-                        string winner = win == Color.None ? "" : win == game.FColor ? game.First : game.Second;
-                        string loser = win == Color.None ? "" : win == game.FColor ? game.Second : game.First;
-                        bool draw = win == Color.None;
-                        GameResult result = new(game.Token, winner, loser, game.Board, draw)
-                        {
-                            Date = DateTime.UtcNow
-                        };
-                        _context.Results.Add(result);
-                        _context.Games.Remove(game);
+                        _context.Entry(game).Property(g => g.Date).IsModified = true;
                         _context.SaveChanges();
                         return true;
                     }
-                    else
+                    catch (InvalidGameOperationException ex)
                     {
-                        try
-                        {
-                            game.Pass();
-                            _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-                            _context.Entry(game).Property(g => g.Date).IsModified = true;
-                            _context.SaveChanges();
-                            return true;
-                        }
-                        catch (InvalidGameOperationException ex)
-                        {
-                            error_message = ex.Message;
-                            return false;
-                        }
+                        error_message = ex.Message;
+                        return false;
                     }
                 }
             }
@@ -410,14 +370,6 @@ namespace API.Data
                 DateTime end = last.Value.AddSeconds(30);
                 double remainingSeconds = (end - now).TotalSeconds;
 
-                if (remainingSeconds <= 0)
-                {
-                    game.Pass();
-                    _context.Entry(game).Property(g => g.Date).IsModified = true;
-                    _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-                    _context.Entry(game).Property(g => g.Board).IsModified = true;
-                    _context.SaveChanges();
-                }
                 return $"{Math.Floor(remainingSeconds)}";
             }
             return string.Empty;

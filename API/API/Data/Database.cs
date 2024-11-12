@@ -119,10 +119,8 @@ namespace API.Data
                     .HasColumnType("nvarchar(max)")
                     .Metadata.SetValueComparer(new RequestCollectionComparer());
 
-                entity.Property(e => e.IsBot)
-                    .IsRequired()
-                    .ValueGeneratedNever()
-                    .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+                entity.Property(e => e.Bot)
+                    .IsRequired();
             });
 
             builder.Entity<GameResult>(entity =>

@@ -50,8 +50,10 @@ builder.Services.AddDataProtection()
     .SetApplicationName("Othello");
 
 builder.Services.AddScoped<BotService>();
+builder.Services.AddHostedService<BotGameService>();
 builder.Services.AddHostedService<BotBackgroundService>();
-builder.Services.AddHostedService<InactiveGameService>();
+builder.Services.AddHostedService<CleanUpService>();
+builder.Services.AddHostedService<GameService>();
 
 var app = builder.Build();
 

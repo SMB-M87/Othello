@@ -19,7 +19,6 @@ namespace API.Controllers
         public ActionResult<Home> View(string token)
         {
             _repository.PlayerRepository.UpdateActivity(token);
-            _repository.PlayerRepository.DeleteGameInvites(token);
             var response = _repository.HomeRepository.GetView(token);
 
             if (response is null)
@@ -31,7 +30,6 @@ namespace API.Controllers
         [HttpGet("partial/{token}")]
         public ActionResult<HomePartial> Partial(string token)
         {
-            _repository.PlayerRepository.DeleteGameInvites(token);
             var response = _repository.HomeRepository.GetPartial(token);
 
             if (response is null)

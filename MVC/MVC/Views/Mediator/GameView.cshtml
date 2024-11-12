@@ -43,9 +43,13 @@
                         data-row="@row"
                         data-col="@col"
                         onclick="cellClicked(this)">
-                        @if (cell != Color.None)
+                        @if (cell != Color.None && cell != Color.PossibleMove)
                         {
                             <i class="fa fa-circle @pieceClass" style="font-size: 30px; color: @(cell.ToString());"></i>
+                        }
+                        else if (cell == Color.PossibleMove)
+                        {
+                            <div style="width: 30px; height: 30px; border: 2px solid @Model.PlayersTurn.ToString(); border-radius: 50%; background-color: transparent; box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);"></div>
                         }
                     </td>
                 }

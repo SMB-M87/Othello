@@ -5,6 +5,7 @@ namespace API.Models
 {
     public class Game : IGame
     {
+        private readonly Random _random = new();
         private const int boardScope = 8;
         private readonly int[,] direction = new int[8, 2] {
                                 {  0,  1 },         // right
@@ -70,12 +71,12 @@ namespace API.Models
             Board[3, 4] = Color.Black;
             Board[4, 3] = Color.Black;
 
-            PlayersTurn = Color.Black;
+            PlayersTurn = _random.Next(1, 3) == 1 ? Color.White : Color.Black;
             Description = description;
             Status = Status.Pending;
 
             First = first;
-            FColor = new Random().Next(1, 3) == 1 ? Color.White : Color.Black;
+            FColor = _random.Next(1, 3) == 1 ? Color.White : Color.Black;
 
             Second = null;
             SColor = GetOpponentsColor(FColor);
@@ -85,17 +86,7 @@ namespace API.Models
             else
                 Rematch = rematch;
 
-            for (int row = 0; row < boardScope; row++)
-            {
-                for (int column = 0; column < boardScope; column++)
-                {
-                    if (PossibleMove(row, column, PlayersTurn))
-                    {
-                        Board[row, column] = Color.PossibleMove;
-                    }
-                }
-            }
-            Date = DateTime.UtcNow;
+            ChangeTurns();
         }
 
         public Game(string token, string first, Color fcolor, string? second = null, Status game = Status.Pending, Color turn = Color.Black, string description = "I wanna play a game and don't have any requirements!")
@@ -163,7 +154,7 @@ namespace API.Models
 
         public bool Finished()
         {
-            return !(IsThereAPossibleMove(PlayersTurn) && IsThereAPossibleMove(GetOpponentsColor(PlayersTurn)));
+            return !(IsThereAPossibleMove(FColor) || IsThereAPossibleMove(SColor));
         }
 
         public void Pass()
@@ -179,21 +170,6 @@ namespace API.Models
             else
             {
                 ChangeTurns();
-
-                for (int row = 0; row < boardScope; row++)
-                {
-                    for (int column = 0; column < boardScope; column++)
-                    {
-                        if (Board[row, column] == Color.PossibleMove)
-                        {
-                            Board[row, column] = Color.None;
-                        }
-                        if (PossibleMove(row, column, PlayersTurn))
-                        {
-                            Board[row, column] = Color.PossibleMove;
-                        }
-                    }
-                }
             }
         }
 
@@ -207,22 +183,6 @@ namespace API.Models
                 }
                 Board[rowMove, columnMove] = PlayersTurn;
                 ChangeTurns();
-
-                for (int row = 0; row < boardScope; row++)
-                {
-                    for (int column = 0; column < boardScope; column++)
-                    {
-                        if (Board[row, column] == Color.PossibleMove)
-                        {
-                            Board[row, column] = Color.None;
-                        }
-                        if (PossibleMove(row, column, PlayersTurn))
-                        {
-                            Board[row, column] = Color.PossibleMove;
-                        }
-                    }
-                }
-                Date = DateTime.UtcNow;
             }
             else
             {
@@ -263,7 +223,6 @@ namespace API.Models
                     }
                 }
             }
-
             Status = Status.Finished;
             PlayersTurn = Color.None;
         }
@@ -301,6 +260,22 @@ namespace API.Models
                 PlayersTurn = Color.Black;
             else if (PlayersTurn == Color.Black)
                 PlayersTurn = Color.White;
+
+            for (int row = 0; row < boardScope; row++)
+            {
+                for (int column = 0; column < boardScope; column++)
+                {
+                    if (Board[row, column] == Color.PossibleMove)
+                    {
+                        Board[row, column] = Color.None;
+                    }
+                    if (PossibleMove(row, column, PlayersTurn))
+                    {
+                        Board[row, column] = Color.PossibleMove;
+                    }
+                }
+            }
+
             Date = DateTime.UtcNow;
         }
 
@@ -311,7 +286,7 @@ namespace API.Models
 
         private bool IsPlaceOnBoardFree(int rowMove, int columnMove)
         {
-            return PositionInbetweenBoardLimits(rowMove, columnMove) && (Board[rowMove, columnMove] == Color.None || Board[rowMove, columnMove] == Color.PossibleMove);
+            return PositionInbetweenBoardLimits(rowMove, columnMove) && Board[rowMove, columnMove] != Color.White && Board[rowMove, columnMove] != Color.Black;
         }
 
         private bool PawnToEncloseInSpecifiedDirection(int rowMove, int columnMove, Color colorPlayer, int rowDirection, int columnDirection)
