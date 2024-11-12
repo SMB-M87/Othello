@@ -51,7 +51,22 @@ namespace API.Service
 
                     if (!hasPendingGame)
                     {
-                        bot.Bot = _random.Next(1, 3);
+                        if (bot.Username == "Identity" || bot.Username == "Ernst")
+                        {
+                            bot.Bot = 1;
+                        }
+                        else if (bot.Username == "Pipo" || bot.Username == "Eltjo")
+                        {
+                            bot.Bot = 2;
+                        }
+                        else if (bot.Username == "Salie" || bot.Username == "Tijn")
+                        {
+                            bot.Bot = 3;
+                        }
+                        else
+                        {
+                            bot.Bot = _random.Next(1, 4);
+                        }
                         var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
 
                         _context.Games.Add(game);
@@ -134,11 +149,13 @@ namespace API.Service
 
                 if (game != null && game.Second != null)
                 {
-                    if (game.IsThereAPossibleMove(game.FColor))
+                    Color player = bot.Token == game.First ? game.FColor : game.SColor;
+
+                    if (game.IsThereAPossibleMove(player))
                     {
                         var possibleMoves = GetPossibleMoves(game.Board);
 
-                        var move = ChooseBotMove(possibleMoves, bot, game.Board, game.FColor);
+                        var move = ChooseBotMove(possibleMoves, bot, game.Board, player);
 
                         game.MakeMove(move.Row, move.Column);
                     }
@@ -191,22 +208,9 @@ namespace API.Service
 
         private static GameMove ChooseBotMove(List<GameMove> possibleMoves, Player bot, Color[,] board, Color colorPlayer)
         {
-            if (bot.Bot == 2)
+            if (bot.Bot == 2 || bot.Bot == 3)
             {
-                GameMove? bestMove = null;
-                int maxFlipped = -1;
-
-                foreach (var move in possibleMoves)
-                {
-                    int flipped = SimulateMoveAndCountFlipped(move, colorPlayer, board);
-
-                    if (flipped > maxFlipped)
-                    {
-                        maxFlipped = flipped;
-                        bestMove = move;
-                    }
-                }
-                return bestMove ?? possibleMoves[_random.Next(possibleMoves.Count)];
+                return EvaluateMoves(possibleMoves, board, colorPlayer, bot.Bot);
             }
             else
             {
@@ -214,18 +218,88 @@ namespace API.Service
             }
         }
 
+        private static GameMove EvaluateMoves(List<GameMove> possibleMoves, Color[,] board, Color colorPlayer, int bot)
+        {
+            GameMove? bestMove = null;
+            int maxScore = int.MinValue;
+
+            foreach (var move in possibleMoves)
+            {
+                var simulatedBoard = (Color[,])board.Clone();
+
+                int flipped = SimulateMoveAndCountFlipped(move, colorPlayer, simulatedBoard);
+                int positionalValue = PositionalValue(move);
+
+                Game switchMoves = new("", "", colorPlayer, "", Status.Playing, colorPlayer)
+                {
+                    Board = simulatedBoard
+                };
+                switchMoves.Pass();
+                List<GameMove> opponentMoves = GetPossibleMoves(switchMoves.Board);
+
+                int opponentPenalty = opponentMoves.Count > 0 ? EvaluateOpponentImpact(opponentMoves, switchMoves.Board, colorPlayer == Color.White ? Color.Black : Color.White, bot) : 0;
+
+                int score = flipped + positionalValue - opponentPenalty;
+
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                    bestMove = move;
+                }
+            }
+            return bestMove ?? possibleMoves[_random.Next(possibleMoves.Count)];
+        }
+
+        private static int EvaluateOpponentImpact(List<GameMove> possibleMoves, Color[,] board, Color colorPlayer, int bot, int depth = 4)
+        {
+            int maxScore = int.MinValue;
+
+            foreach (var move in possibleMoves)
+            {
+                int opponentPenalty = 0;
+                var simulatedBoard = (Color[,])board.Clone();
+
+                int flipped = SimulateMoveAndCountFlipped(move, colorPlayer, simulatedBoard);
+                int positionalValue = PositionalValue(move);
+
+                if (bot == 3 && depth > 0)
+                {
+                    Game switchMoves = new("", "", colorPlayer, "", Status.Playing, colorPlayer)
+                    {
+                        Board = simulatedBoard
+                    };
+                    switchMoves.Pass();
+
+                    if (!switchMoves.Finished())
+                    {
+                        List<GameMove> botMoves = GetPossibleMoves(switchMoves.Board);
+
+                        opponentPenalty = botMoves.Count > 0 ? EvaluateOpponentImpact(botMoves, switchMoves.Board, colorPlayer == Color.White ? Color.Black : Color.White, bot, depth - 1) : 0;
+                    }
+                }
+
+                int score = flipped + positionalValue - opponentPenalty;
+
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                }
+            }
+            return maxScore;
+        }
+
         private static int SimulateMoveAndCountFlipped(GameMove move, Color colorPlayer, Color[,] board)
         {
             int flipped = 0;
             int[,] direction = new int[8, 2] {
-                                {  0,  1 },         // right
-                                {  0, -1 },         // left
-                                {  1,  0 },         // bottom
-                                { -1,  0 },         // top
-                                {  1,  1 },         // bottom right
-                                {  1, -1 },         // bottom left
-                                { -1,  1 },         // top right
-                                { -1, -1 } };       // top left
+                                {  0,  1 },
+                                {  0, -1 },
+                                {  1,  0 },
+                                { -1,  0 },
+                                {  1,  1 },
+                                {  1, -1 },
+                                { -1,  1 },
+                                { -1, -1 } };
             Color colorOpponent = colorPlayer == Color.White ? Color.Black : Color.White;
 
             for (int i = 0; i < 8; i++)
@@ -239,16 +313,15 @@ namespace API.Service
         {
             int row, column;
             int pawnFlipped = 0;
-            var simulatedBoard = (Color[,])board.Clone();
 
-            if (PawnToEncloseInSpecifiedDirection(rowMove, columnMove, colorPlayer, colorOpponent, rowDirection, columnDirection, simulatedBoard))
+            if (PawnToEncloseInSpecifiedDirection(rowMove, columnMove, colorPlayer, colorOpponent, rowDirection, columnDirection, board))
             {
                 row = rowMove + rowDirection;
                 column = columnMove + columnDirection;
 
-                while (row >= 0 && row < 8 && column >= 0 && column < 8 && simulatedBoard[row, column] == colorOpponent)
+                while (row >= 0 && row < 8 && column >= 0 && column < 8 && board[row, column] == colorOpponent)
                 {
-                    simulatedBoard[row, column] = colorPlayer;
+                    board[row, column] = colorPlayer;
                     row += rowDirection;
                     column += columnDirection;
                     pawnFlipped++;
@@ -276,6 +349,32 @@ namespace API.Service
                 NumberOfAdjacentPawnsOfOpponent++;
             }
             return (row >= 0 && row < 8 && column >= 0 && column < 8) && board[row, column] == colorPlayer && NumberOfAdjacentPawnsOfOpponent > 0;
+        }
+
+        private static int PositionalValue(GameMove move)
+        {
+            if ((move.Row == 0 && move.Column == 0) ||
+                (move.Row == 0 && move.Column == 7) ||
+                (move.Row == 7 && move.Column == 0) ||
+                (move.Row == 7 && move.Column == 7))
+            {
+                return 10;
+            }
+            else if (move.Row == 0 || move.Row == 7 || move.Column == 0 || move.Column == 7)
+            {
+                return 5;
+            }
+            else if ((move.Row == 1 && move.Column == 1) || (move.Row == 1 && move.Column == 6) ||
+                     (move.Row == 6 && move.Column == 1) || (move.Row == 6 && move.Column == 6))
+            {
+                return -5; // Negative value for positions adjacent to corners
+            }
+            else if (move.Row == 1 || move.Row == 6 || move.Column == 1 || move.Column == 6)
+            {
+                return -2; // Negative value for positions adjacent to outer lines
+            }
+
+            return 0;
         }
     }
 }

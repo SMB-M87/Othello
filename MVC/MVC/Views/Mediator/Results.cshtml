@@ -14,6 +14,7 @@
             <th>Winner</th>
             <th>Loser</th>
             <th>Draw</th>
+            <th>Forfeit</th>
             <th>Date</th>
         </tr>
     </thead>
@@ -25,6 +26,7 @@
                 <td><a asp-action="Profile" asp-route-token="@result.Winner" style="text-decoration: none; color: inherit;">@result.Winner</a></td>
                 <td><a asp-action="Profile" asp-route-token="@result.Loser" style="text-decoration: none; color: inherit;">@result.Loser</a></td>
                 <td>@result.Draw</td>
+                <td>@result.Forfeit</td>
                 <td>@result.Date</td>
             </tr>
         }

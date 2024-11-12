@@ -14,7 +14,12 @@
         {
             <span><a asp-action="Profile" asp-route-token="@Model.Winner">@Model.Winner</a> drew with <a asp-action="Profile" asp-route-token="@Model.Loser">@Model.Loser</a></span>
         }
-        <span>on @Model.Date.ToString("dd/MM/yyyy HH:mm tt")</span>
+
+        @if (Model.Forfeit)
+        {
+            <span>by surrender</span>
+        }
+        <span>@Model.Date.ToString("'on' dd/MM/yyyy 'at' HH:mm tt")</span>
     </h3>
 </div>
 

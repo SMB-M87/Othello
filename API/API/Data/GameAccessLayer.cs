@@ -239,6 +239,7 @@ namespace API.Data
                     {
                         game.Pass();
                         _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+                        _context.Entry(game).Property(g => g.Board).IsModified = true;
                         _context.Entry(game).Property(g => g.Date).IsModified = true;
                         _context.SaveChanges();
                         return true;

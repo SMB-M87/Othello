@@ -109,7 +109,7 @@ namespace API.Models
             Second = second;
             SColor = GetOpponentsColor(FColor);
 
-            Date = DateTime.UtcNow;
+            Date = DateTime.UtcNow.AddMinutes(-1); // DO NOT BREAK: Minus 1 for bot service method evaluate opponent's impact
         }
 
         public void SetSecondPlayer(string secondPlayerToken)
