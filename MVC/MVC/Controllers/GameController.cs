@@ -18,29 +18,32 @@ namespace MVC.Controllers
 
         public async Task<IActionResult> Play()
         {
-            var token = _userManager.GetUserId(User);
-            var response = await GetView(token);
-
-            if (response.Partial.InGame == true)
+            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                var model = new GamePlay
-                {
-                    Opponent = response.Opponent,
-                    Color = response.Color,
+                var token = _userManager.GetUserId(User);
+                var response = await GetView(token);
 
-                    Partial = new GamePartial
+                if (response.Partial.InGame == true)
+                {
+                    var model = new GamePlay
                     {
-                        InGame = response.Partial.InGame,
-                        PlayersTurn = response.Partial.PlayersTurn,
-                        IsPlayersTurn = response.Partial.IsPlayersTurn,
-                        PossibleMove = response.Partial.PossibleMove,
-                        Board = response.Partial.Board,
-                        Time = response.Partial.Time
-                    }
-                };
-                return View(model);
+                        Opponent = response.Opponent,
+                        Color = response.Color,
+
+                        Partial = new GamePartial
+                        {
+                            InGame = response.Partial.InGame,
+                            PlayersTurn = response.Partial.PlayersTurn,
+                            IsPlayersTurn = response.Partial.IsPlayersTurn,
+                            PossibleMove = response.Partial.PossibleMove,
+                            Board = response.Partial.Board,
+                            Time = response.Partial.Time
+                        }
+                    };
+                    return View(model);
+                }
+                ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
             }
-            ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
             return RedirectToAction("Index", "Home");
         }
 

@@ -44,6 +44,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.RedirectUri = "/Home/Index";
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
 });
 
 builder.Services.AddDataProtection()
@@ -101,8 +108,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-app.UseMiddleware<URLManager>();
-
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -110,5 +115,7 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Home}/{action=Index}/{id?}");
     endpoints.MapRazorPages();
 });
+
+app.UseMiddleware<URLManager>();
 
 app.Run();

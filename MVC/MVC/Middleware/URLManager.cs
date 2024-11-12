@@ -19,7 +19,14 @@ namespace MVC.Middleware
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
         {
             var user = context.User;
+            var currentPath = context.Request.Path.Value?.ToLower();
             var isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            if (context.GetEndpoint() == null)
+            {
+                context.Response.Redirect("/Home/Index");
+                return;
+            }
 
             using var scope = serviceProvider.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
@@ -41,7 +48,6 @@ namespace MVC.Middleware
                 {
                     var token = userManager.GetUserId(user);
                     var httpClient = _httpClientFactory.CreateClient("ApiClient");
-                    var currentPath = context.Request.Path.Value?.ToLower();
                     var response = await httpClient.GetAsync($"api/game/{token}");
 
                     if (response.IsSuccessStatusCode)

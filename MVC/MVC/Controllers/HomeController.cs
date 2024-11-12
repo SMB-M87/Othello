@@ -58,69 +58,77 @@ namespace MVC.Controllers
 
         public async Task<IActionResult> Profile(string username = "")
         {
-            if (string.IsNullOrEmpty(username))
+            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                username = _userManager.GetUserName(User);
+                if (string.IsNullOrEmpty(username))
+                {
+                    username = _userManager.GetUserName(User);
+                }
+
+                if (string.IsNullOrEmpty(username) || username == "Deleted")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                string currentUserId = _userManager.GetUserId(User);
+                var response = await GetProfile($"{username} {currentUserId}");
+
+                var model = new HomeProfile
+                {
+                    Stats = response.Stats,
+                    Username = username,
+                    MatchHistory = response.MatchHistory,
+                    IsFriend = response.IsFriend,
+                    HasSentRequest = response.HasSentRequest,
+                    HasPendingRequest = response.HasPendingRequest,
+                    LastSeen = response.LastSeen
+                };
+
+                return View("Profile", model);
             }
-
-            if (string.IsNullOrEmpty(username) || username == "Deleted")
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            string currentUserId = _userManager.GetUserId(User);
-            var response = await GetProfile($"{username} {currentUserId}");
-
-            var model = new HomeProfile
-            {
-                Stats = response.Stats,
-                Username = username,
-                MatchHistory = response.MatchHistory,
-                IsFriend = response.IsFriend,
-                HasSentRequest = response.HasSentRequest,
-                HasPendingRequest = response.HasPendingRequest,
-                LastSeen = response.LastSeen
-            };
-
-            return View("Profile", model);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Result(string token = "")
         {
-            if (string.IsNullOrEmpty(token))
+            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                var username = _userManager.GetUserName(User);
-                var current_user_id = _userManager.GetUserId(User);
-
-                var model = new GameOverview
+                if (string.IsNullOrEmpty(token))
                 {
-                    Username = username,
-                    Result = await MostRecentGame(current_user_id) ?? new(),
-                    Rematch = true,
-                    Request = string.Empty
-                };
+                    var username = _userManager.GetUserName(User);
+                    var current_user_id = _userManager.GetUserId(User);
 
-                if (model.Result != null && model.Result.Board != null)
-                {
-                    return View("Result", model);
+                    var model = new GameOverview
+                    {
+                        Username = username,
+                        Result = await MostRecentGame(current_user_id) ?? new(),
+                        Rematch = true,
+                        Request = string.Empty
+                    };
+
+                    if (model.Result != null && model.Result.Board != null)
+                    {
+                        return View("Result", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {
-                    return RedirectToAction("Index");
+                    string[] parts = token.Split(' ');
+
+                    var model = new GameOverview
+                    {
+                        Username = parts[0],
+                        Result = await GetResult(parts[1]) ?? new(),
+                        Rematch = false
+                    };
+                    return View("Result", model);
                 }
             }
-            else
-            {
-                string[] parts = token.Split(' ');
-
-                var model = new GameOverview
-                {
-                    Username = parts[0],
-                    Result = await GetResult(parts[1]) ?? new(),
-                    Rematch = false
-                };
-                return View("Result", model);
-            }
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()

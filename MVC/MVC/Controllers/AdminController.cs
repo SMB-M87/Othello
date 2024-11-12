@@ -76,7 +76,7 @@ namespace MVC.Controllers
         {
             var model = await GetPlayer(token);
 
-            if (model is not null)
+            if (model is not null && model.Token != "")
             {
                 return View("Profile", model);
             }
@@ -103,7 +103,7 @@ namespace MVC.Controllers
         {
             var model = await GetGame(token);
 
-            if (model is not null)
+            if (model is not null && model.Board is not null && model.Board.GetLength(0) > 0)
             {
                 return View("GameView", model);
             }
@@ -129,7 +129,7 @@ namespace MVC.Controllers
         {
             var model = await GetResult(token);
 
-            if (model is not null)
+            if (model is not null && model.Token != "")
             {
                 return View("ResultView", model);
             }
