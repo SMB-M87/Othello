@@ -47,9 +47,9 @@ namespace API.Service
             {
                 if (bot.Username != "Gissa" && bot.Username != "Hidde" && bot.Username != "Pedro")
                 {
-                    bool hasPendingGame = await _context.Games.AnyAsync(g => g.First == bot.Token && g.Status == Status.Pending);
+                    bool inGame = await _context.Games.AnyAsync(g => g.First == bot.Token || (g.Second != null && g.Second == bot.Token));
 
-                    if (!hasPendingGame)
+                    if (!inGame)
                     {
                         if (bot.Username == "Identity" || bot.Username == "Ernst")
                         {
@@ -65,11 +65,47 @@ namespace API.Service
                         }
                         else
                         {
-                            bot.Bot = _random.Next(1, 4);
+                            bot.Bot = 1;
                         }
-                        var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
 
-                        _context.Games.Add(game);
+                        if (bot.Username != "Ernst" && bot.Username != "Eltjo" && bot.Username != "Tijn")
+                        {
+                            var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
+                            _context.Games.Add(game);
+                        }
+                        else
+                        {
+                            if (bot.Username == "Ernst")
+                            {
+                                var game = await _context.Games.FirstOrDefaultAsync(g => g.First == "pipo" && g.Status == Status.Pending);
+
+                                if (game != null && game.Second == null)
+                                {
+                                    game.SetSecondPlayer(bot.Token);
+                                    _context.Entry(game).Property(p => p.Second).IsModified = true;
+                                }
+                            }
+                            else if (bot.Username == "Eltjo")
+                            {
+                                var game = await _context.Games.FirstOrDefaultAsync(g => g.First == "salie" && g.Status == Status.Pending);
+
+                                if (game != null && game.Second == null)
+                                {
+                                    game.SetSecondPlayer(bot.Token);
+                                    _context.Entry(game).Property(p => p.Second).IsModified = true;
+                                }
+                            }
+                            else
+                            {
+                                var game = await _context.Games.FirstOrDefaultAsync(g => g.First == "identity" && g.Status == Status.Pending);
+
+                                if (game != null && game.Second == null)
+                                {
+                                    game.SetSecondPlayer(bot.Token);
+                                    _context.Entry(game).Property(p => p.Second).IsModified = true;
+                                }
+                            }
+                        }
                         _context.Entry(bot).Property(p => p.Bot).IsModified = true;
                     }
                 }
@@ -145,17 +181,18 @@ namespace API.Service
 
             foreach (var bot in bots)
             {
-                var game = await _context.Games.FirstOrDefaultAsync(g => g.PlayersTurn == g.FColor && g.Status == Status.Playing && g.First == bot.Token);
+                var game = await _context.Games
+                    .FirstOrDefaultAsync(g => g.Status == Status.Playing && 
+                    ((g.PlayersTurn == g.FColor && g.First == bot.Token) ||
+                    (g.PlayersTurn == g.SColor && g.Second != null && g.Second == bot.Token)));
 
-                if (game != null && game.Second != null)
+                if (game != null && game.Second != null && !game.Finished())
                 {
-                    Color player = bot.Token == game.First ? game.FColor : game.SColor;
-
-                    if (game.IsThereAPossibleMove(player))
+                    if (game.IsThereAPossibleMove(game.PlayersTurn))
                     {
                         var possibleMoves = GetPossibleMoves(game.Board);
 
-                        var move = ChooseBotMove(possibleMoves, bot, game.Board, player);
+                        var move = ChooseBotMove(possibleMoves, bot, game.Board, game.PlayersTurn);
 
                         game.MakeMove(move.Row, move.Column);
                     }
