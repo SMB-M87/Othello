@@ -51,11 +51,7 @@ namespace API.Service
 
                     if (!inGame)
                     {
-                        if (bot.Username == "Identity" || bot.Username == "Ernst")
-                        {
-                            bot.Bot = 1;
-                        }
-                        else if (bot.Username == "Pipo" || bot.Username == "Eltjo")
+                        if (bot.Username == "Pipo" || bot.Username == "Eltjo")
                         {
                             bot.Bot = 2;
                         }
@@ -67,45 +63,9 @@ namespace API.Service
                         {
                             bot.Bot = 1;
                         }
-
-                        if (bot.Username != "Ernst" && bot.Username != "Eltjo" && bot.Username != "Tijn")
-                        {
-                            var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
-                            _context.Games.Add(game);
-                        }
-                        else
-                        {
-                            if (bot.Username == "Ernst")
-                            {
-                                var game = await _context.Games.FirstOrDefaultAsync(g => g.First == "pipo" && g.Status == Status.Pending);
-
-                                if (game != null && game.Second == null)
-                                {
-                                    game.SetSecondPlayer(bot.Token);
-                                    _context.Entry(game).Property(p => p.Second).IsModified = true;
-                                }
-                            }
-                            else if (bot.Username == "Eltjo")
-                            {
-                                var game = await _context.Games.FirstOrDefaultAsync(g => g.First == "salie" && g.Status == Status.Pending);
-
-                                if (game != null && game.Second == null)
-                                {
-                                    game.SetSecondPlayer(bot.Token);
-                                    _context.Entry(game).Property(p => p.Second).IsModified = true;
-                                }
-                            }
-                            else
-                            {
-                                var game = await _context.Games.FirstOrDefaultAsync(g => g.First == "identity" && g.Status == Status.Pending);
-
-                                if (game != null && game.Second == null)
-                                {
-                                    game.SetSecondPlayer(bot.Token);
-                                    _context.Entry(game).Property(p => p.Second).IsModified = true;
-                                }
-                            }
-                        }
+                        
+                        var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
+                        _context.Games.Add(game);
                         _context.Entry(bot).Property(p => p.Bot).IsModified = true;
                     }
                 }
@@ -182,7 +142,7 @@ namespace API.Service
             foreach (var bot in bots)
             {
                 var game = await _context.Games
-                    .FirstOrDefaultAsync(g => g.Status == Status.Playing && 
+                    .FirstOrDefaultAsync(g => g.Status == Status.Playing &&
                     ((g.PlayersTurn == g.FColor && g.First == bot.Token) ||
                     (g.PlayersTurn == g.SColor && g.Second != null && g.Second == bot.Token)));
 

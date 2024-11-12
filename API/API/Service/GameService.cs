@@ -6,7 +6,7 @@ namespace API.Service
     public class GameService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(3);
 
         public GameService(IServiceProvider serviceProvider)
         {
