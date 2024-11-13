@@ -35,7 +35,7 @@ Game.Data = (function () {
 
   const _get = function () {
     if (stateMap.environment == "production") {
-      return $.get(configMap.apiUrl + "/" + configMap.apiKey) //'http://api.openweathermap.org/data/2.5/weather?q=zwolle&apikey='+'cfcc94758edb2474cacd9a3efe2404e7'
+      return $.get(configMap.apiUrl + "/" + configMap.apiKey)
         .then((result) => {
           return result;
         })

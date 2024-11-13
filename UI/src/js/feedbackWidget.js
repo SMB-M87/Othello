@@ -86,6 +86,7 @@ class FeedbackWidget {
 
 $(function () {
   const feedbackWidget = new FeedbackWidget("feedback-widget");
+  let wobbleInterval;
 
   $("#move-button").on("click", function () {
     feedbackWidget.show(
@@ -127,7 +128,7 @@ $(function () {
     $("#move-button").removeClass("wobble");
     setTimeout(startWobble, 2000); // Restart after 2 seconds of inactivity
   }
-
+  
   // Start the wobble animation after initial 2 seconds
   setTimeout(startWobble, 2000);
 });
