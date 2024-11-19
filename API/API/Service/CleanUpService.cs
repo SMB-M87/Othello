@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Service
 {
@@ -21,7 +22,7 @@ namespace API.Service
                 {
                     var context = scope.ServiceProvider.GetRequiredService<Database>();
                     await DeleteGameInvites(context);
-                    await CheckAndForfeitInactiveGames(context);
+                    await CleanUpInactiveGames(context);
                 }
 
                 await Task.Delay(_checkInterval, stoppingToken);
@@ -49,9 +50,9 @@ namespace API.Service
             await context.SaveChangesAsync();
         }
 
-        private static async Task CheckAndForfeitInactiveGames(Database context)
+        private static async Task CleanUpInactiveGames(Database context)
         {
-            var activeGames = context.Games.Where(g => g.Status == Status.Playing).ToList();
+            var activeGames = context.Games.ToList();
 
             foreach (var game in activeGames)
             {
@@ -75,6 +76,20 @@ namespace API.Service
                         }
                     }
                 }
+                else
+                {
+                    var first = GetPlayer(game.First, context);
+
+                    if (first != null && first.Bot == 0)
+                    {
+                        double first_timer = (DateTime.UtcNow - game.Date).TotalSeconds;
+
+                        if (first_timer >= 240)
+                        {
+                            DeleteGame(game, first, context);
+                        }
+                    }
+                }
             }
             await context.SaveChangesAsync();
         }
@@ -92,6 +107,25 @@ namespace API.Service
 
             context.Entry(game).Property(g => g.Status).IsModified = true;
             context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
+        }
+
+        private static void DeleteGame(Game game, Player player, Database context)
+        {
+            context.Games.Remove(game);
+
+            var playersWithGameRequests = context.Players.ToList();
+            playersWithGameRequests = playersWithGameRequests.Where(p => p.Requests.Any(r => r.Username == player.Username && (int)r.Type == (int)Inquiry.Game)).ToList();
+
+            foreach (var gamer in playersWithGameRequests)
+            {
+                var request = gamer.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == player.Username);
+
+                if (request != null)
+                {
+                    gamer.Requests.Remove(request);
+                    context.Entry(gamer).Property(p => p.Requests).IsModified = true;
+                }
+            }
         }
 
         private static Player? GetPlayer(string playerToken, Database context)

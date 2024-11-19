@@ -316,7 +316,7 @@ namespace API.Data
                 var player = await GetPlayer(game.First);
                 if (player is not null)
                 {
-                    var playersWithGameRequests = await _context.Players.Where(p => p.Requests.Count > 0).ToListAsync();
+                    var playersWithGameRequests = await _context.Players.ToListAsync();
                     playersWithGameRequests = playersWithGameRequests.Where(p => p.Requests.Any(r => r.Username == player.Username && (int)r.Type == (int)Inquiry.Game)).ToList();
 
                     foreach (var gamer in playersWithGameRequests)

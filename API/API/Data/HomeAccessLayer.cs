@@ -80,7 +80,7 @@ namespace API.Data
                 {
                     _context.Games.Remove(game);
 
-                    var playersWithGameRequests = await _context.Players.Where(p => p.Requests.Count > 0).ToListAsync();
+                    var playersWithGameRequests = await _context.Players.ToListAsync();
                     playersWithGameRequests = playersWithGameRequests.Where(p => p.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game)).ToList();
 
                     foreach (var gamer in playersWithGameRequests)
@@ -242,37 +242,28 @@ namespace API.Data
 
         private async Task<List<string>?> GetOnlinePlayers(string token)
         {
-            DateTime now = DateTime.UtcNow;
-            var players = await _context.Players.ToListAsync();
-            return players.Where(player => player.Token != token && (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
+            DateTime threshold = DateTime.UtcNow.AddSeconds(-240);
+            return await _context.Players
+                .Where(p => p.Token != token && p.LastActivity >= threshold)
+                .OrderByDescending(p => p.LastActivity)
+                .Select(p => p.Username)
+                .ToListAsync();
         }
 
         private async Task<List<string>?> GetPlayersInGame(string token)
         {
-            var games = await _context.Games
-                               .Where(g => g.Status == Status.Playing)
-                               .OrderByDescending(p => p.Date)
-                               .ToListAsync();
+            DateTime threshold = DateTime.UtcNow.AddSeconds(-240);
+            var players = await _context.Players
+                .Where(p => p.Token != token && p.LastActivity >= threshold)
+                .OrderByDescending(p => p.LastActivity)
+                .ToListAsync();
 
             var playersInGame = new List<string>();
 
-            foreach (var game in games)
+            foreach (var player in players)
             {
-                if (game.Second is not null)
-                {
-                    var first = game.First != token ? await GetPlayersName(game.First) : null;
-                    var second = game.Second != token ? await GetPlayersName(game.Second) : null;
-
-                    if (first != null)
-                    {
-                        playersInGame.Add(first);
-                    }
-
-                    if (second != null)
-                    {
-                        playersInGame.Add(second);
-                    }
-                }
+                if (await PlayerInGame(player.Token))
+                    playersInGame.Add(player.Username);
             }
 
             return playersInGame;
@@ -312,7 +303,7 @@ namespace API.Data
 
         private async Task<bool> PlayerInGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token && g.Status != Status.Finished) || (g.Second != null && g.Second == token && g.Status != Status.Finished));
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
             return game is not null;
         }
 
