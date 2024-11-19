@@ -134,9 +134,9 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Create_OK()
+        public async Task Create_OKAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Create(new("new", "newby"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Create(new("new", "newby"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -146,9 +146,9 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Create_BadRequest()
+        public async Task Create_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Create(new("one", "one"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Create(new("one", "one"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -158,9 +158,9 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Delete_OK()
+        public async Task Delete_OKAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("first"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new("first"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -170,9 +170,9 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Delete_BadRequest()
+        public async Task Delete_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("firsttt"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new("firsttt"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -182,10 +182,10 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Send_OK()
+        public async Task Send_OKAsync()
         {
             PlayerRequest request = new("one", "second");
-            ActionResult<HttpResponseMessage>? result = _controller.FriendRequest(request);
+            ActionResult<HttpResponseMessage>? result = await _controller.FriendRequest(request);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -201,10 +201,10 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Accept_OK()
+        public async Task Accept_OKAsync()
         {
-            _controller.FriendRequest(new("one", "second"));
-            ActionResult<HttpResponseMessage>? result = _controller.AcceptFriendRequest(new("two", "first"));
+            await _controller.FriendRequest(new("one", "second"));
+            ActionResult<HttpResponseMessage>? result = await _controller.AcceptFriendRequest(new("two", "first"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -222,11 +222,11 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void Decline_OK()
+        public async Task Decline_OKAsync()
         {
             PlayerRequest request = new("one", "second");
-            _controller.FriendRequest(request);
-            ActionResult<HttpResponseMessage>? result = _controller.DeclineFriendRequest(new("two", "first"));
+            await _controller.FriendRequest(request);
+            ActionResult<HttpResponseMessage>? result = await _controller.DeclineFriendRequest(new("two", "first"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -242,9 +242,9 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void DeleteFriend_OK()
+        public async Task DeleteFriend_OKAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.DeleteFriend(new("eight", "sixth"));
+            ActionResult<HttpResponseMessage>? result = await _controller.DeleteFriend(new("eight", "sixth"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -261,110 +261,110 @@ namespace APITest.PlayerTest
         }
 
         [Test]
-        public void GameRequest_OK()
+        public async Task GameRequest_OKAsync()
         {
             var request = new PlayerRequest { ReceiverUsername = "11", SenderToken = "10" };
-            var result = _controller.GameRequest(request);
+            var result = await _controller.GameRequest(request);
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
             });
         }
 
         [Test]
-        public void GameRequest_BadRequest()
+        public async Task GameRequest_BadRequestAsync()
         {
             var request = new PlayerRequest { ReceiverUsername = "nonexistent", SenderToken = "second" };
-            var result = _controller.GameRequest(request);
+            var result = await _controller.GameRequest(request);
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
             });
         }
 
         [Test]
-        public void AcceptGameRequest_OK()
+        public async Task AcceptGameRequest_OKAsync()
         {
             var request = new PlayerRequest { ReceiverUsername = "10", SenderToken = "12" };
-            var result = _controller.AcceptGameRequest(request);
+            var result = await _controller.AcceptGameRequest(request);
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
             });
         }
 
         [Test]
-        public void AcceptGameRequest_BadRequest()
+        public async Task AcceptGameRequest_BadRequestAsync()
         {
             var request = new PlayerRequest { ReceiverUsername = "nonexistent", SenderToken = "second" };
-            var result = _controller.AcceptGameRequest(request);
+            var result = await _controller.AcceptGameRequest(request);
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
             });
         }
 
         [Test]
-        public void DeclineGameRequest_OK()
+        public async Task DeclineGameRequest_OKAsync()
         {
             var request = new PlayerRequest { ReceiverUsername = "10", SenderToken = "12" };
-            var result = _controller.DeclineGameRequest(request);
+            var result = await _controller.DeclineGameRequest(request);
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
             });
         }
 
         [Test]
-        public void DeclineGameRequest_BadRequest()
+        public async Task DeclineGameRequest_BadRequestAsync()
         {
             var request = new PlayerRequest { ReceiverUsername = "nonexistent", SenderToken = "two" };
-            var result = _controller.DeclineGameRequest(request);
+            var result = await _controller.DeclineGameRequest(request);
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
             });
         }
 
         [Test]
-        public void DeletePlayer_OK()
+        public async Task DeletePlayer_OKAsync()
         {
-            var result = _controller.Delete(new("13"));
+            var result = await _controller.Delete(new("13"));
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK), "Expected OK status");
             });
         }
 
         [Test]
-        public void DeletePlayer_BadRequest()
+        public async Task DeletePlayer_BadRequestAsync()
         {
-            var result = _controller.Delete(new("nonexistent"));
+            var result = await _controller.Delete(new("nonexistent"));
 
             Assert.Multiple(() =>
             {
-                var httpResponse = result.Value as HttpResponseMessage;
+                var httpResponse = result.Value;
                 Assert.That(httpResponse, Is.Not.Null, "Expected HttpResponseMessage not to be null");
                 Assert.That(httpResponse?.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest), "Expected BadRequest status");
             });

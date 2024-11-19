@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
@@ -11,22 +12,22 @@ namespace API.Data
             _context = context;
         }
 
-        public GameResult? Get(string token)
+        public async Task<GameResult?> Get(string token)
         {
-            var response = _context.Results.FirstOrDefault(s => s.Token == token);
+            var response = await _context.Results.FirstOrDefaultAsync(s => s.Token == token);
 
             if (response is not null)
             {
-                response.Winner = GetPlayersName(response.Winner) ?? string.Empty;
-                response.Loser = GetPlayersName(response.Loser) ?? string.Empty;
+                response.Winner = await GetPlayersName(response.Winner) ?? string.Empty;
+                response.Loser = await GetPlayersName(response.Loser) ?? string.Empty;
                 return response;
             }
             return null;
         }
 
-        public GameResult? GetLast(string player_token)
+        public async Task<GameResult?> GetLast(string player_token)
         {
-            var response = GetMatchHistory(player_token);
+            var response = await GetMatchHistory(player_token);
 
             if (response is not null)
             {
@@ -34,21 +35,21 @@ namespace API.Data
 
                 if (result is not null)
                 {
-                    result.Winner = GetPlayersName(result.Winner) ?? string.Empty;
-                    result.Loser = GetPlayersName(result.Loser) ?? string.Empty;
+                    result.Winner = await GetPlayersName(result.Winner) ?? string.Empty;
+                    result.Loser = await GetPlayersName(result.Loser) ?? string.Empty;
                 }
                 return result;
             }
             return null;
         }
 
-        public string? GetPlayerStats(string username)
+        public async Task<string?> GetPlayerStats(string username)
         {
-            var token = GetPlayersToken(username);
+            var token = await GetPlayersToken(username);
 
             if (token is not null)
             {
-                List<GameResult> results = GetMatchHistory(token);
+                List<GameResult> results = await GetMatchHistory(token);
 
                 int wins = results.Count(r => r.Winner == token && r.Draw == false);
                 int losses = results.Count(r => r.Loser == token && r.Draw == false);
@@ -59,39 +60,41 @@ namespace API.Data
             return null;
         }
 
-        public List<GameResult> GetResults()
+        public async Task<List<GameResult>> GetResults()
         {
-            return _context.Results.ToList();
+            return await _context.Results.ToListAsync();
         }
 
-        public bool Delete(string token)
+        public async Task<bool> Delete(string token)
         {
-            var result = Get(token);
+            var result = await Get(token);
 
             if (result is not null)
             {
                 _context.Results.Remove(result);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;
         }
 
-        private string? GetPlayersToken(string username)
+        private async Task<string?> GetPlayersToken(string username)
         {
-            return _context.Players.FirstOrDefault(s => s.Username == username)?.Token;
+            var player = await _context.Players.FirstOrDefaultAsync(s => s.Username == username);
+            return player?.Token;
         }
 
-        private string? GetPlayersName(string token)
+        private async Task<string?> GetPlayersName(string token)
         {
-            return _context.Players.FirstOrDefault(s => s.Token == token)?.Username;
+            var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
+            return player?.Username;
         }
 
-        private List<GameResult> GetMatchHistory(string player_token)
+        private async Task<List<GameResult>> GetMatchHistory(string player_token)
         {
-            return _context.Results
+            return await _context.Results
                 .Where(s => s.Winner == player_token || s.Loser == player_token)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

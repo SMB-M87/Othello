@@ -9,5 +9,6 @@
 
         public ICollection<string> Friends { get; set; } = null!;
         public ICollection<Request> Requests { get; set; } = null!;
+        public int Bot { get; set; }
     }
 }

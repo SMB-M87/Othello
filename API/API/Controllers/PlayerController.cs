@@ -16,9 +16,9 @@ namespace API.Controllers
         }
 
         [HttpGet("{username}")]
-        public ActionResult<bool> CheckUsername(string username)
+        public async Task<ActionResult<bool>> CheckUsername(string username)
         {
-            bool response = _repository.PlayerRepository.UsernameExists(username);
+            bool response = await _repository.PlayerRepository.UsernameExists(username);
 
             if (response == false)
                 return NotFound();
@@ -27,10 +27,10 @@ namespace API.Controllers
         }
 
         [HttpGet("rematch/{token}")]
-        public ActionResult<string> Rematch(string token)
+        public async Task<ActionResult<string>> Rematch(string token)
         {
             string[] parts = token.Split(' ');
-            var response = _repository.PlayerRepository.GetRematch(parts[0], parts[1]);
+            var response = await _repository.PlayerRepository.GetRematch(parts[0], parts[1]);
 
             if (response is null)
                 return NotFound();
@@ -39,9 +39,9 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult<HttpResponseMessage> Create([FromBody] PlayerRequest player)
+        public async Task<ActionResult<HttpResponseMessage>> Create([FromBody] PlayerRequest player)
         {
-            bool response = _repository.PlayerRepository.Create(new(player.ReceiverUsername, player.SenderToken));
+            bool response = await _repository.PlayerRepository.Create(new(player.ReceiverUsername, player.SenderToken));
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -50,9 +50,9 @@ namespace API.Controllers
         }
 
         [HttpPost("activity")]
-        public ActionResult<HttpResponseMessage> Activity([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> Activity([FromBody] ID id)
         {
-            var response = _repository.PlayerRepository.UpdateActivity(id.Token);
+            var response = await _repository.PlayerRepository.UpdateActivity(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -61,9 +61,9 @@ namespace API.Controllers
         }
 
         [HttpPost("request/friend")]
-        public ActionResult<HttpResponseMessage> FriendRequest([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> FriendRequest([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.FriendRequest(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.FriendRequest(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -72,9 +72,9 @@ namespace API.Controllers
         }
 
         [HttpPost("request/friend/accept")]
-        public ActionResult<HttpResponseMessage> AcceptFriendRequest([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> AcceptFriendRequest([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.AcceptFriendRequest(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.AcceptFriendRequest(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -83,9 +83,9 @@ namespace API.Controllers
         }
 
         [HttpPost("request/friend/decline")]
-        public ActionResult<HttpResponseMessage> DeclineFriendRequest([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> DeclineFriendRequest([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.DeclineFriendRequest(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.DeclineFriendRequest(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -94,9 +94,9 @@ namespace API.Controllers
         }
 
         [HttpPost("request/game")]
-        public ActionResult<HttpResponseMessage> GameRequest([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> GameRequest([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.GameRequest(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.GameRequest(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -105,9 +105,9 @@ namespace API.Controllers
         }
 
         [HttpPost("request/game/accept")]
-        public ActionResult<HttpResponseMessage> AcceptGameRequest([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> AcceptGameRequest([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.AcceptGameRequest(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.AcceptGameRequest(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -116,9 +116,9 @@ namespace API.Controllers
         }
 
         [HttpPost("request/game/decline")]
-        public ActionResult<HttpResponseMessage> DeclineGameRequest([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> DeclineGameRequest([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.DeclineGameRequest(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.DeclineGameRequest(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -127,9 +127,9 @@ namespace API.Controllers
         }
 
         [HttpPost("friend/delete")]
-        public ActionResult<HttpResponseMessage> DeleteFriend([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> DeleteFriend([FromBody] PlayerRequest request)
         {
-            var response = _repository.PlayerRepository.DeleteFriend(request.ReceiverUsername, request.SenderToken);
+            var response = await _repository.PlayerRepository.DeleteFriend(request.ReceiverUsername, request.SenderToken);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -138,9 +138,9 @@ namespace API.Controllers
         }
 
         [HttpPost("delete")]
-        public ActionResult<HttpResponseMessage> Delete([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> Delete([FromBody] ID id)
         {
-            var response = _repository.PlayerRepository.Delete(id.Token);
+            var response = await _repository.PlayerRepository.Delete(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);

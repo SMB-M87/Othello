@@ -51,11 +51,11 @@ namespace API.Service
 
                     if (!inGame)
                     {
-                        if (bot.Username == "Pipo" || bot.Username == "Eltjo")
+                        if (bot.Username == "Ernst" || bot.Username == "Karen" || bot.Username == "Eltjo")
                         {
                             bot.Bot = 2;
                         }
-                        else if (bot.Username == "Salie" || bot.Username == "Tijn")
+                        else if (bot.Username == "John" || bot.Username == "Tijn")
                         {
                             bot.Bot = 3;
                         }

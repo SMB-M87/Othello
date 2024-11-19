@@ -54,7 +54,7 @@ namespace API.Service
 
         private static async Task FinishGame(Database context)
         {
-            var activeGames = context.Games.Where(g => g.Status == Status.Playing).ToList();
+            var activeGames = context.Games.Where(g => g.Status == Status.Playing || g.Status == Status.Finished).ToList();
 
             foreach (var game in activeGames)
             {

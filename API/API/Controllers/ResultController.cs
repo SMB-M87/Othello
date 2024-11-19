@@ -16,9 +16,9 @@ namespace API.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<GameResult> Get(string token)
+        public async Task<ActionResult<GameResult>> Get(string token)
         {
-            var response = _repository.ResultRepository.Get(token);
+            var response = await _repository.ResultRepository.Get(token);
 
             if (response is null)
                 return NotFound();
@@ -27,9 +27,9 @@ namespace API.Controllers
         }
 
         [HttpGet("last/{player_token}")]
-        public ActionResult<GameResult> GetLast(string player_token)
+        public async Task<ActionResult<GameResult>> GetLast(string player_token)
         {
-            var response = _repository.ResultRepository.GetLast(player_token);
+            var response = await _repository.ResultRepository.GetLast(player_token);
 
             if (response is null)
                 return NotFound();

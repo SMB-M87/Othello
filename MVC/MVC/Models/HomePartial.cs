@@ -19,5 +19,17 @@
         public List<string> OfflineFriends => Friends.Except(OnlinePlayers).ToList();
         public List<string> JoinablePlayers => Pending.Games.Select(g => g.Username).ToList();
         public List<string> InvitablePlayers => OnlinePlayers.Except(Pending.Games.Select(g => g.Username)).Except(PlayersInGame).ToList();
+
+        public HomePartial()
+        {
+            Pending = new();
+            OnlinePlayers = new List<string>();
+            PlayersInGame = new List<string>();
+            Friends = new List<string>();
+            FriendRequests = new List<string>();
+            GameRequests = new List<string>();
+            SentFriendRequests = new List<string>();
+            SentGameRequests = new List<string>();
+        }
     }
 }

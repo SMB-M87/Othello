@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
@@ -11,15 +12,15 @@ namespace API.Data
             _context = context;
         }
 
-        public Home GetView(string token)
+        public async Task<Home> GetView(string token)
         {
-            var game = GetPlayersGame(token);
-            var username = GetPlayersName(token);
+            var game = await GetPlayersGame(token);
+            var username = await GetPlayersName(token);
 
             var model = new Home
             {
-                Stats = string.IsNullOrEmpty(username) ? string.Empty : GetPlayerStats(username),
-                MatchHistory = string.IsNullOrEmpty(username) ? new() : GetPlayersMatchHistory(username),
+                Stats = string.IsNullOrEmpty(username) ? string.Empty : await GetPlayerStats(username),
+                MatchHistory = string.IsNullOrEmpty(username) ? new() : await GetPlayersMatchHistory(username),
                 Partial = new HomePartial()
                 {
                     Pending = new HomePending()
@@ -27,27 +28,27 @@ namespace API.Data
                         Session = "false",
                         InGame = game != null,
                         Status = game != null ? ((int)game.Status).ToString() : string.Empty,
-                        Games = GetPendingGames() ?? new()
+                        Games = await GetPendingGames() ?? new()
                     },
 
-                    OnlinePlayers = GetOnlinePlayers(token) ?? new(),
-                    PlayersInGame = GetPlayersInGame(token) ?? new(),
-                    Friends = GetFriends(token) ?? new(),
+                    OnlinePlayers = await GetOnlinePlayers(token) ?? new(),
+                    PlayersInGame = await GetPlayersInGame(token) ?? new(),
+                    Friends = await GetFriends(token) ?? new(),
 
-                    FriendRequests = GetFriendRequests(token) ?? new(),
-                    GameRequests = GetGameRequests(token) ?? new(),
+                    FriendRequests = await GetFriendRequests(token) ?? new(),
+                    GameRequests = await GetGameRequests(token) ?? new(),
 
-                    SentFriendRequests = GetSentFriendRequests(token) ?? new(),
-                    SentGameRequests = GetSentGameRequests(token) ?? new()
+                    SentFriendRequests = await GetSentFriendRequests(token) ?? new(),
+                    SentGameRequests = await GetSentGameRequests(token) ?? new()
                 }
             };
 
             return model;
         }
 
-        public HomePartial GetPartial(string token)
+        public async Task<HomePartial> GetPartial(string token)
         {
-            var game = GetPlayersGame(token);
+            var game = await GetPlayersGame(token);
 
             var model = new HomePartial
             {
@@ -56,30 +57,31 @@ namespace API.Data
                     Session = "false",
                     InGame = game != null,
                     Status = game != null ? ((int)game.Status).ToString() : string.Empty,
-                    Games = GetPendingGames() ?? new()
+                    Games = await GetPendingGames() ?? new()
                 },
 
-                OnlinePlayers = GetOnlinePlayers(token) ?? new(),
-                PlayersInGame = GetPlayersInGame(token) ?? new(),
-                Friends = GetFriends(token) ?? new(),
+                OnlinePlayers = await GetOnlinePlayers(token) ?? new(),
+                PlayersInGame = await GetPlayersInGame(token) ?? new(),
+                Friends = await GetFriends(token) ?? new(),
 
-                FriendRequests = GetFriendRequests(token) ?? new(),
-                GameRequests = GetGameRequests(token) ?? new(),
+                FriendRequests = await GetFriendRequests(token) ?? new(),
+                GameRequests = await GetGameRequests(token) ?? new(),
 
-                SentFriendRequests = GetSentFriendRequests(token) ?? new(),
-                SentGameRequests = GetSentGameRequests(token) ?? new()
+                SentFriendRequests = await GetSentFriendRequests(token) ?? new(),
+                SentGameRequests = await GetSentGameRequests(token) ?? new()
             };
 
             if (game != null && game.Rematch != null && game.Second == null)
             {
-                var player = GetPlayer(game.Rematch);
-                var creator = GetPlayer(token);
+                var player = await GetPlayer(game.Rematch);
+                var creator = await GetPlayer(token);
 
                 if (player is not null && creator is not null && !player.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game))
                 {
                     _context.Games.Remove(game);
 
-                    var playersWithGameRequests = _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game)).ToList();
+                    var playersWithGameRequests = await _context.Players.Where(p => p.Requests.Count > 0).ToListAsync();
+                    playersWithGameRequests = playersWithGameRequests.Where(p => p.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game)).ToList();
 
                     foreach (var gamer in playersWithGameRequests)
                     {
@@ -93,60 +95,58 @@ namespace API.Data
                     }
                     model.Pending.InGame = false;
                     model.Pending.Status = string.Empty;
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
             }
 
             return model;
         }
 
-        public HomeProfile GetProfile(string username, string token)
+        public async Task<HomeProfile> GetProfile(string username, string token)
         {
             HomeProfile profile = new()
             {
-                Stats = GetPlayerStats(username) ?? string.Empty,
+                Stats = await GetPlayerStats(username) ?? string.Empty,
                 Username = username ?? string.Empty,
-                MatchHistory = username != null ? GetPlayersMatchHistory(username) : new(),
-                IsFriend = username != null && IsFriend(username, token),
-                HasSentRequest = username != null && HasSentFriendRequest(username, token),
-                HasPendingRequest = username != null && HasFriendRequest(username, token),
-                LastSeen = GetLastActivity(username ?? string.Empty)
+                MatchHistory = username != null ? await GetPlayersMatchHistory(username) : new(),
+                IsFriend = username != null && await IsFriend(username, token),
+                HasSentRequest = username != null && await HasSentFriendRequest(username, token),
+                HasPendingRequest = username != null && await HasFriendRequest(username, token),
+                LastSeen = await GetLastActivity(username ?? string.Empty)
             };
 
             return profile;
         }
 
-        private Player? GetPlayer(string token)
+        private async Task<Player?> GetPlayer(string token)
         {
-            return _context.Players.FirstOrDefault(s => s.Token == token);
+            return await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
         }
 
-        private string? GetPlayersName(string token)
+        private async Task<string?> GetPlayersName(string token)
         {
-            return _context.Players.FirstOrDefault(s => s.Token == token)?.Username;
+            var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
+            return player?.Username;
         }
 
-        private string? GetPlayersToken(string username)
+        private async Task<string?> GetPlayersToken(string username)
         {
-            return _context.Players.FirstOrDefault(s => s.Username == username)?.Token;
+            var player = await _context.Players.FirstOrDefaultAsync(s => s.Username == username);
+            return player?.Token;
         }
 
-        public Game? GetPlayersGame(string token)
+        public async Task<Game?> GetPlayersGame(string token)
         {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First == token && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second == token && s.Status != Status.Finished);
-
-            return game;
+            return await _context.Games.FirstOrDefaultAsync(g => (g.First == token && g.Status != Status.Finished) || (g.Second != null && g.Second == token && g.Status != Status.Finished));
         }
 
-        public string GetPlayerStats(string username)
+        public async Task<string> GetPlayerStats(string username)
         {
-            var token = GetPlayersToken(username);
+            var token = await GetPlayersToken(username);
 
             if (token != null)
             {
-                List<GameResult> results = GetMatchHistory(token);
+                List<GameResult> results = await GetMatchHistory(token);
 
                 int wins = results.Count(r => r.Winner == token && r.Draw == false);
                 int losses = results.Count(r => r.Loser == token && r.Draw == false);
@@ -157,20 +157,20 @@ namespace API.Data
             return string.Empty;
         }
 
-        private List<GameResult> GetMatchHistory(string token)
+        private async Task<List<GameResult>> GetMatchHistory(string token)
         {
-            return _context.Results
+            return await _context.Results
                 .Where(s => s.Winner == token || s.Loser == token)
-                .ToList();
+                .ToListAsync();
         }
 
-        private List<GameResult> GetPlayersMatchHistory(string username)
+        private async Task<List<GameResult>> GetPlayersMatchHistory(string username)
         {
-            var token = GetPlayersToken(username);
+            var token = await GetPlayersToken(username);
 
             if (token is not null)
             {
-                var response = GetMatchHistory(token);
+                var response = await GetMatchHistory(token);
 
                 if (response.Count > 0)
                 {
@@ -178,8 +178,8 @@ namespace API.Data
 
                     foreach (var game in response)
                     {
-                        game.Winner = GetPlayersName(game.Winner) ?? string.Empty;
-                        game.Loser = GetPlayersName(game.Loser) ?? string.Empty;
+                        game.Winner = await GetPlayersName(game.Winner) ?? string.Empty;
+                        game.Loser = await GetPlayersName(game.Loser) ?? string.Empty;
                     }
                 }
                 return response;
@@ -187,39 +187,35 @@ namespace API.Data
             return new();
         }
 
-        private List<GamePending>? GetPendingGames()
+        private async Task<List<GamePending>?> GetPendingGames()
         {
-            var games = _context.Games.ToList();
+            var games = await _context.Games.Where(g => g.Status == Status.Pending && g.Second == null && g.Rematch == null).OrderByDescending(g => g.Date).ToListAsync();
 
             if (games is not null)
             {
-                var pending = games.FindAll(game => game.Status == Status.Pending && game.Second == null && game.Rematch == null).OrderByDescending(g => g.Date).ToList();
+                List<GamePending> result = new();
 
-                if (pending is not null)
+                foreach (Game game in games)
                 {
-                    List<GamePending> result = new();
+                    var player = await GetPlayersName(game.First) ?? string.Empty;
+                    var stat = await GetPlayerStats(player) ?? string.Empty;
+                    string output = stat.Replace("Wins:", "W:")
+                                        .Replace("Losses:", "L:")
+                                        .Replace("Draws:", "D:")
+                                        .Replace("\t\t", " ");
 
-                    foreach (Game game in pending)
-                    {
-                        var player = GetPlayersName(game.First) ?? string.Empty;
-                        var stat = GetPlayerStats(player) ?? string.Empty;
-                        string output = stat.Replace("Wins:", "W:")
-                                            .Replace("Losses:", "L:")
-                                            .Replace("Draws:", "D:")
-                                            .Replace("\t\t", " ");
-
-                        GamePending temp = new(game.Description, player, output);
-                        result.Add(temp);
-                    }
-                    return result;
+                    GamePending temp = new(game.Description, player, output);
+                    result.Add(temp);
                 }
+                return result;
             }
             return null;
         }
 
-        private string GetLastActivity(string username)
+        private async Task<string> GetLastActivity(string username)
         {
-            DateTime? lastActivity = _context.Players.FirstOrDefault(p => p.Username == username)?.LastActivity;
+            var player = await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
+            DateTime? lastActivity = player?.LastActivity;
 
             if (lastActivity == null || lastActivity == DateTime.MinValue)
             {
@@ -244,66 +240,97 @@ namespace API.Data
                 return $"{Math.Floor(timeSinceLastActivity.TotalDays / 365)} years ago";
         }
 
-        private List<string>? GetOnlinePlayers(string token)
+        private async Task<List<string>?> GetOnlinePlayers(string token)
         {
-            return _context.Players.ToList().FindAll(player => player.Token != token && (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
+            DateTime now = DateTime.UtcNow;
+            var players = await _context.Players.ToListAsync();
+            return players.Where(player => player.Token != token && (DateTime.UtcNow - player.LastActivity).TotalSeconds <= 240).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
         }
 
-        private List<string>? GetPlayersInGame(string token)
+        private async Task<List<string>?> GetPlayersInGame(string token)
         {
-            return _context.Players.ToList().FindAll(player => player.Token != token && PlayerInGame(player.Token)).OrderByDescending(p => p.LastActivity).Select(player => player.Username).ToList();
+            var games = await _context.Games
+                               .Where(g => g.Status == Status.Playing)
+                               .OrderByDescending(p => p.Date)
+                               .ToListAsync();
+
+            var playersInGame = new List<string>();
+
+            foreach (var game in games)
+            {
+                if (game.Second is not null)
+                {
+                    var first = game.First != token ? await GetPlayersName(game.First) : null;
+                    var second = game.Second != token ? await GetPlayersName(game.Second) : null;
+
+                    if (first != null)
+                    {
+                        playersInGame.Add(first);
+                    }
+
+                    if (second != null)
+                    {
+                        playersInGame.Add(second);
+                    }
+                }
+            }
+
+            return playersInGame;
         }
 
-        private List<string>? GetFriends(string token)
+        private async Task<List<string>?> GetFriends(string token)
         {
-            return _context.Players.ToList().FirstOrDefault(p => p.Token == token)?.Friends.OrderBy(friend => friend).ToList();
+            var player = await _context.Players.FirstOrDefaultAsync(p => p.Token == token);
+            return player?.Friends.OrderBy(friend => friend).ToList();
         }
 
-        private List<string>? GetFriendRequests(string token)
+        private async Task<List<string>?> GetFriendRequests(string token)
         {
-            return _context.Players.ToList().FirstOrDefault(p => p.Token == token)?.Requests.Where(r => r.Type == Inquiry.Friend).OrderBy(r => r.Username).Select(p => p.Username).ToList();
+            var player = await _context.Players.FirstOrDefaultAsync(p => p.Token == token);
+            return player?.Requests.Where(r => r.Type == Inquiry.Friend).OrderBy(r => r.Username).Select(p => p.Username).ToList();
         }
 
-        private List<string>? GetGameRequests(string token)
+        private async Task<List<string>?> GetGameRequests(string token)
         {
-            return _context.Players.ToList().FirstOrDefault(p => p.Token == token)?.Requests?.Where(r => r.Type == Inquiry.Game).OrderByDescending(r => r.Date).Select(p => p.Username).ToList();
+            var player = await _context.Players.FirstOrDefaultAsync(p => p.Token == token);
+            return player?.Requests.Where(r => r.Type == Inquiry.Game).OrderByDescending(r => r.Date).Select(p => p.Username).ToList();
         }
 
-        private List<string>? GetSentFriendRequests(string token)
+        private async Task<List<string>?> GetSentFriendRequests(string token)
         {
-            string? username = GetPlayersName(token);
-            return _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Friend)).Select(p => p.Username).ToList();
+            string? username = await GetPlayersName(token);
+            var players = await _context.Players.ToListAsync();
+            return players.Where(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Friend)).Select(p => p.Username).ToList();
         }
 
-        private List<string>? GetSentGameRequests(string token)
+        private async Task<List<string>?> GetSentGameRequests(string token)
         {
-            string? username = GetPlayersName(token);
-            return _context.Players.ToList().FindAll(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Game)).Select(p => p.Username).ToList();
+            string? username = await GetPlayersName(token);
+            var players = await _context.Players.ToListAsync();
+            return players.Where(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Game)).Select(p => p.Username).ToList();
         }
 
-        private bool PlayerInGame(string token)
+        private async Task<bool> PlayerInGame(string token)
         {
-            var games = _context.Games.ToList();
-            var game = games!.FirstOrDefault(s => s.First == token && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second == token && s.Status != Status.Finished);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token && g.Status != Status.Finished) || (g.Second != null && g.Second == token && g.Status != Status.Finished));
             return game is not null;
         }
 
-        private bool IsFriend(string receiver_username, string sender_token)
+        private async Task<bool> IsFriend(string receiver_username, string sender_token)
         {
-            var friends = GetFriends(sender_token);
+            var friends = await GetFriends(sender_token);
             return friends?.Contains(receiver_username) ?? false;
         }
 
-        private bool HasFriendRequest(string receiver_username, string sender_token)
+        private async Task<bool> HasFriendRequest(string receiver_username, string sender_token)
         {
-            var friends = GetFriendRequests(sender_token);
+            var friends = await GetFriendRequests(sender_token);
             return friends?.Contains(receiver_username) ?? false;
         }
 
-        private bool HasSentFriendRequest(string receiver_username, string sender_token)
+        private async Task<bool> HasSentFriendRequest(string receiver_username, string sender_token)
         {
-            var friends = GetSentFriendRequests(sender_token);
+            var friends = await GetSentFriendRequests(sender_token);
             return friends?.Contains(receiver_username) ?? false;
         }
     }

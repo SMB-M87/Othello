@@ -18,9 +18,9 @@ namespace API.Controllers
         }
 
         [HttpGet("player")]
-        public ActionResult<List<Player>> GetPlayers()
+        public async Task<ActionResult<List<Player>>> GetPlayers()
         {
-            var response = _repository.PlayerRepository.GetPlayers();
+            var response = await _repository.PlayerRepository.GetPlayers();
 
             if (response is null)
                 return NotFound();
@@ -29,9 +29,9 @@ namespace API.Controllers
         }
 
         [HttpGet("player/{token}")]
-        public ActionResult<List<Player>> GetPlayer(string token)
+        public async Task<ActionResult<List<Player>>> GetPlayer(string token)
         {
-            var response = _repository.PlayerRepository.Get(token);
+            var response = await _repository.PlayerRepository.Get(token);
 
             if (response is null)
                 return NotFound();
@@ -45,9 +45,9 @@ namespace API.Controllers
         }
 
         [HttpGet("player/name/{username}")]
-        public ActionResult<List<Player>> GetPlayerByName(string username)
+        public async Task<ActionResult<List<Player>>> GetPlayerByName(string username)
         {
-            var response = _repository.PlayerRepository.GetByName(username);
+            var response = await _repository.PlayerRepository.GetByName(username);
 
             if (response is null)
                 return NotFound();
@@ -61,9 +61,9 @@ namespace API.Controllers
         }
 
         [HttpPost("player/delete")]
-        public ActionResult<HttpResponseMessage> DeletePlayer([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> DeletePlayer([FromBody] ID id)
         {
-            var response = _repository.PlayerRepository.Delete(id.Token);
+            var response = await _repository.PlayerRepository.Delete(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -72,9 +72,9 @@ namespace API.Controllers
         }
 
         [HttpGet("game/{token}")]
-        public ActionResult<List<Game>> GetGame(string token)
+        public async Task<ActionResult<List<Game>>> GetGame(string token)
         {
-            var response = _repository.GameRepository.Get(token);
+            var response = await _repository.GameRepository.Get(token);
 
             if (response is null)
                 return NotFound();
@@ -83,9 +83,9 @@ namespace API.Controllers
         }
 
         [HttpGet("game")]
-        public ActionResult<List<Game>> GetGames()
+        public async Task<ActionResult<List<Game>>> GetGames()
         {
-            var response = _repository.GameRepository.GetGames();
+            var response = await _repository.GameRepository.GetGames();
 
             if (response is null)
                 return NotFound();
@@ -94,9 +94,9 @@ namespace API.Controllers
         }
 
         [HttpPost("game/delete")]
-        public ActionResult<HttpResponseMessage> DeleteGame([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> DeleteGame([FromBody] ID id)
         {
-            var response = _repository.GameRepository.PermDelete(id.Token);
+            var response = await _repository.GameRepository.PermDelete(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
@@ -105,9 +105,9 @@ namespace API.Controllers
         }
 
         [HttpGet("result")]
-        public ActionResult<List<GameResult>> GetResults()
+        public async Task<ActionResult<List<GameResult>>> GetResults()
         {
-            var response = _repository.ResultRepository.GetResults();
+            var response = await _repository.ResultRepository.GetResults();
 
             if (response is null)
                 return NotFound();
@@ -116,9 +116,9 @@ namespace API.Controllers
         }
 
         [HttpPost("result/delete")]
-        public ActionResult<HttpResponseMessage> DeleteResult([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> DeleteResult([FromBody] ID id)
         {
-            var response = _repository.ResultRepository.Delete(id.Token);
+            var response = await _repository.ResultRepository.Delete(id.Token);
 
             if (response == true)
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);

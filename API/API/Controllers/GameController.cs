@@ -16,9 +16,9 @@ namespace API.Controllers
         }
 
         [HttpGet("{token}")]
-        public ActionResult<Status> StatusByToken(string token)
+        public async Task<ActionResult<Status>> StatusByToken(string token)
         {
-            var response = _repository.GameRepository.GetStatusByPlayersToken(token);
+            var response = await _repository.GameRepository.GetStatusByPlayersToken(token);
 
             if (response is null)
                 return NotFound();
@@ -27,9 +27,9 @@ namespace API.Controllers
         }
 
         [HttpGet("view/{token}")]
-        public ActionResult<GamePlay> View(string token)
+        public async Task<ActionResult<GamePlay>> View(string token)
         {
-            var response = _repository.GameRepository.GetView(token);
+            var response = await _repository.GameRepository.GetView(token);
 
             if (response is null)
                 return NotFound();
@@ -38,9 +38,9 @@ namespace API.Controllers
         }
 
         [HttpGet("partial/{token}")]
-        public ActionResult<GamePartial> Partial(string token)
+        public async Task<ActionResult<GamePartial>> Partial(string token)
         {
-            var response = _repository.GameRepository.GetPartial(token);
+            var response = await _repository.GameRepository.GetPartial(token);
 
             if (response is null)
                 return NotFound();
@@ -49,13 +49,13 @@ namespace API.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult<HttpResponseMessage> Create([FromBody] GameCreation game)
+        public async Task<ActionResult<HttpResponseMessage>> Create([FromBody] GameCreation game)
         {
-            var response = _repository.GameRepository.Create(game);
+            var response = await _repository.GameRepository.Create(game);
 
             if (response == true)
             {
-                _repository.PlayerRepository.UpdateActivity(game.PlayerToken);
+                await _repository.PlayerRepository.UpdateActivity(game.PlayerToken);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
@@ -63,18 +63,18 @@ namespace API.Controllers
         }
 
         [HttpPost("join")]
-        public ActionResult<HttpResponseMessage> Join([FromBody] PlayerRequest request)
+        public async Task<ActionResult<HttpResponseMessage>> Join([FromBody] PlayerRequest request)
         {
-            var response = _repository.GameRepository.JoinPlayer(request);
+            var response = await _repository.GameRepository.JoinPlayer(request);
 
             if (response == true)
             {
-                var player = _repository.PlayerRepository.GetByName(request.ReceiverUsername);
+                var player = await _repository.PlayerRepository.GetByName(request.ReceiverUsername);
 
                 if (player is not null)
                 {
-                    _repository.PlayerRepository.UpdateActivity(player.Token);
-                    _repository.PlayerRepository.UpdateActivity(request.SenderToken);
+                    await _repository.PlayerRepository.UpdateActivity(player.Token);
+                    await _repository.PlayerRepository.UpdateActivity(request.SenderToken);
                     return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                 }
             }
@@ -82,53 +82,47 @@ namespace API.Controllers
         }
 
         [HttpPost("move")]
-        public ActionResult<HttpResponseMessage> Move([FromBody] GameMove action)
+        public async Task<ActionResult<HttpResponseMessage>> Move([FromBody] GameMove action)
         {
-            var (succeded, error) = _repository.GameRepository.Move(action);
+            var (succeded, error) = await _repository.GameRepository.Move(action);
 
             if (succeded)
             {
-                _repository.PlayerRepository.UpdateActivity(action.PlayerToken);
+                await _repository.PlayerRepository.UpdateActivity(action.PlayerToken);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
-                    Content = new StringContent(error ?? "Move not possible")
+                    Content = new StringContent(error ?? "Move not possible.")
                 };
         }
 
         [HttpPost("pass")]
-        public ActionResult<HttpResponseMessage> Pass([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> Pass([FromBody] ID id)
         {
-            var response = _repository.GameRepository.Pass(id.Token, out string error_message);
+            var (succeded, error) = await _repository.GameRepository.Pass(id.Token);
 
-            if (response)
+            if (succeded)
             {
-                _repository.PlayerRepository.UpdateActivity(id.Token);
+                await _repository.PlayerRepository.UpdateActivity(id.Token);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
-            else if (!string.IsNullOrEmpty(error_message))
-            {
+            else
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
-                    Content = new StringContent(error_message)
+                    Content = new StringContent(error ?? "Pass not possible.")
                 };
-            }
-            else
-            {
-                return new HttpResponseMessage(System.Net.HttpStatusCode.NotFound);
-            }
         }
 
         [HttpPost("forfeit")]
-        public ActionResult<HttpResponseMessage> Forfeit([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> Forfeit([FromBody] ID id)
         {
-            var response = _repository.GameRepository.Forfeit(id.Token);
+            var response = await _repository.GameRepository.Forfeit(id.Token);
 
             if (response == true)
             {
-                _repository.PlayerRepository.UpdateActivity(id.Token);
+                await _repository.PlayerRepository.UpdateActivity(id.Token);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
@@ -136,13 +130,13 @@ namespace API.Controllers
         }
 
         [HttpPost("delete")]
-        public ActionResult<HttpResponseMessage> Delete([FromBody] ID id)
+        public async Task<ActionResult<HttpResponseMessage>> Delete([FromBody] ID id)
         {
-            var response = _repository.GameRepository.Delete(id.Token);
+            var response = await _repository.GameRepository.Delete(id.Token);
 
             if (response == true)
             {
-                _repository.PlayerRepository.UpdateActivity(id.Token);
+                await _repository.PlayerRepository.UpdateActivity(id.Token);
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else

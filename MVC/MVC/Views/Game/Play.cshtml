@@ -92,7 +92,7 @@
 </div>
 
 <div id="buttons-container" class="d-flex justify-content-center">
-    @if (Model is not null && Model.Partial.IsPlayersTurn)
+    @if (Model is not null && Model.Partial.IsPlayersTurn && !Model.Partial.Finished)
     {
         <div style="display: flex; flex-direction: column; align-items: center;">
             <div style="display: flex; gap: 10px;">

@@ -4,10 +4,10 @@ namespace API.Data
 {
     public interface IResultRepository
     {
-        GameResult? Get(string token);
-        GameResult? GetLast(string player_token);
-        string? GetPlayerStats(string player_token);
-        List<GameResult> GetResults();
-        bool Delete(string token);
+        Task<GameResult?> Get(string token);
+        Task<GameResult?> GetLast(string player_token);
+        Task<string?> GetPlayerStats(string player_token);
+        Task<List<GameResult>> GetResults();
+        Task<bool> Delete(string token);
     }
 }

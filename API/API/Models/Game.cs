@@ -276,6 +276,9 @@ namespace API.Models
                 }
             }
 
+            if (Finished())
+                Status = Status.Finished;
+
             Date = DateTime.UtcNow;
         }
 

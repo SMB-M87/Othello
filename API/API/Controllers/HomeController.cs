@@ -16,10 +16,10 @@ namespace API.Controllers
         }
 
         [HttpGet("view/{token}")]
-        public ActionResult<Home> View(string token)
+        public async Task<ActionResult<Home>> View(string token)
         {
-            _repository.PlayerRepository.UpdateActivity(token);
-            var response = _repository.HomeRepository.GetView(token);
+            await _repository.PlayerRepository.UpdateActivity(token);
+            var response = await _repository.HomeRepository.GetView(token);
 
             if (response is null)
                 return NotFound();
@@ -28,9 +28,9 @@ namespace API.Controllers
         }
 
         [HttpGet("partial/{token}")]
-        public ActionResult<HomePartial> Partial(string token)
+        public async Task<ActionResult<HomePartial>> Partial(string token)
         {
-            var response = _repository.HomeRepository.GetPartial(token);
+            var response = await _repository.HomeRepository.GetPartial(token);
 
             if (response is null)
                 return NotFound();
@@ -39,11 +39,11 @@ namespace API.Controllers
         }
 
         [HttpGet("profile/{token}")]
-        public ActionResult<HomeProfile> Profile(string token)
+        public async Task<ActionResult<HomeProfile>> Profile(string token)
         {
             string[] parts = token.Split(' ');
-            _repository.PlayerRepository.UpdateActivity(parts[1]);
-            var response = _repository.HomeRepository.GetProfile(parts[0], parts[1]);
+            await _repository.PlayerRepository.UpdateActivity(parts[1]);
+            var response = await _repository.HomeRepository.GetProfile(parts[0], parts[1]);
 
             if (response is null)
                 return NotFound();

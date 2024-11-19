@@ -4,8 +4,8 @@ namespace API.Data
 {
     public interface IHomeRepository
     {
-        Home GetView(string token);
-        HomePartial GetPartial(string token);
-        HomeProfile GetProfile(string username, string token);
+        Task<Home> GetView(string token);
+        Task<HomePartial> GetPartial(string token);
+        Task<HomeProfile> GetProfile(string username, string token);
     }
 }

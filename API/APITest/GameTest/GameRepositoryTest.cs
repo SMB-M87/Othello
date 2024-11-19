@@ -139,16 +139,19 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Update_Correct()
+        public async Task Update_CorrectAsync()
         {
-            Assert.That(actual: _repository.GameRepository?.GetPlayersGame("12")?.PlayersTurn, Is.EqualTo(expected: Color.Black));
+            var player = await _repository.GameRepository.GetPlayersGame("12");
+            Assert.That(actual: player?.PlayersTurn, Is.EqualTo(expected: Color.Black));
 
-            _repository.GameRepository.Move(new("12", 2, 3));
+            await _repository.GameRepository.Move(new("12", 2, 3));
+
+            var game = await _repository.GameRepository.GetPlayersGame("12");
 
             Assert.Multiple(() =>
             {
-                Assert.That(actual: _repository.GameRepository.GetPlayersGame("12")?.PlayersTurn, Is.EqualTo(expected: Color.White));
-                Assert.That(actual: _repository.GameRepository.GetPlayersGame("12")?.Board?[2, 3], Is.EqualTo(expected: Color.Black));
+                Assert.That(actual: game?.PlayersTurn, Is.EqualTo(expected: Color.White));
+                Assert.That(actual: game?.Board?[2, 3], Is.EqualTo(expected: Color.Black));
             });
         }
 
@@ -167,11 +170,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void GetPlayersGame_Incorrect()
+        public async Task GetPlayersGame_Incorrect()
         {
             string playerToken = "first123456";
 
-            var response = _repository.GameRepository.GetPlayersGame(playerToken);
+            var response = await _repository.GameRepository.GetPlayersGame(playerToken);
 
             Assert.That(response, Is.Null);
         }

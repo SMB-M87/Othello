@@ -37,7 +37,8 @@ namespace MVC.Controllers
                             IsPlayersTurn = response.Partial.IsPlayersTurn,
                             PossibleMove = response.Partial.PossibleMove,
                             Board = response.Partial.Board,
-                            Time = response.Partial.Time
+                            Time = response.Partial.Time,
+                            Finished = response.Partial.Finished
                         }
                     };
                     return View(model);
@@ -61,7 +62,8 @@ namespace MVC.Controllers
                 IsPlayersTurn = response.IsPlayersTurn,
                 PossibleMove = response.PossibleMove,
                 Board = response.Board,
-                Time = response.Time
+                Time = response.Time,
+                Finished = response.Finished
             };
             return PartialView("_Partial", model);
         }

@@ -62,7 +62,7 @@
                 </td>
                 <td>
                     <button type="submit" class="btn btn-primary btn-sm" onclick="editPlayer('@player.Token')">Refresh</button>
-                    @if (player.Username != "mediator" && player.Username != "admin")
+                    @if (player.Bot == 0 && player.Username != "mediator" && player.Username != "admin" && player.Username != "Deleted")
                     {
                         <button type="submit" class="btn btn-danger btn-sm" onclick="deletePlayer('@player.Token')">Delete</button>
                     }

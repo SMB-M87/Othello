@@ -264,11 +264,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Create_OK()
+        public async Task Create_OKAsync()
         {
             GameCreation create = new("26");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Create(create);
+            ActionResult<HttpResponseMessage>? result = await _controller.Create(create);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -284,29 +284,31 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Create_Player_BadRequest()
+        public async Task Create_Player_BadRequestAsync()
         {
             GameCreation create = new("player");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Create(create);
+            ActionResult<HttpResponseMessage>? result = await _controller.Create(create);
             HttpResponseMessage? response = result?.Value;
+
+            var player = await _repository.GameRepository.Get("player");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("player"), Is.Null);
+                    Assert.That(actual: player, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Create_PlayerInGame_BadRequest()
+        public async Task Create_PlayerInGame_BadRequestAsync()
         {
             GameCreation create = new("third");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Create(create);
+            ActionResult<HttpResponseMessage>? result = await _controller.Create(create);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -320,47 +322,51 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Join_Player_BadRequest()
+        public async Task Join_Player_BadRequestAsync()
         {
             PlayerRequest entry = new("two", "player");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var player = await _repository.GameRepository.Get("player");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("player"), Is.Null);
+                    Assert.That(actual: player, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_Game_BadRequest()
+        public async Task Join_Game_BadRequestAsync()
         {
             PlayerRequest entry = new("join", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("25");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("25"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_PlayerInGame_BadRequest()
+        public async Task Join_PlayerInGame_BadRequestAsync()
         {
             PlayerRequest entry = new("zero", "fourth");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -374,29 +380,31 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Join_GameFull_BadRequest()
+        public async Task Join_GameFull_BadRequestAsync()
         {
             PlayerRequest entry = new("second", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("25");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("25"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_OwnGame_BadRequest()
+        public async Task Join_OwnGame_BadRequestAsync()
         {
             PlayerRequest entry = new("zero", "first");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -406,29 +414,31 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Join_FirstPlayerNonExistant_BadRequest()
+        public async Task Join_FirstPlayerNonExistant_BadRequestAsync()
         {
             PlayerRequest entry = new("three", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("25");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("25"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Join_OK()
+        public async Task Join_OKAsync()
         {
             PlayerRequest entry = new("four", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -442,47 +452,51 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void JoinPlayer_Player_BadRequest()
+        public async Task JoinPlayer_Player_BadRequestAsync()
         {
             PlayerRequest entry = new("fourth", "player");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("player");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("player"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_Game_BadRequest()
+        public async Task JoinPlayer_Game_BadRequestAsync()
         {
             PlayerRequest entry = new("join", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("25");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("25"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_PlayerInGame_BadRequest()
+        public async Task JoinPlayer_PlayerInGame_BadRequestAsync()
         {
             PlayerRequest entry = new("first", "fourth");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -496,29 +510,31 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void JoinPlayer_GameFull_BadRequest()
+        public async Task JoinPlayer_GameFull_BadRequestAsync()
         {
             PlayerRequest entry = new("second", "25");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("25");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(actual: _repository.GameRepository.Get("25"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void JoinPlayer_OwnGame_BadRequest()
+        public async Task JoinPlayer_OwnGame_BadRequestAsync()
         {
             PlayerRequest entry = new("first", "first");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Join(entry);
+            ActionResult<HttpResponseMessage>? result = await _controller.Join(entry);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -528,25 +544,27 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Delete_OK()
+        public async Task Delete_OKAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new ID { Token = "fourth" });
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new ID { Token = "fourth" });
             HttpResponseMessage? response = result?.Value;
+
+            var game = await _repository.GameRepository.Get("fourth");
 
             if (response is not null)
                 Assert.Multiple(() =>
                 {
                     Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.GameRepository.Get("fourth"), Is.Null);
+                    Assert.That(actual: game, Is.Null);
                 });
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Delete_Game_BadRequest()
+        public async Task Delete_Game_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("zero"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new("zero"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -556,9 +574,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Delete_Player_BadRequest()
+        public async Task Delete_Player_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("sixteennnn"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new("sixteennnn"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -568,9 +586,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Delete_Playing_BadRequest()
+        public async Task Delete_Playing_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new ID { Token = "second" });
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new ID { Token = "second" });
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -580,11 +598,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Delete_SecondPlayer_BadRequest()
+        public async Task Delete_SecondPlayer_BadRequestAsync()
         {
-            _repository.GameRepository.JoinPlayer(new("zero", "fifth"));
+            await _repository.GameRepository.JoinPlayer(new("zero", "fifth"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Delete(new("fifth"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new("fifth"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -594,11 +612,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_OK()
+        public async Task Move_OKAsync()
         {
             GameMove action = new("second");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -610,38 +628,26 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_Finished_OK()
+        public async Task Move_Finished_OKAsync()
         {
             GameMove action = new("fifth", 0, 2);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("14"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("five"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
-            });
-
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
             {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("14"), Is.EqualTo("Wins:0\t\tLosses:1\t\tDraws:0"));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("five"), Is.EqualTo("Wins:1\t\tLosses:0\t\tDraws:0"));
-                });
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Move_Game_BadRequest()
+        public async Task Move_Game_BadRequestAsync()
         {
             GameMove action = new(new("fourth"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -651,11 +657,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_Player_BadRequest()
+        public async Task Move_Player_BadRequestAsync()
         {
             GameMove action = new(new("zero"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -665,11 +671,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_IncorrectStatus_BadRequest()
+        public async Task Move_IncorrectStatus_BadRequestAsync()
         {
             GameMove action = new(new("nine"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -679,11 +685,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_NotPlayersTurn_BadRequest()
+        public async Task Move_NotPlayersTurn_BadRequestAsync()
         {
             GameMove action = new(new("third"));
 
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -693,11 +699,11 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_NoSecondPlayer_BadRequest()
+        public async Task Move_NoSecondPlayer_BadRequestAsync()
         {
             GameMove action = new("fourth");
 
-            ActionResult<HttpResponseMessage>? result = _controller.Move(action);
+            ActionResult<HttpResponseMessage>? result = await _controller.Move(action);
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -707,23 +713,23 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Move_NotPossible_InvalidGameOperation()
+        public async Task Move_NotPossible_InvalidGameOperationAsync()
         {
             GameMove action = new("second", 0, 0);
 
-            var result = _controller.Move(action);
+            var result = await _controller.Move(action);
 
             Assert.Multiple(() =>
             {
                 Assert.That(result.Value?.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                Assert.That(result.Value?.Content.ReadAsStringAsync().Result, Is.EqualTo("Move (0,0) is not possible!"));  // Expected error message
+                Assert.That(result.Value?.Content.ReadAsStringAsync().Result, Is.EqualTo("Move (0,0) is not possible!"));
             });
         }
 
         [Test]
-        public void Pass_FirstPlayer_OK()
+        public async Task Pass_FirstPlayer_OKAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("17"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("17"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -733,9 +739,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_SecondPlayer_OK()
+        public async Task Pass_SecondPlayer_OKAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("15"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("15"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -745,81 +751,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_Game_NotFound()
+        public async Task Pass_Game_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("fourth"));
-            HttpResponseMessage? response = result?.Value;
-
-            if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_Player_BadRequest()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("first"));
-            HttpResponseMessage? response = result?.Value;
-
-            if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_StatusIncorrect_BadRequest()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? response = result?.Value;
-
-            if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_PlayersturnIncorrect_NotFound()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? response = result?.Value;
-
-            if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_FirstPlayerNonExistant_NotFound()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
-            HttpResponseMessage? response = result?.Value;
-
-            if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_SecondPlayerNonExistant_NotFound()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("nine"));
-            HttpResponseMessage? response = result?.Value;
-
-            if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
-        public void Pass_FirstPlayerPossibleMove_NoTFound()
-        {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("second"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("fourth"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -829,46 +763,107 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Pass_SecondPlayerIncorrectColor_NotFound()
+        public async Task Pass_Player_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Pass(new("third"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("first"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
-                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Forfeit_OK()
+        public async Task Pass_StatusIncorrect_BadRequestAsync()
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("19"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
-                Assert.That(actual: _repository.ResultRepository.GetPlayerStats("20"), Is.EqualTo("Wins:0\t\tLosses:0\t\tDraws:0"));
-            });
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("third"));
+            HttpResponseMessage? response = result?.Value;
 
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("19"));
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public async Task Pass_PlayersturnIncorrect_BadRequestAsync()
+        {
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("third"));
+            HttpResponseMessage? response = result?.Value;
+
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public async Task Pass_FirstPlayerNonExistant_BadRequestAsync()
+        {
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("third"));
+            HttpResponseMessage? response = result?.Value;
+
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public async Task Pass_SecondPlayerNonExistant_BadRequestAsync()
+        {
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("nine"));
+            HttpResponseMessage? response = result?.Value;
+
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public async Task Pass_FirstPlayerPossibleMoveButTimerPassed_OKAsync()
+        {
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("second"));
+            HttpResponseMessage? response = result?.Value;
+
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public async Task Pass_SecondPlayerIncorrectColor_BadRequestAsync()
+        {
+            ActionResult<HttpResponseMessage>? result = await _controller.Pass(new("third"));
+            HttpResponseMessage? response = result?.Value;
+
+            if (response is not null)
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            else
+                Assert.Fail("Respons is null.");
+        }
+
+        [Test]
+        public async Task Forfeit_OKAsync()
+        {
+            ActionResult<HttpResponseMessage>? result = await _controller.Forfeit(new("19"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
             {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("20"), Is.EqualTo("Wins:1\t\tLosses:0\t\tDraws:0"));
-                    Assert.That(actual: _repository.ResultRepository.GetPlayerStats("19"), Is.EqualTo("Wins:0\t\tLosses:1\t\tDraws:0"));
-                });
+                Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             else
                 Assert.Fail("Respons is null.");
         }
 
         [Test]
-        public void Forfeit_Game_BadRequest()
+        public async Task Forfeit_Game_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("26"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Forfeit(new("26"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -878,9 +873,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Forfeit_StatusIncorrect_BadRequest()
+        public async Task Forfeit_StatusIncorrect_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("24"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Forfeit(new("24"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -890,9 +885,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Forfeit_PlayersturnIncorrect_BadRequest()
+        public async Task Forfeit_PlayersturnIncorrect_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("nonexistant"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Forfeit(new("nonexistant"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
@@ -902,9 +897,9 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Forfeit_BadRequest()
+        public async Task Forfeit_BadRequestAsync()
         {
-            ActionResult<HttpResponseMessage>? result = _controller.Forfeit(new("24"));
+            ActionResult<HttpResponseMessage>? result = await _controller.Forfeit(new("24"));
             HttpResponseMessage? response = result?.Value;
 
             if (response is not null)
