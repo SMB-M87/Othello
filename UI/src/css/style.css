@@ -45,6 +45,35 @@
   color: #333;
 }
 
+.feedback-widget__actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.feedback-icon {
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.feedback-icon--success {
+  color: #28a745;
+}
+
+.feedback-icon--success:hover {
+  transform: scale(1.2);
+}
+
+.feedback-icon--danger {
+  color: #dc3545;
+}
+
+.feedback-icon--danger:hover {
+  transform: scale(1.2);
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(0);
@@ -61,14 +90,14 @@
 }
 
 /* Buttons Section */
-#feedback-section__buttons {
+#button-container {
   display: flex;
   gap: 10px;
   justify-content: center;
 }
 
 /* Button Styling - Standard */
-.feedback-section__button {
+.button {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -79,25 +108,25 @@
 }
 
 /* Standard Button Hover Effect */
-.feedback-section__button:hover {
+.button:hover {
   filter: brightness(90%);
 }
 
 /* Danger Button - Specific Style */
-.feedback-section__button--succes {
+.button--succes {
   background-color: #28a745;
 }
 
-.feedback-section__button--succes:hover {
+.button--succes:hover {
   background-color: #218838;
 }
 
 /* Danger Button - Specific Style */
-.feedback-section__button--danger {
+.button--danger {
   background-color: #dc3545;
 }
 
-.feedback-section__button--danger:hover {
+.button--danger:hover {
   background-color: #c82333;
 }
 
@@ -119,6 +148,51 @@
   animation: wobble 0.5s ease-in-out;
 }
 
+.othello-board {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.othello-board td {
+  width: 50px;
+  height: 50px;
+  background-color: green;
+  border: 1px solid #000;
+  position: relative;
+  cursor: pointer;
+}
+
+.white-piece,
+.black-piece {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 5px auto;
+}
+
+.white-piece {
+  background-color: white;
+}
+
+.black-piece {
+  background-color: black;
+}
+
+.possible-move {
+  background-color: limegreen;
+}
+
+.possible-move::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background-color: yellow;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
 /* Feedback Widget Responsive Design */
 @media (max-width: 600px) {
   /* Adjust feedback widget for mobile screens */
@@ -133,11 +207,11 @@
   }
 
   /* Stack buttons vertically */
-  #feedback-section__buttons {
+  #button-container {
     gap: 5px; /* Reduce spacing between buttons */
   }
 
-  .feedback-section__button {
+  .button {
     width: 100%; /* Make buttons full width */
   }
 }

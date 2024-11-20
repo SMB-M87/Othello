@@ -2,14 +2,17 @@ Game.Model = (function () {
   // config
   let configMap = {
     apiUrl: "",
+    apiKey: "",
   };
 
   let stateMap = {
-    firstLoad: true
-  }
+    firstLoad: true,
+  };
 
   // private functions
-  const _init = function () {
+  const _init = function (url, key) {
+    configMap.apiUrl = url;
+    configMap.apiKey = key;
     console.log("Model module started from url: " + configMap.apiUrl);
   };
 
@@ -18,32 +21,111 @@ Game.Model = (function () {
     if (stateMap.firstLoad) {
       dataPromise = Game.Data.get();
       stateMap.firstLoad = false;
-      console.log("Received data from view API:");
+
+      return dataPromise
+        .then((data) => {
+          Game.Othello.updateBoard(data.partial.board);
+          return data;
+        })
+        .catch((e) => {
+          console.log(e.message);
+          return { data: null, error: e.message };
+        });
     } else {
       dataPromise = Game.Data.getPartial();
-      console.log("Received data from partial API:");
-    }
 
-    return dataPromise
-      .then((data) => {
-        console.log(data);
-        return data;
+      return dataPromise
+        .then((data) => {
+          Game.Othello.updateBoard(data.board);
+          return data;
+        })
+        .catch((e) => {
+          console.log(e.message);
+          return { data: null, error: e.message };
+        });
+    }
+  };
+
+  const _sendMove = function (row, col) {
+    const token = configMap.apiKey;
+
+    const moveData = {
+      playerToken: token,
+      row: row,
+      column: col,
+    };
+
+    $.ajax({
+      url: configMap.apiUrl + "move",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(moveData),
+    })
+      .then((response) => {
+        feedbackWidget.show(
+          "You have successfully made a move, wait on your opponent to make his.",
+          "Success"
+        );
+        _getGameState();
       })
-      .catch((e) => {
-        console.log(e.message);
-        return { data: null, error: e.message };
+      .catch((error) => {
+        feedbackWidget.show(
+          "Move failed... Try again or make a different move." +
+            error.responseText,
+          "Danger"
+        );
       });
   };
 
+  const _passGame = function () {
+    const token = configMap.apiKey;
+
+    return $.ajax({
+      url: configMap.apiUrl + "pass",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ token: token }),
+    }).then((response) => {
+      _getGameState();
+    });
+  };
+
+  const _forfeitGame = function () {
+    const token = configMap.apiKey;
+
+    return $.ajax({
+      url: configMap.apiUrl + "forfeit",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify({ token: token }),
+    }).then((response) => {
+      _getGameState();
+    });
+  };
+
   // public functions
-  const init = (url) => {
-    configMap.apiUrl = url;
-    _init();
+  const init = (url, key) => {
+    _init(url, key);
+  };
+
+  const sendMove = function (row, col) {
+    _sendMove(row, col);
+  };
+
+  const passGame = function () {
+    return _passGame();
+  };
+
+  const forfeitGame = function () {
+    return _forfeitGame();
   };
 
   // return object
   return {
     init: init,
     getGameState: _getGameState,
+    sendMove: sendMove,
+    passGame: passGame,
+    forfeitGame: forfeitGame,
   };
 })();

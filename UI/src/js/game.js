@@ -13,7 +13,7 @@ const Game = (function (url, key) {
   const _init = function () {
     console.log("Game module started from url: " + configMap.apiUrl);
     Game.Data.init(configMap.apiUrl, configMap.apiKey);
-    Game.Model.init(configMap.apiUrl);
+    Game.Model.init(configMap.apiUrl, configMap.apiKey);
     Game.Othello.init(configMap.apiUrl);
   };
 
@@ -26,7 +26,7 @@ const Game = (function (url, key) {
         .catch((e) => {
           console.log(e.message);
         });
-    }, 2000);
+    }, 1000);
   };
 
   // public functions
@@ -40,7 +40,7 @@ const Game = (function (url, key) {
   return {
     init: init,
   };
-})("https://localhost:7023/api/game/", "salie");
+})("https://localhost:7023/api/game/", "test");
 
 $(() => {
   function afterInit() {

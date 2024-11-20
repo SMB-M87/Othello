@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Othello</title>
     <link rel="stylesheet" href="css/style.css" />
 
@@ -42,29 +42,19 @@
   </head>
 
   <body>
+    <!-- Game Board -->
+    <section id="game-board-container"></section>
+
     <!-- Feedback Widget -->
     <section id="feedback-section" aria-label="Feedback Widget">
-      <article id="feedback-widget" role="alert"></article>
-      <footer id="feedback-section__buttons">
-        <button
-          id="move-button"
-          class="feedback-section__button feedback-section__button--succes"
-        >
-          Move
-        </button>
-        <button
-          id="pass-button"
-          class="feedback-section__button feedback-section__button--succes"
-        >
-          Pass
-        </button>
-        <button
-          id="forfeit-button"
-          class="feedback-section__button feedback-section__button--succes"
-        >
-          Forfeit
-        </button>
+      <!-- Buttons -->
+      <footer id="button-container">
+        <button id="move-button" class="button button--succes">Move</button>
+        <button id="pass-button" class="button button--succes">Pass</button>
+        <button id="forfeit-button" class="button button--danger">Forfeit</button>
       </footer>
+
+      <article id="feedback-widget" role="alert"></article>
     </section>
   </body>
 </html>
