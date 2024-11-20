@@ -1,7 +1,8 @@
-const Game = (function (url) {
+const Game = (function (url, key) {
   // config
   let configMap = {
     apiUrl: url,
+    apiKey: key
   };
 
   let stateMap = {
@@ -11,14 +12,16 @@ const Game = (function (url) {
   // private functions
   const _init = function () {
     console.log("Game module started from url: " + configMap.apiUrl);
+    Game.Data.init(configMap.apiUrl, configMap.apiKey);
+    Game.Model.init(configMap.apiUrl);
+    Game.Othello.init(configMap.apiUrl);
   };
 
   const _getCurrentGameState = function () {
     setInterval(function () {
       let result = Game.Model.getGameState()
         .then((data) => {
-          stateMap.gameState = data.data;
-          return data;
+          stateMap.gameState = data;
         })
         .catch((e) => {
           console.log(e.message);
@@ -30,17 +33,14 @@ const Game = (function (url) {
   const init = (callback) => {
     _init();
     _getCurrentGameState();
-    Game.Data.init(configMap.apiUrl, "development");
-    Game.Model.init(configMap.apiUrl);
-    Game.Othello.init(configMap.apiUrl);
-    callback();
+    if(callback) callback();
   };
 
   // return object
   return {
     init: init,
   };
-})("https://www.s1164087/api/game/");
+})("https://localhost:7023/api/game/", "salie");
 
 $(() => {
   function afterInit() {

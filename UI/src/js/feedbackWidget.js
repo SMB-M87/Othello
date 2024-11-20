@@ -108,7 +108,7 @@ $(function () {
 
   $("#forfeit-button").on("click", function () {
     feedbackWidget.show("You have successfully forfeited the game.", "Success");
-    feedbackWidget.history();
+    feedbackWidget.removeLog();
     resetWobble();
   });
 

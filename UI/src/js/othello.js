@@ -11,7 +11,7 @@ Game.Othello = (function () {
 
   // public functions
   const init = (url) => {
-    configMap.apiUrl = url + "othello";
+    configMap.apiUrl = url;
     _init();
   };
 
