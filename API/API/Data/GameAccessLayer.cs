@@ -19,11 +19,7 @@ namespace API.Data
 
         public async Task<Game?> GetPlayersGame(string player_token)
         {
-            var games = await GetGames();
-            var game = games!.FirstOrDefault(s => s.First.Equals(player_token) && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second.Equals(player_token) && s.Status != Status.Finished);
-
-            return game;
+            return await _context.Games.FirstOrDefaultAsync(g => (g.First == player_token) || (g.Second != null && g.Second == player_token));
         }
 
         public async Task<Status?> GetStatusByPlayersToken(string token)
@@ -63,6 +59,27 @@ namespace API.Data
                 };
                 return model;
             }
+            else if (game != null && game.Second == null && game.Status == Status.Pending) // DELETE JUST FOR UI TESTING
+            {
+                var first = await GetPlayer(game.First);
+
+                var model = new GamePlay
+                {
+                    Opponent = "nobody",
+                    Color = game.FColor,
+                    Partial = new GamePartial()
+                    {
+                        Time = await GetTimerByPlayersToken(token),
+                        InGame = false,
+                        PlayersTurn = game.PlayersTurn,
+                        IsPlayersTurn = game.FColor == game.PlayersTurn,
+                        PossibleMove = game.IsThereAPossibleMove(game.FColor),
+                        Board = game.Board,
+                        Finished = false
+                    }
+                };
+                return model;
+            }
             else
             {
                 var model = new GamePlay
@@ -98,6 +115,20 @@ namespace API.Data
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                     Board = game.Board,
                     Finished = game.Status == Status.Finished
+                };
+                return model;
+            }
+            else if (game != null && game.Second == null && game.Status == Status.Pending) // DELETE JUST FOR UI TESTING
+            {
+                var model = new GamePartial()
+                {
+                    Time = await GetTimerByPlayersToken(token),
+                    InGame = false,
+                    PlayersTurn = game.PlayersTurn,
+                    IsPlayersTurn = game.FColor == game.PlayersTurn,
+                    PossibleMove = game.IsThereAPossibleMove(game.FColor),
+                    Board = game.Board,
+                    Finished = false
                 };
                 return model;
             }
@@ -169,8 +200,8 @@ namespace API.Data
         {
             if (await PlayerExists(game.First) && !await PlayerInGame(game.First))
             {
-                _context.Games.Add(game);
-                _context.SaveChanges();
+                await _context.Games.AddAsync(game);
+                await _context.SaveChangesAsync();
             }
         }
 
@@ -316,8 +347,13 @@ namespace API.Data
                 var player = await GetPlayer(game.First);
                 if (player is not null)
                 {
-                    var playersWithGameRequests = await _context.Players.ToListAsync();
-                    playersWithGameRequests = playersWithGameRequests.Where(p => p.Requests.Any(r => r.Username == player.Username && (int)r.Type == (int)Inquiry.Game)).ToList();
+                    var playersWithGameRequests = await _context.Players
+                                                        .FromSqlRaw(@"
+                                                            SELECT * 
+                                                            FROM Players 
+                                                            WHERE JSON_VALUE(Requests, '$[0].Type') = {0}
+                                                            AND JSON_VALUE(Requests, '$[0].Username') = {1}",
+                                                            (int)Inquiry.Game, player.Username).ToListAsync();
 
                     foreach (var gamer in playersWithGameRequests)
                     {
@@ -389,16 +425,13 @@ namespace API.Data
 
         private async Task<bool> PlayerInPendingGame(string token)
         {
-            var games = await _context.Games.ToListAsync();
-            var game = games!.FirstOrDefault(s => s.First == token && s.Second is null && s.Status == Status.Pending);
+            var game = await _context.Games.FirstOrDefaultAsync(g => g.First == token && g.Second == null && g.Status == Status.Pending);
             return game is not null;
         }
 
         private async Task<bool> PlayerInGame(string token)
         {
-            var games = await _context.Games.ToListAsync();
-            var game = games!.FirstOrDefault(s => s.First == token && s.Status != Status.Finished);
-            game ??= games!.FirstOrDefault(s => s.Second != null && s.Second == token && s.Status != Status.Finished);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
             return game is not null;
         }
     }

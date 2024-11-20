@@ -80,8 +80,13 @@ namespace API.Data
                 {
                     _context.Games.Remove(game);
 
-                    var playersWithGameRequests = await _context.Players.ToListAsync();
-                    playersWithGameRequests = playersWithGameRequests.Where(p => p.Requests.Any(r => r.Username == creator.Username && r.Type == Inquiry.Game)).ToList();
+                    var playersWithGameRequests = await _context.Players
+                                                        .FromSqlRaw(@"
+                                                            SELECT * 
+                                                            FROM Players 
+                                                            WHERE JSON_VALUE(Requests, '$[0].Type') = {0}
+                                                            AND JSON_VALUE(Requests, '$[0].Username') = {1}",
+                                                            (int)Inquiry.Game, creator.Username).ToListAsync();
 
                     foreach (var gamer in playersWithGameRequests)
                     {
@@ -137,7 +142,7 @@ namespace API.Data
 
         public async Task<Game?> GetPlayersGame(string token)
         {
-            return await _context.Games.FirstOrDefaultAsync(g => (g.First == token && g.Status != Status.Finished) || (g.Second != null && g.Second == token && g.Status != Status.Finished));
+            return await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
         }
 
         public async Task<string> GetPlayerStats(string username)
@@ -290,15 +295,33 @@ namespace API.Data
         private async Task<List<string>?> GetSentFriendRequests(string token)
         {
             string? username = await GetPlayersName(token);
-            var players = await _context.Players.ToListAsync();
-            return players.Where(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Friend)).Select(p => p.Username).ToList();
+
+            if (string.IsNullOrEmpty(username))
+                return new();
+
+            return await _context.Players
+                                 .FromSqlRaw(@"
+                                     SELECT * 
+                                     FROM Players 
+                                     WHERE JSON_VALUE(Requests, '$[0].Type') = {0}
+                                     AND JSON_VALUE(Requests, '$[0].Username') = {1}",
+                                 (int)Inquiry.Friend, username).Select(p => p.Username).ToListAsync();
         }
 
         private async Task<List<string>?> GetSentGameRequests(string token)
         {
             string? username = await GetPlayersName(token);
-            var players = await _context.Players.ToListAsync();
-            return players.Where(p => p.Requests.Any(r => r.Username == username && r.Type == Inquiry.Game)).Select(p => p.Username).ToList();
+
+            if (string.IsNullOrEmpty(username))
+                return new();
+
+            return await _context.Players
+                                 .FromSqlRaw(@"
+                                     SELECT * 
+                                     FROM Players 
+                                     WHERE JSON_VALUE(Requests, '$[0].Type') = {0}
+                                     AND JSON_VALUE(Requests, '$[0].Username') = {1}",
+                                     (int)Inquiry.Game, username).Select(p => p.Username).ToListAsync();
         }
 
         private async Task<bool> PlayerInGame(string token)

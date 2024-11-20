@@ -350,8 +350,7 @@ namespace API.Data
 
         private async Task<bool> PlayerInGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(s => s.First.Equals(token) && s.Status != Status.Finished);
-            game ??= await _context.Games.FirstOrDefaultAsync(s => s.Second != null && s.Second.Equals(token) && s.Status != Status.Finished);
+            var game = await _context.Games.FirstOrDefaultAsync(g => g.First.Equals(token) || (g.Second != null && g.Second.Equals(token)));
             return game is not null;
         }
 
@@ -363,22 +362,17 @@ namespace API.Data
 
         private async Task<bool> JoinPlayersGame(string receiver_token, string sender_token)
         {
-            List<Game>? games = await _context.Games.ToListAsync();
+            var game = await _context.Games.FirstOrDefaultAsync(s => s.First.Equals(receiver_token) && s.Status == Status.Pending);
 
-            if (games.Count > 0)
+            if (game is not null)
             {
-                var game = games!.FirstOrDefault(s => s.First.Equals(receiver_token) && s.Status != Status.Finished);
-
-                if (game is not null)
-                {
-                    game.SetSecondPlayer(sender_token);
-                    await UpdateActivity(game.First);
-                    await UpdateActivity(sender_token);
-                    _context.Entry(game).Property(g => g.Status).IsModified = true;
-                    _context.Entry(game).Property(g => g.Second).IsModified = true;
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
+                game.SetSecondPlayer(sender_token);
+                await UpdateActivity(game.First);
+                await UpdateActivity(sender_token);
+                _context.Entry(game).Property(g => g.Status).IsModified = true;
+                _context.Entry(game).Property(g => g.Second).IsModified = true;
+                await _context.SaveChangesAsync();
+                return true;
             }
             return false;
         }

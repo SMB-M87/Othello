@@ -57,6 +57,16 @@ builder.Services.AddHostedService<BotBackgroundService>();
 builder.Services.AddHostedService<CleanUpService>();
 builder.Services.AddHostedService<GameService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("http://127.0.0.1:5501")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -84,5 +94,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.Run();
