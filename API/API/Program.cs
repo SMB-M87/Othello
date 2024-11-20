@@ -42,11 +42,13 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
         options.Cookie.Domain = "localhost";
+        //options.Cookie.Domain = "othello.hbo-ict.org";
         options.Cookie.Path = "/";
     });
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
+    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello/SharedKeys"))
     .SetApplicationName("Othello");
 
 builder.Services.AddScoped<BotService>();
