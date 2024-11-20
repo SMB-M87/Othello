@@ -17,7 +17,7 @@ class FeedbackWidget {
     widgetElement
       .empty()
       .append(closeButton)
-      .append(`<span>${type} - ${message}</span>`);
+      .append(`<span>${message}</span>`);
     widgetElement.attr("class", `alert alert-${type.toLowerCase()}`);
     widgetElement.css("display", "block");
 
@@ -30,7 +30,7 @@ class FeedbackWidget {
     // Handle auto-dismiss after 15 seconds or clear any prior timeouts
     if (autoDismiss) {
       if (this._timeout) clearTimeout(this._timeout);
-      this._timeout = setTimeout(() => this.hide(), 15000);
+      this._timeout = setTimeout(() => this.hide(), 6000);
     }
 
     // Attach close button click event to hide the widget

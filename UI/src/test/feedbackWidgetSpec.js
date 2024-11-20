@@ -4,7 +4,7 @@ var myApp = {
   },
 };
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000; // Increase timeout to 20 seconds
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 8000; // Increase timeout to 20 seconds
 
 describe("FeedbackWidget", function () {
   let feedbackWidget;
@@ -43,7 +43,7 @@ describe("FeedbackWidget", function () {
       } catch (error) {
         done.fail(error); // Fail the test if an error occurs
       }
-    }, 17000); // 15 seconds + a small buffer
+    }, 7000); // 15 seconds + a small buffer
   });
 
   // 3. Display the feedback widget with a danger alert

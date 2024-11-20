@@ -4,11 +4,11 @@
   flex-direction: column;
   align-items: center;
   max-width: 400px;
-  width: 100%; /* Responsive width */
+  width: 100%;
   margin: 0 auto;
   padding: 20px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for styling */
-  background-color: white; /* Optional: Background color */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
   border-radius: 8px;
 }
 
@@ -75,12 +75,12 @@
   cursor: pointer;
   font-size: 14px;
   color: white;
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  transition: background-color 0.3s ease;
 }
 
 /* Standard Button Hover Effect */
 .feedback-section__button:hover {
-  filter: brightness(90%); /* Slightly darkens the button on hover */
+  filter: brightness(90%);
 }
 
 /* Danger Button - Specific Style */
@@ -117,4 +117,27 @@
 /* Wobble animation class */
 .wobble {
   animation: wobble 0.5s ease-in-out;
+}
+
+/* Feedback Widget Responsive Design */
+@media (max-width: 600px) {
+  /* Adjust feedback widget for mobile screens */
+  #feedback-widget {
+    font-size: 13px;
+    padding: 15px;
+  }
+
+  /* Hide close button on mobile devices */
+  .feedback-widget__close {
+    display: none;
+  }
+
+  /* Stack buttons vertically */
+  #feedback-section__buttons {
+    gap: 5px; /* Reduce spacing between buttons */
+  }
+
+  .feedback-section__button {
+    width: 100%; /* Make buttons full width */
+  }
 }
