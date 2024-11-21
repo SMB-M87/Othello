@@ -15,6 +15,7 @@
         bool PossibleMove(int rowMove, int columnMove);
         bool Finished();
         void Pass();
+        void ByPass();
         void MakeMove(int rowMove, int columnMove);
         Color WinningColor();
         void Finish();

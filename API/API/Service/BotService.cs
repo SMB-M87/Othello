@@ -55,15 +55,18 @@ namespace API.Service
                         {
                             bot.Bot = 2;
                         }
-                        else if (bot.Username == "John" || bot.Username == "Tijn")
+                        else if (bot.Username == "John")
                         {
                             bot.Bot = 3;
+                        }
+                        else if (bot.Username == "Tijn")
+                        {
+                            bot.Bot = 4;
                         }
                         else
                         {
                             bot.Bot = 1;
                         }
-                        
                         var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
                         _context.Games.Add(game);
                         _context.Entry(bot).Property(p => p.Bot).IsModified = true;
@@ -150,11 +153,17 @@ namespace API.Service
                 {
                     if (game.IsThereAPossibleMove(game.PlayersTurn))
                     {
-                        var possibleMoves = GetPossibleMoves(game.Board);
-
-                        var move = ChooseBotMove(possibleMoves, bot, game.Board, game.PlayersTurn);
-
-                        game.MakeMove(move.Row, move.Column);
+                        try
+                        {
+                            var possibleMoves = GetPossibleMoves(game.Board);
+                            var move = ChooseBotMove(possibleMoves, bot, game.Board, game.PlayersTurn);
+                            game.MakeMove(move.Row, move.Column);
+                        }
+                        catch
+                        {
+                            game.ByPass();
+                            game.Pass();
+                        }
                     }
                     else
                     {
@@ -205,9 +214,13 @@ namespace API.Service
 
         private static GameMove ChooseBotMove(List<GameMove> possibleMoves, Player bot, Color[,] board, Color colorPlayer)
         {
-            if (bot.Bot == 2 || bot.Bot == 3)
+            if (bot.Bot >= 1 && bot.Bot <= 4)
             {
-                return EvaluateMoves(possibleMoves, board, colorPlayer, bot.Bot);
+                Game clone = new("", "", colorPlayer, "", Status.Playing, colorPlayer)
+                {
+                    Board = (Color[,])board.Clone(),
+                };
+                return EvaluateMoves(clone, colorPlayer, bot.Bot);
             }
             else
             {
@@ -215,163 +228,278 @@ namespace API.Service
             }
         }
 
-        private static GameMove EvaluateMoves(List<GameMove> possibleMoves, Color[,] board, Color colorPlayer, int bot)
+        private static GameMove EvaluateMoves(Game gameState, Color bot, int searchDepth)
         {
+            int bestValue = int.MinValue;
             GameMove? bestMove = null;
-            int maxScore = int.MinValue;
+            List<GameMove> possibleMoves = GetPossibleMoves(gameState.Board);
 
             foreach (var move in possibleMoves)
             {
-                var simulatedBoard = (Color[,])board.Clone();
-
-                int flipped = SimulateMoveAndCountFlipped(move, colorPlayer, simulatedBoard);
-                int positionalValue = PositionalValue(move);
-
-                Game switchMoves = new("", "", colorPlayer, "", Status.Playing, colorPlayer)
+                Game clone = new("", "", gameState.PlayersTurn, "", Status.Playing, gameState.PlayersTurn)
                 {
-                    Board = simulatedBoard
+                    Board = (Color[,])gameState.Board.Clone(),
                 };
-                switchMoves.Pass();
-                List<GameMove> opponentMoves = GetPossibleMoves(switchMoves.Board);
+                clone.MakeMove(move.Row, move.Column);
 
-                int opponentPenalty = opponentMoves.Count > 0 ? EvaluateOpponentImpact(opponentMoves, switchMoves.Board, colorPlayer == Color.White ? Color.Black : Color.White, bot) : 0;
+                int moveValue = Minimax(clone, searchDepth - 1, int.MinValue, int.MaxValue, false, bot);
 
-                int score = flipped + positionalValue - opponentPenalty;
-
-                if (score > maxScore)
+                if (moveValue > bestValue)
                 {
-                    maxScore = score;
+                    bestValue = moveValue;
                     bestMove = move;
                 }
             }
+
             return bestMove ?? possibleMoves[_random.Next(possibleMoves.Count)];
         }
 
-        private static int EvaluateOpponentImpact(List<GameMove> possibleMoves, Color[,] board, Color colorPlayer, int bot, int depth = 4)
+        private static int Minimax(Game gameState, int depth, int alpha, int beta, bool maximizingPlayer, Color bot)
         {
-            int maxScore = int.MinValue;
-
-            foreach (var move in possibleMoves)
+            if (depth == 0 || gameState.Finished())
             {
-                int opponentPenalty = 0;
-                var simulatedBoard = (Color[,])board.Clone();
-
-                int flipped = SimulateMoveAndCountFlipped(move, colorPlayer, simulatedBoard);
-                int positionalValue = PositionalValue(move);
-
-                if (bot == 3 && depth > 0)
-                {
-                    Game switchMoves = new("", "", colorPlayer, "", Status.Playing, colorPlayer)
-                    {
-                        Board = simulatedBoard
-                    };
-                    switchMoves.Pass();
-
-                    if (!switchMoves.Finished())
-                    {
-                        List<GameMove> botMoves = GetPossibleMoves(switchMoves.Board);
-
-                        opponentPenalty = botMoves.Count > 0 ? EvaluateOpponentImpact(botMoves, switchMoves.Board, colorPlayer == Color.White ? Color.Black : Color.White, bot, depth - 1) : 0;
-                    }
-                }
-
-                int score = flipped + positionalValue - opponentPenalty;
-
-                if (score > maxScore)
-                {
-                    maxScore = score;
-                }
+                return EvaluateBoard(gameState.Board, gameState.PlayersTurn, bot);
             }
-            return maxScore;
+
+            List<GameMove> possibleMoves = GetPossibleMoves(gameState.Board);
+
+            if (possibleMoves.Count == 0)
+            {
+                Game clone = new("", "", gameState.PlayersTurn, "", Status.Playing, gameState.PlayersTurn)
+                {
+                    Board = (Color[,])gameState.Board.Clone(),
+                };
+                clone.ByPass();
+                clone.Pass();
+                return Minimax(clone, depth - 1, alpha, beta, !maximizingPlayer, bot);
+            }
+
+            if (maximizingPlayer)
+            {
+                int maxEval = int.MinValue;
+                foreach (var move in possibleMoves)
+                {
+                    Game clone = new("", "", gameState.PlayersTurn, "", Status.Playing, gameState.PlayersTurn)
+                    {
+                        Board = (Color[,])gameState.Board.Clone(),
+                    };
+                    clone.MakeMove(move.Row, move.Column);
+                    int eval = Minimax(clone, depth - 1, alpha, beta, false, bot);
+                    maxEval = Math.Max(maxEval, eval);
+                    alpha = Math.Max(alpha, eval);
+                    if (beta <= alpha)
+                        break;
+                }
+                return maxEval;
+            }
+            else
+            {
+                int minEval = int.MaxValue;
+                foreach (var move in possibleMoves)
+                {
+                    Game clone = new("", "", gameState.PlayersTurn, "", Status.Playing, gameState.PlayersTurn)
+                    {
+                        Board = (Color[,])gameState.Board.Clone(),
+                    };
+                    clone.MakeMove(move.Row, move.Column);
+                    int eval = Minimax(clone, depth - 1, alpha, beta, true, bot);
+                    minEval = Math.Min(minEval, eval);
+                    beta = Math.Min(beta, eval);
+                    if (beta <= alpha)
+                        break;
+                }
+                return minEval;
+            }
         }
 
-        private static int SimulateMoveAndCountFlipped(GameMove move, Color colorPlayer, Color[,] board)
+        private static int EvaluateBoard(Color[,] board, Color playerTurn, Color bot)
         {
-            int flipped = 0;
-            int[,] direction = new int[8, 2] {
-                                {  0,  1 },
-                                {  0, -1 },
-                                {  1,  0 },
-                                { -1,  0 },
-                                {  1,  1 },
-                                {  1, -1 },
-                                { -1,  1 },
-                                { -1, -1 } };
-            Color colorOpponent = colorPlayer == Color.White ? Color.Black : Color.White;
+            int score = 0;
+
+            score += 100 * DiscDifference(board, bot);
+            score += 80 * Mobility(board, playerTurn, bot);
+            score += 1000 * CornerOccupancy(board, bot);
+            score += 100 * Stability(board, bot);
+            score += 10 * PositionalWeights(board, bot);
+
+            return score;
+        }
+
+        private static int DiscDifference(Color[,] board, Color bot)
+        {
+            int botDiscs = 0;
+            int oppDiscs = 0;
+            Color botColor = bot;
+            Color oppColor = botColor == Color.White ? Color.Black : Color.White;
+
+            foreach (var cell in board)
+            {
+                if (cell == botColor)
+                    botDiscs++;
+                else if (cell == oppColor)
+                    oppDiscs++;
+            }
+            return botDiscs - oppDiscs;
+        }
+
+        private static int Mobility(Color[,] board, Color playersTurn, Color bot)
+        {
+            int botMoves;
+            int oppMoves;
+
+            if (playersTurn == bot)
+            {
+                botMoves = GetPossibleMoves(board).Count;
+
+                Game clone = new("", "", playersTurn, "", Status.Playing, playersTurn)
+                {
+                    Board = (Color[,])board.Clone(),
+                };
+                clone.ByPass();
+                clone.Pass();
+
+                oppMoves = GetPossibleMoves(board).Count;
+            }
+            else
+            {
+                oppMoves = GetPossibleMoves(board).Count;
+
+                Game clone = new("", "", playersTurn, "", Status.Playing, playersTurn)
+                {
+                    Board = (Color[,])board.Clone(),
+                };
+                clone.ByPass();
+                clone.Pass();
+
+                botMoves = GetPossibleMoves(board).Count;
+            }
+            return botMoves - oppMoves;
+        }
+
+        private static int CornerOccupancy(Color[,] board, Color bot)
+        {
+            int score = 0;
+            Color botColor = bot;
+            Color oppColor = botColor == Color.White ? Color.Black : Color.White;
+
+            int[,] corners = { { 0, 0 }, { 0, 7 }, { 7, 0 }, { 7, 7 } };
+            for (int i = 0; i < 4; i++)
+            {
+                Color cell = board[corners[i, 0], corners[i, 1]];
+                if (cell == botColor)
+                    score += 1;
+                else if (cell == oppColor)
+                    score -= 1;
+            }
+            return score;
+        }
+
+        private static int Stability(Color[,] board, Color bot)
+        {
+            int[,] directions = {
+                { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 },
+                { 1, 1 }, { 1, -1 }, { -1, 1 }, { -1, -1 }
+            };
+
+            bool[,] stable = new bool[8, 8];
+            Color botColor = bot;
+            Color oppColor = botColor == Color.White ? Color.Black : Color.White;
+
+            int[,] corners = { { 0, 0 }, { 0, 7 }, { 7, 0 }, { 7, 7 } };
+
+            for (int i = 0; i < 4; i++)
+            {
+                MarkStableDiscs(corners[i, 0], corners[i, 1], board, stable, directions);
+            }
+
+            int botStableCount = 0;
+            int oppStableCount = 0;
+
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (stable[row, col])
+                    {
+                        if (board[row, col] == botColor)
+                            botStableCount++;
+                        else if (board[row, col] == oppColor)
+                            oppStableCount++;
+                    }
+                }
+            }
+
+            return botStableCount - oppStableCount;
+        }
+
+        private static void MarkStableDiscs(int row, int col, Color[,] board, bool[,] stable, int[,] directions)
+        {
+            if (row < 0 || row >= 8 || col < 0 || col >= 8 || stable[row, col] || board[row, col] == Color.None)
+                return;
+
+            stable[row, col] = true;
 
             for (int i = 0; i < 8; i++)
             {
-                flipped += FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(move.Row, move.Column, colorPlayer, colorOpponent, direction[i, 0], direction[i, 1], board);
-            }
-            return flipped;
-        }
+                int newRow = row + directions[i, 0];
+                int newCol = col + directions[i, 1];
 
-        private static int FlipOpponentsPawnsInSpecifiedDirectionIfEnclosed(int rowMove, int columnMove, Color colorPlayer, Color colorOpponent, int rowDirection, int columnDirection, Color[,] board)
-        {
-            int row, column;
-            int pawnFlipped = 0;
-
-            if (PawnToEncloseInSpecifiedDirection(rowMove, columnMove, colorPlayer, colorOpponent, rowDirection, columnDirection, board))
-            {
-                row = rowMove + rowDirection;
-                column = columnMove + columnDirection;
-
-                while (row >= 0 && row < 8 && column >= 0 && column < 8 && board[row, column] == colorOpponent)
+                if (IsStableInDirection(row, col, directions[i, 0], directions[i, 1], board, stable))
                 {
-                    board[row, column] = colorPlayer;
-                    row += rowDirection;
-                    column += columnDirection;
-                    pawnFlipped++;
+                    MarkStableDiscs(newRow, newCol, board, stable, directions);
                 }
             }
-            return pawnFlipped;
         }
 
-        private static bool PawnToEncloseInSpecifiedDirection(int rowMove, int columnMove, Color colorPlayer, Color colorOpponent, int rowDirection, int columnDirection, Color[,] board)
+        private static bool IsStableInDirection(int row, int col, int rowDir, int colDir, Color[,] board, bool[,] stable)
         {
-            int row, column;
+            Color currentColor = board[row, col];
+            int newRow = row + rowDir;
+            int newCol = col + colDir;
 
-            if (!((rowMove >= 0 && rowMove < 8 && columnMove >= 0 && columnMove < 8) && (board[rowMove, columnMove] == Color.None || board[rowMove, columnMove] == Color.PossibleMove)))
-                return false;
-
-            row = rowMove + rowDirection;
-            column = columnMove + columnDirection;
-
-            int NumberOfAdjacentPawnsOfOpponent = 0;
-
-            while ((row >= 0 && row < 8 && column >= 0 && column < 8) && board[row, column] == colorOpponent)
+            while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8)
             {
-                row += rowDirection;
-                column += columnDirection;
-                NumberOfAdjacentPawnsOfOpponent++;
+                if (board[newRow, newCol] != currentColor)
+                    return false;
+
+                if (stable[newRow, newCol])
+                    return true;
+
+                newRow += rowDir;
+                newCol += colDir;
             }
-            return (row >= 0 && row < 8 && column >= 0 && column < 8) && board[row, column] == colorPlayer && NumberOfAdjacentPawnsOfOpponent > 0;
+
+            return false;
         }
 
-        private static int PositionalValue(GameMove move)
+        private static int PositionalWeights(Color[,] board, Color bot)
         {
-            if ((move.Row == 0 && move.Column == 0) ||
-                (move.Row == 0 && move.Column == 7) ||
-                (move.Row == 7 && move.Column == 0) ||
-                (move.Row == 7 && move.Column == 7))
-            {
-                return 10;
-            }
-            else if (move.Row == 0 || move.Row == 7 || move.Column == 0 || move.Column == 7)
-            {
-                return 5;
-            }
-            else if ((move.Row == 1 && move.Column == 1) || (move.Row == 1 && move.Column == 6) ||
-                     (move.Row == 6 && move.Column == 1) || (move.Row == 6 && move.Column == 6))
-            {
-                return -5; // Negative value for positions adjacent to corners
-            }
-            else if (move.Row == 1 || move.Row == 6 || move.Column == 1 || move.Column == 6)
-            {
-                return -2; // Negative value for positions adjacent to outer lines
-            }
+            int[,] weights = {
+                {100, -20, 10, 5, 5, 10, -20, 100},
+                {-20, -50, -2, -2, -2, -2, -50, -20},
+                {10, -2, 5, 1, 1, 5, -2, 10},
+                {5, -2, 1, 0, 0, 1, -2, 5},
+                {5, -2, 1, 0, 0, 1, -2, 5},
+                {10, -2, 5, 1, 1, 5, -2, 10},
+                {-20, -50, -2, -2, -2, -2, -50, -20},
+                {100, -20, 10, 5, 5, 10, -20, 100}
+            };
 
-            return 0;
+            int score = 0;
+            Color botColor = bot;
+            Color oppColor = botColor == Color.White ? Color.Black : Color.White;
+
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    if (board[row, col] == botColor)
+                        score += weights[row, col];
+                    else if (board[row, col] == oppColor)
+                        score -= weights[row, col];
+                }
+            }
+            return score;
         }
     }
 }

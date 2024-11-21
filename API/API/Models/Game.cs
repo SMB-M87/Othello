@@ -173,6 +173,11 @@ namespace API.Models
             }
         }
 
+        public void ByPass()
+        {
+            Date = DateTime.UtcNow.AddSeconds(-30);
+        }
+
         public void MakeMove(int rowMove, int columnMove)
         {
             if (Status == Status.Playing && PossibleMove(rowMove, columnMove))
