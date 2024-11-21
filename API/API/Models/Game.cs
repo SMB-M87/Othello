@@ -282,7 +282,10 @@ namespace API.Models
             }
 
             if (Finished())
+            {
+                PlayersTurn = Color.None;
                 Status = Status.Finished;
+            }
 
             Date = DateTime.UtcNow;
         }

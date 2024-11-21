@@ -51,7 +51,7 @@ namespace API.Data
                         Time = await GetTimerByPlayersToken(token),
                         InGame = game.Status == Status.Playing,
                         PlayersTurn = game.PlayersTurn,
-                        IsPlayersTurn = token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
+                        IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                         PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                         Board = game.Board,
                         Finished = game.Status == Status.Finished
@@ -90,7 +90,7 @@ namespace API.Data
                     Time = await GetTimerByPlayersToken(token),
                     InGame = game.Status == Status.Playing,
                     PlayersTurn = game.PlayersTurn,
-                    IsPlayersTurn = token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
+                    IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                     Board = game.Board,
                     Finished = game.Status == Status.Finished

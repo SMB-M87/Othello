@@ -214,7 +214,7 @@ namespace API.Service
 
         private static GameMove ChooseBotMove(List<GameMove> possibleMoves, Player bot, Color[,] board, Color colorPlayer)
         {
-            if (bot.Bot >= 1 && bot.Bot <= 4)
+            if (bot.Bot >= 1 && bot.Bot <= 4 && possibleMoves.Count > 1)
             {
                 Game clone = new("", "", colorPlayer, "", Status.Playing, colorPlayer)
                 {
