@@ -1,15 +1,6 @@
 Game.Othello = (function () {
-  // config
-  let configMap = {
-    apiUrl: "",
-  };
-
   // private functions
-  const _init = function () {
-    console.log("Othello module started from url: " + configMap.apiUrl);
-  };
-
-  const _update = function (data, playerColor) {
+  const _updateBoard = function (board, isPlayersTurn, playerColor) {
     const boardContainer = document.getElementById("game-board-container");
     boardContainer.innerHTML = "";
 
@@ -27,11 +18,7 @@ Game.Othello = (function () {
         td.style.backgroundColor =
           (row + col) % 2 === 0 ? "lawngreen" : "limegreen";
 
-        td.addEventListener("click", function () {
-          cellClicked(row, col);
-        });
-
-        const cellValue = data.board[row][col];
+        const cellValue = board[row][col];
         const cellDiv = document.createElement("div");
         cellDiv.style.display = "flex";
         cellDiv.style.justifyContent = "center";
@@ -52,11 +39,9 @@ Game.Othello = (function () {
           piece.style.color = "black";
           cellDiv.appendChild(piece);
         } else if (cellValue === 3) {
-          if (data.isPlayersTurn) {
+          if (isPlayersTurn) {
             const moveIndicator = document.createElement("div");
             moveIndicator.className = "possible-move";
-            moveIndicator.style.width = "30px";
-            moveIndicator.style.height = "30px";
             moveIndicator.style.border = `2px solid ${
               playerColor === 1 ? "white" : "black"
             }`;
@@ -64,17 +49,14 @@ Game.Othello = (function () {
             moveIndicator.style.backgroundColor = "transparent";
             moveIndicator.style.boxShadow = "0 0 5px rgba(0, 0, 0, 0.5)";
             cellDiv.appendChild(moveIndicator);
-            moveIndicator.classList.add("wobble");
             td.classList.add("wobble");
           }
         }
-
         td.appendChild(cellDiv);
         tr.appendChild(td);
       }
       table.appendChild(tr);
     }
-
     boardContainer.appendChild(table);
     _calculateScores();
   };
@@ -96,28 +78,17 @@ Game.Othello = (function () {
         }
       }
     });
-
     document.getElementById("white-score").textContent = whiteScore;
     document.getElementById("black-score").textContent = blackScore;
   };
 
-  const cellClicked = function (row, col) {
-    Game.Model.sendMove(row, col);
-  };
-
   // public functions
-  const init = (url) => {
-    configMap.apiUrl = url;
-    _init();
-  };
-
-  const update = function (data, playerColor) {
-    _update(data, playerColor);
+  const updateBoard = function (board, isPlayersTurn, playerColor) {
+    _updateBoard(board, isPlayersTurn, playerColor);
   };
 
   // return object
   return {
-    init: init,
-    update: update,
+    updateBoard: updateBoard
   };
 })();

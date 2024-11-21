@@ -15,7 +15,7 @@ class FeedbackWidget {
     widgetElement.empty().append(closeButton).append(`<span>${message}</span>`);
 
     const actionsContainer = $('<div class="feedback-widget__actions"></div>');
-    actions.forEach(action => {
+    actions.forEach((action) => {
       const iconElement = $(`<span>${action.icon}</span>`);
       iconElement.addClass(action.class);
       iconElement.on("click", action.callback);
@@ -85,61 +85,64 @@ class FeedbackWidget {
   }
 }
 
-const feedbackWidget = new FeedbackWidget("feedback-widget");
-
 $(function () {
+  const feedbackWidget = new FeedbackWidget("feedback-widget");
+
+  $("#game-board-container").on("click", ".possible-move", (event) => {
+    const cell = $(event.target).closest("td");
+    const row = cell.data("row");
+    const col = cell.data("col");
+
+    Game.Data.sendMove(row, col)
+      .then(() => {
+        feedbackWidget.log({ message: `Move made on row ${row} and col ${col}.`, type: "Success" });
+        feedbackWidget.history();
+      })
+      .catch((error) => {
+        feedbackWidget.log({ message: `Move failed: ${error.responseText || error}`, type: "Danger" });
+      });
+  });
+
   $("#pass-button").on("click", function () {
-    Game.Model.passGame()
-    .then(() => {
-      feedbackWidget.history();
-    })
-    .catch((error) => {
-      feedbackWidget.show("Pass failed: " + error.responseText, "Danger");
-    });
+    Game.Data.passGame()
+      .then(() => {
+        feedbackWidget.log({ message: `Turn passed.`, type: "Success" });
+        feedbackWidget.history();
+      })
+      .catch((error) => {
+        feedbackWidget.log({ message: "Pass failed: " + error.responseText, type: "Danger" });
+      });
   });
 
   $("#forfeit-button").on("click", function () {
     const feedbackSection = document.getElementById("feedback-section");
     feedbackSection.style.display = "flex";
 
-    feedbackWidget.show(
-      "Are you sure you want to forfeit?",
-      "info",
-      true,
-      [
-        {
-          icon: "✓",
-          class: "feedback-icon feedback-icon--success",
-          callback: () => {
-            Game.Model.forfeitGame()
+    feedbackWidget.show("Are you sure you want to forfeit?", "info", true, [
+      {
+        icon: "✓",
+        class: "feedback-icon feedback-icon--success",
+        callback: () => {
+          Game.Data.forfeitGame()
             .then(() => {
-              feedbackWidget.hide();
               feedbackWidget.removeLog();
+              feedbackWidget.hide();
             })
             .catch((error) => {
-              feedbackWidget.show("Forfeit failed: " + error.responseText, "Danger");
+              feedbackWidget.log(
+                "Forfeit failed: " + error.responseText,
+                "Danger"
+              );
             });
-          },
         },
-        {
-          icon: "✕",
-          class: "feedback-icon feedback-icon--danger",
-          callback: () => {
-            feedbackWidget.hide();
-          },
+      },
+      {
+        icon: "✕",
+        class: "feedback-icon feedback-icon--danger",
+        callback: () => {
+          feedbackWidget.hide();
         },
-      ]
-    );
+      },
+    ]);
   });
-
-  function startWobble() {
-    wobbleInterval = setInterval(() => {
-      $("#move-button").addClass("wobble");
-      setTimeout(() => {
-        $("#move-button").removeClass("wobble");
-      }, 500);
-    }, 2000);
-  }
-
-  startWobble();
 });

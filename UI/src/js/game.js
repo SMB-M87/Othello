@@ -2,30 +2,19 @@ const Game = (function (url, key) {
   // config
   let configMap = {
     apiUrl: url,
-    apiKey: key
-  };
-
-  let stateMap = {
-    gameState: "",
+    apiKey: key,
   };
 
   // private functions
   const _init = function () {
-    console.log("Game module started from url: " + configMap.apiUrl);
-    Game.Data.init(configMap.apiUrl, configMap.apiKey);
-    Game.Model.init(configMap.apiUrl, configMap.apiKey);
-    Game.Othello.init(configMap.apiUrl);
+    const feedbackWidget = FeedbackSingleton.getInstance();
+    feedbackWidget.removeLog();
+    Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
   };
 
   const _getCurrentGameState = function () {
     setInterval(function () {
-      let result = Game.Model.getGameState()
-        .then((data) => {
-          stateMap.gameState = data;
-        })
-        .catch((e) => {
-          console.log(e.message);
-        });
+      Game.Model.getGameState();
     }, 1000);
   };
 
@@ -33,7 +22,7 @@ const Game = (function (url, key) {
   const init = (callback) => {
     _init();
     _getCurrentGameState();
-    if(callback) callback();
+    if (callback) callback();
   };
 
   // return object
@@ -43,9 +32,7 @@ const Game = (function (url, key) {
 })("https://localhost:7023/api/game/", "test");
 
 $(() => {
-  function afterInit() {
-    console.log("Game init completed.");
-  }
+  function afterInit() {}
 
   Game.init(afterInit);
 });
