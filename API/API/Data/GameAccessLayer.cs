@@ -59,27 +59,6 @@ namespace API.Data
                 };
                 return model;
             }
-            else if (game != null && game.Second == null && game.Status == Status.Pending) // DELETE JUST FOR UI TESTING
-            {
-                var first = await GetPlayer(game.First);
-
-                var model = new GamePlay
-                {
-                    Opponent = "nobody",
-                    Color = game.FColor,
-                    Partial = new GamePartial()
-                    {
-                        Time = await GetTimerByPlayersToken(token),
-                        InGame = false,
-                        PlayersTurn = game.PlayersTurn,
-                        IsPlayersTurn = game.FColor == game.PlayersTurn,
-                        PossibleMove = game.IsThereAPossibleMove(game.FColor),
-                        Board = game.Board,
-                        Finished = false
-                    }
-                };
-                return model;
-            }
             else
             {
                 var model = new GamePlay
@@ -115,20 +94,6 @@ namespace API.Data
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
                     Board = game.Board,
                     Finished = game.Status == Status.Finished
-                };
-                return model;
-            }
-            else if (game != null && game.Second == null && game.Status == Status.Pending) // DELETE JUST FOR UI TESTING
-            {
-                var model = new GamePartial()
-                {
-                    Time = await GetTimerByPlayersToken(token),
-                    InGame = false,
-                    PlayersTurn = game.PlayersTurn,
-                    IsPlayersTurn = game.FColor == game.PlayersTurn,
-                    PossibleMove = game.IsThereAPossibleMove(game.FColor),
-                    Board = game.Board,
-                    Finished = false
                 };
                 return model;
             }

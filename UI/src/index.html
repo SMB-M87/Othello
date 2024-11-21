@@ -42,18 +42,45 @@
   </head>
 
   <body>
+    <section id="player-info" class="player-info">
+      <h2>
+        Playing against
+        <span
+          id="opponent-name"
+          style="font-weight: bold; color: #007bff"
+        ></span>
+      </h2>
+    </section>
+
+    <section id="score-display" class="score-display">
+      <p>
+        <span id="player-color-indicator" class="player-color-indicator">
+          <strong><span id="player-score">0</span></strong>
+        </span>
+      </p>
+      <p>
+        <span id="timer-color-indicator" class="player-color-indicator">
+          <strong><span id="time-remaining">0</span></strong>
+        </span>
+      </p>
+      <p>
+        <span id="opponent-color-indicator" class="player-color-indicator">
+          <strong><span id="opponent-score">0</span></strong>
+        </span>
+      </p>
+    </section>
+
     <!-- Game Board -->
     <section id="game-board-container"></section>
 
+    <!-- Buttons -->
+    <section id="button-container">
+      <button id="pass-button" class="button button--succes">Pass</button>
+      <button id="forfeit-button" class="button button--danger">Forfeit</button>
+    </section>
+
     <!-- Feedback Widget -->
     <section id="feedback-section" aria-label="Feedback Widget">
-      <!-- Buttons -->
-      <footer id="button-container">
-        <button id="move-button" class="button button--succes">Move</button>
-        <button id="pass-button" class="button button--succes">Pass</button>
-        <button id="forfeit-button" class="button button--danger">Forfeit</button>
-      </footer>
-
       <article id="feedback-widget" role="alert"></article>
     </section>
   </body>

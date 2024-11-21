@@ -1,30 +1,28 @@
-/* Feedback Widget Section */
 #feedback-section {
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   max-width: 400px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   background-color: white;
   border-radius: 8px;
 }
 
-/* Feedback Message Container */
 #feedback-widget {
   background-color: #f9f9f9;
   display: none;
   opacity: 0;
   border-radius: 8px;
-  padding: 20px;
+  padding-top: 25px;
   position: relative;
   color: #4a4a4a;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   transition: opacity 0.5s ease-in-out;
 }
@@ -32,7 +30,7 @@
 .feedback-widget__close {
   position: absolute;
   top: 5px;
-  right: 10px;
+  right: 6px;
   background: none;
   border: none;
   font-size: 18px;
@@ -46,10 +44,10 @@
 }
 
 .feedback-widget__actions {
-  margin-top: 10px;
+  margin-top: 5px;
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
 }
 
 .feedback-icon {
@@ -89,14 +87,13 @@
   animation: slideUp 0.5s forwards;
 }
 
-/* Buttons Section */
 #button-container {
   display: flex;
   gap: 10px;
   justify-content: center;
+  margin-top: 10px;
 }
 
-/* Button Styling - Standard */
 .button {
   padding: 10px 20px;
   border: none;
@@ -107,12 +104,10 @@
   transition: background-color 0.3s ease;
 }
 
-/* Standard Button Hover Effect */
 .button:hover {
   filter: brightness(90%);
 }
 
-/* Danger Button - Specific Style */
 .button--succes {
   background-color: #28a745;
 }
@@ -121,7 +116,6 @@
   background-color: #218838;
 }
 
-/* Danger Button - Specific Style */
 .button--danger {
   background-color: #dc3545;
 }
@@ -136,16 +130,36 @@
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(-5deg);
+    transform: rotate(-0.5deg);
   }
   75% {
-    transform: rotate(5deg);
+    transform: rotate(0.5deg);
   }
 }
 
-/* Wobble animation class */
 .wobble {
   animation: wobble 0.5s ease-in-out;
+}
+
+.player-info {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.score-display {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  gap: 20px;
+}
+
+.player-color-indicator {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
 }
 
 .othello-board {
@@ -154,12 +168,17 @@
 }
 
 .othello-board td {
-  width: 50px;
-  height: 50px;
-  background-color: green;
-  border: 1px solid #000;
+  width: 60px;
+  height: 60px;
+  background-color: #4caf50;
+  border: 2px solid #006400;
   position: relative;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.othello-board td:hover {
+  background-color: #66bb6a;
 }
 
 .white-piece,
@@ -167,51 +186,59 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin: 5px auto;
+  margin: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .white-piece {
-  background-color: white;
+  background: linear-gradient(to bottom, #ffffff, #dcdcdc);
 }
 
 .black-piece {
-  background-color: black;
+  background: linear-gradient(to bottom, #000000, #1a1919);
 }
 
 .possible-move {
-  background-color: limegreen;
-}
-
-.possible-move::after {
-  content: '';
-  width: 10px;
-  height: 10px;
-  background-color: yellow;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
-  position: absolute;
-  top: 20px;
-  left: 20px;
+  background-color: transparent;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Feedback Widget Responsive Design */
+.possible-move:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
 @media (max-width: 600px) {
-  /* Adjust feedback widget for mobile screens */
   #feedback-widget {
     font-size: 13px;
     padding: 15px;
   }
 
-  /* Hide close button on mobile devices */
   .feedback-widget__close {
     display: none;
   }
 
-  /* Stack buttons vertically */
   #button-container {
-    gap: 5px; /* Reduce spacing between buttons */
+    gap: 5px;
   }
 
-  .button {
-    width: 100%; /* Make buttons full width */
+  .othello-board td {
+    width: 50px;
+    height: 50px;
   }
+
+  .white-piece,
+  .black-piece {
+    width: 40px;
+    height: 40px;
+  }  
 }

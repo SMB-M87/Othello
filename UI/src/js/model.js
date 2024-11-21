@@ -7,6 +7,9 @@ Game.Model = (function () {
 
   let stateMap = {
     firstLoad: true,
+    opponent: '',
+    playerColor: '',
+    previousData: null,
   };
 
   // private functions
@@ -20,11 +23,21 @@ Game.Model = (function () {
     let dataPromise;
     if (stateMap.firstLoad) {
       dataPromise = Game.Data.get();
-      stateMap.firstLoad = false;
 
       return dataPromise
         .then((data) => {
-          Game.Othello.updateBoard(data.partial.board);
+          stateMap.opponent = data.opponent;
+          stateMap.playerColor = data.color;
+          stateMap.firstLoad = false;
+
+          document.getElementById('opponent-name').textContent = data.opponent;
+          _updateColorIndicators(stateMap.playerColor);
+
+          Game.Othello.update(data.partial, stateMap.playerColor);
+          _updateTimer(data.partial.isPlayersTurn, data.partial.time);
+          _toggleButtons(data.partial.isPlayersTurn, data.partial.possibleMove);
+          stateMap.previousData = data;
+
           return data;
         })
         .catch((e) => {
@@ -36,7 +49,10 @@ Game.Model = (function () {
 
       return dataPromise
         .then((data) => {
-          Game.Othello.updateBoard(data.board);
+          Game.Othello.update(data, stateMap.playerColor);
+          _updateTimer(data.isPlayersTurn, data.time);
+          _toggleButtons(data.isPlayersTurn, data.possibleMove);
+          stateMap.previousData.partial = data;
           return data;
         })
         .catch((e) => {
@@ -45,6 +61,55 @@ Game.Model = (function () {
         });
     }
   };
+
+  const _updateColorIndicators = function (playerColor) {
+    const playerColorIndicator = document.getElementById('player-color-indicator');
+    const opponentColorIndicator = document.getElementById('opponent-color-indicator');
+  
+    let playerColorHex = playerColor === 1 ? '#FFFFFF' : '#000000';
+    let opponentColorHex = playerColor === 1 ? '#000000' : '#FFFFFF';
+  
+    playerColorIndicator.style.backgroundColor = playerColorHex;
+    opponentColorIndicator.style.backgroundColor = opponentColorHex;
+
+    playerColorIndicator.style.color = opponentColorHex;
+    opponentColorIndicator.style.color = playerColorHex;
+  
+    document.getElementById('player-score').id = playerColor === 1 ? 'white-score' : 'black-score';
+    document.getElementById('opponent-score').id = playerColor === 1 ? 'black-score' : 'white-score';
+  };
+
+  const _updateTimer = function (isPlayersTurn, timeLeft) {
+    const timer = document.getElementById('timer-color-indicator');
+    
+    timer.style.backgroundColor = isPlayersTurn ? 'lightgreen' : 'lightcoral';
+    timer.style.color = isPlayersTurn ? "#006400" : "#8B0000";
+
+    document.getElementById('time-remaining').textContent = timeLeft;
+  };
+
+  const _toggleButtons = function (isPlayersTurn, possibleMove) {
+    const feedbackWidget = document.getElementById("feedback-widget");
+    const buttonContainer = document.getElementById("button-container");
+    const passButton = document.getElementById("pass-button");
+    const forfeitButton = document.getElementById("forfeit-button");
+  
+    if (isPlayersTurn) {
+      feedbackWidget.style.display = "block";
+      buttonContainer.style.display = "flex";
+  
+      if (!possibleMove) {
+        passButton.style.display = "inline-block";
+      } else {
+        passButton.style.display = "none";
+      }
+  
+      forfeitButton.style.display = "inline-block";
+    } else {
+      feedbackWidget.style.display = "none";
+      buttonContainer.style.display = "none";
+    }
+  };  
 
   const _sendMove = function (row, col) {
     const token = configMap.apiKey;
@@ -62,15 +127,11 @@ Game.Model = (function () {
       data: JSON.stringify(moveData),
     })
       .then((response) => {
-        feedbackWidget.show(
-          "You have successfully made a move, wait on your opponent to make his.",
-          "Success"
-        );
         _getGameState();
       })
       .catch((error) => {
         feedbackWidget.show(
-          "Move failed... Try again or make a different move." +
+          "Move failed: " +
             error.responseText,
           "Danger"
         );

@@ -44,6 +44,7 @@ class FeedbackWidget {
 
   hide() {
     const widgetElement = $("#" + this._elementId);
+    const feedbackSection = document.getElementById("feedback-section");
 
     widgetElement.addClass("hide-animation");
 
@@ -55,6 +56,7 @@ class FeedbackWidget {
         .attr("class", "");
     }, 500);
 
+    feedbackSection.style.display = "none";
     if (this._timeout) clearTimeout(this._timeout);
   }
 
@@ -86,18 +88,9 @@ class FeedbackWidget {
 const feedbackWidget = new FeedbackWidget("feedback-widget");
 
 $(function () {
-  $("#move-button").on("click", function () {
-    feedbackWidget.show(
-      "You have successfully made a move, wait on your opponent to make his.",
-      "Success"
-    );
-    feedbackWidget.history();
-  });
-
   $("#pass-button").on("click", function () {
     Game.Model.passGame()
     .then(() => {
-      feedbackWidget.show("You have successfully passed your turn.", "Success");
       feedbackWidget.history();
     })
     .catch((error) => {
@@ -106,6 +99,9 @@ $(function () {
   });
 
   $("#forfeit-button").on("click", function () {
+    const feedbackSection = document.getElementById("feedback-section");
+    feedbackSection.style.display = "flex";
+
     feedbackWidget.show(
       "Are you sure you want to forfeit?",
       "info",
@@ -117,7 +113,7 @@ $(function () {
           callback: () => {
             Game.Model.forfeitGame()
             .then(() => {
-              feedbackWidget.show("You have forfeited the game.", "Success");
+              feedbackWidget.hide();
               feedbackWidget.removeLog();
             })
             .catch((error) => {
