@@ -13,6 +13,5 @@ const files = {
   sass: ["src/css/*.scss"],
   html: ["src/index.html"],
 };
-const name = "SMB-M87";
 
-module.exports = { serverProjectPath, files, name };
+export { serverProjectPath, files };

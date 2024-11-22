@@ -132,14 +132,14 @@ Game.Model = (function () {
       buttonContainer.classList.remove("hidden");
 
       if (!possibleMove) {
-        passButton.classList.add("inline-block");
+        passButton.classList.add("inline-block", "fade-in");
         passButton.classList.remove("hidden");
       } else {
         passButton.classList.add("hidden");
         passButton.classList.remove("inline-block");
       }
 
-      forfeitButton.classList.add("inline-block");
+      forfeitButton.classList.add("inline-block", "fade-in");
       forfeitButton.classList.remove("hidden");
     } else {
       feedbackWidget.classList.add("hidden");
@@ -149,10 +149,10 @@ Game.Model = (function () {
       buttonContainer.classList.remove("flex");
 
       passButton.classList.add("hidden");
-      passButton.classList.remove("inline-block");
+      passButton.classList.remove("inline-block", "fade-in");
 
       forfeitButton.classList.add("hidden");
-      forfeitButton.classList.remove("inline-block");
+      forfeitButton.classList.remove("inline-block", "fade-in");
     }
   };
 
