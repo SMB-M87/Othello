@@ -76,14 +76,16 @@ Game.Model = (function () {
       "opponent-color-indicator"
     );
 
-    let playerColorHex = playerColor === 1 ? "#FFFFFF" : "#000000";
-    let opponentColorHex = playerColor === 1 ? "#000000" : "#FFFFFF";
+    playerColorIndicator.classList.remove("white", "black");
+    opponentColorIndicator.classList.remove("white", "black");
 
-    playerColorIndicator.style.backgroundColor = playerColorHex;
-    opponentColorIndicator.style.backgroundColor = opponentColorHex;
-
-    playerColorIndicator.style.color = opponentColorHex;
-    opponentColorIndicator.style.color = playerColorHex;
+    if (playerColor === 1) {
+      playerColorIndicator.classList.add("white");
+      opponentColorIndicator.classList.add("black");
+    } else {
+      playerColorIndicator.classList.add("black");
+      opponentColorIndicator.classList.add("white");
+    }
 
     document.getElementById("player-score").id =
       playerColor === 1 ? "white-score" : "black-score";
@@ -94,9 +96,26 @@ Game.Model = (function () {
   const _updateTimer = function (isPlayersTurn, timeLeft) {
     const timer = document.getElementById("timer-color-indicator");
 
-    timer.style.backgroundColor = isPlayersTurn ? "lightgreen" : "lightcoral";
-    timer.style.color = isPlayersTurn ? "#006400" : "#8B0000";
+    if (isPlayersTurn) {
+      timer.classList.remove("red");
+      timer.classList.add("green");
 
+      if (
+        timeLeft.endsWith("0") ||
+        timeLeft.endsWith("5") ||
+        timeLeft === "4" ||
+        timeLeft === "3" ||
+        timeLeft === "2"||
+        timeLeft === "1"
+      ) {
+        timer.classList.add("wobble");
+      } else {
+        timer.classList.remove("wobble");
+      }
+    } else {
+      timer.classList.remove("green");
+      timer.classList.add("red");
+    }
     document.getElementById("time-remaining").textContent = timeLeft;
   };
 
@@ -107,18 +126,34 @@ Game.Model = (function () {
     const forfeitButton = document.getElementById("forfeit-button");
 
     if (isPlayersTurn) {
-      feedbackWidget.style.display = "block";
-      buttonContainer.style.display = "flex";
-
+      feedbackWidget.classList.add("visible");
+      feedbackWidget.classList.remove("hidden");
+  
+      buttonContainer.classList.add("flex");
+      buttonContainer.classList.remove("hidden");
+  
       if (!possibleMove) {
-        passButton.style.display = "inline-block";
+        passButton.classList.add("inline-block");
+        passButton.classList.remove("hidden");
       } else {
-        passButton.style.display = "none";
+        passButton.classList.add("hidden");
+        passButton.classList.remove("inline-block");
       }
-      forfeitButton.style.display = "inline-block";
+  
+      forfeitButton.classList.add("inline-block");
+      forfeitButton.classList.remove("hidden");
     } else {
-      feedbackWidget.style.display = "none";
-      buttonContainer.style.display = "none";
+      feedbackWidget.classList.add("hidden");
+      feedbackWidget.classList.remove("visible");
+  
+      buttonContainer.classList.add("hidden");
+      buttonContainer.classList.remove("flex");
+  
+      passButton.classList.add("hidden");
+      passButton.classList.remove("inline-block");
+  
+      forfeitButton.classList.add("hidden");
+      forfeitButton.classList.remove("inline-block");
     }
   };
 

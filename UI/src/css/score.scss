@@ -1,0 +1,34 @@
+.color-indicator {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+.score-display {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  gap: 20px;
+}
+
+.color-indicator.white {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.color-indicator.black {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.color-indicator.green {
+  background-color: lightgreen;
+  color: #006400;
+}
+
+.color-indicator.red {
+  background-color: lightcoral;
+  color: #8B0000;
+}

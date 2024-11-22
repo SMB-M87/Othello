@@ -15,10 +15,17 @@ const hello = function (done) {
   done();
 };
 
+const watchFiles = () => {
+  watch(files.sass, sass);
+  watch(files.js, js);
+  watch(files.html, html);
+};
+
 const _default = series(hello, html, sass, js);
 module.exports = {
   default: _default,
   js,
   sass,
-  html
+  html,
+  watch: watchFiles
 };

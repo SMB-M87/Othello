@@ -10,8 +10,10 @@ class FeedbackWidget {
 
   show(message, type, autoDismiss = true, actions = []) {
     const widgetElement = $("#" + this._elementId);
+    const feedbackSection = $("#feedback-section");
     const closeButton = $('<button class="feedback-widget__close">×</button>');
 
+    feedbackSection.addClass("flex").removeClass("hidden");
     widgetElement.empty().append(closeButton).append(`<span>${message}</span>`);
 
     const actionsContainer = $('<div class="feedback-widget__actions"></div>');
@@ -21,16 +23,11 @@ class FeedbackWidget {
       iconElement.on("click", action.callback);
       actionsContainer.append(iconElement);
     });
-
     widgetElement.append(actionsContainer);
 
-    widgetElement.attr("class", `alert alert-${type.toLowerCase()}`);
-    widgetElement.css("display", "block");
-
-    widgetElement.css("display", "block");
-    setTimeout(() => {
-      widgetElement.css("opacity", "1");
-    }, 10);
+    widgetElement
+      .removeClass("hidden fade-out")
+      .addClass(`visible alert alert-${type.toLowerCase()} fade-in`);
 
     if (autoDismiss) {
       if (this._timeout) clearTimeout(this._timeout);
@@ -38,25 +35,20 @@ class FeedbackWidget {
     }
 
     closeButton.on("click", () => this.hide());
-
     this.log({ message, type });
   }
 
   hide() {
     const widgetElement = $("#" + this._elementId);
-    const feedbackSection = document.getElementById("feedback-section");
+    const feedbackSection = $("#feedback-section");
 
-    widgetElement.addClass("hide-animation");
+    widgetElement.removeClass("fade-in").addClass("fade-out");
 
     setTimeout(() => {
-      widgetElement
-        .css("display", "none")
-        .removeClass("hide-animation")
-        .empty()
-        .attr("class", "");
+      widgetElement.addClass("hidden").removeClass("visible fade-out").empty();
+      feedbackSection.addClass("hidden").removeClass("flex");
     }, 500);
 
-    feedbackSection.style.display = "none";
     if (this._timeout) clearTimeout(this._timeout);
   }
 
@@ -95,11 +87,17 @@ $(function () {
 
     Game.Data.sendMove(row, col)
       .then(() => {
-        feedbackWidget.log({ message: `Move made on row ${row} and col ${col}.`, type: "Success" });
+        feedbackWidget.log({
+          message: `Move made on row ${row} and col ${col}.`,
+          type: "Success",
+        });
         feedbackWidget.history();
       })
       .catch((error) => {
-        feedbackWidget.log({ message: `Move failed: ${error.responseText || error}`, type: "Danger" });
+        feedbackWidget.log({
+          message: `Move failed: ${error.responseText || error}`,
+          type: "Danger",
+        });
       });
   });
 
@@ -110,14 +108,14 @@ $(function () {
         feedbackWidget.history();
       })
       .catch((error) => {
-        feedbackWidget.log({ message: "Pass failed: " + error.responseText, type: "Danger" });
+        feedbackWidget.log({
+          message: "Pass failed: " + error.responseText,
+          type: "Danger",
+        });
       });
   });
 
   $("#forfeit-button").on("click", function () {
-    const feedbackSection = document.getElementById("feedback-section");
-    feedbackSection.style.display = "flex";
-
     feedbackWidget.show("Are you sure you want to forfeit?", "info", true, [
       {
         icon: "✓",

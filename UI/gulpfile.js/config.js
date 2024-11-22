@@ -10,7 +10,7 @@ const files = {
     "src/js/othello.js",
   ],
   js: ["src/js/*.js"],
-  css: ["src/css/*.scss"],
+  sass: ["src/css/*.scss"],
   html: ["src/index.html"],
 };
 const name = "SMB-M87";
