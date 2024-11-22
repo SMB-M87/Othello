@@ -12,6 +12,7 @@ const files = {
   js: ["src/js/*.js"],
   sass: ["src/css/*.scss"],
   html: ["src/index.html"],
+  vendor: ["src/vendor/*.js"]
 };
 
 export { serverProjectPath, files };

@@ -1,9 +1,9 @@
 import gulp from "gulp";
 const { src, dest } = gulp;
 
-import order from "gulp-order"; //npm i gulp-order --save-dev
-import concat from "gulp-concat"; //npm i gulp-concat --save-dev
-import babel from "gulp-babel"; //npm i --save-dev gulp-babel @babel/core @babel/preset-env
+import order from "gulp-order";
+import concat from "gulp-concat";
+import babel from "gulp-babel";
 import uglify from "gulp-uglifyjs";
 
 const js = function (backendPath, filesJs, filesJsOrder) {

@@ -132,7 +132,7 @@ Game.Model = (function () {
       buttonContainer.classList.remove("hidden");
 
       if (!possibleMove) {
-        passButton.classList.add("inline-block", "fade-in");
+        passButton.classList.add("inline-block", "pass-wobble");
         passButton.classList.remove("hidden");
       } else {
         passButton.classList.add("hidden");
@@ -149,7 +149,7 @@ Game.Model = (function () {
       buttonContainer.classList.remove("flex");
 
       passButton.classList.add("hidden");
-      passButton.classList.remove("inline-block", "fade-in");
+      passButton.classList.remove("inline-block", "pass-wobble");
 
       forfeitButton.classList.add("hidden");
       forfeitButton.classList.remove("inline-block", "fade-in");

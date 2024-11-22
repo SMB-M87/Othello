@@ -6,6 +6,7 @@ import { serverProjectPath, files } from "./config.js";
 import jsTask from "./tasks/js.js";
 import sassTask from "./tasks/sass.js";
 import htmlTask from "./tasks/html.js";
+import vendorTask from "./tasks/vendor.js";
 
 const js = jsTask.js(serverProjectPath, files.js, files.jsOrder);
 js.displayName = "js";
@@ -16,13 +17,17 @@ sass.displayName = "sass";
 const html = htmlTask.html(serverProjectPath, files.html);
 html.displayName = "html";
 
+const vendor = vendorTask.vendor(serverProjectPath, files.vendor);
+vendor.displayName = "vendor";
+
 const watchFiles = () => {
   watch(files.sass, sass);
   watch(files.js, js);
   watch(files.html, html);
+  watch(files.vendor, vendor);
 };
 
-export default series(html, sass, js);
+export default series(html, sass, js, vendor);
 
-export const build = series(html, sass, js);
+export const build = series(html, sass, js, vendor);
 export const sucks = watchFiles;

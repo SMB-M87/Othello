@@ -11,7 +11,7 @@ import cleanCSS from "gulp-clean-css";
 import autoprefixer from "gulp-autoprefixer";
 import rename from "gulp-rename";
 
-const compileStyles  = function (serverProjectPath, files_sass) {
+const compileStyles  = function (backendPath, files_sass) {
   return function () {
     return src("src/css/main.scss")
       .pipe(sourcemaps.init())
@@ -21,7 +21,7 @@ const compileStyles  = function (serverProjectPath, files_sass) {
       .pipe(cleanCSS())
       .pipe(rename("style.min.css"))
       .pipe(sourcemaps.write("."))
-      .pipe(dest(serverProjectPath + "/css"));
+      .pipe(dest(backendPath + "/css"));
   };
 };
 
