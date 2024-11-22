@@ -68,6 +68,29 @@ Game.Othello = (function () {
     document.getElementById("black-score").textContent = blackScore;
   };
 
+  const _makeMove = function (board) {
+    const previousBoard = Game.Model.getBoard() || [];
+    const boardCells = document.querySelectorAll("#game-board-container td");
+
+    boardCells.forEach((cell) => {
+      const row = parseInt(cell.dataset.row, 10);
+      const col = parseInt(cell.dataset.col, 10);
+      const currentValue = board[row][col];
+      const previousValue = previousBoard[row]?.[col] || 0;
+
+      if (
+        currentValue !== previousValue &&
+        (currentValue === 1 || currentValue === 2)
+      ) {
+        const piece = cell.querySelector("i");
+        if (piece) {
+          piece.classList.remove("highlight");
+          piece.classList.add("glow");
+        }
+      }
+    });
+  };
+
   const _highlightChanges = function (board) {
     const previousBoard = Game.Model.getBoard() || [];
     const boardCells = document.querySelectorAll("#game-board-container td");
@@ -84,6 +107,7 @@ Game.Othello = (function () {
       ) {
         const piece = cell.querySelector("i");
         if (piece) {
+          piece.classList.remove("glow");
           piece.classList.add("highlight");
         }
       }
@@ -95,6 +119,10 @@ Game.Othello = (function () {
     _updateBoard(board, isPlayersTurn, playerColor);
   };
 
+  const makeMove = function (board) {
+    _makeMove(board);
+  };
+
   const highlightChanges = function (board) {
     _highlightChanges(board);
   };
@@ -102,6 +130,7 @@ Game.Othello = (function () {
   // return object
   return {
     updateBoard: updateBoard,
+    makeMove: makeMove,
     highlightChanges: highlightChanges,
   };
 })();

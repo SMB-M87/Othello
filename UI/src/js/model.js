@@ -41,18 +41,20 @@ Game.Model = (function () {
             Game.Othello.highlightChanges(data.board);
             _toggleButtons(data.isPlayersTurn, data.possibleMove);
             stateMap.turnReload = false;
+            stateMap.opponentReload = true;
           }
           _updateTimer(data.isPlayersTurn, data.time);
           stateMap.board = data.board;
         } else {
-          if (!stateMap.turnReload) {
-            stateMap.turnReload = true;
-          }
           Game.Othello.updateBoard(
             data.board,
             data.isPlayersTurn,
             stateMap.playerColor
           );
+          if (!stateMap.turnReload) {
+            Game.Othello.makeMove(data.board);
+            stateMap.turnReload = true;
+          }
           _toggleButtons(data.isPlayersTurn, data.possibleMove);
           _updateTimer(data.isPlayersTurn, data.time);
           stateMap.board = data.board;

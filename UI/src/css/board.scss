@@ -85,8 +85,12 @@
   animation: wobble 0.5s ease-in-out infinite;
 }
 
+.glow {
+  animation: click-glow 0.7s ease-in-out;
+}
+
 .highlight {
-  animation: highlights 5s ease-in-out infinite;
+  animation: fadeIn 0.7s ease-in-out, highlights 5s ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -113,13 +117,16 @@
 
 @keyframes click-glow {
   0% {
-    box-shadow: 0 0 15px rgba(255, 255, 0, 0.8), 0 0 30px rgba(255, 255, 0, 0.4);
+    opacity: 0;
+    box-shadow: 0 0 15px rgba(1, 230, 255, 0.8), 0 0 30px rgba(5, 247, 211, 0.4);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 255, 0, 0.6), 0 0 50px rgba(255, 255, 0, 0.3);
+    opacity: 0.5;
+    box-shadow: 0 0 30px rgba(51, 246, 126, 0.6), 0 0 50px rgba(0, 255, 34, 0.3);
   }
   100% {
-    box-shadow: 0 0 10px rgba(255, 255, 0, 0.5), 0 0 20px rgba(255, 255, 0, 0.2);
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(255, 163, 16, 0.5), 0 0 20px rgba(239, 82, 168, 0.2);
   }
 }
 
