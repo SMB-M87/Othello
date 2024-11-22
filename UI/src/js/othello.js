@@ -32,7 +32,9 @@ Game.Othello = (function () {
           if (isPlayersTurn) {
             const moveIndicator = document.createElement("div");
             moveIndicator.className = "possible-move";
-            moveIndicator.classList.add(playerColor === 1 ? "white-border" : "black-border");
+            moveIndicator.classList.add(
+              playerColor === 1 ? "white-border" : "black-border"
+            );
             cellDiv.appendChild(moveIndicator);
           }
         }
@@ -66,13 +68,40 @@ Game.Othello = (function () {
     document.getElementById("black-score").textContent = blackScore;
   };
 
+  const _highlightChanges = function (board) {
+    const previousBoard = Game.Model.getBoard() || [];
+    const boardCells = document.querySelectorAll("#game-board-container td");
+
+    boardCells.forEach((cell) => {
+      const row = parseInt(cell.dataset.row, 10);
+      const col = parseInt(cell.dataset.col, 10);
+      const currentValue = board[row][col];
+      const previousValue = previousBoard[row]?.[col] || 0;
+
+      if (
+        currentValue !== previousValue &&
+        (currentValue === 1 || currentValue === 2)
+      ) {
+        const piece = cell.querySelector("i");
+        if (piece) {
+          piece.classList.add("highlight");
+        }
+      }
+    });
+  };
+
   // public functions
   const updateBoard = function (board, isPlayersTurn, playerColor) {
     _updateBoard(board, isPlayersTurn, playerColor);
   };
 
+  const highlightChanges = function (board) {
+    _highlightChanges(board);
+  };
+
   // return object
   return {
-    updateBoard: updateBoard
+    updateBoard: updateBoard,
+    highlightChanges: highlightChanges,
   };
 })();

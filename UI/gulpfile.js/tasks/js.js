@@ -18,4 +18,4 @@ const js = function (backendPath, filesJs, filesJsOrder) {
   };
 };
 
-module.exports = { js }
+module.exports = { js };

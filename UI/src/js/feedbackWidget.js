@@ -1,5 +1,6 @@
 class FeedbackWidget {
   constructor(elementId) {
+    console.log("Initializing FeedbackWidget with elementId:", elementId);
     this._elementId = elementId;
     this._timeout = null;
   }
@@ -78,7 +79,7 @@ class FeedbackWidget {
 }
 
 $(function () {
-  const feedbackWidget = new FeedbackWidget("feedback-widget");
+  const feedbackWidget = FeedbackSingleton.getInstance();
 
   $("#game-board-container").on("click", ".possible-move", (event) => {
     const cell = $(event.target).closest("td");

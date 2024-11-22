@@ -5,24 +5,22 @@ Game.Model = (function () {
     turnReload: true,
     opponent: "",
     playerColor: "",
-    previousData: null,
+    board: null,
   };
 
   // private functions
   const _getGameState = function () {
-    let dataPromise;
-
-    if (stateMap.firstLoad) {
-      dataPromise = Game.Data.get();
-    } else {
-      dataPromise = Game.Data.getPartial();
-    }
+    let dataPromise = stateMap.firstLoad
+      ? Game.Data.get()
+      : Game.Data.getPartial();
 
     return dataPromise
       .then((data) => {
         if (stateMap.firstLoad) {
           stateMap.opponent = data.opponent;
           stateMap.playerColor = data.color;
+          stateMap.board = data.partial.board;
+          stateMap.firstLoad = false;
 
           document.getElementById("opponent-name").textContent = data.opponent;
           _updateColorIndicators(stateMap.playerColor);
@@ -33,8 +31,6 @@ Game.Model = (function () {
           );
           _toggleButtons(data.partial.isPlayersTurn, data.partial.possibleMove);
           _updateTimer(data.partial.isPlayersTurn, data.partial.time);
-          stateMap.previousData = data;
-          stateMap.firstLoad = false;
         } else if (data.isPlayersTurn) {
           if (stateMap.turnReload) {
             Game.Othello.updateBoard(
@@ -42,11 +38,12 @@ Game.Model = (function () {
               data.isPlayersTurn,
               stateMap.playerColor
             );
+            Game.Othello.highlightChanges(data.board);
             _toggleButtons(data.isPlayersTurn, data.possibleMove);
             stateMap.turnReload = false;
           }
           _updateTimer(data.isPlayersTurn, data.time);
-          stateMap.previousData.partial = data;
+          stateMap.board = data.board;
         } else {
           if (!stateMap.turnReload) {
             stateMap.turnReload = true;
@@ -58,7 +55,7 @@ Game.Model = (function () {
           );
           _toggleButtons(data.isPlayersTurn, data.possibleMove);
           _updateTimer(data.isPlayersTurn, data.time);
-          stateMap.previousData.partial = data;
+          stateMap.board = data.board;
         }
         return data;
       })
@@ -105,7 +102,7 @@ Game.Model = (function () {
         timeLeft.endsWith("5") ||
         timeLeft === "4" ||
         timeLeft === "3" ||
-        timeLeft === "2"||
+        timeLeft === "2" ||
         timeLeft === "1"
       ) {
         timer.classList.add("wobble");
@@ -128,10 +125,10 @@ Game.Model = (function () {
     if (isPlayersTurn) {
       feedbackWidget.classList.add("visible");
       feedbackWidget.classList.remove("hidden");
-  
+
       buttonContainer.classList.add("flex");
       buttonContainer.classList.remove("hidden");
-  
+
       if (!possibleMove) {
         passButton.classList.add("inline-block");
         passButton.classList.remove("hidden");
@@ -139,22 +136,26 @@ Game.Model = (function () {
         passButton.classList.add("hidden");
         passButton.classList.remove("inline-block");
       }
-  
+
       forfeitButton.classList.add("inline-block");
       forfeitButton.classList.remove("hidden");
     } else {
       feedbackWidget.classList.add("hidden");
       feedbackWidget.classList.remove("visible");
-  
+
       buttonContainer.classList.add("hidden");
       buttonContainer.classList.remove("flex");
-  
+
       passButton.classList.add("hidden");
       passButton.classList.remove("inline-block");
-  
+
       forfeitButton.classList.add("hidden");
       forfeitButton.classList.remove("inline-block");
     }
+  };
+
+  const _getBoard = function () {
+    return stateMap.board;
   };
 
   // public functions
@@ -165,5 +166,6 @@ Game.Model = (function () {
   // return object
   return {
     getGameState: getGameState,
+    getBoard: _getBoard,
   };
 })();

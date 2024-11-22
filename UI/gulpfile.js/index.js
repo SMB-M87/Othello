@@ -1,10 +1,10 @@
-const { series } = require("gulp");
+const { series, watch } = require("gulp");
 const { serverProjectPath, files, name } = require("./config");
 
 const js = require("./tasks/js").js(serverProjectPath, files.js, files.jsOrder);
 js.displayName = "js";
 
-const sass = require("./tasks/sass").sass(serverProjectPath, files.css);
+const sass = require("./tasks/sass").sass(serverProjectPath, files.sass);
 sass.displayName = "sass";
 
 const html = require("./tasks/html").html(serverProjectPath, files.html);
@@ -27,5 +27,5 @@ module.exports = {
   js,
   sass,
   html,
-  watch: watchFiles
+  watch: watchFiles,
 };
