@@ -1,6 +1,5 @@
 ﻿using API.Data;
 using API.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Service
 {
@@ -52,7 +51,7 @@ namespace API.Service
 
         private static async Task CleanUpInactiveGames(Database context)
         {
-            var activeGames = context.Games.ToList();
+            var activeGames = context.Games.Where(g => g.Status != Status.Finished).ToList();
 
             foreach (var game in activeGames)
             {
@@ -66,11 +65,11 @@ namespace API.Service
                         double first_timer = (DateTime.UtcNow - first.LastActivity).TotalSeconds;
                         double second_timer = (DateTime.UtcNow - second.LastActivity).TotalSeconds;
 
-                        if (first_timer >= 70)
+                        if (first_timer >= 65 && game.FColor == game.PlayersTurn)
                         {
                             ForfeitGame(game, game.Second, game.First, context);
                         }
-                        else if (second_timer >= 70)
+                        else if (second_timer >= 65 && game.SColor == game.PlayersTurn)
                         {
                             ForfeitGame(game, game.First, game.Second, context);
                         }

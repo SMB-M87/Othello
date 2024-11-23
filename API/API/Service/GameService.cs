@@ -54,16 +54,12 @@ namespace API.Service
 
         private static async Task FinishGame(Database context)
         {
-            var activeGames = context.Games.Where(g => g.Status == Status.Playing || g.Status == Status.Finished).ToList();
+            var activeGames = context.Games.Where(g => g.Status == Status.Finished).ToList();
 
             foreach (var game in activeGames)
             {
-                if (game.Second != null && game.Finished())
+                if (game.Second != null)
                 {
-                    game.Finish();
-                    context.Entry(game).Property(g => g.Status).IsModified = true;
-                    context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
-
                     Color win = game.WinningColor();
                     string winner = win == game.FColor ? game.First : game.Second;
                     string loser = win == game.FColor ? game.Second : game.First;

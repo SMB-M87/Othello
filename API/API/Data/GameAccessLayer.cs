@@ -72,7 +72,8 @@ namespace API.Data
                         IsPlayersTurn = false,
                         PossibleMove = false,
                         Board = new Color[8, 8],
-                        Time = string.Empty
+                        Time = string.Empty,
+                        Finished = true
                     }
                 };
                 return model;
@@ -106,7 +107,8 @@ namespace API.Data
                     IsPlayersTurn = false,
                     PossibleMove = false,
                     Board = new Color[8, 8],
-                    Time = string.Empty
+                    Time = string.Empty,
+                    Finished = true
                 };
                 return model;
             }
