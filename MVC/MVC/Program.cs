@@ -110,6 +110,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
+app.UseMiddleware<URLManager>();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
@@ -117,7 +119,5 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=Home}/{action=Index}/{id?}");
     endpoints.MapRazorPages();
 });
-
-app.UseMiddleware<URLManager>();
 
 app.Run();
