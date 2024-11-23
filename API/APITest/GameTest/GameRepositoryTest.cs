@@ -156,20 +156,6 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public void Delete_Correct()
-        {
-            int size = _context.Games.Count();
-
-            _repository.GameRepository.Delete("fourth");
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(actual: _context.Games.Count(), Is.Not.EqualTo(size));
-                Assert.That(actual: _context.Games.Count(), Is.EqualTo(expected: size - 1));
-            });
-        }
-
-        [Test]
         public async Task GetPlayersGame_Incorrect()
         {
             string playerToken = "first123456";

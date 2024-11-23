@@ -1308,7 +1308,7 @@ namespace APITest.GameTest
 
             game.Pass();
 
-            Assert.That(game.PlayersTurn, Is.EqualTo(Color.White));
+            Assert.That(game.PlayersTurn, Is.EqualTo(Color.None));
         }
 
         [Test]
@@ -1393,7 +1393,7 @@ namespace APITest.GameTest
 
             game.Pass();
 
-            Assert.That(game.PlayersTurn, Is.EqualTo(Color.Black));
+            Assert.That(game.PlayersTurn, Is.EqualTo(Color.None));
         }
 
         [Test]

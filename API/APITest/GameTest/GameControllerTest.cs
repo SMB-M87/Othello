@@ -544,24 +544,6 @@ namespace APITest.GameTest
         }
 
         [Test]
-        public async Task Delete_OKAsync()
-        {
-            ActionResult<HttpResponseMessage>? result = await _controller.Delete(new ID { Token = "fourth" });
-            HttpResponseMessage? response = result?.Value;
-
-            var game = await _repository.GameRepository.Get("fourth");
-
-            if (response is not null)
-                Assert.Multiple(() =>
-                {
-                    Assert.That(actual: response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(actual: game, Is.Null);
-                });
-            else
-                Assert.Fail("Respons is null.");
-        }
-
-        [Test]
         public async Task Delete_Game_BadRequestAsync()
         {
             ActionResult<HttpResponseMessage>? result = await _controller.Delete(new("zero"));

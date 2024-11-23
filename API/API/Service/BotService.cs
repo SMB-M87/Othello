@@ -159,8 +159,11 @@ namespace API.Service
                             var move = ChooseBotMove(possibleMoves, bot, game.Board, game.PlayersTurn);
                             game.MakeMove(move.Row, move.Column);
                         }
-                        catch
+                        catch (Exception ex) 
                         {
+                            Console.WriteLine($"Error while making a move for bot {bot.Token} in game {game.Token}: {ex.Message}");
+                            Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+
                             game.ByPass();
                             game.Pass();
                         }
@@ -256,7 +259,7 @@ namespace API.Service
 
         private static int Minimax(Game gameState, int depth, int alpha, int beta, bool maximizingPlayer, Color bot)
         {
-            if (depth == 0 || gameState.Finished())
+            if (depth == 0 || gameState.Finished() || bot == Color.None)
             {
                 return EvaluateBoard(gameState.Board, gameState.PlayersTurn, bot);
             }
@@ -347,7 +350,12 @@ namespace API.Service
             int botMoves;
             int oppMoves;
 
-            if (playersTurn == bot)
+            if (playersTurn == Color.None)
+            {
+                botMoves = 1000;
+                oppMoves = 0;
+            }
+            else if (playersTurn == bot)
             {
                 botMoves = GetPossibleMoves(board).Count;
 
