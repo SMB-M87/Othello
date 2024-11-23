@@ -1,5 +1,21 @@
 ﻿<iframe src="@Url.Content("~/index.html")" style="width: 100%; height: 100vh; border: none;"></iframe>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@*<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="@Url.Content("~/js/vendor.js")"></script>
-<script src="@Url.Content("~/js/app.js")"></script>
+<script src="@Url.Content("~/js/app.js")"></script> *@
+
+@* <link rel="stylesheet" href="@Url.Content("~/css/style.min.css")" />
+<script src="@Url.Content("~/js/vendor.js")"></script> *@
+
+<script>
+  var GameConfig = {
+    apiUrl: '@Url.Action("", "", null, Request.Scheme + "://" + Request.Host + "/api/game/")',
+    userToken: '@User.Identity.GetUserId()',
+    redirectUrl: '@Url.Action("Result", "Home")'
+  };
+
+    document.getElementById("game-iframe").onload = function () {
+    const iframe = document.getElementById("game-iframe").contentWindow;
+    iframe.postMessage(GameConfig, "*");
+  };
+</script>
