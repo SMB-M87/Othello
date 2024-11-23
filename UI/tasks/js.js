@@ -6,10 +6,10 @@ import concat from "gulp-concat";
 import babel from "gulp-babel";
 import uglify from "gulp-uglifyjs";
 
-const js = function (backendPath, filesJs, filesJsOrder) {
+const js = function (backendPath, files, filesOrder) {
   return function () {
-    return src(filesJs)
-      .pipe(order(filesJsOrder, { base: "./" }))
+    return src(files)
+      .pipe(order(filesOrder, { base: "./" }))
       .pipe(concat("app.js"))
       .pipe(
         babel({

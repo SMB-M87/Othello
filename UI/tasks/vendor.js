@@ -3,9 +3,9 @@ const { src, dest } = gulp;
 
 import concat from "gulp-concat";
 
-const vendor = function (backendPath, filesJs) {
+const vendor = function (backendPath, files) {
   return function () {
-    return src(filesJs)
+    return src(files)
     .pipe(concat("vendor.js"))
     .pipe(dest(backendPath + "/js"));
   };

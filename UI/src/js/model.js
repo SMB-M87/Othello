@@ -1,5 +1,9 @@
 Game.Model = (function () {
   // config
+  let configMap = {
+    redirectUrl: null
+  };
+
   let stateMap = {
     firstLoad: true,
     turnReload: true,
@@ -9,6 +13,10 @@ Game.Model = (function () {
   };
 
   // private functions
+  const _init = function (url) {
+    configMap.redirectUrl = url;
+  }
+
   const _getGameState = function () {
     let dataPromise = stateMap.firstLoad
       ? Game.Data.get()
@@ -16,14 +24,22 @@ Game.Model = (function () {
 
     return dataPromise
       .then((data) => {
+        // Get View
         if (stateMap.firstLoad) {
+          // Not In Game or Game Finished => Redirect to game result view of MVC
+          if (!data.partial.inGame && data.partial.finished) {
+            window.location.href = configMap.redirectUrl;
+            return;
+          }
           stateMap.opponent = data.opponent;
           stateMap.playerColor = data.color;
           stateMap.board = data.partial.board;
           stateMap.firstLoad = false;
 
+          // Show opponents name & set color indicators for the score 
           document.getElementById("opponent-name").textContent = data.opponent;
           _updateColorIndicators(stateMap.playerColor);
+
           Game.Othello.updateBoard(
             data.partial.board,
             data.partial.isPlayersTurn,
@@ -31,7 +47,16 @@ Game.Model = (function () {
           );
           _toggleButtons(data.partial.isPlayersTurn, data.partial.possibleMove);
           _updateTimer(data.partial.isPlayersTurn, data.partial.time);
+
+          // Get Partial
+          // Not In Game or Game Finished => Redirect to game result view of MVC
+        } else if (!data.inGame && data.finished) {
+          window.location.href = configMap.redirectUrl;
+          return;
+
+          // Player's turn
         } else if (data.isPlayersTurn) {
+          // Update board & buttons once
           if (stateMap.turnReload) {
             Game.Othello.updateBoard(
               data.board,
@@ -43,15 +68,19 @@ Game.Model = (function () {
             stateMap.turnReload = false;
             stateMap.opponentReload = true;
           }
+          // Countdown continuous update
           _updateTimer(data.isPlayersTurn, data.time);
           stateMap.board = data.board;
+
+          // Opponent's turn
         } else {
-          Game.Othello.updateBoard(
-            data.board,
-            data.isPlayersTurn,
-            stateMap.playerColor
-          );
           if (!stateMap.turnReload) {
+            Game.Othello.updateBoard(
+              data.board,
+              data.isPlayersTurn,
+              stateMap.playerColor
+            );
+
             Game.Othello.makeMove(data.board);
             stateMap.turnReload = true;
           }
@@ -132,7 +161,7 @@ Game.Model = (function () {
       buttonContainer.classList.remove("hidden");
 
       if (!possibleMove) {
-        passButton.classList.add("inline-block", "pass-wobble");
+        passButton.classList.add("inline-block", "fade-in-wobble");
         passButton.classList.remove("hidden");
       } else {
         passButton.classList.add("hidden");
@@ -149,7 +178,7 @@ Game.Model = (function () {
       buttonContainer.classList.remove("flex");
 
       passButton.classList.add("hidden");
-      passButton.classList.remove("inline-block", "pass-wobble");
+      passButton.classList.remove("inline-block", "fade-in-wobble");
 
       forfeitButton.classList.add("hidden");
       forfeitButton.classList.remove("inline-block", "fade-in");
@@ -161,12 +190,17 @@ Game.Model = (function () {
   };
 
   // public functions
+  const init = (url) => {
+    return _init(url);
+  }
+
   const getGameState = () => {
     return _getGameState();
   };
 
   // return object
   return {
+    init: init,
     getGameState: getGameState,
     getBoard: _getBoard,
   };

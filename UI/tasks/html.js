@@ -5,9 +5,9 @@ import htmlReplace from "gulp-html-replace";
 import htmlmin from "gulp-htmlmin";
 import rename from "gulp-rename";
 
-const html = function (backendPath, files_html) {
+const html = function (backendPath, files) {
   return function () {
-    return src(files_html)
+    return src(files)
       .pipe(
         htmlReplace({
           js: '<script src="js/app.js"></script>',

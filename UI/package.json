@@ -20,6 +20,8 @@
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-concat": "^2.6.1",
+    "gulp-declare": "^0.3.0",
+    "gulp-handlebars": "^5.0.2",
     "gulp-html-replace": "^1.6.2",
     "gulp-htmlmin": "^5.0.1",
     "gulp-order": "^1.2.0",
@@ -27,6 +29,8 @@
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglifyjs": "^0.6.2",
+    "gulp-wrap": "^0.15.0",
+    "merge-stream": "^2.0.0",
     "sass": "^1.81.0"
   },
   "dependencies": {

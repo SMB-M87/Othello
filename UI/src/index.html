@@ -24,7 +24,7 @@
       crossorigin="anonymous"
     />
 
-    <!--link afkomstig van https://cdnjs.com/libraries/jquery/-->
+    <!-- Link from https://cdnjs.com/libraries/jquery/ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
 
     <!-- Latest compiled and minified JavaScript -->
@@ -37,6 +37,9 @@
     <!-- Vendor -->
     <script src="js/vendor.js"></script>
 
+    <!-- Template -->
+    <script src="js/template.js"></script>
+
     <!-- build:js -->
     <script src="js/feedbackWidget.js"></script>
     <script src="js/feedbackSingleton.js"></script>
@@ -47,44 +50,6 @@
     <!-- endbuild -->
   </head>
 
-  <body>
-    <section id="player-info" class="player-info">
-      <h2>
-        Playing against
-        <span id="opponent-name"></span>
-      </h2>
-    </section>
-
-    <section id="score-display" class="score-display">
-      <p>
-        <span id="player-color-indicator" class="color-indicator">
-          <strong><span id="player-score">0</span></strong>
-        </span>
-      </p>
-      <p>
-        <span id="timer-color-indicator" class="color-indicator">
-          <strong><span id="time-remaining">0</span></strong>
-        </span>
-      </p>
-      <p>
-        <span id="opponent-color-indicator" class="color-indicator">
-          <strong><span id="opponent-score">0</span></strong>
-        </span>
-      </p>
-    </section>
-
-    <!-- Game Board -->
-    <section id="game-board-container"></section>
-
-    <!-- Buttons -->
-    <section id="button-container">
-      <button id="pass-button" class="button button--succes">Pass</button>
-      <button id="forfeit-button" class="button button--danger">Forfeit</button>
-    </section>
-
-    <!-- Feedback Widget -->
-    <section id="feedback-section" aria-label="Feedback Widget">
-      <article id="feedback-widget" role="alert"></article>
-    </section>
-  </body>
+  <body id="body">
+  </body>  
 </html>

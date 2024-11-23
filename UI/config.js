@@ -10,9 +10,12 @@ const files = {
     "src/js/othello.js",
   ],
   js: ["src/js/*.js"],
-  sass: ["src/css/*.scss"],
+  sass: ["src/css/main.scss"],
+  sassFiles: ["src/css/*.scss"],
   html: ["src/index.html"],
-  vendor: ["src/vendor/*.js"]
+  vendor: ["src/vendor/*.js"],
+  template: ["src/template/[^_]*.hbs"],
+  partial: ["src/template/_*.hbs"]
 };
 
 export { serverProjectPath, files };

@@ -11,9 +11,9 @@ import cleanCSS from "gulp-clean-css";
 import autoprefixer from "gulp-autoprefixer";
 import rename from "gulp-rename";
 
-const compileStyles  = function (backendPath, files_sass) {
+const compileStyles  = function (backendPath, files) {
   return function () {
-    return src("src/css/main.scss")
+    return src(files)
       .pipe(sourcemaps.init())
       .pipe(compileSass().on("error", compileSass.logError))
       .pipe(concat("style.css"))

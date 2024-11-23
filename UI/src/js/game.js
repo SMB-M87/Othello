@@ -1,15 +1,22 @@
-const Game = (function (url, key) {
-  // config
-  let configMap = {
-    apiUrl: url,
-    apiKey: key,
+const Game = (function (config) {
+  let configMap = { 
+    apiUrl: config.apiUrl,
+    apiKey: config.userToken,
+    redirectUrl: config.redirectUrl
   };
 
   // private functions
   const _init = function () {
+    _template();
     const feedbackWidget = FeedbackSingleton.getInstance();
     feedbackWidget.removeLog();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
+    Game.Model.init(configMap.redirectUrl);
+  };
+
+  const _template = function () {
+    const html = spa_templates["body"]();
+    document.getElementById("body").innerHTML = html;
   };
 
   const _getCurrentGameState = function () {
@@ -29,10 +36,13 @@ const Game = (function (url, key) {
   return {
     init: init,
   };
-})("https://localhost:7023/api/game/", "test");
+})({ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7069/Home/Result/" });
 
 $(() => {
   function afterInit() {}
-
-  Game.init(afterInit);
+  if (spa_templates["body"]) {
+    Game.init(afterInit);
+  } else {
+    console.error("Template 'body' is not loaded yet.");
+  }
 });
