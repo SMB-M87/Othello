@@ -41,7 +41,7 @@ namespace MVC.Controllers
                             Finished = response.Partial.Finished
                         }
                     };
-                    return View(model);
+                    return View(model)/*Redirect("~/index.html")*/;
                 }
                 ModelState.AddModelError(string.Empty, "Unable to retrieve game information.");
             }
