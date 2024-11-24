@@ -28,7 +28,7 @@ const html = function (backendPath, files) {
           extname: ".html",
         })
       )
-      .pipe(dest(backendPath));
+      //.pipe(dest(backendPath));
   };
 };
 

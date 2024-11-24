@@ -87,7 +87,7 @@ namespace API.Data
                 var model = new GamePartial()
                 {
                     Time = await GetTimerByPlayersToken(token),
-                    InGame = game.Status == Status.Playing,
+                    InGame = game.Status == Status.Playing || game.Status == Status.Finished,
                     PlayersTurn = game.PlayersTurn,
                     IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),

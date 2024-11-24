@@ -17,7 +17,7 @@ Game.Model = (function () {
     configMap.redirectUrl = url;
   }
 
-  const _getGameState = async function () {
+  const _getGameState = function () {
     let dataPromise = stateMap.firstLoad
       ? Game.Data.get()
       : Game.Data.getPartial();
@@ -39,12 +39,22 @@ Game.Model = (function () {
           _updateGameInfo(stateMap.opponent, stateMap.playerColor);
           _toggleButtons(data.partial.isPlayersTurn, data.partial.possibleMove);
           _updateTimer(data.partial.isPlayersTurn, data.partial.time);
-
+          
           // Get Partial
-          // Not In Game or Game Finished => Redirect to game result view of MVC
+          // Last Board Update
+        } else if (data.playersTurn === 0 && data.inGame) {
+          Game.Othello.updateBoard(
+            data.board,
+            data.isPlayersTurn,
+            stateMap.playerColor
+          );
+          Game.Othello.highlightChanges(data.board);
+
+          // Game Finished
         } else if (!data.inGame) {
-          window.location.href = configMap.redirectUrl;
-          return;
+          setTimeout(() => {
+            window.location.href = configMap.redirectUrl;
+          }, 500);
 
           // Player's turn
         } else if (data.isPlayersTurn) {
