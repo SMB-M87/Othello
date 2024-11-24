@@ -101,19 +101,19 @@ const Game = (function (config) {
           },
         ]
       );
+    });
 
-      $("#rematch-button").on("click", function () {
-        Game.Data.rematchGame()
-          .then(() => {
-            window.location.href = `${configMap.redirectUrl}Home/Index`;
-          })
-          .catch((error) => {
-            feedbackWidget.log({
-              message: "Rematch failed: " + error.responseText,
-              type: "Danger",
-            });
+    $("#rematch-button").on("click", function () {
+      Game.Data.rematchGame()
+        .then(() => {
+          window.location.href = `${configMap.redirectUrl}Home/Index`;
+        })
+        .catch((error) => {
+          console.log({
+            message: "Rematch failed: " + error.responseText,
+            type: "Danger",
           });
-      });
+        });
     });
   };
 

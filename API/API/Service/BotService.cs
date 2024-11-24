@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Models;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Service
@@ -45,50 +46,28 @@ namespace API.Service
 
             foreach (var bot in bots)
             {
-                if (bot.Username != "Gissa" && bot.Username != "Hidde" && bot.Username != "Pedro")
-                {
-                    bool inGame = await _context.Games.AnyAsync(g => g.First == bot.Token || (g.Second != null && g.Second == bot.Token));
+                bool inGame = await _context.Games.AnyAsync(g => g.First == bot.Token || (g.Second != null && g.Second == bot.Token));
 
-                    if (!inGame)
-                    {
-                        if (bot.Username == "Ernst" || bot.Username == "Karen" || bot.Username == "Eltjo")
-                        {
-                            bot.Bot = 2;
-                        }
-                        else if (bot.Username == "John")
-                        {
-                            bot.Bot = 3;
-                        }
-                        else if (bot.Username == "Tijn")
-                        {
-                            bot.Bot = 4;
-                        }
-                        else
-                        {
-                            bot.Bot = 1;
-                        }
-                        var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
-                        _context.Games.Add(game);
-                        _context.Entry(bot).Property(p => p.Bot).IsModified = true;
-                    }
-                    bot.LastActivity = DateTime.UtcNow;
-                    _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
+                if (!inGame && bot.Bot == 1)
+                {
+                    var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
+                    await _context.Games.AddAsync(game);
                 }
+                bot.LastActivity = DateTime.UtcNow;
+                _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
             }
             await _context.SaveChangesAsync();
         }
 
-        public async Task AcceptFriendRequestsAsync()
+        public async Task AcceptRequestsAsync()
         {
             var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
 
             foreach (var bot in bots)
             {
-                var pendingRequests = bot.Requests
-                    .Where(r => r.Type == Inquiry.Friend && !bot.Friends.Contains(r.Username))
-                    .ToList();
+                var pendingFriends = bot.Requests.Where(r => r.Type == Inquiry.Friend && !bot.Friends.Contains(r.Username)).ToList();
 
-                foreach (var request in pendingRequests)
+                foreach (var request in pendingFriends)
                 {
                     var requester = await _context.Players.FirstOrDefaultAsync(p => p.Username == request.Username);
 
@@ -101,6 +80,32 @@ namespace API.Service
 
                         requester.Friends.Add(bot.Username);
                         _context.Entry(requester).Property(p => p.Friends).IsModified = true;
+                    }
+                }
+
+                var botNotInGame = await _context.Games.FirstOrDefaultAsync(g => g.First == bot.Token || (g.Second != null && g.Second == bot.Token));
+
+                if (botNotInGame is null)
+                {
+                    var pendingGames = bot.Requests.Where(r => r.Type == Inquiry.Game).ToList();
+
+                    foreach (var invite in pendingGames)
+                    {
+                        var requester = await _context.Players.FirstOrDefaultAsync(p => p.Username == invite.Username);
+
+                        if (requester is not null)
+                        {
+                            var game = await _context.Games.FirstOrDefaultAsync(g => g.First == requester.Token && g.Status == Status.Pending);
+
+                            if (game is not null)
+                            {
+                                game.SetSecondPlayer(bot.Token);
+                                _context.Entry(game).Property(g => g.Status).IsModified = true;
+                                _context.Entry(game).Property(g => g.Second).IsModified = true;
+                                _context.Entry(game).Property(g => g.Date).IsModified = true;
+                                await _context.SaveChangesAsync();
+                            }
+                        }
                     }
                 }
             }
@@ -163,7 +168,7 @@ namespace API.Service
                             bot.LastActivity = DateTime.UtcNow;
                             _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
                         }
-                        catch (Exception ex) 
+                        catch (Exception ex)
                         {
                             Console.WriteLine($"Error while making a move for bot {bot.Token} in game {game.Token}: {ex.Message}");
                             Console.WriteLine($"Stack Trace: {ex.StackTrace}");
