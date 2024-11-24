@@ -208,6 +208,10 @@
         const gameRematchContainer = document.getElementById("game-rematch-container");
         const rematchButtonContainer = document.getElementById("rematch-button-container");
 
+        if (!gameRematchContainer || !rematchButtonContainer) {
+            return;
+        }
+
         fetch('@Url.Action("Rematch", "Home")', {
             method: 'POST',
             headers: {

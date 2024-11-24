@@ -18,9 +18,9 @@ namespace MVC.Controllers
         {
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                var api = _httpClient.BaseAddress + "api/game/";
+                var api = _httpClient.BaseAddress + "api/";
                 var token = _userManager.GetUserId(User);
-                var redirect = "https://localhost:7269/Home/Result";
+                var redirect = "https://localhost:7269/Home/";
 
                 ViewBag.ApiUrl = api;
                 ViewBag.Token = token;
