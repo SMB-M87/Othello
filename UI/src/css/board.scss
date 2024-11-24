@@ -80,3 +80,7 @@
   transform: scale(1.5);
   animation: click-glow 0.4s ease-out;
 }
+
+.othello-board .fa-circle::before {
+  content: none;
+}

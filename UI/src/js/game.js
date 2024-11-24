@@ -108,7 +108,7 @@ const Game = (function (config) {
   return {
     init: init,
   };
-})({ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7069/Home/Result/" });
+})({ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7269/Home/Result" });
 
 $(() => {
   function afterInit() {}

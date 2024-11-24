@@ -1,19 +1,24 @@
 #feedback-section {
   display: none;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  max-width: 400px;
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;  
   margin: 0 auto;
   padding: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0.4);
   border-radius: 8px;
+  z-index: 9999; 
 }
 
 #feedback-widget {
   background-color: #f9f9f9;
   display: none;
+  flex-direction: column;
+  align-items: center;
   opacity: 0;
   border-radius: 8px;
   position: relative;
@@ -24,6 +29,7 @@
   margin-bottom: 5px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   transition: opacity 0.5s ease-in-out;
+  z-index: 10000;   
 }
 
 .feedback-widget__close {

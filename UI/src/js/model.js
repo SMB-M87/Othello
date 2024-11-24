@@ -36,10 +36,7 @@ Game.Model = (function () {
           stateMap.board = data.partial.board;
           stateMap.firstLoad = false;
 
-          // Show opponents name & set color indicators for the score 
-          document.getElementById("opponent-name").textContent = data.opponent;
-          _updateColorIndicators(stateMap.playerColor);
-
+          _updateGameInfo(stateMap.opponent, stateMap.playerColor);
           Game.Othello.updateBoard(
             data.partial.board,
             data.partial.isPlayersTurn,
@@ -96,7 +93,11 @@ Game.Model = (function () {
       });
   };
 
-  const _updateColorIndicators = function (playerColor) {
+  const _updateGameInfo = function (opponent, playerColor) {
+    const title = document.getElementById("player-info")
+    document.getElementById("opponent-name").textContent = opponent;
+    title.classList.add("flex");
+
     const playerColorIndicator = document.getElementById(
       "player-color-indicator"
     );
@@ -114,6 +115,8 @@ Game.Model = (function () {
       playerColorIndicator.classList.add("black");
       opponentColorIndicator.classList.add("white");
     }
+
+    document.getElementById("score-display").classList.add("flex");
 
     document.getElementById("player-score").id =
       playerColor === 1 ? "white-score" : "black-score";
