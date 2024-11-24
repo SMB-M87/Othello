@@ -3,7 +3,7 @@
     public class BotBackgroundService : BackgroundService
     {
         private readonly IServiceProvider _services;
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(15);
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(60);
 
         public BotBackgroundService(IServiceProvider services)
         {
@@ -20,7 +20,6 @@
                     await botService.CreateGamesAsync();
                     await botService.AcceptFriendRequestsAsync();
                     await botService.SendGameRequestsAsync();
-                    await botService.UpdateActivityBotAsync();
                 }
 
                 await Task.Delay(_interval, stoppingToken);

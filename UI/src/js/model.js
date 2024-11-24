@@ -42,7 +42,7 @@ Game.Model = (function () {
 
           // Get Partial
           // Not In Game or Game Finished => Redirect to game result view of MVC
-        } else if (!data.inGame && data.finished) {
+        } else if (!data.inGame) {
           window.location.href = configMap.redirectUrl;
           return;
 

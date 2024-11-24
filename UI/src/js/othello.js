@@ -56,16 +56,16 @@ Game.Othello = (function () {
 
         if (cellValue === 1) {
           const piece = document.createElement("i");
-          piece.className = "fa fa-circle white-piece fade-in";
+          piece.className = "fa fa-circle white-piece";
           cellDiv.appendChild(piece);
         } else if (cellValue === 2) {
           const piece = document.createElement("i");
-          piece.className = "fa fa-circle black-piece fade-in";
+          piece.className = "fa fa-circle black-piece";
           cellDiv.appendChild(piece);
         } else if (cellValue === 3) {
           if (isPlayersTurn) {
             const moveIndicator = document.createElement("div");
-            moveIndicator.className = "possible-move fade-in";
+            moveIndicator.className = "possible-move";
             moveIndicator.classList.add(
               playerColor === 1 ? "white-border" : "black-border"
             );

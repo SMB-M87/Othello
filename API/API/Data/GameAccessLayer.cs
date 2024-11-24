@@ -49,12 +49,11 @@ namespace API.Data
                     Partial = new GamePartial()
                     {
                         Time = await GetTimerByPlayersToken(token),
-                        InGame = game.Status == Status.Playing,
+                        InGame = game.Status == Status.Playing || game.Status == Status.Finished,
                         PlayersTurn = game.PlayersTurn,
                         IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                         PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                        Board = game.Board,
-                        Finished = game.Status == Status.Finished
+                        Board = game.Board
                     }
                 };
                 return model;
@@ -72,8 +71,7 @@ namespace API.Data
                         IsPlayersTurn = false,
                         PossibleMove = false,
                         Board = new Color[8, 8],
-                        Time = string.Empty,
-                        Finished = true
+                        Time = string.Empty
                     }
                 };
                 return model;
@@ -93,8 +91,7 @@ namespace API.Data
                     PlayersTurn = game.PlayersTurn,
                     IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                    Board = game.Board,
-                    Finished = game.Status == Status.Finished
+                    Board = game.Board
                 };
                 return model;
             }
@@ -107,8 +104,7 @@ namespace API.Data
                     IsPlayersTurn = false,
                     PossibleMove = false,
                     Board = new Color[8, 8],
-                    Time = string.Empty,
-                    Finished = true
+                    Time = string.Empty
                 };
                 return model;
             }

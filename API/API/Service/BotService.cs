@@ -71,6 +71,8 @@ namespace API.Service
                         _context.Games.Add(game);
                         _context.Entry(bot).Property(p => p.Bot).IsModified = true;
                     }
+                    bot.LastActivity = DateTime.UtcNow;
+                    _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
                 }
             }
             await _context.SaveChangesAsync();
@@ -158,6 +160,8 @@ namespace API.Service
                             var possibleMoves = GetPossibleMoves(game.Board);
                             var move = ChooseBotMove(possibleMoves, bot, game.Board, game.PlayersTurn);
                             game.MakeMove(move.Row, move.Column);
+                            bot.LastActivity = DateTime.UtcNow;
+                            _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
                         }
                         catch (Exception ex) 
                         {
@@ -175,24 +179,6 @@ namespace API.Service
                     _context.Entry(game).Property(g => g.Board).IsModified = true;
                     _context.Entry(game).Property(g => g.PlayersTurn).IsModified = true;
                     _context.Entry(game).Property(g => g.Date).IsModified = true;
-
-                    bot.LastActivity = DateTime.UtcNow;
-                    _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
-                }
-            }
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateActivityBotAsync()
-        {
-            var bots = await _context.Players.Where(p => p.Bot != 0).ToListAsync();
-
-            foreach (var bot in bots)
-            {
-                if (bot.Username != "Gissa" && bot.Username != "Hidde" && bot.Username != "Pedro")
-                {
-                    bot.LastActivity = DateTime.UtcNow;
-                    _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
                 }
             }
             await _context.SaveChangesAsync();

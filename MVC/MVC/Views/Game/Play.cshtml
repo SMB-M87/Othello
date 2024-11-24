@@ -1,4 +1,18 @@
-﻿@section Scripts {
+﻿@Html.AntiForgeryToken()
+
+<script>
+    const config = {
+        apiUrl: "@ViewBag.ApiUrl",
+        userToken: "@ViewBag.Token",
+        redirectUrl: "@ViewBag.RedirectUrl"
+    };
+
+    $(function () {
+    Game.init(() => {config});
+    });
+</script>
+
+@section Scripts {
     <link rel="stylesheet" href="~/css/style.min.css" />
 
     <script src="@Url.Content("~/js/vendor.js")"></script>

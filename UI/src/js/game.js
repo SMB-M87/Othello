@@ -1,12 +1,19 @@
 const Game = (function (config) {
-  let configMap = { 
+  if (!config || !config.apiUrl || !config.userToken || !config.redirectUrl) {
+    throw new Error(
+      "Game module initialization failed: Missing config properties."
+    );
+  }
+
+  let configMap = {
     apiUrl: config.apiUrl,
     apiKey: config.userToken,
-    redirectUrl: config.redirectUrl
+    redirectUrl: config.redirectUrl,
   };
 
   // private functions
   const _init = function () {
+    console.log("Game initialized with config:", configMap);
     _template();
     _eventListener();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
@@ -15,7 +22,9 @@ const Game = (function (config) {
 
   const _template = function () {
     if (!spa_templates || !spa_templates["body"]) {
-      throw new Error("Template 'body' is not available. Ensure the template is compiled and loaded.");
+      throw new Error(
+        "Template 'body' is not available. Ensure the template is compiled and loaded."
+      );
     }
 
     const html = spa_templates["body"]();
@@ -24,13 +33,13 @@ const Game = (function (config) {
 
   const _eventListener = () => {
     const feedbackWidget = FeedbackSingleton.getInstance();
-    feedbackWidget.removeLog();
-  
+    //feedbackWidget.removeLog();
+
     $("#game-board-container").on("click", ".possible-move", (event) => {
       const cell = $(event.target).closest("td");
       const row = cell.data("row");
       const col = cell.data("col");
-  
+
       Game.Data.sendMove(row, col)
         .then(() => {
           feedbackWidget.log({
@@ -46,7 +55,7 @@ const Game = (function (config) {
           });
         });
     });
-  
+
     $("#pass-button").on("click", function () {
       Game.Data.passGame()
         .then(() => {
@@ -60,7 +69,7 @@ const Game = (function (config) {
           });
         });
     });
-  
+
     $("#forfeit-button").on("click", function () {
       feedbackWidget.show("Are you sure you want to forfeit?", "info", true, [
         {
@@ -89,7 +98,7 @@ const Game = (function (config) {
         },
       ]);
     });
-  };  
+  };
 
   const _getCurrentGameState = function () {
     Game.Othello.board();
@@ -108,10 +117,10 @@ const Game = (function (config) {
 
   // return object
   return {
-    init: init
+    init: init,
   };
-})({ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7269/Home/Result" });
-
+})(config);
+//{ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7269/Home/Result" }
 $(() => {
   function afterInit() {}
   Game.init(afterInit);
