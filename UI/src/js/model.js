@@ -29,7 +29,7 @@ Game.Model = (function () {
         // Get View
         if (stateMap.firstLoad) {
           if (data.partial.playersTurn === 0) {
-            window.location.href = `configMap.redirectUrl${"Result"}`;
+            window.location.href = `${configMap.redirectUrl}Result`;
             return;
           }
           stateMap.opponent = data.opponent;
@@ -268,3 +268,4 @@ Game.Model = (function () {
     getBoard: _getBoard,
   };
 })();
+
