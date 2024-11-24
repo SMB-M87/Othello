@@ -1,12 +1,11 @@
 Game.Data = (function () {
   let configMap = {
-    apiUrl: "",
-    apiKey: "",
+    apiUrl: null,
+    apiKey: null,
     mock: [
       {
-        url: "api",
-        key: "key",
-        data: 0,
+        url: null,
+        key: null,
       },
     ],
   };
@@ -22,7 +21,7 @@ Game.Data = (function () {
       configMap.apiKey = key;
       stateMap.environment = environment;
     } else if (environment == "development") {
-      configMap.mock.url = url + "data";
+      configMap.mock.url = url;
       configMap.mock.key = key;
       stateMap.environment = environment;
     } else {
@@ -60,6 +59,29 @@ Game.Data = (function () {
     } else {
       throw new Error("This environment is unknown.");
     }
+  };
+
+  const _getRematch = function () {
+    const username = Game.Model.getOpponent();
+
+    const config = `${username} ${configMap.apiKey}`;
+
+    const encoded = encodeURIComponent(config);
+
+    return $.ajax({
+      url: `${configMap.apiUrl}player/rematch/${encoded}`,
+      method: "GET",
+    })
+      .then((response) => {
+        if (response) {
+          return response;
+        } else {
+          return null;
+        }
+      })
+      .catch((error) => {
+        return null;
+      });
   };
 
   const _sendMove = function (row, col) {
@@ -107,6 +129,55 @@ Game.Data = (function () {
     });
   };
 
+  const _rematchGame = function () {
+    const username = Game.Model.getOpponent();
+
+    const config = {
+      PlayerToken: configMap.apiKey,
+      Description: `Rematch against ${username}`,
+      Rematch: username,
+    };
+
+    return $.ajax({
+      url: configMap.apiUrl + "game/create",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(config),
+    });
+  };
+
+  const _acceptGame = function () {
+    const username = Game.Model.getOpponent();
+
+    const config = {
+      ReceiverUsername: username,
+      SenderToken: configMap.apiKey,
+    };
+
+    return $.ajax({
+      url: configMap.apiUrl + "player/request/game/accept",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(config),
+    }).then((response) => {});
+  };
+
+  const _declineGame = function () {
+    const username = Game.Model.getOpponent();
+
+    const config = {
+      ReceiverUsername: username,
+      SenderToken: configMap.apiKey,
+    };
+
+    return $.ajax({
+      url: configMap.apiUrl + "player/request/game/decline",
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(config),
+    }).then((response) => {});
+  };
+
   const _setMockData = function (mockData) {
     configMap.mock = mockData;
   };
@@ -132,6 +203,10 @@ Game.Data = (function () {
     return _getPartial();
   };
 
+  const getRematch = () => {
+    return _getRematch();
+  };
+
   const sendMove = function (row, col) {
     return _sendMove(row, col);
   };
@@ -144,6 +219,18 @@ Game.Data = (function () {
     return _forfeitGame();
   };
 
+  const rematchGame = function () {
+    return _rematchGame();
+  };
+
+  const acceptGame = function () {
+    return _acceptGame();
+  };
+
+  const declineGame = function () {
+    return _declineGame();
+  };
+
   const setMockData = (mockData) => {
     _setMockData(mockData);
   };
@@ -153,9 +240,13 @@ Game.Data = (function () {
     init: init,
     get: get,
     getPartial: getPartial,
+    getRematch: getRematch,
     sendMove: sendMove,
     passGame: passGame,
     forfeitGame: forfeitGame,
+    rematchGame: rematchGame,
+    acceptGame: acceptGame,
+    declineGame: declineGame,
     setMockData: setMockData,
   };
 })();

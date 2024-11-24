@@ -89,44 +89,19 @@ namespace MVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Result(string token = "")
+        public async Task<IActionResult> Result(string token)
         {
-            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
+            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated && !string.IsNullOrEmpty(token))
             {
-                if (string.IsNullOrEmpty(token))
+                string[] parts = token.Split(' ');
+
+                var model = new GameOverview
                 {
-                    var username = _userManager.GetUserName(User);
-                    var current_user_id = _userManager.GetUserId(User);
-
-                    var model = new GameOverview
-                    {
-                        Username = username,
-                        Result = await MostRecentGame(current_user_id) ?? new(),
-                        Rematch = true,
-                        Request = string.Empty
-                    };
-
-                    if (model.Result != null && model.Result.Board != null)
-                    {
-                        return View("Result", model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index");
-                    }
-                }
-                else
-                {
-                    string[] parts = token.Split(' ');
-
-                    var model = new GameOverview
-                    {
-                        Username = parts[0],
-                        Result = await GetResult(parts[1]) ?? new(),
-                        Rematch = false
-                    };
-                    return View("Result", model);
-                }
+                    Username = parts[0],
+                    Result = await GetResult(parts[1]) ?? new(),
+                    Rematch = false
+                };
+                return View("Result", model);
             }
             return RedirectToAction("Index");
         }
@@ -180,18 +155,6 @@ namespace MVC.Controllers
                 SentGameRequests = response.SentGameRequests,
             };
             return PartialView("_Partial", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Rematch([FromBody] Text text)
-        {
-            var token = _userManager.GetUserId(User);
-
-            var model = new Text
-            {
-                Body = await Rematch(text.Body, token)
-            };
-            return PartialView("_Rematch", model);
         }
 
         [HttpPost]
@@ -489,24 +452,6 @@ namespace MVC.Controllers
             return result;
         }
 
-        private async Task<GameResult> MostRecentGame(string token)
-        {
-            var response = await _httpClient.GetAsync($"api/result/last/{token}");
-            GameResult result = new();
-
-            if (response.IsSuccessStatusCode)
-            {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
-
-                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
-            }
-            return result;
-        }
-
         private async Task<GameResult?> GetResult(string token)
         {
             var response = await _httpClient.GetAsync($"api/result/{token}");
@@ -521,24 +466,6 @@ namespace MVC.Controllers
                 };
 
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
-            }
-            return result;
-        }
-
-        private async Task<string> Rematch(string receiver_username, string sender_token)
-        {
-            var request = receiver_username + " " + sender_token;
-
-            var response = await _httpClient.GetAsync($"api/player/rematch/{request}");
-            string result = string.Empty;
-
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Unable to fetch rematch data.");
             }
             return result;
         }

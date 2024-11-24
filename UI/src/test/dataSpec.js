@@ -18,7 +18,7 @@ describe("Game.Data Module", function () {
       },
     ]);
   });
-  
+
   it("should be defined", function () {
     expect(Game.Data).toBeDefined();
   });

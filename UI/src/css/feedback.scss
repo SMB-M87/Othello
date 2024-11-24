@@ -32,6 +32,21 @@
   z-index: 10000;   
 }
 
+#feedback-widget.top-right {
+  position: fixed;
+  top: 85px;
+  right: 25px;
+  background-color: transparent;
+  box-shadow: none;
+  opacity: 1;
+  z-index: 10000;
+  transition: all 0.5s ease-in-out;
+}
+
+#feedback-section.transparent {
+  background-color: transparent;
+}
+
 .feedback-widget__close {
   position: absolute;
   top: 0px;

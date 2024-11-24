@@ -8,7 +8,7 @@ class FeedbackWidget {
     return this._elementId;
   }
 
-  show(message, type, autoDismiss = true, actions = []) {
+  show(message, type, time = 6000, autoDismiss = true, actions = []) {
     const widgetElement = $("#" + this._elementId);
     const feedbackSection = $("#feedback-section");
     const closeButton = $('<button class="feedback-widget__close">×</button>');
@@ -31,7 +31,7 @@ class FeedbackWidget {
 
     if (autoDismiss) {
       if (this._timeout) clearTimeout(this._timeout);
-      this._timeout = setTimeout(() => this.hide(), 6000);
+      this._timeout = setTimeout(() => this.hide(), time);
     }
 
     closeButton.on("click", () => this.hide());
@@ -63,7 +63,6 @@ class FeedbackWidget {
 
   removeLog() {
     localStorage.removeItem("feedback_widget");
-    console.clear();
   }
 
   history() {
@@ -72,7 +71,6 @@ class FeedbackWidget {
       storedData?.messages
         .map((msg) => `${msg.type} - ${msg.message}`)
         .join("\n") || "No history.";
-    console.clear();
     console.log(history);
   }
 }

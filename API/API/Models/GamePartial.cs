@@ -8,5 +8,6 @@
         public bool PossibleMove { get; set; }
         public Color[,] Board { get; set; } = null!;
         public string Time { get; set; } = null!;
+        public Color Winner { get; set; }
     }
 }

@@ -16,7 +16,6 @@ const Game = (function (config) {
     _template();
     _eventListener();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
-    Game.Model.init(configMap.redirectUrl);
   };
 
   const _template = function () {
@@ -32,7 +31,7 @@ const Game = (function (config) {
 
   const _eventListener = () => {
     const feedbackWidget = FeedbackSingleton.getInstance();
-    //feedbackWidget.removeLog();
+    feedbackWidget.removeLog();
 
     $("#game-board-container").on("click", ".possible-move", (event) => {
       const cell = $(event.target).closest("td");
@@ -70,32 +69,51 @@ const Game = (function (config) {
     });
 
     $("#forfeit-button").on("click", function () {
-      feedbackWidget.show("Are you sure you want to forfeit?", "info", true, [
-        {
-          icon: "✓",
-          class: "feedback-icon feedback-icon--success",
-          callback: () => {
-            Game.Data.forfeitGame()
-              .then(() => {
-                feedbackWidget.removeLog();
-                feedbackWidget.hide();
-              })
-              .catch((error) => {
-                feedbackWidget.log(
-                  "Forfeit failed: " + error.responseText,
-                  "Danger"
-                );
-              });
+      feedbackWidget.show(
+        "Are you sure you want to forfeit?",
+        "info",
+        8000,
+        true,
+        [
+          {
+            icon: "✓",
+            class: "feedback-icon feedback-icon--success",
+            callback: () => {
+              Game.Data.forfeitGame()
+                .then(() => {
+                  feedbackWidget.removeLog();
+                  feedbackWidget.hide();
+                })
+                .catch((error) => {
+                  feedbackWidget.log(
+                    "Forfeit failed: " + error.responseText,
+                    "Danger"
+                  );
+                });
+            },
           },
-        },
-        {
-          icon: "✕",
-          class: "feedback-icon feedback-icon--danger",
-          callback: () => {
-            feedbackWidget.hide();
+          {
+            icon: "✕",
+            class: "feedback-icon feedback-icon--danger",
+            callback: () => {
+              feedbackWidget.hide();
+            },
           },
-        },
-      ]);
+        ]
+      );
+
+      $("#rematch-button").on("click", function () {
+        Game.Data.rematchGame()
+          .then(() => {
+            window.location.href = `${configMap.redirectUrl}Home/Index`;
+          })
+          .catch((error) => {
+            feedbackWidget.log({
+              message: "Rematch failed: " + error.responseText,
+              type: "Danger",
+            });
+          });
+      });
     });
   };
 

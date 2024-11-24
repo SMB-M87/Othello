@@ -27,13 +27,10 @@ namespace API.Controllers
         }
 
         [HttpGet("rematch/{token}")]
-        public async Task<ActionResult<string>> Rematch(string token)
+        public async Task<ActionResult<string?>> Rematch(string token)
         {
             string[] parts = token.Split(' ');
             var response = await _repository.PlayerRepository.GetRematch(parts[0], parts[1]);
-
-            if (response is null)
-                return NotFound();
 
             return Ok(response);
         }

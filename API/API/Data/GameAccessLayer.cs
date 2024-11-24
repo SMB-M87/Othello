@@ -53,7 +53,8 @@ namespace API.Data
                         PlayersTurn = game.PlayersTurn,
                         IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                         PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                        Board = game.Board
+                        Board = game.Board,
+                        Winner = game.WinningColor()
                     }
                 };
                 return model;
@@ -71,7 +72,8 @@ namespace API.Data
                         IsPlayersTurn = false,
                         PossibleMove = false,
                         Board = new Color[8, 8],
-                        Time = string.Empty
+                        Time = string.Empty,
+                        Winner = Color.None
                     }
                 };
                 return model;
@@ -91,7 +93,8 @@ namespace API.Data
                     PlayersTurn = game.PlayersTurn,
                     IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
                     PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                    Board = game.Board
+                    Board = game.Board,
+                    Winner = game.WinningColor()
                 };
                 return model;
             }
@@ -104,7 +107,8 @@ namespace API.Data
                     IsPlayersTurn = false,
                     PossibleMove = false,
                     Board = new Color[8, 8],
-                    Time = string.Empty
+                    Time = string.Empty,
+                    Winner = Color.None
                 };
                 return model;
             }

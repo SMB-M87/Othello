@@ -1,37 +1,67 @@
 Game.Model = (function () {
   // config
-  let configMap = {
-    redirectUrl: null,
-  };
-
   let stateMap = {
     firstLoad: true,
     turnReload: true,
     lastLoad: true,
     endLoad: false,
+    rematchLoad: true,
     opponent: "",
     playerColor: "",
     board: null,
+    winner: 0,
   };
 
   // private functions
-  const _init = function (url) {
-    configMap.redirectUrl = url;
-  };
-
   const _getGameState = function () {
-    let dataPromise = stateMap.firstLoad
+    let dataPromise = stateMap.endLoad
+      ? Game.Data.getRematch()
+      : stateMap.firstLoad
       ? Game.Data.get()
       : Game.Data.getPartial();
 
     return dataPromise
       .then((data) => {
-        // Get View
-        if (stateMap.firstLoad) {
-          if (data.partial.playersTurn === 0) {
-            window.location.href = `${configMap.redirectUrl}Result`;
-            return;
+        // Rematch
+        if (stateMap.endLoad) {
+          if (data != null && stateMap.rematchLoad) {
+            const feedbackWidget = FeedbackSingleton.getInstance();
+            const section = document.getElementById("feedback-section");
+            const widget = document.getElementById("feedback-widget");
+
+            section.classList.add("transparent");
+            widget.classList.add("top-right");
+
+            feedbackWidget.show(
+              `${stateMap.opponent} wants a rematch, do you accept?`,
+              "info",
+              45000,
+              true,
+              [
+                {
+                  icon: "✓",
+                  class: "feedback-icon feedback-icon--success",
+                  callback: () => {
+                    Game.Data.acceptGame();
+                    feedbackWidget.hide();
+                    window.location.reload();
+                  },
+                },
+                {
+                  icon: "✕",
+                  class: "feedback-icon feedback-icon--danger",
+                  callback: () => {
+                    Game.Data.declineGame();
+                    feedbackWidget.hide();
+                  },
+                },
+              ]
+            );
+            stateMap.rematchLoad = false;
           }
+
+          // Get View
+        } else if (stateMap.firstLoad) {
           stateMap.opponent = data.opponent;
           stateMap.playerColor = data.color;
           stateMap.board = data.partial.board;
@@ -105,6 +135,7 @@ Game.Model = (function () {
           );
           _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
           stateMap.board = data.board;
+          stateMap.winner = data.winner;
           stateMap.lastLoad = false;
 
           // Game Finished
@@ -121,9 +152,18 @@ Game.Model = (function () {
               data.playersTurn
             );
             _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
+            stateMap.winner = stateMap.playerColor == 1 ? 2 : 1;
             stateMap.lastLoad = false;
           }
-          configMap.endLoad = true;
+          document.getElementById("game-status").textContent =
+            stateMap.winner === 0
+              ? "Drew"
+              : stateMap.winner === stateMap.playerColor
+              ? "Won"
+              : "Lost";
+          document.getElementById("opponent-name").textContent =
+            stateMap.opponent;
+          stateMap.endLoad = true;
         }
         return data;
       })
@@ -200,9 +240,10 @@ Game.Model = (function () {
     const buttonContainer = document.getElementById("button-container");
     const passButton = document.getElementById("pass-button");
     const forfeitButton = document.getElementById("forfeit-button");
-    const rematchButton = document.getElementById("rematch-button");
 
     if (playersTurn === 0) {
+      const rematchButton = document.getElementById("rematch-button");
+
       buttonContainer.classList.add("flex");
       buttonContainer.classList.remove("hidden");
 
@@ -252,20 +293,27 @@ Game.Model = (function () {
     return stateMap.board;
   };
 
-  // public functions
-  const init = (url) => {
-    return _init(url);
+  const _getOpponent = function () {
+    return stateMap.opponent;
   };
 
+  // public functions
   const getGameState = () => {
     return _getGameState();
   };
 
+  const getBoard = function () {
+    return _getBoard();
+  };
+
+  const getOpponent = function () {
+    return _getOpponent();
+  };
+
   // return object
   return {
-    init: init,
     getGameState: getGameState,
-    getBoard: _getBoard,
+    getBoard: getBoard,
+    getOpponent: getOpponent,
   };
 })();
-

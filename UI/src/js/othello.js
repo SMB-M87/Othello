@@ -4,7 +4,7 @@ Game.Othello = (function () {
     const boardContainer = document.getElementById("game-board-container");
     boardContainer.innerHTML = "";
     boardContainer.classList.add("game-board-container");
-  
+
     const table = document.createElement("table");
     table.className = "othello-board";
 
@@ -14,18 +14,22 @@ Game.Othello = (function () {
         const td = document.createElement("td");
         td.dataset.row = row;
         td.dataset.col = col;
-        td.classList.add("board-cell", (row + col) % 2 === 0 ? "even" : "odd", "distort");
-  
+        td.classList.add(
+          "board-cell",
+          (row + col) % 2 === 0 ? "even" : "odd",
+          "distort"
+        );
+
         const randomX = Math.random();
         const randomY = Math.random();
         const randomRot = Math.random();
         const delay = (row * 8 + col) * 0.02;
-  
+
         td.style.setProperty("--random-x", randomX);
         td.style.setProperty("--random-y", randomY);
         td.style.setProperty("--random-rot", randomRot);
         td.style.setProperty("--animation-delay", `${delay}s`);
-  
+
         tr.appendChild(td);
       }
       table.appendChild(tr);
@@ -151,7 +155,7 @@ Game.Othello = (function () {
   // public functions
   const board = function () {
     return _board();
-  }
+  };
 
   const updateBoard = function (board, isPlayersTurn, playerColor) {
     _updateBoard(board, isPlayersTurn, playerColor);
