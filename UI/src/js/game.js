@@ -13,7 +13,6 @@ const Game = (function (config) {
 
   // private functions
   const _init = function () {
-    console.log("Game initialized with config:", configMap);
     _template();
     _eventListener();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
@@ -120,7 +119,7 @@ const Game = (function (config) {
     init: init,
   };
 })(config);
-//{ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7269/Home/Result" }
+
 $(() => {
   function afterInit() {}
   Game.init(afterInit);

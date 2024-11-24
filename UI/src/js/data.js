@@ -4,7 +4,7 @@ Game.Data = (function () {
     apiKey: "",
     mock: [
       {
-        url: "api/game/view/<token>",
+        url: "api",
         key: "key",
         data: 0,
       },
@@ -32,7 +32,7 @@ Game.Data = (function () {
 
   const _get = function () {
     if (stateMap.environment == "production") {
-      return $.get(configMap.apiUrl + "view/" + configMap.apiKey)
+      return $.get(configMap.apiUrl + "game/view/" + configMap.apiKey)
         .then((result) => {
           return result;
         })
@@ -48,7 +48,7 @@ Game.Data = (function () {
 
   const _getPartial = function () {
     if (stateMap.environment == "production") {
-      return $.get(configMap.apiUrl + "partial/" + configMap.apiKey)
+      return $.get(configMap.apiUrl + "game/partial/" + configMap.apiKey)
         .then((result) => {
           return result;
         })
@@ -72,7 +72,7 @@ Game.Data = (function () {
     };
 
     return $.ajax({
-      url: configMap.apiUrl + "move",
+      url: configMap.apiUrl + "game/move",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(moveData),
@@ -85,7 +85,7 @@ Game.Data = (function () {
     const token = configMap.apiKey;
 
     return $.ajax({
-      url: configMap.apiUrl + "pass",
+      url: configMap.apiUrl + "game/pass",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ token: token }),
@@ -98,7 +98,7 @@ Game.Data = (function () {
     const token = configMap.apiKey;
 
     return $.ajax({
-      url: configMap.apiUrl + "forfeit",
+      url: configMap.apiUrl + "game/forfeit",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ token: token }),

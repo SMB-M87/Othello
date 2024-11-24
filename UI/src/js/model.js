@@ -1,12 +1,14 @@
 Game.Model = (function () {
   // config
   let configMap = {
-    redirectUrl: null
+    redirectUrl: null,
   };
 
   let stateMap = {
     firstLoad: true,
     turnReload: true,
+    lastLoad: true,
+    endLoad: false,
     opponent: "",
     playerColor: "",
     board: null,
@@ -15,7 +17,7 @@ Game.Model = (function () {
   // private functions
   const _init = function (url) {
     configMap.redirectUrl = url;
-  }
+  };
 
   const _getGameState = function () {
     let dataPromise = stateMap.firstLoad
@@ -26,9 +28,8 @@ Game.Model = (function () {
       .then((data) => {
         // Get View
         if (stateMap.firstLoad) {
-          // Not In Game or Game Finished => Redirect to game result view of MVC
-          if (!data.partial.inGame && data.partial.finished) {
-            window.location.href = configMap.redirectUrl;
+          if (data.partial.playersTurn === 0) {
+            window.location.href = `configMap.redirectUrl${"Result"}`;
             return;
           }
           stateMap.opponent = data.opponent;
@@ -37,28 +38,20 @@ Game.Model = (function () {
           stateMap.firstLoad = false;
 
           _updateGameInfo(stateMap.opponent, stateMap.playerColor);
-          _toggleButtons(data.partial.isPlayersTurn, data.partial.possibleMove);
-          _updateTimer(data.partial.isPlayersTurn, data.partial.time);
-          
-          // Get Partial
-          // Last Board Update
-        } else if (data.playersTurn === 0 && data.inGame) {
-          Game.Othello.updateBoard(
-            data.board,
-            data.isPlayersTurn,
-            stateMap.playerColor
+          _toggleButtons(
+            data.partial.isPlayersTurn,
+            data.partial.possibleMove,
+            data.partial.playersTurn
           );
-          Game.Othello.highlightChanges(data.board);
+          _updateTimer(
+            data.partial.isPlayersTurn,
+            data.partial.time,
+            data.partial.playersTurn
+          );
 
-          // Game Finished
-        } else if (!data.inGame) {
-          setTimeout(() => {
-            window.location.href = configMap.redirectUrl;
-          }, 500);
-
+          // Get Partial
           // Player's turn
-        } else if (data.isPlayersTurn) {
-          // Update board & buttons once
+        } else if (data.playersTurn !== 0 && data.isPlayersTurn) {
           if (stateMap.turnReload) {
             Game.Othello.updateBoard(
               data.board,
@@ -66,16 +59,19 @@ Game.Model = (function () {
               stateMap.playerColor
             );
             Game.Othello.highlightChanges(data.board);
-            _toggleButtons(data.isPlayersTurn, data.possibleMove);
+            _toggleButtons(
+              data.isPlayersTurn,
+              data.possibleMove,
+              data.playersTurn
+            );
             stateMap.turnReload = false;
             stateMap.opponentReload = true;
           }
-          // Countdown continuous update
-          _updateTimer(data.isPlayersTurn, data.time);
+          _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
           stateMap.board = data.board;
 
           // Opponent's turn
-        } else {
+        } else if (data.playersTurn !== 0 && !data.isPlayersTurn) {
           if (!stateMap.turnReload) {
             Game.Othello.updateBoard(
               data.board,
@@ -84,11 +80,50 @@ Game.Model = (function () {
             );
 
             Game.Othello.makeMove(data.board);
+            _toggleButtons(
+              data.isPlayersTurn,
+              data.possibleMove,
+              data.playersTurn
+            );
             stateMap.turnReload = true;
           }
-          _toggleButtons(data.isPlayersTurn, data.possibleMove);
-          _updateTimer(data.isPlayersTurn, data.time);
+          _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
           stateMap.board = data.board;
+
+          // Last Board Update
+        } else if (data.playersTurn === 0 && data.inGame && stateMap.lastLoad) {
+          Game.Othello.updateBoard(
+            data.board,
+            data.isPlayersTurn,
+            stateMap.playerColor
+          );
+          Game.Othello.highlightChanges(data.board);
+          _toggleButtons(
+            data.isPlayersTurn,
+            data.possibleMove,
+            data.playersTurn
+          );
+          _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
+          stateMap.board = data.board;
+          stateMap.lastLoad = false;
+
+          // Game Finished
+        } else if (!data.inGame && !stateMap.endLoad) {
+          if (stateMap.lastLoad) {
+            Game.Othello.updateBoard(
+              stateMap.board,
+              false,
+              stateMap.playerColor
+            );
+            _toggleButtons(
+              data.isPlayersTurn,
+              data.possibleMove,
+              data.playersTurn
+            );
+            _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
+            stateMap.lastLoad = false;
+          }
+          configMap.endLoad = true;
         }
         return data;
       })
@@ -99,7 +134,7 @@ Game.Model = (function () {
   };
 
   const _updateGameInfo = function (opponent, playerColor) {
-    const title = document.getElementById("player-info")
+    const title = document.getElementById("player-info");
     document.getElementById("opponent-name").textContent = opponent;
     title.classList.add("flex", "fade-in");
 
@@ -129,67 +164,87 @@ Game.Model = (function () {
       playerColor === 1 ? "black-score" : "white-score";
   };
 
-  const _updateTimer = function (isPlayersTurn, timeLeft) {
+  const _updateTimer = function (isPlayersTurn, timeLeft, playersTurn) {
     const timer = document.getElementById("timer-color-indicator");
 
-    if (isPlayersTurn) {
-      timer.classList.remove("red");
-      timer.classList.add("green");
+    if (playersTurn !== 0) {
+      if (isPlayersTurn) {
+        timer.classList.remove("red");
+        timer.classList.add("green");
 
-      if (
-        timeLeft.endsWith("0") ||
-        timeLeft.endsWith("5") ||
-        timeLeft === "4" ||
-        timeLeft === "3" ||
-        timeLeft === "2" ||
-        timeLeft === "1"
-      ) {
-        timer.classList.add("wobble");
+        if (
+          timeLeft.endsWith("0") ||
+          timeLeft.endsWith("5") ||
+          timeLeft === "4" ||
+          timeLeft === "3" ||
+          timeLeft === "2" ||
+          timeLeft === "1"
+        ) {
+          timer.classList.add("wobble");
+        } else {
+          timer.classList.remove("wobble");
+        }
       } else {
-        timer.classList.remove("wobble");
+        timer.classList.remove("green");
+        timer.classList.add("red");
       }
+      document.getElementById("time-remaining").textContent = timeLeft;
     } else {
-      timer.classList.remove("green");
-      timer.classList.add("red");
+      timer.classList.remove("green", "red");
+      timer.classList.add("hidden");
     }
-    document.getElementById("time-remaining").textContent = timeLeft;
   };
 
-  const _toggleButtons = function (isPlayersTurn, possibleMove) {
+  const _toggleButtons = function (isPlayersTurn, possibleMove, playersTurn) {
     const feedbackWidget = document.getElementById("feedback-widget");
     const buttonContainer = document.getElementById("button-container");
     const passButton = document.getElementById("pass-button");
     const forfeitButton = document.getElementById("forfeit-button");
+    const rematchButton = document.getElementById("rematch-button");
 
-    if (isPlayersTurn) {
-      feedbackWidget.classList.add("visible");
-      feedbackWidget.classList.remove("hidden");
-
+    if (playersTurn === 0) {
       buttonContainer.classList.add("flex");
       buttonContainer.classList.remove("hidden");
-
-      if (!possibleMove) {
-        passButton.classList.add("inline-block", "fade-in-wobble");
-        passButton.classList.remove("hidden");
-      } else {
-        passButton.classList.add("hidden");
-        passButton.classList.remove("inline-block");
-      }
-
-      forfeitButton.classList.add("inline-block", "fade-in");
-      forfeitButton.classList.remove("hidden");
-    } else {
-      feedbackWidget.classList.add("hidden");
-      feedbackWidget.classList.remove("visible");
-
-      buttonContainer.classList.add("hidden");
-      buttonContainer.classList.remove("flex");
 
       passButton.classList.add("hidden");
       passButton.classList.remove("inline-block", "fade-in-wobble");
 
       forfeitButton.classList.add("hidden");
       forfeitButton.classList.remove("inline-block", "fade-in");
+
+      rematchButton.classList.add("inline-block", "fade-in");
+      rematchButton.classList.remove("hidden");
+    } else {
+      if (isPlayersTurn) {
+        feedbackWidget.classList.add("visible");
+        feedbackWidget.classList.remove("hidden");
+
+        buttonContainer.classList.add("flex");
+        buttonContainer.classList.remove("hidden");
+
+        if (!possibleMove) {
+          passButton.classList.add("inline-block", "fade-in-wobble");
+          passButton.classList.remove("hidden");
+        } else {
+          passButton.classList.add("hidden");
+          passButton.classList.remove("inline-block");
+        }
+
+        forfeitButton.classList.add("inline-block", "fade-in");
+        forfeitButton.classList.remove("hidden");
+      } else {
+        feedbackWidget.classList.add("hidden");
+        feedbackWidget.classList.remove("visible");
+
+        buttonContainer.classList.add("hidden");
+        buttonContainer.classList.remove("flex");
+
+        passButton.classList.add("hidden");
+        passButton.classList.remove("inline-block", "fade-in-wobble");
+
+        forfeitButton.classList.add("hidden");
+        forfeitButton.classList.remove("inline-block", "fade-in");
+      }
     }
   };
 
@@ -200,7 +255,7 @@ Game.Model = (function () {
   // public functions
   const init = (url) => {
     return _init(url);
-  }
+  };
 
   const getGameState = () => {
     return _getGameState();

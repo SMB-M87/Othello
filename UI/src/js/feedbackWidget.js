@@ -1,6 +1,5 @@
 class FeedbackWidget {
   constructor(elementId) {
-    console.log("Initializing FeedbackWidget with elementId:", elementId);
     this._elementId = elementId;
     this._timeout = null;
   }
