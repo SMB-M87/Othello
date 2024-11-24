@@ -4,10 +4,12 @@
   border: 1px solid #ddd;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: inline-block;
+  background-color: lightblue;
+  color: blue;
 }
 
 .score-display {
-  display: none;
+  display: flex;
   justify-content: center;
   margin-top: 15px;
   gap: 20px;

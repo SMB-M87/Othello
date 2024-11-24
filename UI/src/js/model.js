@@ -17,7 +17,7 @@ Game.Model = (function () {
     configMap.redirectUrl = url;
   }
 
-  const _getGameState = function () {
+  const _getGameState = async function () {
     let dataPromise = stateMap.firstLoad
       ? Game.Data.get()
       : Game.Data.getPartial();
@@ -37,11 +37,6 @@ Game.Model = (function () {
           stateMap.firstLoad = false;
 
           _updateGameInfo(stateMap.opponent, stateMap.playerColor);
-          Game.Othello.updateBoard(
-            data.partial.board,
-            data.partial.isPlayersTurn,
-            stateMap.playerColor
-          );
           _toggleButtons(data.partial.isPlayersTurn, data.partial.possibleMove);
           _updateTimer(data.partial.isPlayersTurn, data.partial.time);
 
@@ -96,7 +91,7 @@ Game.Model = (function () {
   const _updateGameInfo = function (opponent, playerColor) {
     const title = document.getElementById("player-info")
     document.getElementById("opponent-name").textContent = opponent;
-    title.classList.add("flex");
+    title.classList.add("flex", "fade-in");
 
     const playerColorIndicator = document.getElementById(
       "player-color-indicator"
@@ -116,7 +111,7 @@ Game.Model = (function () {
       opponentColorIndicator.classList.add("white");
     }
 
-    document.getElementById("score-display").classList.add("flex");
+    document.getElementById("score-display").classList.add("flex", "fade-in");
 
     document.getElementById("player-score").id =
       playerColor === 1 ? "white-score" : "black-score";

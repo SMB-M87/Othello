@@ -92,6 +92,8 @@ const Game = (function (config) {
   };  
 
   const _getCurrentGameState = function () {
+    Game.Othello.board();
+
     setInterval(function () {
       Game.Model.getGameState();
     }, 1000);
@@ -106,7 +108,7 @@ const Game = (function (config) {
 
   // return object
   return {
-    init: init,
+    init: init
   };
 })({ apiUrl:"https://localhost:7023/api/game/", userToken: "test", redirectUrl: "https://localhost:7269/Home/Result" });
 

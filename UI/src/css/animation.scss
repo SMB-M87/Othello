@@ -40,6 +40,16 @@
   animation: fadeIn 0.7s ease-in-out, highlights 5s ease-in-out infinite;
 }
 
+.distort {
+  animation: distort 1s ease-out both;
+  animation-delay: var(--animation-delay, 0s);
+  transform: translateX(calc(-50px + 100px * var(--random-x))) 
+             translateY(calc(-50px + 100px * var(--random-y)))
+             scale(2)
+             rotate(calc(-90deg + 180deg * var(--random-rot)));
+  opacity: 0;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -103,5 +113,28 @@
   50% {
     box-shadow: 0 0 40px rgba(255, 0, 0, 1);
     transform: scale(0.9);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes distort {
+  0% {
+    transform: translateX(calc(-50px + 100px * var(--random-x))) 
+               translateY(calc(-50px + 100px * var(--random-y)))
+               scale(2)
+               rotate(calc(-90deg + 180deg * var(--random-rot)));
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1) rotate(0);
+    opacity: 1;
   }
 }
