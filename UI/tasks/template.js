@@ -14,7 +14,9 @@ const template = function (backendPath, templates, partials) {
       .pipe(handlebars())
       .pipe(
         wrap(
-          'this["spa_templates"] = this["spa_templates"] || {}; this["spa_templates"][<%= processPartialName(file.relative) %>] = Handlebars.template(<%= contents %>);',
+          'this["spa_templates"] = this["spa_templates"] || {}; ' +
+          'this["spa_templates"][<%= processPartialName(file.relative) %>] = Handlebars.template(<%= contents %>); ' +
+          'Handlebars.registerPartial(<%= processPartialName(file.relative) %>, this["spa_templates"][<%= processPartialName(file.relative) %>]);',
           {},
           {
             imports: {

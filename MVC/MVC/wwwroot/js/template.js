@@ -45,7 +45,7 @@ this["spa_templates"] = this["spa_templates"] || {}; this["spa_templates"]["boar
   return "<table class=\"othello-board\">\r\n"
     + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"boardRows") : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":2,"column":2},"end":{"line":18,"column":11}}})) != null ? stack1 : "")
     + "</table>";
-},"usePartial":true,"useData":true});
+},"usePartial":true,"useData":true}); Handlebars.registerPartial("board", this["spa_templates"]["board"]);
 this["spa_templates"] = this["spa_templates"] || {};
 this["spa_templates"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
@@ -109,4 +109,4 @@ this["spa_templates"] = this["spa_templates"] || {}; this["spa_templates"]["pawn
   return "<div class=\"cell-div\">\r\n"
     + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"isPossibleMove") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data,"loc":{"start":{"line":2,"column":2},"end":{"line":8,"column":9}}})) != null ? stack1 : "")
     + "</div>";
-},"useData":true});
+},"useData":true}); Handlebars.registerPartial("pawn", this["spa_templates"]["pawn"]);
