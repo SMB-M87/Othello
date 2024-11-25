@@ -25,7 +25,7 @@ Game.Model = (function () {
       .then((data) => {
         // Rematch
         if (!stateMap.endLoad) {
-          if (data != null && stateMap.rematchLoad) {
+          if (data === stateMap.opponent && stateMap.rematchLoad) {
             const feedbackWidget = FeedbackSingleton.getInstance();
 
             feedbackWidget.show(
@@ -122,6 +122,8 @@ Game.Model = (function () {
       if (data.forfeit) {
         document.getElementById("forfeit-title").textContent = "by forfeit"
       } 
+
+      Game.Othello.updateBoard(data.board, 0, stateMap.playerColor);
   }
 
   const _renderView = function (

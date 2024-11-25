@@ -20,7 +20,7 @@ const template = function (backendPath, templates, partials) {
             imports: {
               processPartialName: function (fileName) {
                 return JSON.stringify(
-                  path.basename(fileName, ".hbs").substr(1)
+                  path.basename(fileName, ".js").substr(1)
                 );
               },
             },
