@@ -5,6 +5,7 @@ const files = {
     "src/js/feedbackSingleton.js",
     "src/js/feedbackWidget.js",
     "src/js/game.js",
+    "src/js/handlebar.js",
     "src/js/data.js",
     "src/js/model.js",
     "src/js/othello.js",

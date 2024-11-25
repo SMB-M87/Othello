@@ -1,0 +1,19 @@
+<table class="othello-board">
+  {{#each boardRows}}
+    <tr>
+      {{#each this}}
+        <td data-row="{{row}}" data-col="{{col}}" class="board-cell {{cellClass}} distort"
+            style="--random-x: {{randomX}}; --random-y: {{randomY}}; --random-rot: {{randomRot}}; --animation-delay: {{animationDelay}}s;">
+          {{> pawn
+              isPossibleMove=isPossibleMove
+              hasPiece=hasPiece
+              pieceColorClass=pieceColorClass
+              playerColorClass=playerColorClass
+              highlight=highlight
+              flip=flip
+          }}
+        </td>
+      {{/each}}
+    </tr>
+  {{/each}}
+</table>

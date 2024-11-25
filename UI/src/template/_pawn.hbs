@@ -1,0 +1,9 @@
+<div class="cell-div">
+  {{#if isPossibleMove}}
+    <div class="possible-move {{playerColorClass}}-border"></div>
+  {{else}}
+    {{#if hasPiece}}
+      <i class="fa fa-circle {{pieceColorClass}} {{#if highlight}}highlight{{/if}} {{#if flip}}flip{{/if}}"></i>
+    {{/if}}
+  {{/if}}
+</div>

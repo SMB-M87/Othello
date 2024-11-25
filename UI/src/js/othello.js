@@ -120,6 +120,7 @@ Game.Othello = (function () {
         piece.classList.remove("highlight", "flip");
       }
     });
+
     _calculateScores();
     Game.Model.setBoard(board);
   };
