@@ -14,13 +14,12 @@ const Game = (function (config) {
   // private functions
   const _init = function () {
     Game.Handlebar.renderBody();
+    Game.Handlebar.renderBoard(null, null, null);
     Game.Handlebar.attachEventListeners();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
   };
 
   const _getCurrentGameState = function () {
-    Game.Othello.board();
-
     setInterval(function () {
       Game.Model.getGameState();
     }, 1000);

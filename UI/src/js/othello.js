@@ -1,53 +1,5 @@
 Game.Othello = (function () {
   // private functions
-  const _board = function () {
-    const boardContainer = document.getElementById("game-board-container");
-    boardContainer.innerHTML = "";
-    boardContainer.classList.add("game-board-container");
-
-    const table = document.createElement("table");
-    table.className = "othello-board";
-
-    for (let row = 0; row < 8; row++) {
-      const tr = document.createElement("tr");
-      for (let col = 0; col < 8; col++) {
-        const td = document.createElement("td");
-        td.dataset.row = row;
-        td.dataset.col = col;
-        td.classList.add(
-          "board-cell",
-          (row + col) % 2 === 0 ? "even" : "odd",
-          "distort"
-        );
-
-        const randomX = Math.random();
-        const randomY = Math.random();
-        const randomRot = Math.random();
-        const delay = (row * 8 + col) * 0.02;
-
-        td.style.setProperty("--random-x", randomX);
-        td.style.setProperty("--random-y", randomY);
-        td.style.setProperty("--random-rot", randomRot);
-        td.style.setProperty("--animation-delay", `${delay}s`);
-
-        td.addEventListener("animationend", () => {
-          td.classList.remove("distort");
-          td.style.removeProperty("--random-x");
-          td.style.removeProperty("--random-y");
-          td.style.removeProperty("--random-rot");
-          td.style.removeProperty("--animation-delay");
-        });
-
-        const cellDiv = document.createElement("div");
-        cellDiv.classList.add("cell-div");
-        td.appendChild(cellDiv);
-        tr.appendChild(td);
-      }
-      table.appendChild(tr);
-    }
-    boardContainer.appendChild(table);
-  };
-
   const _updateBoard = function (board, playersTurn, playerColor) {
     const previousBoard = Game.Model.getBoard() || [];
     const boardCells = document.querySelectorAll("#game-board-container td");
@@ -147,17 +99,12 @@ Game.Othello = (function () {
   };
 
   // public functions
-  const board = function () {
-    return _board();
-  };
-
   const updateBoard = function (board, playersTurn, playerColor) {
     _updateBoard(board, playersTurn, playerColor);
   };
 
   // return object
   return {
-    board: board,
-    updateBoard: updateBoard,
+    updateBoard: updateBoard
   };
 })();

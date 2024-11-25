@@ -18,13 +18,14 @@ Game.Handlebar = (function () {
 
   const _prepareBoardData = function (board, playersTurn, playerColor) {
     const boardData = [];
-
+    const defaultPlayerColor = playerColor || 1;
+  
     for (let row = 0; row < 8; row++) {
       const rowData = [];
       for (let col = 0; col < 8; col++) {
-        const currentValue = board[row]?.[col] ?? 0;
-        const isPossibleMove = playersTurn === playerColor && currentValue === 3;
-        const hasPiece = currentValue === 1 || currentValue === 2;
+        const currentValue = board ? (board[row]?.[col] ?? 0) : 0;
+        const isPossibleMove = board && playersTurn === playerColor && currentValue === 3;
+        const hasPiece = board && (currentValue === 1 || currentValue === 2);
         const pieceColorClass =
           currentValue === 1
             ? "white-piece"
@@ -39,19 +40,19 @@ Game.Handlebar = (function () {
           randomY: Math.random(),
           randomRot: Math.random(),
           animationDelay: (row * 8 + col) * 0.02,
-          isPossibleMove,
-          hasPiece,
+          isPossibleMove: isPossibleMove || false,
+          hasPiece: hasPiece || false,
           pieceColorClass,
-          playerColorClass: playerColor === 1 ? "white" : "black",
+          playerColorClass: defaultPlayerColor === 1 ? "white" : "black",
           highlight: false,
           flip: false,
         });
       }
       boardData.push(rowData);
     }
-
+  
     return boardData;
-  };  
+  };
 
   const _attachListeners = function (listeners) {
     listeners.forEach(({ selector, event, callback }) => {
