@@ -51,10 +51,7 @@ namespace API.Data
                         Time = await GetTimerByPlayersToken(token),
                         InGame = game.Status == Status.Playing || game.Status == Status.Finished,
                         PlayersTurn = game.PlayersTurn,
-                        IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
-                        PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                        Board = game.Board,
-                        Winner = game.WinningColor()
+                        Board = game.Board
                     }
                 };
                 return model;
@@ -69,11 +66,8 @@ namespace API.Data
                     {
                         InGame = false,
                         PlayersTurn = Color.None,
-                        IsPlayersTurn = false,
-                        PossibleMove = false,
                         Board = new Color[8, 8],
-                        Time = string.Empty,
-                        Winner = Color.None
+                        Time = string.Empty
                     }
                 };
                 return model;
@@ -91,10 +85,7 @@ namespace API.Data
                     Time = await GetTimerByPlayersToken(token),
                     InGame = game.Status == Status.Playing || game.Status == Status.Finished,
                     PlayersTurn = game.PlayersTurn,
-                    IsPlayersTurn = game.PlayersTurn == Color.None ? false : token == game.First ? game.FColor == game.PlayersTurn : game.SColor == game.PlayersTurn,
-                    PossibleMove = game.IsThereAPossibleMove(token == game.First ? game.FColor : game.SColor),
-                    Board = game.Board,
-                    Winner = game.WinningColor()
+                    Board = game.Board
                 };
                 return model;
             }
@@ -104,11 +95,8 @@ namespace API.Data
                 {
                     InGame = false,
                     PlayersTurn = Color.None,
-                    IsPlayersTurn = false,
-                    PossibleMove = false,
                     Board = new Color[8, 8],
-                    Time = string.Empty,
-                    Winner = Color.None
+                    Time = string.Empty
                 };
                 return model;
             }
