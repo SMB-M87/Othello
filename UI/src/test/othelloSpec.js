@@ -6,7 +6,6 @@ var myApp = {
 
 describe("Game.Othello Module", function () {
   beforeAll(function () {
-    // Mock DOM elements required for the Othello module
     $("body").append(`
       <div id="game-board-container"></div>
       <span id="white-score"></span>
@@ -14,8 +13,57 @@ describe("Game.Othello Module", function () {
     `);
   });
 
+  beforeEach(function () {
+    if (!window.spa_templates) {
+      window.spa_templates = {};
+    }
+    window.spa_templates["body"] = jasmine.createSpy("body").and.returnValue(`
+          <section id="player-info" class="player-info">
+            <h2>
+              <span id="game-status">Playing</span> against
+              <span id="opponent-name">...</span>
+              <span id="forfeit-title"></span>
+            </h2>
+          </section>
+      
+          <section id="score-display" class="score-display">
+            <p>
+              <span id="player-color-indicator" class="color-indicator">
+                <strong><span id="player-score">2</span></strong>
+              </span>
+            </p>
+            <p>
+              <span id="timer-color-indicator" class="color-indicator">
+                <strong><span id="time-remaining">30</span></strong>
+              </span>
+            </p>
+            <p>
+              <span id="opponent-color-indicator" class="color-indicator">
+                <strong><span id="opponent-score">2</span></strong>
+              </span>
+            </p>
+          </section>
+      
+          <section id="game-board-container"></section>
+      
+          <section id="button-container">
+            <button id="pass-button" class="button button--success">Pass</button>
+            <button id="forfeit-button" class="button button--danger">Forfeit</button>
+            <button id="rematch-button" class="button button--info hidden">
+              <i class="fas fa-redo"></i><span>Rematch</span>
+            </button>
+          </section>
+      
+          <section id="feedback-section" aria-label="Feedback Widget">
+            <article id="feedback-widget" role="alert"></article>
+          </section>
+        `);
+
+    document.getElementById("body").innerHTML = spa_templates["body"]();
+  });
+
   afterEach(function () {
-    // Clear the game board after each test
+    document.getElementById("body").innerHTML = "";
     $("#game-board-container").empty();
   });
 
@@ -35,7 +83,7 @@ describe("Game.Othello Module", function () {
     expect(table.length).toBe(1);
 
     const cells = $("#game-board-container td");
-    expect(cells.length).toBe(64); // 8x8 board
+    expect(cells.length).toBe(64);
   });
 
   it("should update the board with pieces", function () {
@@ -44,8 +92,8 @@ describe("Game.Othello Module", function () {
     const mockBoard = Array(8)
       .fill(null)
       .map(() => Array(8).fill(0));
-    mockBoard[3][3] = 1; // White piece
-    mockBoard[3][4] = 2; // Black piece
+    mockBoard[3][3] = 1;
+    mockBoard[3][4] = 2;
 
     Game.Othello.updateBoard(mockBoard, 1, 1);
 
