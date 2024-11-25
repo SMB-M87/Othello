@@ -17,12 +17,17 @@ const Game = (function (config) {
     Game.Handlebar.renderBoard(null, null, null);
     Game.Handlebar.attachEventListeners();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
+    Game.Api.init();
   };
 
   const _getCurrentGameState = function () {
     setInterval(function () {
       Game.Model.getGameState();
     }, 1000);
+
+    setInterval(function () {
+      Game.Api.get();
+    }, 10000);
   };
 
   // public functions

@@ -58,7 +58,7 @@ Game.Model = (function () {
 
           // Game Finished
         } else if (!stateMap.lastLoad && stateMap.endLoad) {
-          _renderResult(data, stateMap.opponent);
+          _renderResult(data);
           stateMap.endLoad = false;
 
           // Get View
@@ -111,11 +111,11 @@ Game.Model = (function () {
       });
   };
 
-  const _renderResult = function (data, opponent) {
+  const _renderResult = function (data) {
     document.getElementById("game-status").textContent =
     data.draw
       ? "Drew"
-      : data.winner === opponent
+      : data.winner === stateMap.opponent
       ? "Lost"
       : "Won";
 
@@ -223,7 +223,7 @@ Game.Model = (function () {
     const buttonContainer = document.getElementById("button-container");
     const passButton = document.getElementById("pass-button");
     const forfeitButton = document.getElementById("forfeit-button");
-
+    
     if (playersTurn === 0) {
       const rematchButton = document.getElementById("rematch-button");
 
