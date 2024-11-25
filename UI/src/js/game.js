@@ -57,7 +57,6 @@ const Game = (function (config) {
       Game.Data.passGame()
         .then(() => {
           feedbackWidget.log({ message: `Turn passed.`, type: "Success" });
-          feedbackWidget.history();
         })
         .catch((error) => {
           feedbackWidget.log({
@@ -105,6 +104,7 @@ const Game = (function (config) {
     $("#rematch-button").on("click", function () {
       Game.Data.rematchGame()
         .then(() => {
+          feedbackWidget.removeLog();
           window.location.href = `${configMap.redirectUrl}Home/Index`;
         })
         .catch((error) => {

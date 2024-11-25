@@ -61,15 +61,18 @@ Game.Data = (function () {
     }
   };
 
-  const _getResult = function () {
+  const _getResult = function (delay) {
     if (stateMap.environment == "production") {
-      return $.get(configMap.apiUrl + "result/last/" + configMap.apiKey)
-        .then((result) => {
-          return result;
-        })
-        .catch((e) => {
-          console.log(e.message);
-        });
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          $.get(configMap.apiUrl + "result/last/" + configMap.apiKey)
+            .then((result) => resolve(result))
+            .catch((e) => {
+              console.log(e.message);
+              reject(e);
+            });
+        }, delay);
+      });
     } else if (stateMap.environment == "development") {
       return _getMockData();
     } else {
@@ -219,8 +222,8 @@ Game.Data = (function () {
     return _getPartial();
   };
 
-  const getResult = () => {
-    return _getResult();
+  const getResult = (delay = 1000) => {
+    return _getResult(delay);
   };  
   
   const getRematch = () => {
