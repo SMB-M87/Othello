@@ -4,18 +4,19 @@ Game.Model = (function () {
     firstLoad: true,
     turnReload: true,
     lastLoad: true,
-    endLoad: false,
+    endLoad: true,
     rematchLoad: true,
     opponent: "",
     playerColor: "",
     board: null,
-    winner: 0,
   };
 
   // private functions
   const _getGameState = function () {
-    let dataPromise = stateMap.endLoad
+    let dataPromise = !stateMap.endLoad
       ? Game.Data.getRematch()
+      : !stateMap.lastLoad 
+      ? Game.Data.getResult()
       : stateMap.firstLoad
       ? Game.Data.get()
       : Game.Data.getPartial();
@@ -23,14 +24,9 @@ Game.Model = (function () {
     return dataPromise
       .then((data) => {
         // Rematch
-        if (stateMap.endLoad) {
+        if (!stateMap.endLoad) {
           if (data != null && stateMap.rematchLoad) {
             const feedbackWidget = FeedbackSingleton.getInstance();
-            const section = document.getElementById("feedback-section");
-            const widget = document.getElementById("feedback-widget");
-
-            section.classList.add("transparent");
-            widget.classList.add("top-right");
 
             feedbackWidget.show(
               `${stateMap.opponent} wants a rematch, do you accept?`,
@@ -60,117 +56,102 @@ Game.Model = (function () {
             stateMap.rematchLoad = false;
           }
 
+          // Game Finished
+        } else if (!stateMap.lastLoad && stateMap.endLoad) {
+          _renderResult(data, stateMap.opponent);
+          stateMap.endLoad = false;
+
           // Get View
         } else if (stateMap.firstLoad) {
+          _renderView(
+            data.opponent,
+            data.color,
+            data.partial.time,
+            data.partial.playersturn,
+            data.partial.board
+          );
           stateMap.opponent = data.opponent;
           stateMap.playerColor = data.color;
-          stateMap.board = data.partial.board;
           stateMap.firstLoad = false;
-
-          _updateGameInfo(stateMap.opponent, stateMap.playerColor);
-          _toggleButtons(
-            data.partial.isPlayersTurn,
-            data.partial.possibleMove,
-            data.partial.playersTurn
-          );
-          _updateTimer(
-            data.partial.isPlayersTurn,
-            data.partial.time,
-            data.partial.playersTurn
-          );
 
           // Get Partial
           // Player's turn
-        } else if (data.playersTurn !== 0 && data.isPlayersTurn) {
+        } else if (
+          data.playersTurn !== 0 &&
+          data.playersTurn === stateMap.playerColor
+        ) {
+          _updateTimer(stateMap.playerColor, data.time, data.playersTurn);
           if (stateMap.turnReload) {
-            Game.Othello.updateBoard(
-              data.board,
-              data.isPlayersTurn,
-              stateMap.playerColor
-            );
-            Game.Othello.highlightChanges(data.board);
-            _toggleButtons(
-              data.isPlayersTurn,
-              data.possibleMove,
-              data.playersTurn
-            );
+            _renderPartial(stateMap.playerColor, data.playersTurn, data.board);
             stateMap.turnReload = false;
-            stateMap.opponentReload = true;
           }
-          _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
-          stateMap.board = data.board;
 
           // Opponent's turn
-        } else if (data.playersTurn !== 0 && !data.isPlayersTurn) {
+        } else if (
+          data.playersTurn !== 0 &&
+          data.playersTurn !== stateMap.playerColor
+        ) {
+          _updateTimer(stateMap.playerColor, data.time, data.playersTurn);
           if (!stateMap.turnReload) {
-            Game.Othello.updateBoard(
-              data.board,
-              data.isPlayersTurn,
-              stateMap.playerColor
-            );
-
-            Game.Othello.makeMove(data.board);
-            _toggleButtons(
-              data.isPlayersTurn,
-              data.possibleMove,
-              data.playersTurn
-            );
+            _renderPartial(stateMap.playerColor, data.playersTurn, data.board);
             stateMap.turnReload = true;
           }
-          _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
-          stateMap.board = data.board;
 
           // Last Board Update
-        } else if (data.playersTurn === 0 && data.inGame && stateMap.lastLoad) {
-          Game.Othello.updateBoard(
-            data.board,
-            data.isPlayersTurn,
-            stateMap.playerColor
-          );
-          Game.Othello.highlightChanges(data.board);
-          _toggleButtons(
-            data.isPlayersTurn,
-            data.possibleMove,
-            data.playersTurn
-          );
-          _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
-          stateMap.board = data.board;
-          stateMap.winner = data.winner;
+        } else if ((!data.inGame || (data.playersTurn === 0 && data.inGame)) && stateMap.lastLoad) {
+          _updateTimer(stateMap.playerColor, 0, data.playersTurn);
+          _renderPartial(stateMap.playerColor, 0, data.board);
           stateMap.lastLoad = false;
-
-          // Game Finished
-        } else if (!data.inGame && !stateMap.endLoad) {
-          if (stateMap.lastLoad) {
-            Game.Othello.updateBoard(
-              stateMap.board,
-              false,
-              stateMap.playerColor
-            );
-            _toggleButtons(
-              data.isPlayersTurn,
-              data.possibleMove,
-              data.playersTurn
-            );
-            _updateTimer(data.isPlayersTurn, data.time, data.playersTurn);
-            stateMap.winner = stateMap.playerColor == 1 ? 2 : 1;
-            stateMap.lastLoad = false;
-          }
-          document.getElementById("game-status").textContent =
-            stateMap.winner === 0
-              ? "Drew"
-              : stateMap.winner === stateMap.playerColor
-              ? "Won"
-              : "Lost";
-          document.getElementById("opponent-name").textContent =
-            stateMap.opponent;
-          stateMap.endLoad = true;
-        }
+        } 
         return data;
       })
       .catch((e) => {
         console.log(e.message);
         return { data: null, error: e.message };
       });
+  };
+
+  const _renderResult = function (data, opponent) {
+    document.getElementById("game-status").textContent =
+    data.draw
+      ? "Drew"
+      : data.winner === opponent
+      ? "Lost"
+      : "Won";
+
+      if (data.forfeit) {
+        document.getElementById("forfeit-title").textContent = "by forfeit"
+      } 
+  }
+
+  const _renderView = function (
+    opponent,
+    playerColor,
+    countdown,
+    playersTurn,
+    board
+  ) {
+    _updateGameInfo(opponent, playerColor);
+    _updateTimer(playerColor, countdown, playersTurn);
+    Game.Othello.updateBoard(board, playersTurn, playerColor);
+    _toggleButtons(
+      playerColor,
+      board.some((row) => row.includes(3)),
+      playersTurn
+    );
+  };
+
+  const _renderPartial = function (playerColor, playersTurn, board) {
+    Game.Othello.updateBoard(
+      board,
+      playersTurn,
+      playerColor
+    );
+    _toggleButtons(
+      playerColor,
+      board ? board.some((row) => row.includes(3)) : false,
+      playersTurn
+    );
   };
 
   const _updateGameInfo = function (opponent, playerColor) {
@@ -204,11 +185,11 @@ Game.Model = (function () {
       playerColor === 1 ? "black-score" : "white-score";
   };
 
-  const _updateTimer = function (isPlayersTurn, timeLeft, playersTurn) {
+  const _updateTimer = function (playerColor, timeLeft, playersTurn) {
     const timer = document.getElementById("timer-color-indicator");
 
     if (playersTurn !== 0) {
-      if (isPlayersTurn) {
+      if (playerColor === playersTurn) {
         timer.classList.remove("red");
         timer.classList.add("green");
 
@@ -235,7 +216,7 @@ Game.Model = (function () {
     }
   };
 
-  const _toggleButtons = function (isPlayersTurn, possibleMove, playersTurn) {
+  const _toggleButtons = function (playerColor, possibleMove, playersTurn) {
     const feedbackWidget = document.getElementById("feedback-widget");
     const buttonContainer = document.getElementById("button-container");
     const passButton = document.getElementById("pass-button");
@@ -256,7 +237,7 @@ Game.Model = (function () {
       rematchButton.classList.add("inline-block", "fade-in");
       rematchButton.classList.remove("hidden");
     } else {
-      if (isPlayersTurn) {
+      if (playerColor === playersTurn) {
         feedbackWidget.classList.add("visible");
         feedbackWidget.classList.remove("hidden");
 
@@ -289,6 +270,10 @@ Game.Model = (function () {
     }
   };
 
+  const _setBoard = function (board) {
+    stateMap.board = board;
+  };
+
   const _getBoard = function () {
     return stateMap.board;
   };
@@ -302,6 +287,10 @@ Game.Model = (function () {
     return _getGameState();
   };
 
+  const setBoard = function (board) {
+    return _setBoard(board);
+  };
+
   const getBoard = function () {
     return _getBoard();
   };
@@ -313,6 +302,7 @@ Game.Model = (function () {
   // return object
   return {
     getGameState: getGameState,
+    setBoard: setBoard,
     getBoard: getBoard,
     getOpponent: getOpponent,
   };

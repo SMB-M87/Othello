@@ -44,7 +44,6 @@ const Game = (function (config) {
             message: `Move made on row ${row} and col ${col}.`,
             type: "Success",
           });
-          feedbackWidget.history();
         })
         .catch((error) => {
           feedbackWidget.log({

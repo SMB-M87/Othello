@@ -61,6 +61,22 @@ Game.Data = (function () {
     }
   };
 
+  const _getResult = function () {
+    if (stateMap.environment == "production") {
+      return $.get(configMap.apiUrl + "result/last/" + configMap.apiKey)
+        .then((result) => {
+          return result;
+        })
+        .catch((e) => {
+          console.log(e.message);
+        });
+    } else if (stateMap.environment == "development") {
+      return _getMockData();
+    } else {
+      throw new Error("This environment is unknown.");
+    }
+  };  
+
   const _getRematch = function () {
     const username = Game.Model.getOpponent();
 
@@ -203,6 +219,10 @@ Game.Data = (function () {
     return _getPartial();
   };
 
+  const getResult = () => {
+    return _getResult();
+  };  
+  
   const getRematch = () => {
     return _getRematch();
   };
@@ -240,6 +260,7 @@ Game.Data = (function () {
     init: init,
     get: get,
     getPartial: getPartial,
+    getResult: getResult,
     getRematch: getRematch,
     sendMove: sendMove,
     passGame: passGame,

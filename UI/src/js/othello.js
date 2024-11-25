@@ -30,6 +30,17 @@ Game.Othello = (function () {
         td.style.setProperty("--random-rot", randomRot);
         td.style.setProperty("--animation-delay", `${delay}s`);
 
+        td.addEventListener("animationend", () => {
+          td.classList.remove("distort");
+          td.style.removeProperty("--random-x");
+          td.style.removeProperty("--random-y");
+          td.style.removeProperty("--random-rot");
+          td.style.removeProperty("--animation-delay");
+        });
+
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("cell-div");
+        td.appendChild(cellDiv);
         tr.appendChild(td);
       }
       table.appendChild(tr);
@@ -37,52 +48,80 @@ Game.Othello = (function () {
     boardContainer.appendChild(table);
   };
 
-  const _updateBoard = function (board, isPlayersTurn, playerColor) {
-    const boardContainer = document.getElementById("game-board-container");
-    boardContainer.innerHTML = "";
-    boardContainer.classList.remove("game-board-container");
+  const _updateBoard = function (board, playersTurn, playerColor) {
+    const previousBoard = Game.Model.getBoard() || [];
+    const boardCells = document.querySelectorAll("#game-board-container td");
 
-    const table = document.createElement("table");
-    table.className = "othello-board";
+    boardCells.forEach((cell) => {
+      const row = parseInt(cell.dataset.row, 10);
+      const col = parseInt(cell.dataset.col, 10);
+      const currentValue = board[row]?.[col] ?? 0;
+      const previousValue = previousBoard[row]?.[col] || 0;
 
-    for (let row = 0; row < 8; row++) {
-      const tr = document.createElement("tr");
-      for (let col = 0; col < 8; col++) {
-        const td = document.createElement("td");
-        td.dataset.row = row;
-        td.dataset.col = col;
-        td.classList.add("board-cell");
-        td.classList.add((row + col) % 2 === 0 ? "even" : "odd");
+      const cellDiv = cell.querySelector(".cell-div");
 
-        const cellValue = board[row][col];
-        const cellDiv = document.createElement("div");
-        cellDiv.classList.add("cell-div");
-
-        if (cellValue === 1) {
-          const piece = document.createElement("i");
-          piece.className = "fa fa-circle white-piece";
-          cellDiv.appendChild(piece);
-        } else if (cellValue === 2) {
-          const piece = document.createElement("i");
-          piece.className = "fa fa-circle black-piece";
-          cellDiv.appendChild(piece);
-        } else if (cellValue === 3) {
-          if (isPlayersTurn) {
-            const moveIndicator = document.createElement("div");
-            moveIndicator.className = "possible-move";
-            moveIndicator.classList.add(
-              playerColor === 1 ? "white-border" : "black-border"
-            );
-            cellDiv.appendChild(moveIndicator);
-          }
-        }
-        td.appendChild(cellDiv);
-        tr.appendChild(td);
+      if (playersTurn !== playerColor && previousValue === 3) {
+        cellDiv.innerHTML = "";
       }
-      table.appendChild(tr);
-    }
-    boardContainer.appendChild(table);
+
+      if (playersTurn === 0) {
+        cellDiv.innerHTML = "";
+
+        if (board && (currentValue === 1 || currentValue === 2)) {
+          const piece = document.createElement("i");
+          piece.className = `fa fa-circle ${
+            currentValue === 1 ? "white-piece" : "black-piece"
+          }`;
+          cellDiv.appendChild(piece);
+        } else if (previousValue === 1 || previousValue === 2) {
+          const piece = document.createElement("i");
+          piece.className = `fa fa-circle ${
+            previousValue === 1 ? "white-piece" : "black-piece"
+          }`;
+          cellDiv.appendChild(piece);
+        }
+      } else if (playersTurn === playerColor && currentValue === 3) {
+        cellDiv.innerHTML = "";
+        const moveIndicator = document.createElement("div");
+        moveIndicator.className = `possible-move ${
+          playerColor === 1 ? "white-border" : "black-border"
+        }`;
+        cellDiv.appendChild(moveIndicator);
+        cell.appendChild(cellDiv);
+      } else if (
+        currentValue !== previousValue &&
+        (currentValue === 1 || currentValue === 2)
+      ) {
+        const piece = cell.querySelector("i");
+
+        if (piece) {
+          piece.classList.remove("highlight");
+          piece.classList.add("flip");
+
+          setTimeout(() => {
+            piece.classList.remove("white-piece", "black-piece");
+            piece.classList.add(
+              currentValue === 1 ? "white-piece" : "black-piece"
+            );
+          }, 300);
+        } else {
+          cellDiv.innerHTML = "";
+          const newPiece = document.createElement("i");
+          newPiece.className = `fa fa-circle ${
+            currentValue === 1 ? "white-piece" : "black-piece"
+          } highlight`;
+          cellDiv.appendChild(newPiece);
+        }
+      } else if (
+        currentValue === previousValue &&
+        (currentValue === 1 || currentValue === 2)
+      ) {
+        const piece = cell.querySelector("i");
+        piece.classList.remove("highlight", "flip");
+      }
+    });
     _calculateScores();
+    Game.Model.setBoard(board);
   };
 
   const _calculateScores = function () {
@@ -106,74 +145,18 @@ Game.Othello = (function () {
     document.getElementById("black-score").textContent = blackScore;
   };
 
-  const _makeMove = function (board) {
-    const previousBoard = Game.Model.getBoard() || [];
-    const boardCells = document.querySelectorAll("#game-board-container td");
-
-    boardCells.forEach((cell) => {
-      const row = parseInt(cell.dataset.row, 10);
-      const col = parseInt(cell.dataset.col, 10);
-      const currentValue = board[row][col];
-      const previousValue = previousBoard[row]?.[col] || 0;
-
-      if (
-        currentValue !== previousValue &&
-        (currentValue === 1 || currentValue === 2)
-      ) {
-        const piece = cell.querySelector("i");
-        if (piece) {
-          piece.classList.remove("highlight");
-          piece.classList.add("glow");
-        }
-      }
-    });
-  };
-
-  const _highlightChanges = function (board) {
-    const previousBoard = Game.Model.getBoard() || [];
-    const boardCells = document.querySelectorAll("#game-board-container td");
-
-    boardCells.forEach((cell) => {
-      const row = parseInt(cell.dataset.row, 10);
-      const col = parseInt(cell.dataset.col, 10);
-      const currentValue = board[row][col];
-      const previousValue = previousBoard[row]?.[col] || 0;
-
-      if (
-        currentValue !== previousValue &&
-        (currentValue === 1 || currentValue === 2)
-      ) {
-        const piece = cell.querySelector("i");
-        if (piece) {
-          piece.classList.remove("glow");
-          piece.classList.add("highlight");
-        }
-      }
-    });
-  };
-
   // public functions
   const board = function () {
     return _board();
   };
 
-  const updateBoard = function (board, isPlayersTurn, playerColor) {
-    _updateBoard(board, isPlayersTurn, playerColor);
-  };
-
-  const makeMove = function (board) {
-    _makeMove(board);
-  };
-
-  const highlightChanges = function (board) {
-    _highlightChanges(board);
+  const updateBoard = function (board, playersTurn, playerColor) {
+    _updateBoard(board, playersTurn, playerColor);
   };
 
   // return object
   return {
     board: board,
     updateBoard: updateBoard,
-    makeMove: makeMove,
-    highlightChanges: highlightChanges,
   };
 })();
