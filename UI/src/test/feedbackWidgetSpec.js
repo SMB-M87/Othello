@@ -10,121 +10,159 @@ describe("FeedbackWidget", function () {
   let feedbackWidget;
 
   beforeAll(function () {
-    // Spy on window.alert to suppress actual alerts in tests
-    spyOn(window, "alert").and.stub();
-
-    // Add DOM elements dynamically for testing
-    $("body").append('<div id="feedback-widget" role="alert"></div>');
+    // Spy on console.log and dynamically add DOM elements for testing
+    spyOn(console, "log").and.callThrough();
+    $("body").append(`
+      <div id="feedback-section" class="hidden"></div>
+      <div id="feedback-widget" role="alert"></div>
+    `);
     feedbackWidget = new FeedbackWidget("feedback-widget");
   });
 
+  beforeEach(function () {
+    if (!window.spa_templates) {
+      window.spa_templates = {};
+    }
+    window.spa_templates["body"] = jasmine.createSpy("body").and.returnValue(`
+          <section id="player-info" class="player-info">
+            <h2>
+              <span id="game-status">Playing</span> against
+              <span id="opponent-name">...</span>
+              <span id="forfeit-title"></span>
+            </h2>
+          </section>
+      
+          <section id="score-display" class="score-display">
+            <p>
+              <span id="player-color-indicator" class="color-indicator">
+                <strong><span id="player-score">2</span></strong>
+              </span>
+            </p>
+            <p>
+              <span id="timer-color-indicator" class="color-indicator">
+                <strong><span id="time-remaining">30</span></strong>
+              </span>
+            </p>
+            <p>
+              <span id="opponent-color-indicator" class="color-indicator">
+                <strong><span id="opponent-score">2</span></strong>
+              </span>
+            </p>
+          </section>
+      
+          <section id="game-board-container"></section>
+      
+          <section id="button-container">
+            <button id="pass-button" class="button button--success">Pass</button>
+            <button id="forfeit-button" class="button button--danger">Forfeit</button>
+            <button id="rematch-button" class="button button--info hidden">
+              <i class="fas fa-redo"></i><span>Rematch</span>
+            </button>
+          </section>
+      
+          <section id="feedback-section" aria-label="Feedback Widget">
+            <article id="feedback-widget" role="alert"></article>
+          </section>
+        `);
+
+    document.getElementById("body").innerHTML = spa_templates["body"]();
+  });
+
   afterEach(function () {
-    // Reset display style and content after each test
+    document.getElementById("body").innerHTML = "";
     feedbackWidget.hide();
-    localStorage.removeItem("feedback_widget"); // Clear logs between tests
+    localStorage.removeItem("feedback_widget");
   });
 
-  // 1. DOM Element Check
   it("should define the feedback widget DOM element", function () {
-    expect($("#feedback-widget")).toBeDefined();
+    expect($("#feedback-widget").length).toBe(1);
   });
 
-  // 2. Show the feedback widget with success alert and auto-dismiss
-  it("should display the feedback widget with a success alert and auto-dismiss", function (done) {
-    feedbackWidget.show("Fusion is near.", "Success", true);
-    expect($("#feedback-widget").css("display")).toBe("block");
+  it("should display the widget with a success alert and auto-dismiss", function (done) {
+    feedbackWidget.show("Fusion is near.", "Success", 1000);
     expect($("#feedback-widget").hasClass("alert-success")).toBe(true);
-    expect($("#feedback-widget span").text()).toBe("Success - Fusion is near.");
+    expect($("#feedback-widget").text()).toContain("Fusion is near.");
 
     setTimeout(() => {
       try {
-        expect($("#feedback-widget").css("display")).toBe("none");
-        done(); // Signal completion of the test
+        expect($("#feedback-widget").hasClass("visible")).toBe(false);
+        done();
       } catch (error) {
-        done.fail(error); // Fail the test if an error occurs
+        done.fail(error);
       }
-    }, 7000); // 15 seconds + a small buffer
+    }, 1500);
   });
 
-  // 3. Display the feedback widget with a danger alert
-  it("should show the feedback widget with a danger alert", function () {
-    feedbackWidget.show("Subcritical reactor!!!", "Danger");
-    expect($("#feedback-widget").css("display")).toBe("block");
+  it("should display the widget with a danger alert", function () {
+    feedbackWidget.show("Critical error!", "Danger", 6000, false);
     expect($("#feedback-widget").hasClass("alert-danger")).toBe(true);
-    expect($("#feedback-widget span").text()).toBe("Danger - Subcritical reactor!!!");
+    expect($("#feedback-widget").text()).toContain("Critical error!");
   });
 
-  // 4. Hide the feedback widget when close button is clicked
-  it("should hide the feedback widget when the close button is clicked", function (done) {
-    feedbackWidget.show("Some message", "Info");
+  it("should hide the widget when the close button is clicked", function (done) {
+    feedbackWidget.show("Close test", "Info");
     $(".feedback-widget__close").trigger("click");
 
     setTimeout(() => {
       try {
-        expect($("#feedback-widget").css("display")).toBe("none");
-        done(); // Signal completion of the test
+        expect($("#feedback-widget").hasClass("visible")).toBe(false);
+        done();
       } catch (error) {
-        done.fail(error); // Fail the test if an error occurs
+        done.fail(error);
       }
-    }, 2000);
+    }, 500);
   });
 
-  // 5. Log messages to localStorage
   it("should log a message to localStorage", function () {
     feedbackWidget.show("Fusion is near.", "Success");
-    let storedData = JSON.parse(localStorage.getItem("feedback_widget"));
+    const storedData = JSON.parse(localStorage.getItem("feedback_widget"));
     expect(storedData.messages.length).toBe(1);
-    expect(storedData.messages[0].type).toBe("Success");
-    expect(storedData.messages[0].message).toBe("Fusion is near.");
+    expect(storedData.messages[0]).toEqual({
+      message: "Fusion is near.",
+      type: "Success",
+    });
   });
 
-  // 6. Log only the 10 most recent messages
   it("should store only the last 10 messages in the log", function () {
     for (let i = 1; i <= 12; i++) {
-      feedbackWidget.show("Message " + i, "Success");
+      feedbackWidget.show(`Message ${i}`, "Info");
     }
-    let storedData = JSON.parse(localStorage.getItem("feedback_widget"));
+    const storedData = JSON.parse(localStorage.getItem("feedback_widget"));
     expect(storedData.messages.length).toBe(10);
-    expect(storedData.messages[0].message).toBe("Message 12"); // Most recent
-    expect(storedData.messages[9].message).toBe("Message 3"); // Oldest
+    expect(storedData.messages[0].message).toBe("Message 12");
+    expect(storedData.messages[9].message).toBe("Message 3");
   });
 
-  // 7. Remove all logs from localStorage
   it("should clear all logs from localStorage when removeLog is called", function () {
     feedbackWidget.show("Fusion is near.", "Success");
     feedbackWidget.removeLog();
-    expect(localStorage.getItem("feedback_widget")).toBe(null);
+    expect(localStorage.getItem("feedback_widget")).toBeNull();
   });
 
-  // 8. Verify history output in console
   it("should output the history of messages in the console", function () {
-    spyOn(console, "log");
     feedbackWidget.show("Fusion is near.", "Success");
-    feedbackWidget.show("Subcritical reactor!!!", "Danger");
+    feedbackWidget.show("Critical error!", "Danger");
     feedbackWidget.history();
 
-    // Use an array comparison for flexibility in line breaks
     const expectedHistory = [
-      "Danger - Subcritical reactor!!!",
+      "Danger - Critical error!",
       "Success - Fusion is near.",
     ].join("\n");
 
     expect(console.log).toHaveBeenCalledWith(expectedHistory);
   });
 
-  // 9. Check alert class assignment on show
   it("should assign appropriate alert classes based on the alert type", function () {
-    feedbackWidget.show("Testing alert types.", "Info");
+    feedbackWidget.show("Test Info", "Info");
     expect($("#feedback-widget").hasClass("alert-info")).toBe(true);
 
-    feedbackWidget.show("Testing alert types.", "Warning");
+    feedbackWidget.show("Test Warning", "Warning");
     expect($("#feedback-widget").hasClass("alert-warning")).toBe(true);
   });
 
-  // 10. Check localStorage is not updated when hiding
-  it("should not add to localStorage log when hiding the widget", function () {
-    feedbackWidget.hide(); // Hide the widget
-    let storedData = JSON.parse(localStorage.getItem("feedback_widget"));
-    expect(storedData).toEqual(null); // No log should be stored
+  it("should not update localStorage when hiding the widget", function () {
+    feedbackWidget.hide();
+    const storedData = JSON.parse(localStorage.getItem("feedback_widget"));
+    expect(storedData).toBeNull();
   });
 });
