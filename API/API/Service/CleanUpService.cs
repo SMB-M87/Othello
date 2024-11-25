@@ -6,7 +6,7 @@ namespace API.Service
     public class CleanUpService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(5);
+        private readonly TimeSpan _checkInterval = TimeSpan.FromSeconds(10);
 
         public CleanUpService(IServiceProvider serviceProvider)
         {

@@ -1,4 +1,4 @@
-Handlebars.registerPartial("board.js", Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+this["spa_templates"] = this["spa_templates"] || {}; this["spa_templates"]["board"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -45,12 +45,21 @@ Handlebars.registerPartial("board.js", Handlebars.template({"1":function(contain
   return "<table class=\"othello-board\">\r\n"
     + ((stack1 = lookupProperty(helpers,"each").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"boardRows") : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data,"loc":{"start":{"line":2,"column":2},"end":{"line":18,"column":11}}})) != null ? stack1 : "")
     + "</table>";
-},"usePartial":true,"useData":true}));
+},"usePartial":true,"useData":true});
 this["spa_templates"] = this["spa_templates"] || {};
 this["spa_templates"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<section id=\"player-info\" class=\"player-info\">\r\n  <h2>\r\n    <span id=\"game-status\">Playing</span> against\r\n    <span id=\"opponent-name\">...</span>\r\n    <span id=\"forfeit-title\"></span>\r\n  </h2>\r\n</section>\r\n\r\n<section id=\"score-display\" class=\"score-display\">\r\n  <p>\r\n    <span id=\"player-color-indicator\" class=\"color-indicator\">\r\n      <strong><span id=\"player-score\">2</span></strong>\r\n    </span>\r\n  </p>\r\n  <p>\r\n    <span id=\"timer-color-indicator\" class=\"color-indicator\">\r\n      <strong><span id=\"time-remaining\">30</span></strong>\r\n    </span>\r\n  </p>\r\n  <p>\r\n    <span id=\"opponent-color-indicator\" class=\"color-indicator\">\r\n      <strong><span id=\"opponent-score\">2</span></strong>\r\n    </span>\r\n  </p>\r\n</section>\r\n\r\n<section id=\"game-board-container\">\r\n  \r\n</section>\r\n\r\n<section id=\"button-container\">\r\n  <button id=\"pass-button\" class=\"button button--succes\">Pass</button>\r\n  <button id=\"forfeit-button\" class=\"button button--danger\">Forfeit</button>\r\n  <button id=\"rematch-button\" class=\"button button--info hidden\"><i class=\"fas fa-redo\"></i><span>Rematch</span></button>\r\n</section>\r\n\r\n<section id=\"feedback-section\" aria-label=\"Feedback Widget\">\r\n  <article id=\"feedback-widget\" role=\"alert\"></article>\r\n</section>";
-},"useData":true});
-Handlebars.registerPartial("pawn.js", Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1, lookupProperty = container.lookupProperty || function(parent, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
+          return parent[propertyName];
+        }
+        return undefined
+    };
+
+  return "<section id=\"player-info\" class=\"player-info\">\r\n  <h2>\r\n    <span id=\"game-status\">Playing</span> against\r\n    <span id=\"opponent-name\">...</span>\r\n    <span id=\"forfeit-title\"></span>\r\n  </h2>\r\n</section>\r\n\r\n<section id=\"score-display\" class=\"score-display\">\r\n  <p>\r\n    <span id=\"player-color-indicator\" class=\"color-indicator\">\r\n      <strong><span id=\"player-score\">2</span></strong>\r\n    </span>\r\n  </p>\r\n  <p>\r\n    <span id=\"timer-color-indicator\" class=\"color-indicator\">\r\n      <strong><span id=\"time-remaining\">30</span></strong>\r\n    </span>\r\n  </p>\r\n  <p>\r\n    <span id=\"opponent-color-indicator\" class=\"color-indicator\">\r\n      <strong><span id=\"opponent-score\">2</span></strong>\r\n    </span>\r\n  </p>\r\n</section>\r\n\r\n<section id=\"game-board-container\">\r\n"
+    + ((stack1 = container.invokePartial(lookupProperty(partials,"board"),depth0,{"name":"board","hash":{"boardRows":(depth0 != null ? lookupProperty(depth0,"boardData") : depth0)},"data":data,"indent":"  ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "</section>\r\n\r\n<section id=\"button-container\">\r\n  <button id=\"pass-button\" class=\"button button--succes\">Pass</button>\r\n  <button id=\"forfeit-button\" class=\"button button--danger\">Forfeit</button>\r\n  <button id=\"rematch-button\" class=\"button button--info hidden\"><i class=\"fas fa-redo\"></i><span>Rematch</span></button>\r\n</section>\r\n\r\n<section id=\"feedback-section\" aria-label=\"Feedback Widget\">\r\n  <article id=\"feedback-widget\" role=\"alert\"></article>\r\n</section>";
+},"usePartial":true,"useData":true});
+this["spa_templates"] = this["spa_templates"] || {}; this["spa_templates"]["pawn"] = Handlebars.template({"1":function(container,depth0,helpers,partials,data) {
     var helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {
         if (Object.prototype.hasOwnProperty.call(parent, propertyName)) {
           return parent[propertyName];
@@ -100,4 +109,4 @@ Handlebars.registerPartial("pawn.js", Handlebars.template({"1":function(containe
   return "<div class=\"cell-div\">\r\n"
     + ((stack1 = lookupProperty(helpers,"if").call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? lookupProperty(depth0,"isPossibleMove") : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data,"loc":{"start":{"line":2,"column":2},"end":{"line":8,"column":9}}})) != null ? stack1 : "")
     + "</div>";
-},"useData":true}));
+},"useData":true});
