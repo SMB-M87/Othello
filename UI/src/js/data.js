@@ -27,6 +27,13 @@ Game.Data = (function () {
     } else {
       throw new Error("This environment is unknown.");
     }
+
+    $.ajaxSetup({
+      xhrFields: {
+          withCredentials: true,
+      },
+      crossDomain: true,
+  });
   };
 
   const _get = function () {
