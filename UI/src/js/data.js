@@ -87,7 +87,6 @@ Game.Data = (function () {
               withCredentials: true,
             },
           })
-          $.get(configMap.apiUrl + "result/last/" + configMap.apiKey)
             .then((result) => resolve(result))
             .catch((e) => {
               console.log(e.message);
