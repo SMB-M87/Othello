@@ -67,19 +67,20 @@ namespace MVC.Middleware
                     }
                     else
                     {
-                        if (user.IsInRole(Roles.Administrator) && currentPath is not null &&
+                        if (user.IsInRole(Roles.Admin) && currentPath is not null &&
                            !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/admin"))
                         {
                             context.Response.Redirect($"/Home/Index");
                             return;
                         }
-                        else if (user.IsInRole(Roles.Mediator) && currentPath is not null &&
-                            !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mediator"))
+                        else if (user.IsInRole(Roles.Mod) && currentPath is not null &&
+                            !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mod"))
                         {
                             context.Response.Redirect($"/Home/Index");
                             return;
                         }
-                        else if (user.IsInRole(Roles.Player) && currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
+                        else if (user.IsInRole(Roles.User) && !user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.Mod) && 
+                            currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
                         {
                             context.Response.Redirect($"/Home/Index");
                             return;

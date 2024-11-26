@@ -91,9 +91,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    await RoleInitializer.InitializeAsync(userManager, roleManager);
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())

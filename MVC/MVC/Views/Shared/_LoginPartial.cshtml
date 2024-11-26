@@ -5,24 +5,24 @@
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        @if (User.IsInRole(Roles.Administrator) || User.IsInRole(Roles.Mediator))
+        @if (User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Mod))
         {
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-dark" href="#" id="dashboardDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Dashboard
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dashboardDropdown">
-                    @if (User.IsInRole(Roles.Administrator))
+                    @if (User.IsInRole(Roles.Admin))
                     {
                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Players">Players</a></li>
                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Games">Games</a></li>
                         <li><a class="dropdown-item" asp-controller="Admin" asp-action="Results">Results</a></li>
                     }
-                    @if (User.IsInRole(Roles.Mediator))
+                    @if (User.IsInRole(Roles.Mod))
                     {
-                        <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Players">Players</a></li>
-                        <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Games">Games</a></li>
-                        <li><a class="dropdown-item" asp-controller="Mediator" asp-action="Results">Results</a></li>
+                        <li><a class="dropdown-item" asp-controller="Mod" asp-action="Players">Players</a></li>
+                        <li><a class="dropdown-item" asp-controller="Mod" asp-action="Games">Games</a></li>
+                        <li><a class="dropdown-item" asp-controller="Mod" asp-action="Results">Results</a></li>
                     }
                 </ul>
             </li>

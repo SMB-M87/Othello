@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MVC.Data.Migrations
+namespace MVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241019155049_Roles")]
-    partial class Roles
+    [Migration("20241126141840_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,29 @@ namespace MVC.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "de62baed-3711-48bf-a1ec-2f937cfe01fc",
+                            ConcurrencyStamp = "7ee3a4c7-10a1-434a-bd0d-011b321e10de",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "410a1c68-2195-4899-9218-90b568957677",
+                            ConcurrencyStamp = "d0c1be76-2303-4dc2-b979-f0190b7f1162",
+                            Name = "mod",
+                            NormalizedName = "MOD"
+                        },
+                        new
+                        {
+                            Id = "dd007521-34c8-418e-acab-f55db638ac7d",
+                            ConcurrencyStamp = "8f37dc4b-0e6e-4b48-ad69-42751150cf1b",
+                            Name = "user",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -139,6 +162,56 @@ namespace MVC.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "admin-133742069420135",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "100e7432-8f27-41db-acd4-733339e906cd",
+                            Email = "admin@othello.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@OTHELLO.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAED18MdnWrRbpYbop59KhmbFnunZg1aAecK8e+1fIoig9MObeyIbRqF+CY9q9ARcLUg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "22a36f92-448b-493a-9699-dfae828c7e7c",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = "mod-987456269420135",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "52fef446-3685-4ab3-8cbe-89a454bf2171",
+                            Email = "mod@othello.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "MOD@OTHELLO.COM",
+                            NormalizedUserName = "MOD",
+                            PasswordHash = "AQAAAAEAACcQAAAAELQa/0aaWoH8kKT/uAitkQTA97lop5D36CAMjUzej36MujeNydMBg+riLhMXXiNt7A==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "acd5854d-5888-4ee0-bf7b-c3a0f5ecbde4",
+                            TwoFactorEnabled = false,
+                            UserName = "mod"
+                        },
+                        new
+                        {
+                            Id = "user-987456456198135",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "4d1d023c-fa40-4ebf-96ef-e234aa7af641",
+                            Email = "user-987456456198135@othello.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER-987456456198135@OTHELLO.COM",
+                            NormalizedUserName = "OTHELLOWORLD",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHIw9YNpy7iqHjMnmlTTtnrCTbJVjY8jmdZNK49Aep3fMxXL9HNhCXQNR97W42qUbQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "6e2fcdb0-d41f-419b-acd4-e071965fbcb0",
+                            TwoFactorEnabled = false,
+                            UserName = "OthelloWorld"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -169,12 +242,10 @@ namespace MVC.Data.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -203,6 +274,33 @@ namespace MVC.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "admin-133742069420135",
+                            RoleId = "de62baed-3711-48bf-a1ec-2f937cfe01fc"
+                        },
+                        new
+                        {
+                            UserId = "admin-133742069420135",
+                            RoleId = "dd007521-34c8-418e-acab-f55db638ac7d"
+                        },
+                        new
+                        {
+                            UserId = "mod-987456269420135",
+                            RoleId = "410a1c68-2195-4899-9218-90b568957677"
+                        },
+                        new
+                        {
+                            UserId = "mod-987456269420135",
+                            RoleId = "dd007521-34c8-418e-acab-f55db638ac7d"
+                        },
+                        new
+                        {
+                            UserId = "user-987456456198135",
+                            RoleId = "dd007521-34c8-418e-acab-f55db638ac7d"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -211,12 +309,10 @@ namespace MVC.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");

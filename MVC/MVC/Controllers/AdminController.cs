@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace MVC.Controllers
 {
-    [Authorize(Roles = Roles.Administrator)]
+    [Authorize(Roles = Roles.Admin)]
     public class AdminController : Controller
     {
         private readonly HttpClient _httpClient;

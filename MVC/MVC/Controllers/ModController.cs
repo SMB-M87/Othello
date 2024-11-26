@@ -7,13 +7,13 @@ using System.Text.Json.Serialization;
 
 namespace MVC.Controllers
 {
-    [Authorize(Roles = Roles.Mediator)]
-    public class MediatorController : Controller
+    [Authorize(Roles = Roles.Mod)]
+    public class ModController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IHttpContextAccessor? _httpContextAccessor;
 
-        public MediatorController(
+        public ModController(
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             IHttpContextAccessor httpContextAccessor)
@@ -135,7 +135,7 @@ namespace MVC.Controllers
 
         private async Task<List<Player>> GetPlayers()
         {
-            var response = await _httpClient.GetAsync("api/mediator/player");
+            var response = await _httpClient.GetAsync("api/mod/player");
             List<Player> result = new();
 
             if (response.IsSuccessStatusCode)
@@ -147,11 +147,11 @@ namespace MVC.Controllers
 
         private async Task<Player?> GetPlayer(string token)
         {
-            var response = await _httpClient.GetAsync($"api/mediator/player/{token}");
+            var response = await _httpClient.GetAsync($"api/mod/player/{token}");
             Player result = new();
 
             if (!response.IsSuccessStatusCode)
-                response = await _httpClient.GetAsync($"api/mediator/player/name/{token}");
+                response = await _httpClient.GetAsync($"api/mod/player/name/{token}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -171,7 +171,7 @@ namespace MVC.Controllers
 
         private async Task<List<Game>> GetGames()
         {
-            var response = await _httpClient.GetAsync("api/mediator/game");
+            var response = await _httpClient.GetAsync("api/mod/game");
             List<Game> result = new();
 
             if (response.IsSuccessStatusCode)
@@ -189,7 +189,7 @@ namespace MVC.Controllers
 
         private async Task<Game> GetGame(string token)
         {
-            var response = await _httpClient.GetAsync($"api/mediator/game/{token}");
+            var response = await _httpClient.GetAsync($"api/mod/game/{token}");
             Game result = new();
 
             if (response.IsSuccessStatusCode)
@@ -207,7 +207,7 @@ namespace MVC.Controllers
 
         private async Task<List<GameResult>> GetResults()
         {
-            var response = await _httpClient.GetAsync("api/mediator/result");
+            var response = await _httpClient.GetAsync("api/mod/result");
             List<GameResult> result = new();
 
             if (response.IsSuccessStatusCode)
