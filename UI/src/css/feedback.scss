@@ -32,6 +32,16 @@
   z-index: 10000;   
 }
 
+.feedbackcanvas {
+  width: 80%;
+  max-width: 1200px;
+}
+
+.feedback-widget canvas {
+  width: 100%;
+  height: auto;
+}
+
 .feedback-widget__close {
   position: absolute;
   top: 0px;

@@ -5,8 +5,10 @@ Game.Stat = (function () {
     chartInstance: null,
     statsData: {
       labels: [],
-      capturedPieces: { white: [], black: [] }
+      capturedPieces: { white: [], black: [] },
     },
+    cumulativeWhite: 0,
+    cumulativeBlack: 0,
   };
 
   // Private methods
@@ -15,17 +17,13 @@ Game.Stat = (function () {
       throw new Error("Game.Stat init failed: No container ID provided.");
     }
     configMap.chartContainer = containerId;
-    _initChart();
   };
 
-  const _initChart = function () {
-    const ctx = document
-      .getElementById(configMap.chartContainer)
-      .getContext("2d");
-    if (configMap.chartInstance) {
+  const _initChart = function (ctx, storeInstance = false) {
+    if (storeInstance && configMap.chartInstance) {
       configMap.chartInstance.destroy();
     }
-    configMap.chartInstance = new Chart(ctx, {
+    const chartInstance = new Chart(ctx, {
       type: "line",
       data: {
         labels: configMap.statsData.labels,
@@ -41,7 +39,7 @@ Game.Stat = (function () {
             data: configMap.statsData.capturedPieces.black,
             borderColor: "#000000",
             fill: false,
-          }
+          },
         ],
       },
       options: {
@@ -67,14 +65,30 @@ Game.Stat = (function () {
         },
       },
     });
+    if (storeInstance) {
+      configMap.chartInstance = chartInstance;
+    }
+    return chartInstance;
   };
 
   const _updateStats = (white, black) => {
     configMap.statsData.labels.push(`${configMap.turn}`);
-    configMap.statsData.capturedPieces.white.push(white);
-    configMap.statsData.capturedPieces.black.push(black);
+
+    configMap.cumulativeWhite += white;
+    configMap.cumulativeBlack += black;
     configMap.turn++;
-    _initChart();
+
+    configMap.statsData.capturedPieces.white.push(configMap.cumulativeWhite);
+    configMap.statsData.capturedPieces.black.push(configMap.cumulativeBlack);
+
+    if (configMap.chartInstance) {
+      configMap.chartInstance.update();
+    }
+  };
+
+  const _renderChartInCanvas = (canvasElement) => {
+    const ctx = canvasElement.getContext("2d");
+    _initChart(ctx);
   };
 
   // Public methods
@@ -86,8 +100,13 @@ Game.Stat = (function () {
     _updateStats(turn, white, black);
   };
 
+  const render = (canvas) => {
+    _renderChartInCanvas(canvas);
+  }
+
   return {
     init: init,
-    updateStats: updateStats
+    updateStats: updateStats,
+    render: render
   };
 })();

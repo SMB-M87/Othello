@@ -19,12 +19,13 @@ Game.Handlebar = (function () {
   const _prepareBoardData = function (board, playersTurn, playerColor) {
     const boardData = [];
     const defaultPlayerColor = playerColor || 1;
-  
+
     for (let row = 0; row < 8; row++) {
       const rowData = [];
       for (let col = 0; col < 8; col++) {
-        const currentValue = board ? (board[row]?.[col] ?? 0) : 0;
-        const isPossibleMove = board && playersTurn === playerColor && currentValue === 3;
+        const currentValue = board ? board[row]?.[col] ?? 0 : 0;
+        const isPossibleMove =
+          board && playersTurn === playerColor && currentValue === 3;
         const hasPiece = board && (currentValue === 1 || currentValue === 2);
         const pieceColorClass =
           currentValue === 1
@@ -50,7 +51,7 @@ Game.Handlebar = (function () {
       }
       boardData.push(rowData);
     }
-  
+
     return boardData;
   };
 
@@ -174,6 +175,25 @@ Game.Handlebar = (function () {
                 type: "Danger",
               });
             });
+        },
+      },
+      {
+        selector: "#stat-button",
+        event: "click",
+        callback: () => {
+          const canvas = document.createElement("canvas");
+          canvas.id = "feedback-stats-chart";
+
+          FeedbackSingleton.getInstance().show(
+            null,
+            "info",
+            8000,
+            false,
+            [],
+            canvas
+          );
+
+          Game.Stat.render(canvas);
         },
       },
     ];

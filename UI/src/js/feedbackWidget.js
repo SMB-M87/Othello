@@ -8,13 +8,23 @@ class FeedbackWidget {
     return this._elementId;
   }
 
-  show(message, type, time = 6000, autoDismiss = true, actions = []) {
+  show(message, type, time = 6000, autoDismiss = true, actions = [], contentElement = null) {
     const widgetElement = $("#" + this._elementId);
     const feedbackSection = $("#feedback-section");
     const closeButton = $('<button class="feedback-widget__close">×</button>');
 
     feedbackSection.addClass("flex").removeClass("hidden");
-    widgetElement.empty().append(closeButton).append(`<span>${message}</span>`);
+    widgetElement.removeClass("hidden fade-out feedbackcanvas");
+    widgetElement.empty().append(closeButton);
+
+    if (message) {
+      widgetElement.append(`<span>${message}</span>`);
+    }
+
+    if (contentElement) {
+      widgetElement.append(contentElement);
+      widgetElement.addClass("feedbackcanvas");
+    }
 
     const actionsContainer = $('<div class="feedback-widget__actions"></div>');
     actions.forEach((action) => {
@@ -42,10 +52,10 @@ class FeedbackWidget {
     const widgetElement = $("#" + this._elementId);
     const feedbackSection = $("#feedback-section");
 
-    widgetElement.removeClass("fade-in").addClass("fade-out");
+    widgetElement.removeClass("fade-in", "feedbackcanvas").addClass("fade-out");
 
     setTimeout(() => {
-      widgetElement.addClass("hidden").removeClass("visible fade-out").empty();
+      widgetElement.addClass("hidden").removeClass("visible fade-out feedbackcanvas").empty();
       feedbackSection.addClass("hidden").removeClass("flex");
     }, 500);
 

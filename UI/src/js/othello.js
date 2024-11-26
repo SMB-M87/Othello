@@ -3,6 +3,8 @@ Game.Othello = (function () {
   const _updateBoard = function (board, playersTurn, playerColor) {
     let whiteScore = 0;
     let blackScore = 0;
+    let white = 0;
+    let black = 0;
     const previousBoard = Game.Model.getBoard() || [];
     const boardCells = document.querySelectorAll("#game-board-container td");
 
@@ -71,6 +73,12 @@ Game.Othello = (function () {
           } highlight`;
           cellDiv.appendChild(newPiece);
         }
+
+        if (currentValue === 1) {
+          white++;
+        } else {
+          black++;
+        } 
       } else if (
         currentValue === previousValue &&
         (currentValue === 1 || currentValue === 2)
@@ -82,7 +90,10 @@ Game.Othello = (function () {
 
     document.getElementById("white-score").textContent = whiteScore;
     document.getElementById("black-score").textContent = blackScore;
-    Game.Stat.updateStats(whiteScore, blackScore);
+
+    if (playersTurn !== 0)
+      Game.Stat.updateStats(white, black);
+
     Game.Model.setBoard(board);
   };
 

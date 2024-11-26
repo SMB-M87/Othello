@@ -208,12 +208,12 @@ Game.Model = (function () {
           timer.classList.remove("wobble");
         }
       } else {
-        timer.classList.remove("green");
+        timer.classList.remove("green", "wobble");
         timer.classList.add("red");
       }
       document.getElementById("time-remaining").textContent = timeLeft;
     } else {
-      timer.classList.remove("green", "red");
+      timer.classList.remove("green", "red", "wobble");
       timer.classList.add("fade-out");
     }
   };
