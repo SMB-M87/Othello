@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Authorize(Roles = Roles.Mediator)]
-    [Route("api/mediator")]
+    [Authorize(Roles = Roles.Mod)]
+    [Route("api/mod")]
     [ApiController]
-    public class MediatorController : ControllerBase
+    public class ModController : ControllerBase
     {
         private readonly IRepository _repository;
 
-        public MediatorController(IRepository repository)
+        public ModController(IRepository repository)
         {
             _repository = repository;
         }

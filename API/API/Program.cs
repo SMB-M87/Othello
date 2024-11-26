@@ -19,8 +19,8 @@ builder.Services
     .AddTransient<GameController>()
     .AddTransient<ResultController>()
     .AddTransient<PlayerController>()
-    .AddTransient<HomeController>()
-    .AddTransient<MediatorController>()
+    .AddTransient<UserController>()
+    .AddTransient<ModController>()
     .AddTransient<AdminController>()
     .AddControllers()
     .AddJsonOptions(options =>

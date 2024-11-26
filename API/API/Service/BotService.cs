@@ -1,6 +1,5 @@
 ﻿using API.Data;
 using API.Models;
-using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Service

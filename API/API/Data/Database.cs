@@ -17,6 +17,7 @@ namespace API.Data
         public DbSet<Game> Games { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<GameResult> Results { get; set; }
+        public DbSet<PlayerLog> Logs { get; set; }
 
         public Database(DbContextOptions<Database> options) : base(options) { }
 
@@ -161,6 +162,33 @@ namespace API.Data
                       .HasColumnType("nvarchar(max)");
 
                 entity.Property(e => e.Date)
+                      .IsRequired();
+            });
+
+            builder.Entity<PlayerLog>(entity =>
+            {
+                entity.HasKey(e => e.Token);
+
+                entity.Property(e => e.Token)
+                      .IsRequired();
+
+                entity.HasOne<Player>()
+                      .WithMany()
+                      .HasForeignKey(e => e.Player)
+                      .HasPrincipalKey(p => p.Token)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.Action)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+                entity.Property(e => e.Details)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
+
+                entity.Property(e => e.Timestamp)
                       .IsRequired();
             });
 

@@ -2,8 +2,8 @@
 {
     public static class Roles
     {
-        public const string Administrator = "administrator";
-        public const string Mediator = "mediator";
-        public const string Player = "player";
+        public const string Admin = "admin";
+        public const string Mod = "mod";
+        public const string User = "user";
     }
 }

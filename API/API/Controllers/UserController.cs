@@ -1,16 +1,17 @@
 ﻿using API.Data;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/home")]
     [ApiController]
-    public class HomeController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IRepository _repository;
 
-        public HomeController(IRepository repository)
+        public UserController(IRepository repository)
         {
             _repository = repository;
         }

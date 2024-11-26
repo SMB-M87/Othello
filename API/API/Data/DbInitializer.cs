@@ -14,29 +14,29 @@ namespace API.Data
 
         public void Seed()
         {
-            Player one = new("karen", "Karen", 1);
-            Player two = new("ernst", "Ernst", 1);
-            Player three = new("john", "John", 1);
-            Player four = new("eltjo", "Eltjo", 1);
-            Player five = new("tijn", "Tijn", 1);
-            Player six = new("cena", "Cena", 1);
-            Player seven = new("burst", "Burst", 1);
-            Player eight = new("burton", "Burton", 1);
-            Player nine = new("briar", "Briar", 1);
-            Player ten = new("lambert", "Lambert", 1);
-            Player eleven = new("identity", "Identity", 1);
-            Player t12 = new("salie", "Salie", 1);
-            Player t13 = new("pipo", "Pipo", 1);
-            Player t14 = new("gissa", "Gissa", 1);
-            Player t15 = new("hidde", "Hidde", 1);
-            Player t16 = new("noga", "Noga", 1);
-            Player t17 = new("nastrovia", "Nastrovia", 1);
-            Player t18 = new("pedro", "Pedro", 1);
-            Player t19 = new("ahmed", "Ahmed", 1);
-            Player t20 = new("nadege", "Nadege", 1);
-            Player t21 = new("rachel", "Rachel", 1);
-            Player t22 = new("ff20c418-f1b0-4f16-b582-294be25c24ef", "mediator"); // Give own identity mediator token
-            Player t23 = new("58a479fd-ae6f-4474-a147-68cbdb62c19b", "admin"); // Give own identity admin token
+            Player one = new("mary", "Mary", 2);
+            Player three = new("john", "John", 3);
+            Player four = new("jimmy", "Jimmy", 2);
+            Player five = new("ted", "Ted", 4);
+            Player six = new("michael", "Michael", 3);
+            Player seven = new("william", "William", 1);
+            Player eight = new("sarah", "Sarah", 3);
+            Player nine = new("lisa", "Lisa", 1);
+            Player ten = new("nancy", "Nancy", 1);
+            Player eleven = new("Anthony", "Anthony", 2);
+            Player t12 = new("matthew", "Matthew", 1);
+            Player t13 = new("donald", "Donald", 1);
+            Player t14 = new("andrew", "Andrew", 1);
+            Player t15 = new("kimberly", "Kimberly", 1);
+            Player t16 = new("margaret", "Margaret", 1);
+            Player t17 = new("carol", "Carol", 1);
+            Player t18 = new("brian", "Brian", 1);
+            Player t19 = new("jason", "Jason", 1);
+            Player t20 = new("jeffrey", "Jeffrey", 1);
+            Player t21 = new("amy", "Amy", 1);
+            Player t23 = new("admin-133742069420135", "admin", 0);
+            Player t22 = new("mod-987456269420135", "mod", 0);
+            Player two = new("user-987456456198135", "OthelloWorld", 4);
             Player delete = new("deleted", "Deleted");
 
             _builder.Entity<Player>().HasData(one, two, three, four, five, six, seven, eight, nine, ten, eleven, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, delete);

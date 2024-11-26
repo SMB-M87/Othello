@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -18,6 +19,11 @@ namespace API.Controllers
         [HttpGet("{token}")]
         public async Task<ActionResult<Status>> StatusByToken(string token)
         {
+/*            token = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (token is null)
+                return NotFound();*/
+
             var response = await _repository.GameRepository.GetStatusByPlayersToken(token);
 
             if (response is null)
