@@ -1,6 +1,8 @@
 Game.Othello = (function () {
   // private functions
   const _updateBoard = function (board, playersTurn, playerColor) {
+    let whiteScore = 0;
+    let blackScore = 0;
     const previousBoard = Game.Model.getBoard() || [];
     const boardCells = document.querySelectorAll("#game-board-container td");
 
@@ -9,8 +11,13 @@ Game.Othello = (function () {
       const col = parseInt(cell.dataset.col, 10);
       const currentValue = board[row]?.[col] ?? 0;
       const previousValue = previousBoard[row]?.[col] || 0;
-
       const cellDiv = cell.querySelector(".cell-div");
+
+      if (currentValue === 1) {
+        whiteScore++;
+      } else if (currentValue === 2) {
+        blackScore++;
+      }
 
       if (playersTurn !== playerColor && previousValue === 3) {
         cellDiv.innerHTML = "";
@@ -73,29 +80,10 @@ Game.Othello = (function () {
       }
     });
 
-    _calculateScores();
-    Game.Model.setBoard(board);
-  };
-
-  const _calculateScores = function () {
-    let whiteScore = 0;
-    let blackScore = 0;
-
-    const boardCells = document.querySelectorAll("#game-board-container td");
-
-    boardCells.forEach((cell) => {
-      const piece = cell.querySelector("i");
-
-      if (piece) {
-        if (piece.classList.contains("white-piece")) {
-          whiteScore++;
-        } else if (piece.classList.contains("black-piece")) {
-          blackScore++;
-        }
-      }
-    });
     document.getElementById("white-score").textContent = whiteScore;
     document.getElementById("black-score").textContent = blackScore;
+    Game.Stat.updateStats(whiteScore, blackScore);
+    Game.Model.setBoard(board);
   };
 
   // public functions

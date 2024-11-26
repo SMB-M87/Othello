@@ -18,16 +18,13 @@ const Game = (function (config) {
     Game.Handlebar.attachEventListeners();
     Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
     Game.Api.init();
+    Game.Stat.init("stats-chart");
   };
 
   const _getCurrentGameState = function () {
     setInterval(function () {
       Game.Model.getGameState();
     }, 1000);
-
-    setInterval(function () {
-      Game.Api.get();
-    }, 10000);
   };
 
   // public functions

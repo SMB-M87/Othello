@@ -154,6 +154,8 @@ Game.Model = (function () {
       board ? board.some((row) => row.includes(3)) : false,
       playersTurn
     );
+    if (playersTurn !== playerColor)
+      Game.Api.get();
   };
 
   const _updateGameInfo = function (opponent, playerColor) {

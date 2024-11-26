@@ -34,6 +34,7 @@
     "sass": "^1.81.0"
   },
   "dependencies": {
+    "chart.js": "^4.4.6",
     "handlebars": "^4.7.8"
   }
 }
