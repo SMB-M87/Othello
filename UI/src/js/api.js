@@ -20,10 +20,9 @@ Game.Api = (function () {
   };
 
   const _set = function (result) {
-    const section = document.getElementById("joke");
     const joke = document.getElementById("joke-content");
 
-    if (section && joke) {
+    if (joke) {
       if (result && result.joke) {
         joke.textContent = result.joke;
       } else if (typeof result === "string") {

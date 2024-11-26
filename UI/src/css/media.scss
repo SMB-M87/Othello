@@ -1,393 +1,337 @@
-@media (min-width: 720px) and (min-height: 900px) {
+@media (max-width: 1000px) {
+  .score-display {
+    gap: 360px;
+  }
+  
+  .center-info {
+    gap: 40px;
+  }
+
   .othello-board td {
     width: 82px;
     height: 82px;
   }
-
+  
   .white-piece,
   .black-piece {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .possible-move {
+    width: 60px;
+    height: 60px;
+  }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+}
+
+@media (max-height: 1000px) {
+  .score-display {
+    gap: 360px;
+  }
+  
+  .center-info {
+    gap: 40px;
+  }
+
+  .othello-board td {
+    width: 82px;
+    height: 82px;
+  }
+  
+  .white-piece,
+  .black-piece {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .possible-move {
+    width: 60px;
+    height: 60px;
+  }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+}
+
+@media (max-width: 770px) {
+  .score-display {
+    gap: 220px;
+  }
+  
+  .center-info {
+    gap: 25px;
+  }
+
+  .othello-board td {
     width: 65px;
     height: 65px;
-  }  
-
+  }
+  
+  .white-piece,
+  .black-piece {
+    width: 60px;
+    height: 60px;
+  }
+  
   .possible-move {
     width: 50px;
     height: 50px;
   }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+
+  #joke-content {
+    max-width: 600px;
+  }  
 }
 
-@media (min-width: 404px) and (max-width: 600px) {
-  #feedback-widget {
-    font-size: 13px;
-    padding: 15px;
+@media (max-height: 865px) {
+  .score-display {
+    gap: 220px;
   }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
+  
+  .center-info {
+    gap: 30px;
   }
 
   .othello-board td {
+    width: 65px;
+    height: 65px;
+  }
+  
+  .white-piece,
+  .black-piece {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .possible-move {
     width: 50px;
     height: 50px;
   }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
 
+  #joke-content {
+    max-width: 600px;
+  } 
+}
+
+@media (max-width: 550px) {
+  .score-display {
+    gap: 170px;
+  }
+  
+  .center-info {
+    gap: 10px;
+  }
+
+  .left-buttons,
+  .right-buttons {
+    gap: 10px;
+  }
+
+  .othello-board td {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .white-piece,
+  .black-piece {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .possible-move {
+    width: 40px;
+    height: 40px;
+  }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+
+  #joke-content {
+    max-width: 450px;
+  } 
+}
+
+@media (max-height: 720px) {
+  .score-display {
+    gap: 170px;
+  }
+  
+  .center-info {
+    gap: 10px;
+  }
+
+  .left-buttons,
+  .right-buttons {
+    gap: 10px;
+  }
+
+  .othello-board td {
+    width: 55px;
+    height: 55px;
+  }
+  
+  .white-piece,
+  .black-piece {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .possible-move {
+    width: 40px;
+    height: 40px;
+  }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+
+  #joke-content {
+    max-width: 450px;
+  } 
+}
+
+@media (max-width: 470px) {
+  .score-display {
+    gap: 145px;
+    font-size: 12px;
+  }
+  
+  .center-info {
+    gap: 5px;
+  }
+
+  .left-buttons,
+  .right-buttons {
+    gap: 5px;
+  }
+
+  .button {
+    font-size: 12px;
+  }
+
+  .othello-board td {
+    width: 45px;
+    height: 45px;
+  }
+  
   .white-piece,
   .black-piece {
     width: 40px;
     height: 40px;
-  }  
-
-  .possible-move {
-    width: 25px;
-    height: 25px;
   }
+  
+  .possible-move {
+    width: 35px;
+    height: 35px;
+  }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+
+  #joke-content {
+    max-width: 380px;
+  } 
 }
 
-@media (min-height: 600px) and (max-height: 670px) {
-  #feedback-widget {
-    font-size: 13px;
-    padding: 15px;
+@media (max-width: 425px) {
+  .score-display {
+    gap: 110px;
+    font-size: 8px;
+  }
+  
+  .center-info {
+    gap: 4px;
   }
 
-  .feedback-widget__close {
-    display: none;
+  .left-buttons,
+  .right-buttons {
+    gap: 4px;
   }
 
-  #button-container {
-    gap: 5px;
+  .button {
+    font-size: 8px;
   }
 
   .othello-board td {
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
   }
-
-  .white-piece,
-  .black-piece {
-    width: 40px;
-    height: 40px;
-  }  
-
-  .possible-move {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-@media (min-width: 326px) and (max-width: 403px) {
-  #feedback-widget {
-    font-size: 10px;
-    padding: 10px;
-  }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
-  }
-
-  .othello-board td {
-    width: 40px;
-    height: 40px;
-  }
-
+  
   .white-piece,
   .black-piece {
     width: 30px;
     height: 30px;
-  }  
-
-  .possible-move {
-    width: 20px;
-    height: 20px;
   }
+  
+  .possible-move {
+    width: 25px;
+    height: 25px;
+  }
+  
+  #feedback-widget {
+    font-size: 24px; 
+  }
+
+  #joke-content {
+    max-width: 320px;
+  } 
 }
 
-@media (min-height: 520px) and (max-height: 599px) {
-  #feedback-widget {
-    font-size: 10px;
-    padding: 10px;
+@media (max-height: 545px) {
+  .score-display {
+    gap: 110px;
+    font-size: 8px;
+  }
+  
+  .center-info {
+    gap: 4px;
   }
 
-  .feedback-widget__close {
-    display: none;
+  .left-buttons,
+  .right-buttons {
+    gap: 4px;
   }
 
-  #button-container {
-    gap: 5px;
+  .button {
+    font-size: 8px;
   }
 
   .othello-board td {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
   }
-
+  
   .white-piece,
   .black-piece {
     width: 30px;
     height: 30px;
-  }  
-
+  }
+  
   .possible-move {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-@media (min-width: 204px) and (max-width: 325px) {
-  #feedback-widget {
-    font-size: 8px;
-    padding: 8px;
-  }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
-  }
-
-  .othello-board td {
     width: 25px;
     height: 25px;
   }
-
-  .white-piece,
-  .black-piece {
-    width: 18px;
-    height: 18px;
-  }  
-
-  .possible-move {
-    width: 13px;
-    height: 13px;
-  }
   
-  #player-info h2 {
-    font-size: 16px;
-    line-height: 1.2;
-  }
-
-  #joke-content {
-    font-size: 13px;
-    line-height: 1.2;
-  }
-}
-
-@media (min-height: 380px) and (max-height: 519px) {
   #feedback-widget {
-    font-size: 8px;
-    padding: 8px;
-  }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
-  }
-
-  .othello-board td {
-    width: 25px;
-    height: 25px;
-  }
-
-  .white-piece,
-  .black-piece {
-    width: 18px;
-    height: 18px;
-  }  
-
-  .possible-move {
-    width: 13px;
-    height: 13px;
-  }
-  
-  #player-info h2 {
-    font-size: 16px;
-    line-height: 1.2;
+    font-size: 24px; 
   }
 
   #joke-content {
-    font-size: 13px;
-    line-height: 1.2;
-  }
-}
-
-@media (min-width: 122px) and (max-width: 203px) {
-  #feedback-widget {
-    font-size: 8px;
-    padding: 8px;
-  }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
-  }
-
-  .button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 10px;
-    color: white;
-    transition: background-color 0.3s ease;
-  }
-
-  .othello-board td {
-    width: 15px;
-    height: 15px;
-  }
-
-  .white-piece,
-  .black-piece {
-    width: 12px;
-    height: 12px;
-  }  
-
-  .possible-move {
-    width: 8px;
-    height: 8px;
-  }
-  
-  #player-info h2 {
-    font-size: 12px;
-    line-height: 1.2;
-  }
-
-  #joke-content {
-    font-size: 9px;
-    line-height: 1.2;
-  }
-  
-  .score-display {
-    font-size: 7px;
-    gap: 10px;
-  }
-}
-
-@media (min-height: 200px) and (max-height: 379px) {
-  #feedback-widget {
-    font-size: 8px;
-    padding: 8px;
-  }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
-  }
-
-  .button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 10px;
-    color: white;
-    transition: background-color 0.3s ease;
-  }
-
-  .othello-board td {
-    width: 15px;
-    height: 15px;
-  }
-
-  .white-piece,
-  .black-piece {
-    width: 12px;
-    height: 12px;
-  }  
-
-  .possible-move {
-    width: 8px;
-    height: 8px;
-  }
-  
-  #player-info h2 {
-    font-size: 12px;
-    line-height: 1.2;
-  }
-
-  #joke-content {
-    font-size: 9px;
-    line-height: 1.2;
-  }
-  
-  .score-display {
-    font-size: 7px;
-    gap: 10px;
-  }
-}
-
-@media (max-width: 121px) {
-  #feedback-widget {
-    font-size: 4px;
-    padding: 4px;
-  }
-
-  .feedback-widget__close {
-    display: none;
-  }
-
-  #button-container {
-    gap: 5px;
-  }
-
-  .button {
-    padding: 3px 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 6px;
-    color: white;
-    transition: background-color 0.3s ease;
-  }
-
-  .othello-board td {
-    width: 7px;
-    height: 7px;
-  }
-
-  .white-piece,
-  .black-piece {
-    width: 5px;
-    height: 5px;
-  }  
-
-  .possible-move {
-    width: 4px;
-    height: 4px;
-  }
-  
-  #player-info h2 {
-    font-size: 7px;
-    line-height: 1.2;
-  }
-
-  #joke-content {
-    font-size: 5px;
-    line-height: 1.2;
-  }
-  
-  .score-display {
-    flex-direction: column;
-    margin-top: 3px;
-    font-size: 4px;
-    gap: 3px;
-  }
+    max-width: 320px;
+  } 
 }

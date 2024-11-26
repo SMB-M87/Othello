@@ -122,7 +122,7 @@ Game.Model = (function () {
       if (data.forfeit) {
         document.getElementById("forfeit-title").textContent = "by forfeit"
       } 
-
+      _updateTimer(0, 0, 0);
       Game.Othello.updateBoard(data.board, 0, stateMap.playerColor);
   }
 
@@ -136,11 +136,6 @@ Game.Model = (function () {
     _updateGameInfo(opponent, playerColor);
     _updateTimer(playerColor, countdown, playersTurn);
     Game.Othello.updateBoard(board, playersTurn, playerColor);
-    _toggleButtons(
-      playerColor,
-      board.some((row) => row.includes(3)),
-      playersTurn
-    );
   };
 
   const _renderPartial = function (playerColor, playersTurn, board) {
@@ -162,6 +157,9 @@ Game.Model = (function () {
     const title = document.getElementById("player-info");
     document.getElementById("opponent-name").textContent = opponent;
     title.classList.add("flex", "fade-in");
+
+    const stat = document.getElementById("stat-button");
+    stat.classList.add("fade-in");
 
     const playerColorIndicator = document.getElementById(
       "player-color-indicator"
@@ -216,60 +214,43 @@ Game.Model = (function () {
       document.getElementById("time-remaining").textContent = timeLeft;
     } else {
       timer.classList.remove("green", "red");
-      timer.classList.add("hidden");
+      timer.classList.add("fade-out");
     }
   };
 
   const _toggleButtons = function (playerColor, possibleMove, playersTurn) {
-    const feedbackWidget = document.getElementById("feedback-widget");
-    const buttonContainer = document.getElementById("button-container");
     const passButton = document.getElementById("pass-button");
     const forfeitButton = document.getElementById("forfeit-button");
     
     if (playersTurn === 0) {
       const rematchButton = document.getElementById("rematch-button");
 
-      buttonContainer.classList.add("flex");
-      buttonContainer.classList.remove("hidden");
+      passButton.classList.add("fade-out");
+      passButton.classList.remove("fade-in-wobble");
 
-      passButton.classList.add("hidden");
-      passButton.classList.remove("inline-block", "fade-in-wobble");
-
-      forfeitButton.classList.add("hidden");
+      forfeitButton.classList.add("fade-out");
       forfeitButton.classList.remove("inline-block", "fade-in");
 
       rematchButton.classList.add("inline-block", "fade-in");
-      rematchButton.classList.remove("hidden");
+      rematchButton.classList.remove("fade-out");
     } else {
       if (playerColor === playersTurn) {
-        feedbackWidget.classList.add("visible");
-        feedbackWidget.classList.remove("hidden");
-
-        buttonContainer.classList.add("flex");
-        buttonContainer.classList.remove("hidden");
-
         if (!possibleMove) {
-          passButton.classList.add("inline-block", "fade-in-wobble");
-          passButton.classList.remove("hidden");
+          passButton.classList.add("fade-in-wobble");
+          passButton.classList.remove("fade-out");
         } else {
-          passButton.classList.add("hidden");
-          passButton.classList.remove("inline-block");
+          passButton.classList.add("fade-out");
+          passButton.classList.remove("fade-in-wobble");
         }
 
-        forfeitButton.classList.add("inline-block", "fade-in");
-        forfeitButton.classList.remove("hidden");
+        forfeitButton.classList.add("fade-in");
+        forfeitButton.classList.remove("fade-out");
       } else {
-        feedbackWidget.classList.add("hidden");
-        feedbackWidget.classList.remove("visible");
+        passButton.classList.add("fade-out");
+        passButton.classList.remove("fade-in-wobble");
 
-        buttonContainer.classList.add("hidden");
-        buttonContainer.classList.remove("flex");
-
-        passButton.classList.add("hidden");
-        passButton.classList.remove("inline-block", "fade-in-wobble");
-
-        forfeitButton.classList.add("hidden");
-        forfeitButton.classList.remove("inline-block", "fade-in");
+        forfeitButton.classList.add("fade-out");
+        forfeitButton.classList.remove("fade-in");
       }
     }
   };

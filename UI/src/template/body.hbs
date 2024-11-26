@@ -7,34 +7,40 @@
 </section>
 
 <section id="score-display" class="score-display">
-  <p>
-    <span id="player-color-indicator" class="color-indicator">
-      <strong><span id="player-score">2</span></strong>
-    </span>
-  </p>
-  <p>
-    <span id="timer-color-indicator" class="color-indicator">
-      <strong><span id="time-remaining">30</span></strong>
-    </span>
-  </p>
-  <p>
-    <span id="opponent-color-indicator" class="color-indicator">
-      <strong><span id="opponent-score">2</span></strong>
-    </span>
-  </p>
+  <div class="right-buttons">
+    <button id="stat-button" class="button button--info">Stats</button>
+    <button id="rematch-button" class="button button--info">Rematch</button>
+  </div>
+
+  <div class="center-info">
+    <p>
+      <span id="player-color-indicator" class="color-indicator">
+        <strong><span id="player-score">2</span></strong>
+      </span>
+    </p>
+    <p>
+      <span id="timer-color-indicator" class="color-indicator">
+        <strong><span id="time-remaining">30</span></strong>
+      </span>
+    </p>
+    <p>
+      <span id="opponent-color-indicator" class="color-indicator">
+        <strong><span id="opponent-score">2</span></strong>
+      </span>
+    </p>
+  </div>
+
+  <div class="left-buttons">
+    <button id="pass-button" class="button button--succes">Pass</button>
+    <button id="forfeit-button" class="button button--danger">Forfeit</button>
+  </div>
 </section>
 
 <section id="game-board-container">
   {{> board boardRows=boardData}}
 </section>
 
-<section id="button-container">
-  <button id="pass-button" class="button button--succes">Pass</button>
-  <button id="forfeit-button" class="button button--danger">Forfeit</button>
-  <button id="rematch-button" class="button button--info hidden"><i class="fas fa-redo"></i><span>Rematch</span></button>
-</section>
-
-<section id="joke" class="player-info">
+<section id="joke">
   <h4 id="joke-content"></h4>
 </section>
 

@@ -1,3 +1,27 @@
+#time-remaining {
+  visibility: visible;
+}
+
+.score-display {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  width: 100%;
+  position: relative;
+  margin-top: 15px;
+  gap: 485px;
+}
+
+.center-info {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+}
+
 .color-indicator {
   padding: 5px 10px;
   border-radius: 5px;
@@ -6,13 +30,7 @@
   display: inline-block;
   background-color: lightblue;
   color: blue;
-}
-
-.score-display {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-  gap: 20px;
+  text-align: center;
 }
 
 .color-indicator.white {
