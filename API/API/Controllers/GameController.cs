@@ -2,6 +2,7 @@
 using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace API.Controllers
 {
@@ -20,15 +21,19 @@ namespace API.Controllers
         [HttpGet("{token}")]
         public async Task<ActionResult<Status>> StatusByToken(string token)
         {
-/*            token = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            if (token is null)
-                return NotFound();*/
-
             var response = await _repository.GameRepository.GetStatusByPlayersToken(token);
 
             if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/StatusByToken", $"Failed to fetch game status {token} from game database within the game controller.")
+                );
                 return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "Game/StatusByToken", $"Fetched game status {token} from game database within the game controller.")
+            );
 
             return Ok(response);
         }
@@ -39,7 +44,16 @@ namespace API.Controllers
             var response = await _repository.GameRepository.GetView(token);
 
             if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/GetView", $"Failed to fetch game view {token} from game database within the game controller.")
+                );
                 return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "Game/GetView", $"Fetch game view {token} from game database within the game controller.")
+            );
 
             return Ok(response);
         }
@@ -50,7 +64,16 @@ namespace API.Controllers
             var response = await _repository.GameRepository.GetPartial(token);
 
             if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/GetPartial", $"Failed to fetch game partial {token} from game database within the game controller.")
+                );
                 return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "Game/GetPartial", $"Fetch game partial {token} from game database within the game controller.")
+            );
 
             return Ok(response);
         }
@@ -63,10 +86,18 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.PlayerRepository.UpdateActivity(game.PlayerToken);
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Create", $"Player {game.PlayerToken} created game within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Create", $"Player {game.PlayerToken} failed to creat game within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            }
         }
 
         [HttpPost("join")]
@@ -82,9 +113,15 @@ namespace API.Controllers
                 {
                     await _repository.PlayerRepository.UpdateActivity(player.Token);
                     await _repository.PlayerRepository.UpdateActivity(request.SenderToken);
+                    await _repository.LogRepository.Create(
+                        new(User?.Identity?.Name ?? "Anonymous", "Game/Join", $"Player {request.SenderToken} joined {request.ReceiverUsername}'s game from within the game controller.")
+                    );
                     return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
                 }
             }
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "Game/Join", $"Player {request.SenderToken} failed to join {request.ReceiverUsername}'s game from within the game controller.")
+            );
             return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
         }
 
@@ -96,13 +133,21 @@ namespace API.Controllers
             if (succeded)
             {
                 await _repository.PlayerRepository.UpdateActivity(action.PlayerToken);
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Move", $"Player {action.PlayerToken} made move ({action.Row},{action.Column}) from within game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Move", $"Player {action.PlayerToken} failed to make move ({action.Row},{action.Column}) from within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
                     Content = new StringContent(error ?? "Move not possible.")
                 };
+            }
         }
 
         [HttpPost("pass")]
@@ -113,13 +158,21 @@ namespace API.Controllers
             if (succeded)
             {
                 await _repository.PlayerRepository.UpdateActivity(id.Token);
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Pass", $"Player {id.Token} passed his turn from within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Pass", $"Player {id.Token} passed his turn from within the game controller.")
+                ); 
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
                     Content = new StringContent(error ?? "Pass not possible.")
                 };
+            }
         }
 
         [HttpPost("forfeit")]
@@ -130,10 +183,18 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.PlayerRepository.UpdateActivity(id.Token);
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Forfeit", $"Player {id.Token} forfeited the game from within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Forfeit", $"Player {id.Token} failed to forfeit the game from within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            }
         }
 
         [HttpPost("delete")]
@@ -144,10 +205,18 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.PlayerRepository.UpdateActivity(id.Token);
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Delete", $"Player {id.Token} deleted the game from within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "Game/Delete", $"Player {id.Token} failed to delete the game from within the game controller.")
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            }
         }
     }
 }

@@ -70,7 +70,7 @@ namespace MVC.Middleware
                     {
                         var result = await response.Content.ReadAsStringAsync();
 
-                        if ((result == "1" || result == "2") && currentPath is not null && !PlayingAllowedPath(currentPath))
+                        if (result == "1" && currentPath is not null && !PlayingAllowedPath(currentPath))
                         {
                             context.Response.Redirect("/Game/Play");
                             return;

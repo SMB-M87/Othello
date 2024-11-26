@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241126141840_Initial")]
+    [Migration("20241126182308_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,22 +53,22 @@ namespace MVC.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "de62baed-3711-48bf-a1ec-2f937cfe01fc",
-                            ConcurrencyStamp = "7ee3a4c7-10a1-434a-bd0d-011b321e10de",
+                            Id = "4f79496e-df06-4282-bb80-809c19c17a26",
+                            ConcurrencyStamp = "8d5f1b2c-cf9a-4870-bf44-29e59378d93d",
                             Name = "admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "410a1c68-2195-4899-9218-90b568957677",
-                            ConcurrencyStamp = "d0c1be76-2303-4dc2-b979-f0190b7f1162",
+                            Id = "c8741835-5f35-470c-97a1-6ede4f281953",
+                            ConcurrencyStamp = "732ee2d6-1031-4d22-ad0a-74bbb0423ca2",
                             Name = "mod",
                             NormalizedName = "MOD"
                         },
                         new
                         {
-                            Id = "dd007521-34c8-418e-acab-f55db638ac7d",
-                            ConcurrencyStamp = "8f37dc4b-0e6e-4b48-ad69-42751150cf1b",
+                            Id = "a7a67848-a86a-484a-9fb1-fa046c05e699",
+                            ConcurrencyStamp = "074df94a-dd85-465a-ac97-53c0e2815168",
                             Name = "user",
                             NormalizedName = "USER"
                         });
@@ -168,15 +168,15 @@ namespace MVC.Migrations
                         {
                             Id = "admin-133742069420135",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "100e7432-8f27-41db-acd4-733339e906cd",
+                            ConcurrencyStamp = "01aa152e-7697-4f1a-a243-a83a0d0c9783",
                             Email = "admin@othello.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@OTHELLO.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAED18MdnWrRbpYbop59KhmbFnunZg1aAecK8e+1fIoig9MObeyIbRqF+CY9q9ARcLUg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOi7jEfmIhAi7ussmzbDRcVxudS/tvV1psg/MSB9IyaY0/KC3IuI29emknjUioWGMA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "22a36f92-448b-493a-9699-dfae828c7e7c",
+                            SecurityStamp = "cdd37d07-8aa5-403d-b7fe-b7286a4cf831",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -184,15 +184,15 @@ namespace MVC.Migrations
                         {
                             Id = "mod-987456269420135",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "52fef446-3685-4ab3-8cbe-89a454bf2171",
+                            ConcurrencyStamp = "b722e10a-0d08-4b7d-94d6-03a72d8ee773",
                             Email = "mod@othello.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "MOD@OTHELLO.COM",
                             NormalizedUserName = "MOD",
-                            PasswordHash = "AQAAAAEAACcQAAAAELQa/0aaWoH8kKT/uAitkQTA97lop5D36CAMjUzej36MujeNydMBg+riLhMXXiNt7A==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEO/OaXyD5oaICoivuGAFjhF3ninJhaefvdTvKdPE1pBoPSxRTWCUF5dwXUk64IFyrw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "acd5854d-5888-4ee0-bf7b-c3a0f5ecbde4",
+                            SecurityStamp = "ed534a89-674a-4acb-bfd4-2e6be8eb81cb",
                             TwoFactorEnabled = false,
                             UserName = "mod"
                         },
@@ -200,15 +200,15 @@ namespace MVC.Migrations
                         {
                             Id = "user-987456456198135",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4d1d023c-fa40-4ebf-96ef-e234aa7af641",
+                            ConcurrencyStamp = "412833cc-e114-461a-be94-64cc78b30bee",
                             Email = "user-987456456198135@othello.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER-987456456198135@OTHELLO.COM",
                             NormalizedUserName = "OTHELLOWORLD",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHIw9YNpy7iqHjMnmlTTtnrCTbJVjY8jmdZNK49Aep3fMxXL9HNhCXQNR97W42qUbQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAENC6m8QAQX0Y8toO+ern2w3Xz9DsN/JgEGnFWn0CSYw8GVu3I+tZSW4t06XXquK3Hg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "6e2fcdb0-d41f-419b-acd4-e071965fbcb0",
+                            SecurityStamp = "0a829fc2-be9a-4d86-a548-b4cf0ea3ecfb",
                             TwoFactorEnabled = false,
                             UserName = "OthelloWorld"
                         });
@@ -279,27 +279,27 @@ namespace MVC.Migrations
                         new
                         {
                             UserId = "admin-133742069420135",
-                            RoleId = "de62baed-3711-48bf-a1ec-2f937cfe01fc"
+                            RoleId = "4f79496e-df06-4282-bb80-809c19c17a26"
                         },
                         new
                         {
                             UserId = "admin-133742069420135",
-                            RoleId = "dd007521-34c8-418e-acab-f55db638ac7d"
+                            RoleId = "a7a67848-a86a-484a-9fb1-fa046c05e699"
                         },
                         new
                         {
                             UserId = "mod-987456269420135",
-                            RoleId = "410a1c68-2195-4899-9218-90b568957677"
+                            RoleId = "c8741835-5f35-470c-97a1-6ede4f281953"
                         },
                         new
                         {
                             UserId = "mod-987456269420135",
-                            RoleId = "dd007521-34c8-418e-acab-f55db638ac7d"
+                            RoleId = "a7a67848-a86a-484a-9fb1-fa046c05e699"
                         },
                         new
                         {
                             UserId = "user-987456456198135",
-                            RoleId = "dd007521-34c8-418e-acab-f55db638ac7d"
+                            RoleId = "a7a67848-a86a-484a-9fb1-fa046c05e699"
                         });
                 });
 

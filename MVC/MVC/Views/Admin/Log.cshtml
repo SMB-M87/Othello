@@ -1,0 +1,49 @@
+﻿@model PlayerLog
+
+<div class="container">
+    <div class="d-flex justify-content-center">
+        <h2>Player Log Details</h2>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header text-white bg-dark">
+            <h4 class="mb-0">Log Information</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>Token</th>
+                        <td>@Model.Token</td>
+                    </tr>
+                    <tr>
+                        <th>Username</th>
+                        <td>
+                            <a asp-action="Profile" asp-route-token="@Model.Username" style="text-decoration: none; color: inherit;">
+                                @Model.Username
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Action</th>
+                        <td>@Model.Action</td>
+                    </tr>
+                    <tr>
+                        <th>Timestamp</th>
+                        <td>@Model.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    </tr>
+                    <tr>
+                        <th>Details</th>
+                        <td>@Model.Details</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <a href="javascript:history.back()" class="btn btn-secondary" title="Go back">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>

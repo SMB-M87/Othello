@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class HomeAccessLayer : IHomeRepository
+    public class UserAccessLayer : IUserRepository
     {
         private readonly Database _context;
 
-        public HomeAccessLayer(Database context)
+        public UserAccessLayer(Database context)
         {
             _context = context;
         }
@@ -48,7 +48,7 @@ namespace API.Data
 
         public async Task<HomePartial> GetPartial(string token)
         {
-            var game = await GetPlayersGame(token);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token)); ;
 
             var model = new HomePartial
             {
@@ -125,24 +125,24 @@ namespace API.Data
 
         private async Task<Player?> GetPlayer(string token)
         {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token);
         }
 
         private async Task<string?> GetPlayersName(string token)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token);
             return player?.Username;
         }
 
         private async Task<string?> GetPlayersToken(string username)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.Username == username);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username == username);
             return player?.Token;
         }
 
         public async Task<Game?> GetPlayersGame(string token)
         {
-            return await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
+            return await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
         }
 
         public async Task<string> GetPlayerStats(string username)
@@ -164,7 +164,7 @@ namespace API.Data
 
         private async Task<List<GameResult>> GetMatchHistory(string token)
         {
-            return await _context.Results
+            return await _context.Results.AsNoTracking()
                 .Where(s => s.Winner == token || s.Loser == token)
                 .ToListAsync();
         }
@@ -194,7 +194,7 @@ namespace API.Data
 
         private async Task<List<GamePending>?> GetPendingGames()
         {
-            var games = await _context.Games.Where(g => g.Status == Status.Pending && g.Second == null && g.Rematch == null).OrderByDescending(g => g.Date).ToListAsync();
+            var games = await _context.Games.AsNoTracking().Where(g => g.Status == Status.Pending && g.Second == null && g.Rematch == null).OrderByDescending(g => g.Date).ToListAsync();
 
             if (games is not null)
             {
@@ -219,7 +219,7 @@ namespace API.Data
 
         private async Task<string> GetLastActivity(string username)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(p => p.Username == username);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(p => p.Username == username);
             DateTime? lastActivity = player?.LastActivity;
 
             if (lastActivity == null || lastActivity == DateTime.MinValue)
@@ -248,7 +248,7 @@ namespace API.Data
         private async Task<List<string>?> GetOnlinePlayers(string token)
         {
             DateTime threshold = DateTime.UtcNow.AddSeconds(-240);
-            return await _context.Players
+            return await _context.Players.AsNoTracking()
                 .Where(p => p.Token != token && p.LastActivity >= threshold)
                 .OrderByDescending(p => p.LastActivity)
                 .Select(p => p.Username)
@@ -258,7 +258,7 @@ namespace API.Data
         private async Task<List<string>?> GetPlayersInGame(string token)
         {
             DateTime threshold = DateTime.UtcNow.AddSeconds(-240);
-            var players = await _context.Players
+            var players = await _context.Players.AsNoTracking()
                 .Where(p => p.Token != token && p.LastActivity >= threshold)
                 .OrderByDescending(p => p.LastActivity)
                 .ToListAsync();
@@ -276,19 +276,19 @@ namespace API.Data
 
         private async Task<List<string>?> GetFriends(string token)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(p => p.Token == token);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(p => p.Token == token);
             return player?.Friends.OrderBy(friend => friend).ToList();
         }
 
         private async Task<List<string>?> GetFriendRequests(string token)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(p => p.Token == token);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(p => p.Token == token);
             return player?.Requests.Where(r => r.Type == Inquiry.Friend).OrderBy(r => r.Username).Select(p => p.Username).ToList();
         }
 
         private async Task<List<string>?> GetGameRequests(string token)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(p => p.Token == token);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(p => p.Token == token);
             return player?.Requests.Where(r => r.Type == Inquiry.Game).OrderByDescending(r => r.Date).Select(p => p.Username).ToList();
         }
 
@@ -305,7 +305,7 @@ namespace API.Data
                                      FROM Players 
                                      WHERE JSON_VALUE(Requests, '$[0].Type') = {0}
                                      AND JSON_VALUE(Requests, '$[0].Username') = {1}",
-                                 (int)Inquiry.Friend, username).Select(p => p.Username).ToListAsync();
+                                 (int)Inquiry.Friend, username).Select(p => p.Username).AsNoTracking().ToListAsync();
         }
 
         private async Task<List<string>?> GetSentGameRequests(string token)
@@ -321,12 +321,12 @@ namespace API.Data
                                      FROM Players 
                                      WHERE JSON_VALUE(Requests, '$[0].Type') = {0}
                                      AND JSON_VALUE(Requests, '$[0].Username') = {1}",
-                                     (int)Inquiry.Game, username).Select(p => p.Username).ToListAsync();
+                                     (int)Inquiry.Game, username).Select(p => p.Username).AsNoTracking().ToListAsync();
         }
 
         private async Task<bool> PlayerInGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
+            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
             return game is not null;
         }
 

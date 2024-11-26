@@ -172,11 +172,10 @@ namespace API.Data
                 entity.Property(e => e.Token)
                       .IsRequired();
 
-                entity.HasOne<Player>()
-                      .WithMany()
-                      .HasForeignKey(e => e.Player)
-                      .HasPrincipalKey(p => p.Token)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.Username)
+                      .IsRequired()
+                      .ValueGeneratedNever()
+                      .Metadata.SetAfterSaveBehavior(Microsoft.EntityFrameworkCore.Metadata.PropertySaveBehavior.Ignore);
 
                 entity.Property(e => e.Action)
                       .IsRequired()

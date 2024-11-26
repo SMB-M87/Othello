@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -159,9 +158,9 @@ namespace MVC.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "410a1c68-2195-4899-9218-90b568957677", "d0c1be76-2303-4dc2-b979-f0190b7f1162", "mod", "MOD" },
-                    { "dd007521-34c8-418e-acab-f55db638ac7d", "8f37dc4b-0e6e-4b48-ad69-42751150cf1b", "user", "USER" },
-                    { "de62baed-3711-48bf-a1ec-2f937cfe01fc", "7ee3a4c7-10a1-434a-bd0d-011b321e10de", "admin", "ADMIN" }
+                    { "4f79496e-df06-4282-bb80-809c19c17a26", "8d5f1b2c-cf9a-4870-bf44-29e59378d93d", "admin", "ADMIN" },
+                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "074df94a-dd85-465a-ac97-53c0e2815168", "user", "USER" },
+                    { "c8741835-5f35-470c-97a1-6ede4f281953", "732ee2d6-1031-4d22-ad0a-74bbb0423ca2", "mod", "MOD" }
                 });
 
             migrationBuilder.InsertData(
@@ -169,9 +168,9 @@ namespace MVC.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "admin-133742069420135", 0, "100e7432-8f27-41db-acd4-733339e906cd", "admin@othello.com", true, false, null, "ADMIN@OTHELLO.COM", "ADMIN", "AQAAAAEAACcQAAAAED18MdnWrRbpYbop59KhmbFnunZg1aAecK8e+1fIoig9MObeyIbRqF+CY9q9ARcLUg==", null, false, "22a36f92-448b-493a-9699-dfae828c7e7c", false, "admin" },
-                    { "mod-987456269420135", 0, "52fef446-3685-4ab3-8cbe-89a454bf2171", "mod@othello.com", true, false, null, "MOD@OTHELLO.COM", "MOD", "AQAAAAEAACcQAAAAELQa/0aaWoH8kKT/uAitkQTA97lop5D36CAMjUzej36MujeNydMBg+riLhMXXiNt7A==", null, false, "acd5854d-5888-4ee0-bf7b-c3a0f5ecbde4", false, "mod" },
-                    { "user-987456456198135", 0, "4d1d023c-fa40-4ebf-96ef-e234aa7af641", "user-987456456198135@othello.com", true, false, null, "USER-987456456198135@OTHELLO.COM", "OTHELLOWORLD", "AQAAAAEAACcQAAAAEHIw9YNpy7iqHjMnmlTTtnrCTbJVjY8jmdZNK49Aep3fMxXL9HNhCXQNR97W42qUbQ==", null, false, "6e2fcdb0-d41f-419b-acd4-e071965fbcb0", false, "OthelloWorld" }
+                    { "admin-133742069420135", 0, "01aa152e-7697-4f1a-a243-a83a0d0c9783", "admin@othello.com", true, false, null, "ADMIN@OTHELLO.COM", "ADMIN", "AQAAAAEAACcQAAAAEOi7jEfmIhAi7ussmzbDRcVxudS/tvV1psg/MSB9IyaY0/KC3IuI29emknjUioWGMA==", null, false, "cdd37d07-8aa5-403d-b7fe-b7286a4cf831", false, "admin" },
+                    { "mod-987456269420135", 0, "b722e10a-0d08-4b7d-94d6-03a72d8ee773", "mod@othello.com", true, false, null, "MOD@OTHELLO.COM", "MOD", "AQAAAAEAACcQAAAAEO/OaXyD5oaICoivuGAFjhF3ninJhaefvdTvKdPE1pBoPSxRTWCUF5dwXUk64IFyrw==", null, false, "ed534a89-674a-4acb-bfd4-2e6be8eb81cb", false, "mod" },
+                    { "user-987456456198135", 0, "412833cc-e114-461a-be94-64cc78b30bee", "user-987456456198135@othello.com", true, false, null, "USER-987456456198135@OTHELLO.COM", "OTHELLOWORLD", "AQAAAAEAACcQAAAAENC6m8QAQX0Y8toO+ern2w3Xz9DsN/JgEGnFWn0CSYw8GVu3I+tZSW4t06XXquK3Hg==", null, false, "0a829fc2-be9a-4d86-a548-b4cf0ea3ecfb", false, "OthelloWorld" }
                 });
 
             migrationBuilder.InsertData(
@@ -179,11 +178,11 @@ namespace MVC.Migrations
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
-                    { "dd007521-34c8-418e-acab-f55db638ac7d", "admin-133742069420135" },
-                    { "de62baed-3711-48bf-a1ec-2f937cfe01fc", "admin-133742069420135" },
-                    { "410a1c68-2195-4899-9218-90b568957677", "mod-987456269420135" },
-                    { "dd007521-34c8-418e-acab-f55db638ac7d", "mod-987456269420135" },
-                    { "dd007521-34c8-418e-acab-f55db638ac7d", "user-987456456198135" }
+                    { "4f79496e-df06-4282-bb80-809c19c17a26", "admin-133742069420135" },
+                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "admin-133742069420135" },
+                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "mod-987456269420135" },
+                    { "c8741835-5f35-470c-97a1-6ede4f281953", "mod-987456269420135" },
+                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "user-987456456198135" }
                 });
 
             migrationBuilder.CreateIndex(

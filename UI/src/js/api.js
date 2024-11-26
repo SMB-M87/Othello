@@ -10,7 +10,11 @@ Game.Api = (function () {
   };
 
   const _get = function () {
-    $.get(configMap.apiUrl)
+    return $.ajax({
+      url: configMap.apiUrl,
+      method: "GET",
+      crossDomain: true,
+    })
       .then((result) => {
         _set(result);
       })

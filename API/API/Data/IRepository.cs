@@ -5,6 +5,7 @@
         IGameRepository GameRepository { get; }
         IResultRepository ResultRepository { get; }
         IPlayerRepository PlayerRepository { get; }
-        IHomeRepository HomeRepository { get; }
+        IUserRepository HomeRepository { get; }
+        ILogRepository LogRepository { get; }
     }
 }

@@ -27,18 +27,18 @@ Game.Data = (function () {
     } else {
       throw new Error("This environment is unknown.");
     }
-
-    $.ajaxSetup({
-      xhrFields: {
-          withCredentials: true,
-      },
-      crossDomain: true,
-  });
   };
 
   const _get = function () {
     if (stateMap.environment == "production") {
-      return $.get(configMap.apiUrl + "game/view/" + configMap.apiKey)
+      return $.ajax({
+        url: configMap.apiUrl + "game/view/" + configMap.apiKey,
+        method: "GET",
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      })
         .then((result) => {
           return result;
         })
@@ -54,7 +54,14 @@ Game.Data = (function () {
 
   const _getPartial = function () {
     if (stateMap.environment == "production") {
-      return $.get(configMap.apiUrl + "game/partial/" + configMap.apiKey)
+      return $.ajax({
+        url: configMap.apiUrl + "game/partial/" + configMap.apiKey,
+        method: "GET",
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true,
+        },
+      })
         .then((result) => {
           return result;
         })
@@ -72,6 +79,14 @@ Game.Data = (function () {
     if (stateMap.environment == "production") {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
+          $.ajax({
+            url: configMap.apiUrl + "result/last/" + configMap.apiKey,
+            method: "GET",
+            crossDomain: true,
+            xhrFields: {
+              withCredentials: true,
+            },
+          })
           $.get(configMap.apiUrl + "result/last/" + configMap.apiKey)
             .then((result) => resolve(result))
             .catch((e) => {
@@ -85,7 +100,7 @@ Game.Data = (function () {
     } else {
       throw new Error("This environment is unknown.");
     }
-  };  
+  };
 
   const _getRematch = function () {
     const username = Game.Model.getOpponent();
@@ -97,6 +112,10 @@ Game.Data = (function () {
     return $.ajax({
       url: `${configMap.apiUrl}player/rematch/${encoded}`,
       method: "GET",
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     })
       .then((response) => {
         if (response) {
@@ -124,6 +143,10 @@ Game.Data = (function () {
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(moveData),
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     }).then((response) => {
       Game.Model.getGameState();
     });
@@ -137,6 +160,10 @@ Game.Data = (function () {
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ token: token }),
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     }).then((response) => {
       Game.Model.getGameState();
     });
@@ -150,6 +177,10 @@ Game.Data = (function () {
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ token: token }),
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     }).then((response) => {
       Game.Model.getGameState();
     });
@@ -169,6 +200,10 @@ Game.Data = (function () {
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(config),
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     });
   };
 
@@ -185,6 +220,10 @@ Game.Data = (function () {
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(config),
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     }).then((response) => {});
   };
 
@@ -201,6 +240,10 @@ Game.Data = (function () {
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify(config),
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true,
+      },
     }).then((response) => {});
   };
 
@@ -235,8 +278,8 @@ Game.Data = (function () {
 
   const getResult = (delay = 1000) => {
     return _getResult(delay);
-  };  
-  
+  };
+
   const getRematch = () => {
     return _getRematch();
   };

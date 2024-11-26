@@ -137,7 +137,7 @@ namespace API.Migrations
                             Token = "mary",
                             Bot = 2,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4429),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6589),
                             Requests = "[]",
                             Username = "Mary"
                         },
@@ -146,7 +146,7 @@ namespace API.Migrations
                             Token = "user-987456456198135",
                             Bot = 4,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4526),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6606),
                             Requests = "[]",
                             Username = "OthelloWorld"
                         },
@@ -155,7 +155,7 @@ namespace API.Migrations
                             Token = "john",
                             Bot = 3,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4432),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6591),
                             Requests = "[]",
                             Username = "John"
                         },
@@ -164,7 +164,7 @@ namespace API.Migrations
                             Token = "jimmy",
                             Bot = 2,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4510),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6592),
                             Requests = "[]",
                             Username = "Jimmy"
                         },
@@ -173,7 +173,7 @@ namespace API.Migrations
                             Token = "ted",
                             Bot = 4,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4511),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6593),
                             Requests = "[]",
                             Username = "Ted"
                         },
@@ -182,7 +182,7 @@ namespace API.Migrations
                             Token = "michael",
                             Bot = 3,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4512),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6593),
                             Requests = "[]",
                             Username = "Michael"
                         },
@@ -191,7 +191,7 @@ namespace API.Migrations
                             Token = "william",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4513),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6594),
                             Requests = "[]",
                             Username = "William"
                         },
@@ -200,7 +200,7 @@ namespace API.Migrations
                             Token = "sarah",
                             Bot = 3,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4514),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6595),
                             Requests = "[]",
                             Username = "Sarah"
                         },
@@ -209,7 +209,7 @@ namespace API.Migrations
                             Token = "lisa",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4514),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6596),
                             Requests = "[]",
                             Username = "Lisa"
                         },
@@ -218,7 +218,7 @@ namespace API.Migrations
                             Token = "nancy",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4515),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6597),
                             Requests = "[]",
                             Username = "Nancy"
                         },
@@ -227,7 +227,7 @@ namespace API.Migrations
                             Token = "Anthony",
                             Bot = 2,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4516),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6597),
                             Requests = "[]",
                             Username = "Anthony"
                         },
@@ -236,7 +236,7 @@ namespace API.Migrations
                             Token = "matthew",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4517),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6598),
                             Requests = "[]",
                             Username = "Matthew"
                         },
@@ -245,7 +245,7 @@ namespace API.Migrations
                             Token = "donald",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4517),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6599),
                             Requests = "[]",
                             Username = "Donald"
                         },
@@ -254,7 +254,7 @@ namespace API.Migrations
                             Token = "andrew",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4518),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6599),
                             Requests = "[]",
                             Username = "Andrew"
                         },
@@ -263,7 +263,7 @@ namespace API.Migrations
                             Token = "kimberly",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4519),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6600),
                             Requests = "[]",
                             Username = "Kimberly"
                         },
@@ -272,7 +272,7 @@ namespace API.Migrations
                             Token = "margaret",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4520),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6601),
                             Requests = "[]",
                             Username = "Margaret"
                         },
@@ -281,7 +281,7 @@ namespace API.Migrations
                             Token = "carol",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4520),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6601),
                             Requests = "[]",
                             Username = "Carol"
                         },
@@ -290,7 +290,7 @@ namespace API.Migrations
                             Token = "brian",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4521),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6602),
                             Requests = "[]",
                             Username = "Brian"
                         },
@@ -299,7 +299,7 @@ namespace API.Migrations
                             Token = "jason",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4522),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6603),
                             Requests = "[]",
                             Username = "Jason"
                         },
@@ -308,7 +308,7 @@ namespace API.Migrations
                             Token = "jeffrey",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4522),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6604),
                             Requests = "[]",
                             Username = "Jeffrey"
                         },
@@ -317,7 +317,7 @@ namespace API.Migrations
                             Token = "amy",
                             Bot = 1,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4523),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6604),
                             Requests = "[]",
                             Username = "Amy"
                         },
@@ -326,7 +326,7 @@ namespace API.Migrations
                             Token = "mod-987456269420135",
                             Bot = 0,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4525),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6606),
                             Requests = "[]",
                             Username = "mod"
                         },
@@ -335,7 +335,7 @@ namespace API.Migrations
                             Token = "admin-133742069420135",
                             Bot = 0,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4524),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6605),
                             Requests = "[]",
                             Username = "admin"
                         },
@@ -344,7 +344,7 @@ namespace API.Migrations
                             Token = "deleted",
                             Bot = 0,
                             Friends = "[]",
-                            LastActivity = new DateTime(2024, 11, 26, 14, 21, 40, 120, DateTimeKind.Utc).AddTicks(4527),
+                            LastActivity = new DateTime(2024, 11, 26, 18, 23, 31, 86, DateTimeKind.Utc).AddTicks(6607),
                             Requests = "[]",
                             Username = "Deleted"
                         });
@@ -363,16 +363,14 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Player")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Token");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("Player");
+                    b.HasKey("Token");
 
                     b.ToTable("Logs");
                 });
@@ -407,15 +405,6 @@ namespace API.Migrations
                     b.HasOne("API.Models.Player", null)
                         .WithMany()
                         .HasForeignKey("Winner")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("API.Models.PlayerLog", b =>
-                {
-                    b.HasOne("API.Models.Player", null)
-                        .WithMany()
-                        .HasForeignKey("Player")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

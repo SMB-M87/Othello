@@ -2,7 +2,7 @@
 
 namespace API.Data
 {
-    public interface IHomeRepository
+    public interface IUserRepository
     {
         Task<Home> GetView(string token);
         Task<HomePartial> GetPartial(string token);

@@ -14,12 +14,12 @@ namespace API.Data
 
         public async Task<Game?> Get(string token)
         {
-            return await _context.Games.FirstOrDefaultAsync(g => g.Token.Equals(token));
+            return await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Token.Equals(token));
         }
 
         public async Task<Game?> GetPlayersGame(string player_token)
         {
-            return await _context.Games.FirstOrDefaultAsync(g => (g.First == player_token) || (g.Second != null && g.Second == player_token));
+            return await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => (g.First == player_token) || (g.Second != null && g.Second == player_token));
         }
 
         public async Task<Status?> GetStatusByPlayersToken(string token)
@@ -30,7 +30,7 @@ namespace API.Data
 
         public async Task<List<Game>> GetGames()
         {
-            return await _context.Games.ToListAsync();
+            return await _context.Games.AsNoTracking().ToListAsync();
         }
 
         public async Task<GamePlay> GetView(string token)
@@ -111,7 +111,7 @@ namespace API.Data
             {
                 await _context.Games.AddAsync(new(game.PlayerToken, game.Description));
 
-                var player = await GetPlayer(game.PlayerToken);
+                var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == game.PlayerToken);
                 if (player is not null)
                 {
                     var gameRequests = player.Requests.Where(r => r.Type == Inquiry.Game).ToList();
@@ -127,8 +127,8 @@ namespace API.Data
             }
             else if (game.Rematch != null && player_exists && player_not_in_game)
             {
-                var player = await GetPlayer(game.PlayerToken);
-                var opponent = await GetPlayerToken(game.Rematch);
+                var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == game.PlayerToken);
+                var opponent = await _context.Players.FirstOrDefaultAsync(s => s.Token == game.Rematch);
 
                 if (player is not null && opponent is not null)
                 {
@@ -167,7 +167,7 @@ namespace API.Data
             if (player_token is null)
                 return false;
 
-            var game = await GetPlayersGame(player_token);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == player_token) || (g.Second != null && g.Second == player_token));
 
             if (game is not null && await PlayerExists(player_token) && await PlayerExists(request.SenderToken) &&
                 request.SenderToken != player_token && !await PlayerInGame(request.SenderToken) && await PlayerInPendingGame(player_token))
@@ -184,7 +184,7 @@ namespace API.Data
 
         public async Task<(bool succeded, string? error)> Move(GameMove action)
         {
-            var game = await GetPlayersGame(action.PlayerToken);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == action.PlayerToken) || (g.Second != null && g.Second == action.PlayerToken));
 
             if (game is not null && await PlayerExists(action.PlayerToken) && game.Second is not null)
             {
@@ -216,7 +216,7 @@ namespace API.Data
 
         public async Task<(bool succeded, string? error)> Pass(string token)
         {
-            var game = await GetPlayersGame(token);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
             string error = string.Empty;
 
             if (game is not null && await PlayerExists(token) && game.Second is not null)
@@ -250,7 +250,7 @@ namespace API.Data
 
         public async Task<bool> Forfeit(string token)
         {
-            var game = await GetPlayersGame(token);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
 
             if (game is not null && await PlayerExists(token) && game.Second is not null)
             {
@@ -293,7 +293,7 @@ namespace API.Data
 
         public async Task<bool> Delete(string token)
         {
-            var game = await GetPlayersGame(token);
+            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
 
             if (game is not null && await PlayerExists(token) && await PlayerInPendingGame(token) && token == game.First)
             {
@@ -329,7 +329,7 @@ namespace API.Data
 
         public async Task<bool> PermDelete(string token)
         {
-            var game = await Get(token);
+            var game = await _context.Games.FirstOrDefaultAsync(g => g.Token.Equals(token)); ;
 
             if (game is not null)
             {
@@ -342,23 +342,18 @@ namespace API.Data
 
         private async Task<Player?> GetPlayer(string token)
         {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
-        }
-
-        private async Task<Player?> GetPlayerToken(string username)
-        {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Username == username);
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token);
         }
 
         private async Task<string?> GetToken(string username)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.Username == username);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username == username);
             return player?.Token;
         }
 
         private async Task<bool> PlayerExists(string token)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token);
             return player != null;
         }
 
@@ -380,13 +375,13 @@ namespace API.Data
 
         private async Task<bool> PlayerInPendingGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(g => g.First == token && g.Second == null && g.Status == Status.Pending);
+            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.First == token && g.Second == null && g.Status == Status.Pending);
             return game is not null;
         }
 
         private async Task<bool> PlayerInGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
+            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token));
             return game is not null;
         }
     }

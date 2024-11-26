@@ -137,6 +137,25 @@ namespace MVC.Controllers
             return RedirectToAction("Results");
         }
 
+        public async Task<IActionResult> Logs(string searchQuery = "null")
+        {
+            var model = await GetLogs(searchQuery);
+            return View(model);
+        }
+
+        public async Task<IActionResult> Log(string token)
+        {
+            var model = await GetLog(token);
+
+            if (model is not null && model.Token != "")
+            {
+                return View("Log", model);
+            }
+
+            return RedirectToAction("Players");
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> PlayerEdit([FromBody] Text text)
@@ -310,6 +329,30 @@ namespace MVC.Controllers
                 };
 
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+            }
+            return result;
+        }
+
+        private async Task<List<PlayerLog>> GetLogs(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/admin/logs/{token}");
+            List<PlayerLog> result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<List<PlayerLog>>() ?? new();
+            }
+            return result;
+        }
+
+        private async Task<PlayerLog> GetLog(string token)
+        {
+            var response = await _httpClient.GetAsync($"api/admin/log/{token}");
+            PlayerLog result = new();
+
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadFromJsonAsync<PlayerLog>() ?? new();
             }
             return result;
         }

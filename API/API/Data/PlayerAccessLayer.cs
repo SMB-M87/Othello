@@ -230,7 +230,7 @@ namespace API.Data
 
         public async Task<bool> Delete(string token)
         {
-            var player = await Get(token);
+            var player = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(token));
 
             if (player is not null)
             {
@@ -350,13 +350,13 @@ namespace API.Data
 
         private async Task<bool> PlayerInGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(g => g.First.Equals(token) || (g.Second != null && g.Second.Equals(token)));
+            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.First.Equals(token) || (g.Second != null && g.Second.Equals(token)));
             return game is not null;
         }
 
         private async Task<bool> PlayerInPendingGame(string token)
         {
-            var game = await _context.Games.FirstOrDefaultAsync(s => s.First.Equals(token) && s.Second == null && s.Status == Status.Pending);
+            var game = await _context.Games.AsNoTracking().FirstOrDefaultAsync(s => s.First.Equals(token) && s.Second == null && s.Status == Status.Pending);
             return game is not null;
         }
 
@@ -379,7 +379,7 @@ namespace API.Data
 
         private async Task<bool> TokenExists(string token)
         {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Token == token) != null;
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token) != null;
         }
     }
 }

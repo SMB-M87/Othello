@@ -24,7 +24,16 @@ namespace API.Controllers
             var response = await _repository.HomeRepository.GetView(token);
 
             if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "User/View", $"Player {token} failed to fetch view from database within the user controller.")
+                );
                 return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "User/View", $"Player {token} fetched view from player database within the user controller.")
+            );
 
             return Ok(response);
         }
@@ -35,7 +44,16 @@ namespace API.Controllers
             var response = await _repository.HomeRepository.GetPartial(token);
 
             if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "User/Partial", $"Player {token} failed to fetch partial from player database within the user controller.")
+                );
                 return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "User/Partial", $"Player {token} fetched partial from player database within the user controller.")
+            );
 
             return Ok(response);
         }
@@ -48,7 +66,16 @@ namespace API.Controllers
             var response = await _repository.HomeRepository.GetProfile(parts[0], parts[1]);
 
             if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "User/Profile", $"Player {parts[1]} failed to fetch profile from player {parts[0]} within the user controller.")
+                );
                 return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "User/Profile", $"Player {parts[1]} fetched profile from player {parts[0]} within the user controller.")
+            );
 
             return Ok(response);
         }

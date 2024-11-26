@@ -59,7 +59,7 @@ Game.Stat = (function () {
           y: {
             title: {
               display: true,
-              text: "Count",
+              text: "Flipped",
             },
           },
         },

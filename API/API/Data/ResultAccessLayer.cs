@@ -14,7 +14,7 @@ namespace API.Data
 
         public async Task<GameResult?> Get(string token)
         {
-            var response = await _context.Results.FirstOrDefaultAsync(s => s.Token == token);
+            var response = await _context.Results.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token);
 
             if (response is not null)
             {
@@ -62,12 +62,12 @@ namespace API.Data
 
         public async Task<List<GameResult>> GetResults()
         {
-            return await _context.Results.ToListAsync();
+            return await _context.Results.AsNoTracking().ToListAsync();
         }
 
         public async Task<bool> Delete(string token)
         {
-            var result = await Get(token);
+            var result = await _context.Results.FirstOrDefaultAsync(s => s.Token == token);
 
             if (result is not null)
             {
@@ -80,19 +80,20 @@ namespace API.Data
 
         private async Task<string?> GetPlayersToken(string username)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.Username == username);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username == username);
             return player?.Token;
         }
 
         private async Task<string?> GetPlayersName(string token)
         {
-            var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == token);
+            var player = await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token == token);
             return player?.Username;
         }
 
         private async Task<List<GameResult>> GetMatchHistory(string player_token)
         {
             return await _context.Results
+                .AsNoTracking()
                 .Where(s => s.Winner == player_token || s.Loser == player_token)
                 .ToListAsync();
         }

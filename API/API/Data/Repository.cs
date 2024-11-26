@@ -12,6 +12,7 @@
         public IGameRepository GameRepository => new GameAccessLayer(_context);
         public IResultRepository ResultRepository => new ResultAccessLayer(_context);
         public IPlayerRepository PlayerRepository => new PlayerAccessLayer(_context);
-        public IHomeRepository HomeRepository => new HomeAccessLayer(_context);
+        public IUserRepository HomeRepository => new UserAccessLayer(_context);
+        public ILogRepository LogRepository => new LogAccessLayer(_context);
     }
 }
