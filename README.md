@@ -1,5 +1,5 @@
 # Othello MVC API Application
-This is a backend-driven web application for a multiplayer Othello (Reversi) game built using ASP.NET Core MVC. The application consists of a REST API and an MVC client. The frontend is planned to be developed in vanilla JavaScript, and the current implementation handles all logic via the API and server-side code.
+This is a backend-driven web application for a multiplayer Othello (Reversi) game built using ASP.NET Core MVC. The application consists of a REST API and an MVC client. The gameplay is developed in vanilla JavaScript. There are bots to populate the server and they make use of minmax algorithms.
 
 # Table of Contents
 - [Project Overview](#ProjectOverview)  
@@ -11,16 +11,14 @@ This is a backend-driven web application for a multiplayer Othello (Reversi) gam
 - [MVC Structure](#MVCStructure)  
 - [Controllers](##Controllers)  
 - [Game Flow](#GameFlow)  
-- [Planned Frontend](#PlannedFrontend)  
 - [Installation and Setup](#InstallationandSetup)  
-- [Future Enhancements](#FutureEnhancements)  
 
 ## Project Overview
 The Othello MVC API project is designed to handle multiplayer Othello gameplay through a robust backend architecture. The application provides essential features for managing players, game sessions, and results. The REST API offers a suite of endpoints to facilitate game creation, player interaction, and game results tracking, while the MVC structure allows seamless interaction between the API and the client application.
 
-https://github.com/user-attachments/assets/59557958-513f-489e-a648-21cdd2536e03
+https://github.com/user-attachments/assets/431edc10-336a-44e0-b97f-489b57eb18d0
 
-https://github.com/user-attachments/assets/60a65b00-40fa-45ba-83e1-acf8d1d5bb6c
+https://github.com/user-attachments/assets/f7bb6898-6582-41be-aef5-a6c04624a91e
 
 # Features
 - User Authentication: Players register and log in through the MVC application using ASP.NET Identity.  
@@ -99,13 +97,6 @@ The MVC side of the project is responsible for rendering views and handling user
 4. Gameplay: The game board is updated in real-time using AJAX (or SignalR in the future).
 5. Game Completion: Once the game is over, players are free to start or join another game.
 
-# Planned Frontend
-The frontend will be developed using vanilla JavaScript. Features like real-time updates, game state polling, and user interactions will be handled with AJAX requests.
-
-## Planned Features
-- AJAX Polling: Check the game state periodically to update the game board in real-time.
-- Vanilla JavaScript: Used for UI interactivity, including showing move options, handling game state changes, and responding to player actions.
-- Responsive Design: Ensure that the game and all other pages are responsive across devices.
 
 #Installation and Setup
 1. Clone the repository:
@@ -125,12 +116,3 @@ The frontend will be developed using vanilla JavaScript. Features like real-time
 
 4. Access the app:
     - Go to https://localhost:{port} to start the game.
-
-# Future Enhancements
-1. SignalR Integration: Real-time updates via SignalR to avoid polling.
-2. Frontend Development: Develop a rich user interface using vanilla JavaScript and possibly transition to a modern frontend framework (React/Angular) later.
-3. Player Statistics: Show more detailed player statistics such as move efficiency, longest winning streak, etc.
-4. AI Opponent: Implement an AI opponent for single-player mode.
-
-# Conclusion
-This Othello MVC and API application provides a backend foundation for building a fully-featured multiplayer game with real-time updates, player management, and friend-based interactions. The project is designed to be flexible and scalable, allowing for future enhancements and frontend development using vanilla JavaScript or any modern framework.
