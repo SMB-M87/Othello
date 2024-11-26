@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = Roles.User)]
     [Route("api/result")]
     [ApiController]
     public class ResultController : ControllerBase

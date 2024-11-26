@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = Roles.User)]
     [Route("api/home")]
     [ApiController]
     public class UserController : ControllerBase

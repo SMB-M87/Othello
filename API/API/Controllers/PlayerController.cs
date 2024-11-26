@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = Roles.User)]
     [Route("api/player")]
     [ApiController]
     public class PlayerController : ControllerBase
