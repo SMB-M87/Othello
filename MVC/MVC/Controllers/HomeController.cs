@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using System.Diagnostics;
+using System.Net;
 using System.Text.Json;
 
 namespace MVC.Controllers
@@ -10,11 +12,49 @@ namespace MVC.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IHttpContextAccessor? _httpContextAccessor;
 
-        public HomeController(IHttpClientFactory httpClientFactory, UserManager<IdentityUser> userManager)
+        public HomeController(
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory,
+            UserManager<IdentityUser> userManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _httpContextAccessor = httpContextAccessor;
+
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new Exception("BaseUrl setting is missing in configuration.");
+
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
+
+            var cookies = _httpContextAccessor?.HttpContext?.Request.Cookies;
+
+            if (cookies is not null)
+            {
+                foreach (var cookie in cookies)
+                {
+                    if (cookie.Key == ".AspNet.SharedAuthCookie")
+                    {
+                        handler.CookieContainer.Add(
+                            new Uri(baseUrl),
+                            new Cookie(cookie.Key, cookie.Value)
+                        );
+                    }
+                }
+
+                _httpClient = new HttpClient(handler)
+                {
+                    BaseAddress = new Uri(baseUrl)
+                };
+            }
+            else
+            {
+                _httpClient = httpClientFactory.CreateClient("ApiClient");
+            }
         }
 
         public async Task<IActionResult> Index()
@@ -56,6 +96,7 @@ namespace MVC.Controllers
             return View();
         }
 
+        [Authorize(Roles = Roles.User)]
         public async Task<IActionResult> Profile(string username = "")
         {
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
@@ -89,6 +130,7 @@ namespace MVC.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = Roles.User)]
         public async Task<IActionResult> Result(string token)
         {
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated && !string.IsNullOrEmpty(token))
@@ -111,6 +153,13 @@ namespace MVC.Controllers
             return View();
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Creation()
@@ -119,6 +168,7 @@ namespace MVC.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Cancel()
@@ -127,6 +177,7 @@ namespace MVC.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         public async Task<IActionResult> Partial()
         {
@@ -157,6 +208,7 @@ namespace MVC.Controllers
             return PartialView("_Partial", model);
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> CreateGame([FromBody] Text text)
@@ -186,6 +238,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game created." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> RematchGame([FromBody] Text text)
@@ -216,6 +269,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game created." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeleteGame()
@@ -231,6 +285,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game deleted." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> JoinGame([FromBody] Text player)
@@ -250,6 +305,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game joined." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> SendFriendRequest([FromBody] Text player)
@@ -269,6 +325,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Friend request sent." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> AcceptFriendRequest([FromBody] Text player)
@@ -288,6 +345,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Friend request accepted." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeclineFriendRequest([FromBody] Text player)
@@ -307,6 +365,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Friend request declined." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeleteFriend([FromBody] Text player)
@@ -326,6 +385,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Friend deleted." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> SendGameRequest([FromBody] Text player)
@@ -345,6 +405,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game request sent." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> AcceptGameRequest([FromBody] Text player)
@@ -364,6 +425,7 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game request accepted." });
         }
 
+        [Authorize(Roles = Roles.User)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeclineGameRequest([FromBody] Text player)
@@ -468,12 +530,6 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
             }
             return result;
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

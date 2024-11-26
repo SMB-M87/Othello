@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
+using System.Net;
 
 namespace MVC.Controllers
 {
@@ -10,11 +11,49 @@ namespace MVC.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IHttpContextAccessor? _httpContextAccessor;
 
-        public GameController(IHttpClientFactory httpClientFactory, UserManager<IdentityUser> userManager)
+        public GameController(
+            IConfiguration configuration, 
+            IHttpClientFactory httpClientFactory, 
+            UserManager<IdentityUser> userManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _httpContextAccessor = httpContextAccessor;
+
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new Exception("BaseUrl setting is missing in configuration.");
+
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
+
+            var cookies = _httpContextAccessor?.HttpContext?.Request.Cookies;
+
+            if (cookies is not null)
+            {
+                foreach (var cookie in cookies)
+                {
+                    if (cookie.Key == ".AspNet.SharedAuthCookie")
+                    {
+                        handler.CookieContainer.Add(
+                            new Uri(baseUrl),
+                            new Cookie(cookie.Key, cookie.Value)
+                        );
+                    }
+                }
+
+                _httpClient = new HttpClient(handler)
+                {
+                    BaseAddress = new Uri(baseUrl)
+                };
+            }
+            else
+            {
+                _httpClient = httpClientFactory.CreateClient("ApiClient");
+            }
         }
 
         public IActionResult Play()

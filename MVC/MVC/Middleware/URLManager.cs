@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MVC.Models;
+using System.Net;
 
 namespace MVC.Middleware
 {
@@ -47,14 +48,29 @@ namespace MVC.Middleware
                 if (!isAjaxRequest)
                 {
                     var token = userManager.GetUserId(user);
-                    var httpClient = _httpClientFactory.CreateClient("ApiClient");
-                    var response = await httpClient.GetAsync($"api/game/{token}");
+
+                    var httpClient = _httpClientFactory.CreateClient();
+                    var baseUrl = "https://localhost:7023/";
+                    var handler = new HttpClientHandler
+                    {
+                        UseCookies = true,
+                        CookieContainer = new CookieContainer()
+                    };
+
+                    var cookies = context.Request.Cookies;
+                    if (cookies.TryGetValue(".AspNet.SharedAuthCookie", out var cookieValue))
+                    {
+                        handler.CookieContainer.Add(new Uri(baseUrl), new Cookie(".AspNet.SharedAuthCookie", cookieValue));
+                    }
+
+                    var httpClientWithCookies = new HttpClient(handler) { BaseAddress = new Uri(baseUrl) };
+                    var response = await httpClientWithCookies.GetAsync($"api/game/{userId}");
 
                     if (response.IsSuccessStatusCode)
                     {
                         var result = await response.Content.ReadAsStringAsync();
 
-                        if (result == "1" && currentPath is not null && !PlayingAllowedPath(currentPath))
+                        if ((result == "1" || result == "2") && currentPath is not null && !PlayingAllowedPath(currentPath))
                         {
                             context.Response.Redirect("/Game/Play");
                             return;
