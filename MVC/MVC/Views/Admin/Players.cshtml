@@ -1,4 +1,4 @@
-﻿@model List<Player>
+﻿@model List<PlayerView>
 @Html.AntiForgeryToken()
 
 <h2>Players</h2>
@@ -61,10 +61,42 @@
                     }
                 </td>
                 <td>
-                    <button type="submit" class="btn btn-primary btn-sm" onclick="editPlayer('@player.Token')">Refresh</button>
-                    @if (player.Bot == 0 && player.Username != "mod" && player.Username != "admin" && player.Username != "Deleted")
+                    @if (player.Bot == 0 && player.Roles.Count > 0 && !player.Roles.Contains(Roles.Admin) && player.Roles.Contains(Roles.User))
                     {
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="deletePlayer('@player.Token')">Delete</button>
+                        <button type="submit" class="btn btn-link p-0" onclick="suspendPlayer('@player.Token')" title="Suspend Player" style="cursor: pointer;">
+                            <i class="fas fa-lock" style="font-size: 18px; color: red;" onmouseover="this.style.color='#cc0000'" onmouseout="this.style.color='red'"></i>
+                        </button>
+                    }
+
+                    @if (player.Bot == 0 && player.Roles.Count > 0 && !player.Roles.Contains(Roles.Admin) && player.Roles.Contains(Roles.User))
+                    {
+                        <button type="button" class="btn btn-link p-0" onclick="unsuspendPlayer('@player.Token')" title="Unsuspend Player" style="cursor: pointer;">
+                            <i class="fas fa-unlock" style="font-size: 18px; color: green;" onmouseover="this.style.color='#006400'" onmouseout="this.style.color='green'"></i>
+                        </button>
+                    }
+
+                    @if (player.Bot == 0 && player.Roles.Count > 0 && !player.Roles.Contains(Roles.Admin) && !player.Roles.Contains(Roles.Mod))
+                    {
+                        <button type="submit" class="btn btn-link p-0" onclick="elevatePlayer('@player.Token')" title="Elevate rights">
+                            <i class="fas fa-arrow-up" style="font-size: 18px; color: dodgerblue;"
+                               onmouseover="this.style.color='blue'" onmouseout="this.style.color='dodgerblue'"></i>
+                        </button>
+                    }
+
+                    @if (player.Bot == 0 && player.Roles.Count > 0 && !player.Roles.Contains(Roles.Admin) && player.Roles.Contains(Roles.Mod))
+                    {
+                        <button type="button" class="btn btn-link p-0" onclick="delevatePlayer('@player.Token')" title="Remove rights">
+                            <i class="fas fa-arrow-down" style="font-size: 18px; color: darkorange;"
+                               onmouseover="this.style.color='orange'" onmouseout="this.style.color='darkorange'"></i>
+                        </button>
+                    }
+
+                    @if (player.Bot == 0 && player.Roles.Count > 0 && !player.Roles.Contains(Roles.Admin))
+                    {
+                        <button type="submit" class="btn btn-link p-0" onclick="deletePlayer('@player.Token')" title="Delete player">
+                            <i class="fas fa-trash-alt" style="font-size: 18px; color: red;"
+                               onmouseover="this.style.color='darkred'" onmouseout="this.style.color='red'"></i>
+                        </button>
                     }
                 </td>
             </tr>
@@ -73,10 +105,79 @@
 </table>
 
 <script>
-    function editPlayer(token) {
+    function suspendPlayer(token) {
         const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-        fetch('@Url.Action("PlayerEdit", "Admin")', {
+        fetch('@Url.Action("SuspendPlayer", "Admin")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function unsuspendPlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("UnsuspendPlayer", "Admin")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function elevatePlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("ElevatePlayer", "Admin")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function delevatePlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("DelevatePlayer", "Admin")', {
             method: 'POST',
             headers: {
                 'RequestVerificationToken': antiForgeryToken,

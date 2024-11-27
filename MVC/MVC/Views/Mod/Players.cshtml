@@ -15,6 +15,7 @@
             <th>Last Activity</th>
             <th>Friends</th>
             <th>Requests</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -58,7 +59,64 @@
                         <span>empty</span>
                     }
                 </td>
+                <td>
+                    <button type="submit" class="btn btn-link p-0" onclick="suspendPlayer('@player.Token')" title="Suspend Player" style="cursor: pointer;">
+                        <i class="fas fa-lock" style="font-size: 18px; color: red;" onmouseover="this.style.color='#cc0000'" onmouseout="this.style.color='red'"></i>
+                    </button>
+
+                    <button type="button" class="btn btn-link p-0" onclick="unsuspendPlayer('@player.Token')" title="Unsuspend Player" style="cursor: pointer;">
+                        <i class="fas fa-unlock" style="font-size: 18px; color: green;" onmouseover="this.style.color='#006400'" onmouseout="this.style.color='green'"></i>
+                    </button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<script>
+    function suspendPlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("SuspendPlayer", "Mod")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function unsuspendPlayer(token) {
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        fetch('@Url.Action("UnsuspendPlayer", "Mod")', {
+            method: 'POST',
+            headers: {
+                'RequestVerificationToken': antiForgeryToken,
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ body: token })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>

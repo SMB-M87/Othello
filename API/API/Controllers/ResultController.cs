@@ -20,18 +20,20 @@ namespace API.Controllers
         [HttpGet("{token}")]
         public async Task<ActionResult<GameResult>> Get(string token)
         {
+            var name = User?.Identity?.Name ?? "Anonymous";
+
             var response = await _repository.ResultRepository.Get(token);
 
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Result/Get", $"Failed to fetch data from game result {token} out of the result database within the result controller.")
+                    new(name, "FAIL:Result/Get", $"Failed to fetch data from game result {token} out of the result database within the result controller.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Result/Get", $"Fetched data from game result {token} out of the result database within the result controller.")
+                new(name, "Result/Get", $"Fetched data from game result {token} out of the result database within the result controller.")
             );
 
             return Ok(response);
@@ -40,6 +42,18 @@ namespace API.Controllers
         [HttpGet("last/{player_token}")]
         public async Task<ActionResult<GameResult>> GetLast(string player_token)
         {
+            var name = User?.Identity?.Name ?? "Anonymous";
+
+            var check = await _repository.PlayerRepository.PlayerChecksOut(player_token, name);
+
+            if (check == false)
+            {
+                await _repository.LogRepository.Create(
+                new(name, "FAIL:Result/GetLast/Check", $"Failed to pass the check before player {player_token} fetched the last result out of the result database within the player controller.")
+                );
+                return BadRequest();
+            }
+
             var response = await _repository.ResultRepository.GetLast(player_token);
 
             if (response is null)

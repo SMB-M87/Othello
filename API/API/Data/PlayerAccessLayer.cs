@@ -14,12 +14,12 @@ namespace API.Data
 
         public async Task<Player?> Get(string token)
         {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(token));
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Token.Equals(token));
         }
 
         public async Task<Player?> GetByName(string username)
         {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(username));
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username.Equals(username));
         }
 
         public async Task<string?> GetRematch(string receiver_username, string sender_token)
@@ -37,12 +37,17 @@ namespace API.Data
 
         public async Task<bool> UsernameExists(string username)
         {
-            return await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(username)) != null;
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username.Equals(username)) != null;
+        }
+
+        public async Task<bool> PlayerChecksOut(string token, string username)
+        {
+            return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username.Equals(username) && s.Token.Equals(token)) != null;
         }
 
         public async Task<List<Player>> GetPlayers()
         {
-            return await _context.Players.ToListAsync();
+            return await _context.Players.AsNoTracking().ToListAsync();
         }
 
         public async Task<bool> Create(Player player)
@@ -61,7 +66,7 @@ namespace API.Data
         {
             if (await TokenExists(token))
             {
-                var player = await Get(token);
+                var player = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(token));
 
                 if (player is not null)
                 {
@@ -76,8 +81,8 @@ namespace API.Data
 
         public async Task<bool> FriendRequest(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
 
             if (receiver is not null && sender is not null &&
                 !receiver.Friends.Contains(sender.Username) && !sender.Friends.Contains(receiver.Username) &&
@@ -95,8 +100,8 @@ namespace API.Data
 
         public async Task<bool> AcceptFriendRequest(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
 
             if (receiver is not null && sender is not null &&
                 !receiver.Friends.Contains(sender.Username) && !sender.Friends.Contains(receiver.Username) &&
@@ -123,8 +128,8 @@ namespace API.Data
 
         public async Task<bool> DeclineFriendRequest(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
 
             if (receiver is not null && sender is not null &&
                 !receiver.Friends.Contains(sender.Username) && !sender.Friends.Contains(receiver.Username) &&
@@ -146,8 +151,8 @@ namespace API.Data
 
         public async Task<bool> GameRequest(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
             DateTime now = DateTime.UtcNow;
 
             if (receiver is not null && sender is not null &&
@@ -166,8 +171,8 @@ namespace API.Data
 
         public async Task<bool> AcceptGameRequest(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
             DateTime now = DateTime.UtcNow;
 
             if (receiver is not null && sender is not null &&
@@ -190,8 +195,8 @@ namespace API.Data
 
         public async Task<bool> DeclineGameRequest(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
 
             if (receiver is not null && sender is not null &&
                 sender.Requests.Any(p => p.Username == receiver.Username && p.Type == Inquiry.Game))
@@ -212,8 +217,8 @@ namespace API.Data
 
         public async Task<bool> DeleteFriend(string receiver_username, string sender_token)
         {
-            var receiver = await GetByName(receiver_username);
-            var sender = await Get(sender_token);
+            var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(receiver_username));
+            var sender = await _context.Players.FirstOrDefaultAsync(s => s.Token.Equals(sender_token));
 
             if (receiver is not null && sender is not null)
             {
@@ -290,7 +295,7 @@ namespace API.Data
                 var friendsToRemove = player.Friends.ToList();
                 foreach (string friend in friendsToRemove)
                 {
-                    var receiver = await GetByName(friend);
+                    var receiver = await _context.Players.FirstOrDefaultAsync(s => s.Username.Equals(friend));
 
                     if (receiver is not null)
                     {

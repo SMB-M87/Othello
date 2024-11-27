@@ -146,5 +146,45 @@ namespace API.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet("logs/{token}")]
+        public async Task<ActionResult<List<PlayerLog>>> GetLogs(string token)
+        {
+            var response = await _repository.LogRepository.GetLogs(token);
+
+            if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetLogs", $"Tryed to fetch {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log log database through the mod view but failed.")
+                );
+                return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLogs", $"Fetched {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log database through the mod view.")
+            );
+
+            return Ok(response);
+        }
+
+        [HttpGet("log/{token}")]
+        public async Task<ActionResult<PlayerLog?>> GetLog(string token)
+        {
+            var response = await _repository.LogRepository.Get(token);
+
+            if (response is null)
+            {
+                await _repository.LogRepository.Create(
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetLog", $"Tryed to fetch data from log {token} out of the log database through the mod view but failed.")
+                );
+                return NotFound();
+            }
+
+            await _repository.LogRepository.Create(
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLog", $"Fetched data from log {token} out of the log database through the mod view.")
+            );
+
+            return Ok(response);
+        }
     }
 }

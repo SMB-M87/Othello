@@ -61,7 +61,9 @@
                 </td>
                 <td>@game.Date</td>
                 <td>
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="deleteGame('@game.Token')">Delete</button>
+                    <button type="submit" class="btn btn-link p-0" onclick="deleteGame('@game.Token')">
+                        <i class="fas fa-trash-alt" style="font-size: 18px; color: red;"></i>
+                    </button>
                 </td>
             </tr>
         }

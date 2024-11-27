@@ -8,6 +8,7 @@ namespace API.Data
         Task<Player?> GetByName(string username);
         Task<string?> GetRematch(string receiver_username, string sender_token);
         Task<bool> UsernameExists(string username);
+        Task<bool> PlayerChecksOut(string token, string username);
         Task<List<Player>> GetPlayers();
         Task<bool> Create(Player player);
         Task<bool> UpdateActivity(string token);

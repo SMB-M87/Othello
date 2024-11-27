@@ -95,7 +95,7 @@ namespace MVC.Middleware
                             context.Response.Redirect($"/Home/Index");
                             return;
                         }
-                        else if (user.IsInRole(Roles.User) && !user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.Mod) && 
+                        else if (user.IsInRole(Roles.User) && !user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.Mod) &&
                             currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
                         {
                             context.Response.Redirect($"/Home/Index");

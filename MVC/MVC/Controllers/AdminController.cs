@@ -155,18 +155,101 @@ namespace MVC.Controllers
             return RedirectToAction("Players");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> SuspendPlayer([FromBody] Text text)
+        {
+            var user = await _userManager.FindByIdAsync(text.Body);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found in Identity database." });
+            }
+
+            var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
+            if (!suspend.Succeeded)
+            {
+                return Json(new { success = false, message = "Failed to suspend user." });
+            }
+
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            return Json(new { success = true, message = "User suspended for a month." });
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<JsonResult> PlayerEdit([FromBody] Text text)
+        public async Task<JsonResult> UnsuspendPlayer([FromBody] Text text)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/player/activity", new { Token = text.Body });
-
-            if (!response.IsSuccessStatusCode)
+            var user = await _userManager.FindByIdAsync(text.Body);
+            if (user == null)
             {
-                return Json(new { success = false, message = "Unable to update last activity player." });
+                return Json(new { success = false, message = "User not found in Identity database." });
             }
-            return Json(new { success = true, message = "Player last activity updated." });
+
+            var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+            if (!suspend.Succeeded)
+            {
+                return Json(new { success = false, message = "Failed to unsuspend user." });
+            }
+
+            user.AccessFailedCount = 0;
+            await _userManager.UpdateAsync(user);
+
+            return Json(new { success = true, message = "User unsuspended immediatly." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> ElevatePlayer([FromBody] Text text)
+        {
+            var user = await _userManager.FindByIdAsync(text.Body);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found in Identity database." });
+            }
+
+            var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
+            if (isModerator)
+            {
+                return Json(new { success = false, message = "User is already a moderator." });
+            }
+
+            var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.Mod);
+            if (!addRoleResult.Succeeded)
+            {
+                return Json(new { success = false, message = "Failed to elevate user to moderator role." });
+            }
+
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            return Json(new { success = true, message = "User elevated to moderator role." });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> DelevatePlayer([FromBody] Text text)
+        {
+            var user = await _userManager.FindByIdAsync(text.Body);
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found in Identity database." });
+            }
+
+            var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
+            if (!isModerator)
+            {
+                return Json(new { success = false, message = "User is not a moderator." });
+            }
+
+            var removeRoleResult = await _userManager.RemoveFromRoleAsync(user, Roles.Mod);
+            if (!removeRoleResult.Succeeded)
+            {
+                return Json(new { success = false, message = "Failed to remove moderator role from user." });
+            }
+
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            return Json(new { success = true, message = "Moderator role removed from user." });
         }
 
         [HttpPost]
@@ -180,7 +263,7 @@ namespace MVC.Controllers
             }
             else
             {
-                var response = await _httpClient.PostAsJsonAsync("api/player/delete", new { Token = text.Body });
+                var response = await _httpClient.PostAsJsonAsync("api/admin/player/delete", new { Token = text.Body });
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -225,14 +308,37 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Result deleted." });
         }
 
-        private async Task<List<Player>> GetPlayers()
+        private async Task<List<PlayerView>> GetPlayers()
         {
             var response = await _httpClient.GetAsync("api/admin/player");
-            List<Player> result = new();
+            List<PlayerView> result = new();
 
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
+                var results = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
+
+                foreach (var player in results)
+                {
+                    PlayerView temp = new()
+                    {
+                        Token = player.Token,
+                        Username = player.Username,
+                        LastActivity = player.LastActivity,
+                        Friends = player.Friends,
+                        Requests = player.Requests,
+                        Bot = player.Bot,
+                        Roles = new List<string>()
+                    };
+
+                    var identityUser = await _userManager.FindByIdAsync(player.Token);
+                    if (identityUser != null)
+                    {
+                        var roles = await _userManager.GetRolesAsync(identityUser);
+                        temp.Roles = roles;
+                    }
+
+                    result.Add(temp);
+                }
             }
             return result;
         }

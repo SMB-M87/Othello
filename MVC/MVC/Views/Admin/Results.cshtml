@@ -31,7 +31,9 @@
                 <td>@result.Forfeit</td>
                 <td>@result.Date</td>
                 <td>
-                    <button type="submit" class="btn btn-danger btn-sm" onclick="deleteResult('@result.Token')">Delete</button>
+                    <button type="submit" class="btn btn-link p-0" onclick="deleteResult('@result.Token')">
+                        <i class="fas fa-trash-alt" style="font-size: 18px; color: red;"></i>
+                    </button>
                 </td>
             </tr>
         }

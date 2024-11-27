@@ -1,6 +1,6 @@
-﻿using MVC.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using MVC.Data;
 
 #nullable disable
 

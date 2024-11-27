@@ -1,0 +1,37 @@
+﻿@model List<PlayerLog>
+@Html.AntiForgeryToken()
+
+<h2>Logs</h2>
+
+<form method="get" asp-action="Logs">
+    <input type="text" name="searchQuery" placeholder="Search by token or username" value="@ViewData["SearchQuery"]" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Username</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td><a asp-action="Log" asp-route-token="@log.Token" style="text-decoration: none; color: inherit;">@log.Token</a></td>
+                <td>
+                    <a asp-action="Profile" asp-route-token="@log.Username" style="text-decoration: none; color: inherit;">
+                        @log.Username
+                    </a>
+                </td>
+                <td>@log.Action</td>
+                <td>@log.Details</td>
+                <td>@log.Timestamp</td>
+            </tr>
+        }
+    </tbody>
+</table>

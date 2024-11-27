@@ -14,8 +14,8 @@ namespace MVC.Controllers
         private readonly IHttpContextAccessor? _httpContextAccessor;
 
         public GameController(
-            IConfiguration configuration, 
-            IHttpClientFactory httpClientFactory, 
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory,
             UserManager<IdentityUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {
