@@ -162,17 +162,20 @@ namespace MVC.Controllers
             var user = await _userManager.FindByIdAsync(text.Body);
             if (user == null)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
                 return Json(new { success = false, message = "User not found in Identity database." });
             }
 
             var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
             if (!suspend.Succeeded)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
                 return Json(new { success = false, message = "Failed to suspend user." });
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
 
+            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/SuspendPlayer", $"Suspended player {text.Body} for a month."));
             return Json(new { success = true, message = "User suspended for a month." });
         }
 
@@ -183,18 +186,21 @@ namespace MVC.Controllers
             var user = await _userManager.FindByIdAsync(text.Body);
             if (user == null)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
                 return Json(new { success = false, message = "User not found in Identity database." });
             }
 
             var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
             if (!suspend.Succeeded)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
                 return Json(new { success = false, message = "Failed to unsuspend user." });
             }
 
             user.AccessFailedCount = 0;
             await _userManager.UpdateAsync(user);
 
+            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
             return Json(new { success = true, message = "User unsuspended immediatly." });
         }
 
@@ -342,6 +348,11 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
             }
             return result;
+        }
+
+        private async Task LogIt(PlayerLog log)
+        {
+            await _httpClient.PostAsJsonAsync($"api/mod/log", log);
         }
 
         private async Task<List<PlayerLog>> GetLogs(string token)

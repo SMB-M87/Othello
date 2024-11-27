@@ -162,17 +162,20 @@ namespace MVC.Controllers
             var user = await _userManager.FindByIdAsync(text.Body);
             if (user == null)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
                 return Json(new { success = false, message = "User not found in Identity database." });
             }
 
             var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
             if (!suspend.Succeeded)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
                 return Json(new { success = false, message = "Failed to suspend user." });
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
 
+            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/SuspendPlayer", $"Suspended player {text.Body} for a month."));
             return Json(new { success = true, message = "User suspended for a month." });
         }
 
@@ -183,18 +186,21 @@ namespace MVC.Controllers
             var user = await _userManager.FindByIdAsync(text.Body);
             if (user == null)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
                 return Json(new { success = false, message = "User not found in Identity database." });
             }
 
             var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
             if (!suspend.Succeeded)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
                 return Json(new { success = false, message = "Failed to unsuspend user." });
             }
 
             user.AccessFailedCount = 0;
             await _userManager.UpdateAsync(user);
 
+            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
             return Json(new { success = true, message = "User unsuspended immediatly." });
         }
 
@@ -205,23 +211,27 @@ namespace MVC.Controllers
             var user = await _userManager.FindByIdAsync(text.Body);
             if (user == null)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, but couldn't find the player."));
                 return Json(new { success = false, message = "User not found in Identity database." });
             }
 
             var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
             if (isModerator)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, but the player is already moderator."));
                 return Json(new { success = false, message = "User is already a moderator." });
             }
 
             var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.Mod);
             if (!addRoleResult.Succeeded)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, to no avail."));
                 return Json(new { success = false, message = "Failed to elevate user to moderator role." });
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
 
+            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Elevated player {text.Body} to moderator."));
             return Json(new { success = true, message = "User elevated to moderator role." });
         }
 
@@ -232,23 +242,27 @@ namespace MVC.Controllers
             var user = await _userManager.FindByIdAsync(text.Body);
             if (user == null)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, but couldn't find the player."));
                 return Json(new { success = false, message = "User not found in Identity database." });
             }
 
             var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
             if (!isModerator)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, but the player is not moderator."));
                 return Json(new { success = false, message = "User is not a moderator." });
             }
 
             var removeRoleResult = await _userManager.RemoveFromRoleAsync(user, Roles.Mod);
             if (!removeRoleResult.Succeeded)
             {
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, to no avail."));
                 return Json(new { success = false, message = "Failed to remove moderator role from user." });
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
 
+            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Downgraded player {text.Body} to simple user."));
             return Json(new { success = true, message = "Moderator role removed from user." });
         }
 
@@ -437,6 +451,11 @@ namespace MVC.Controllers
                 result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
             }
             return result;
+        }
+
+        private async Task LogIt(PlayerLog log)
+        {
+            await _httpClient.PostAsJsonAsync($"api/admin/log", log);
         }
 
         private async Task<List<PlayerLog>> GetLogs(string token)

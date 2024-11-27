@@ -147,6 +147,12 @@ namespace API.Controllers
             return Ok(response);
         }
 
+        [HttpPost("log")]
+        public async Task Log([FromBody] PlayerLog log)
+        {
+            await _repository.LogRepository.Create(log);
+        }
+
         [HttpGet("logs/{token}")]
         public async Task<ActionResult<List<PlayerLog>>> GetLogs(string token)
         {
