@@ -216,16 +216,12 @@ namespace MVC.Controllers
                 foreach (var player in results)
                 {
                     var identityUser = await _userManager.FindByIdAsync(player.Token);
-                    if (identityUser != null)
+                    if (identityUser != null && player.Bot == 0)
                     {
                         var roles = await _userManager.GetRolesAsync(identityUser);
 
                         if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
                             result.Add(player);
-                    }
-                    else
-                    {
-                        result.Add(player);
                     }
                 }
             }
@@ -257,7 +253,6 @@ namespace MVC.Controllers
             }
 
             var response = await _httpClient.GetAsync($"api/mod/player/{token}");
-            var result = new Player();
 
             if (!response.IsSuccessStatusCode)
                 response = await _httpClient.GetAsync($"api/mod/player/name/{token}");
@@ -273,9 +268,11 @@ namespace MVC.Controllers
                     }
                 };
                 var resultList = await response.Content.ReadFromJsonAsync<List<Player>>(options);
-                result = resultList?.FirstOrDefault() ?? new();
+
+                if (resultList?.FirstOrDefault()?.Bot == 0)
+                    return resultList?.FirstOrDefault() ?? new();
             }
-            return result;
+            return null;
         }
 
         private async Task<List<Game>> GetGames()

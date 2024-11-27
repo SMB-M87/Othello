@@ -161,13 +161,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetLogs", $"Tryed to fetch {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log log database through the mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetLogs", $"Tryed to fetch {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log log database through the mod view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLogs", $"Fetched {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log database through the mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetLogs", $"Fetched {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log database through the mod view.")
             );
 
             return Ok(response);
@@ -181,13 +181,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetLog", $"Tryed to fetch data from log {token} out of the log database through the mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetLog", $"Tryed to fetch data from log {token} out of the log database through the mod view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLog", $"Fetched data from log {token} out of the log database through the mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetLog", $"Fetched data from log {token} out of the log database through the mod view.")
             );
 
             return Ok(response);
