@@ -25,13 +25,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayers", $"Tryed to fetch all players from player database through the mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetPlayers", $"Tryed to fetch all players from player database through the mod view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayers", $"Fetched all players from player database through mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayers", $"Fetched all players from player database through the mod view.")
             );
 
             return Ok(response);
@@ -45,7 +45,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayer", $"Tryed to fetch player {token} from player database through mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetPlayer", $"Tryed to fetch data from player {token} out of the player database through the mod view but failed.")
                 );
                 return NotFound();
             }
@@ -56,7 +56,7 @@ namespace API.Controllers
             };
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayer", $"Fetch player {token} from player database through mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayer", $"Fetched data from player {token} from player database through the mod view.")
             );
 
             return Ok(result);
@@ -70,7 +70,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayerByName", $"Tryed to fetch player {username} from player database through mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetPlayerByName", $"Tryed to fetch data from player {username} out of the player database through the mod view but failed.")
                 );
                 return NotFound();
             }
@@ -81,7 +81,7 @@ namespace API.Controllers
             };
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayerByName", $"Fetch player {username} from player database through mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetPlayerByName", $"Fetched data from player {username} out of the player database through the mod view.")
             );
 
             return Ok(result);
@@ -95,13 +95,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Mod/GetGame", $"Tryed to fetch game {token} from game database through mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetGame", $"Tryed to fetch data from game {token} out of the game database through the mod view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetGame", $"Fetch game {token} from game database through mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetGame", $"Fetched data from game {token} out of the game database through the mod view.")
             );
 
             return Ok(response);
@@ -115,13 +115,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Mod/GetGames", $"Tryed to fetch all games from game database through mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetGames", $"Tryed to fetch all games from game database through the mod view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetGames", $"Fetch all games from game database through mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetGames", $"Fetched all games from game database through the mod view.")
             );
 
             return Ok(response);
@@ -135,13 +135,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Mod/GetResults", $"Tryed to fetch all game result from result database through mod view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/GetResults", $"Tryed to fetch all game result from result database through the mod view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetResults", $"Fetch all game result from result database through mod view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Mod/GetResults", $"Fetched all game result from result database through the mod view.")
             );
 
             return Ok(response);

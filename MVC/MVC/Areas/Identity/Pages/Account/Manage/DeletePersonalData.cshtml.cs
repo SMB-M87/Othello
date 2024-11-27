@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace MVC.Areas.Identity.Pages.Account.Manage
 {
@@ -15,17 +16,54 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IHttpContextAccessor? _httpContextAccessor;
 
         public DeletePersonalDataModel(
+            IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
             UserManager<IdentityUser> userManager,
             ILogger<DeletePersonalDataModel> logger,
-            SignInManager<IdentityUser> signInManager)
+            IHttpContextAccessor httpContextAccessor,
+            SignInManager<IdentityUser> signInManager
+            )
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _httpContextAccessor = httpContextAccessor;
+
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new Exception("BaseUrl setting is missing in configuration.");
+
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
+
+            var cookies = _httpContextAccessor?.HttpContext?.Request.Cookies;
+
+            if (cookies is not null)
+            {
+                foreach (var cookie in cookies)
+                {
+                    if (cookie.Key == ".AspNet.SharedAuthCookie")
+                    {
+                        handler.CookieContainer.Add(
+                            new Uri(baseUrl),
+                            new Cookie(cookie.Key, cookie.Value)
+                        );
+                    }
+                }
+
+                _httpClient = new HttpClient(handler)
+                {
+                    BaseAddress = new Uri(baseUrl)
+                };
+            }
+            else
+            {
+                _httpClient = httpClientFactory.CreateClient("ApiClient");
+            }
         }
 
         /// <summary>

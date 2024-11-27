@@ -25,7 +25,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayers", $"Tryed to fetch all players from player database through the admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetPlayers", $"Tryed to fetch all players from player database through the admin view but failed.")
                 );
                 return NotFound();
             }
@@ -45,7 +45,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayer", $"Tryed to fetch player {token} from player database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetPlayer", $"Tryed to fetch data from player {token} out of the player database through the admin view but failed.")
                 );
                 return NotFound();
             }
@@ -56,7 +56,7 @@ namespace API.Controllers
             };
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayer", $"Fetch player {token} from player database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayer", $"Fetch data from player {token} out of the player database through the admin view.")
             );
 
             return Ok(result);
@@ -70,7 +70,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayerByName", $"Tryed to fetch player {username} from player database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetPlayerByName", $"Tryed to fetch data from player {username} out of the player database through the admin view but failed.")
                 );
                 return NotFound();
             }
@@ -81,7 +81,7 @@ namespace API.Controllers
             };
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayerByName", $"Fetch player {username} from player database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetPlayerByName", $"Fetch data from player {username} out of the player database through the admin view.")
             );
 
             return Ok(result);
@@ -95,7 +95,7 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeletePlayer", $"Delete player {id.Token} from player database through admin view.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/DeletePlayer", $"Deleted player {id.Token} from player database through admin view.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
@@ -116,13 +116,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetGame", $"Tryed to fetch game {token} from game database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetGame", $"Tryed to fetch data from game {token} out of the game database through the admin view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetGame", $"Fetch game {token} from game database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetGame", $"Fetch data from game {token} out of the game database through the admin view.")
             );
 
             return Ok(response);
@@ -136,13 +136,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetGames", $"Tryed to fetch all games from game database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetGames", $"Tryed to fetch all games from game database through the admin view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetGames", $"Fetch all games from game database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetGames", $"Fetched all games from game database through the admin view.")
             );
 
             return Ok(response);
@@ -156,14 +156,14 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeleteGame", $"Delete game {id.Token} from game database through admin view.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/DeleteGame", $"Deleted game {id.Token} from game database through the admin view.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeleteGame", $"Tryed to delete game {id.Token} from game database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeleteGame", $"Tryed to delete game {id.Token} from game database through the admin view but failed.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }
@@ -177,13 +177,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetResults", $"Tryed to fetch all game result from result database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetResults", $"Tryed to fetch all game result from result database through the admin view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetResults", $"Fetch all game result from result database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetResults", $"Fetched all game result from result database through the admin view.")
             );
 
             return Ok(response);
@@ -197,14 +197,14 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeleteResult", $"Delete game result {id.Token} from result database through admin view.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/DeleteResult", $"Deleted game result {id.Token} from result database through the admin view.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeleteResult", $"Tryed to delete game result {id.Token} from result database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "Admin/DeleteResult", $"Tryed to delete game result {id.Token} from result database through the admin view but failed.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }
@@ -218,13 +218,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLogs", $"Tryed to fetch {(token == "null" ? "all logs" : "logs from" + token)} from log database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetLogs", $"Tryed to fetch {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log log database through the admin view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLogs", $"Fetch {(token == "null" ? "all logs" : "logs from" + token)} from log database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLogs", $"Fetched {(token == "null" ? "all logs" : "log(s) from" + token)} out of the log database through the admin view.")
             );
 
             return Ok(response);
@@ -238,13 +238,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLog", $"Tryed to fetch log {token} from log database through admin view but failed.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/GetLog", $"Tryed to fetch data from log {token} out of the log database through the admin view but failed.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLog", $"Fetch log {token} from log database through admin view.")
+                new(User?.Identity?.Name ?? "Anonymous", "Admin/GetLog", $"Fetched data from log {token} out of the log database through the admin view.")
             );
 
             return Ok(response);

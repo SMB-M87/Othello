@@ -26,7 +26,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "User/View", $"Player {token} failed to fetch view from database within the user controller.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:User/View", $"Player {token} failed to fetch view from database within the user controller.")
                 );
                 return NotFound();
             }
@@ -46,7 +46,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "User/Partial", $"Player {token} failed to fetch partial from player database within the user controller.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:User/Partial", $"Player {token} failed to fetch partial from player database within the user controller.")
                 );
                 return NotFound();
             }
@@ -68,7 +68,7 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "User/Profile", $"Player {parts[1]} failed to fetch profile from player {parts[0]} within the user controller.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:User/Profile", $"Player {parts[1]} failed to fetch profile from player {parts[0]} within the user controller.")
                 );
                 return NotFound();
             }

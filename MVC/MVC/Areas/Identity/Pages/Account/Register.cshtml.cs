@@ -100,7 +100,6 @@ namespace MVC.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -112,77 +111,78 @@ namespace MVC.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            var response = await _httpClient.GetAsync($"api/player/{Input.Username}");
+            var response = await _httpClient.GetAsync($"api/check/{Input.Username}");
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 ModelState.AddModelError(string.Empty, "Username is already taken.");
-                return Page();
             }
-            else if (response.StatusCode != System.Net.HttpStatusCode.NotFound)
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                ModelState.AddModelError(string.Empty, "An error occurred while checking the username.");
-                return Page();
-            }
-
-            if (ModelState.IsValid)
-            {
-                var user = CreateUser();
-
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
-                user.EmailConfirmed = true;
-
-                var result = await _userManager.CreateAsync(user, Input.Password);
-
-                if (result.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-                    await _userManager.AddToRoleAsync(user, "player");
+                    var user = CreateUser();
 
-                    var playerCreation = new
+                    await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                    await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
+                    user.EmailConfirmed = true;
+
+                    var result = await _userManager.CreateAsync(user, Input.Password);
+
+                    if (result.Succeeded)
                     {
-                        ReceiverUsername = user.Id,
-                        SenderToken = Input.Username
-                    };
+                        _logger.LogInformation("User created a new account with password.");
+                        await _userManager.AddToRoleAsync(user, "user");
 
-                    var createPlayerResponse = await _httpClient.PostAsJsonAsync("api/player/create/", playerCreation);
-                    if (!createPlayerResponse.IsSuccessStatusCode)
-                    {
-                        ModelState.AddModelError(string.Empty, "An error occurred while creating the player in the API.");
-                        await _userManager.DeleteAsync(user);
-                        return Page();
-                    }
-                    else
-                    {
-                        var userId = await _userManager.GetUserIdAsync(user);
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                        var callbackUrl = Url.Page(
-                            "/Account/ConfirmEmail",
-                            pageHandler: null,
-                            values: new { area = "Identity", userId, code, returnUrl },
-                            protocol: Request.Scheme);
-
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                        var playerCreation = new
                         {
-                            return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+                            ReceiverUsername = user.Id,
+                            SenderToken = Input.Username
+                        };
+
+                        var createPlayerResponse = await _httpClient.PostAsJsonAsync("api/register", playerCreation);
+                        if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            ModelState.AddModelError(string.Empty, "An error occurred while creating the player in the API.");
+                            await _userManager.DeleteAsync(user);
+                        }
+                        else if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            var userId = await _userManager.GetUserIdAsync(user);
+                            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                            var callbackUrl = Url.Page(
+                                "/Account/ConfirmEmail",
+                                pageHandler: null,
+                                values: new { area = "Identity", userId, code, returnUrl },
+                                protocol: Request.Scheme);
+
+                            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                            if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                            {
+                                return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
+                            }
+                            else
+                            {
+                                await _signInManager.SignInAsync(user, isPersistent: false);
+                                return LocalRedirect(returnUrl);
+                            }
                         }
                         else
                         {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return LocalRedirect(returnUrl);
+                            ModelState.AddModelError(string.Empty, "An error occurred while creating the player.");
+                            await _userManager.DeleteAsync(user);
                         }
                     }
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
+
             // If we got this far, something failed, redisplay form
             return Page();
         }
