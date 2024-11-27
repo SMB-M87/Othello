@@ -275,7 +275,7 @@ Game.Data = (function () {
     return _getPartial();
   };
 
-  const getResult = (delay = 1000) => {
+  const getResult = (delay = 50) => {
     return _getResult(delay);
   };
 
