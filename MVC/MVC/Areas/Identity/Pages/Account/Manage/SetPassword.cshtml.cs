@@ -48,7 +48,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             /// </summary>
             [Required]
             [NormalizedPassword]
-            [StringLength(65, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 12)]
+            [StringLength(65, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 16)]
             [DataType(DataType.Password)]
             [Display(Name = "New password")]
             public string NewPassword { get; set; }
