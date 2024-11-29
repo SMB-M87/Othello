@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MVC.Areas.Identity.Pages.Account;
 using MVC.Data;
 using MVC.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+PasswordBreach.Initialize(builder.Environment.ContentRootPath);
 
 builder.Logging.AddConsole();
 

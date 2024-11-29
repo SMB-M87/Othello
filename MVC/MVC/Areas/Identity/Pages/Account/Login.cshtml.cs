@@ -111,7 +111,7 @@ namespace MVC.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Username, Regex.Replace(Input.Password.Trim(), @"\s+", " "), Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(Input.Username);
@@ -120,6 +120,12 @@ namespace MVC.Areas.Identity.Pages.Account
                         var userId = user.Id;
                                                 
                         var login = await _httpClient.GetAsync($"api/login/{userId}");
+
+                        if (PasswordBreach.IsPasswordBreached(Input.Password))
+                        {
+                            TempData["StatusMessage"] = "The password you entered has been found in a data breach. Please change your password immediately.";
+                            return RedirectToPage("/Account/Manage/ChangePassword", new { area = "Identity" });
+                        }
 
                         if (login.StatusCode == System.Net.HttpStatusCode.OK)
                         {

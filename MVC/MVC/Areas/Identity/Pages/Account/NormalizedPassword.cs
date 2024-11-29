@@ -24,6 +24,11 @@ namespace MVC.Areas.Identity.Pages.Account
                 return new ValidationResult("Password must be at least 12 characters long.");
             }
 
+            if (PasswordBreach.IsPasswordBreached(password))
+            {
+                return new ValidationResult("The password you entered has been found in a data breach. Please choose a different password.");
+            }
+
             if (!Regex.IsMatch(normalizedPassword, @"^[\p{L}\p{N}\p{P}\p{S}\p{Zs}\uD83C-\uDBFF\uDC00-\uDFFF]+$"))
             {
                 return new ValidationResult("Password contains invalid characters.");
