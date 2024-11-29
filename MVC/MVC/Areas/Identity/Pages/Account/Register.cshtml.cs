@@ -85,7 +85,8 @@ namespace MVC.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [NormalizedPassword]
+            [StringLength(65, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 12)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -96,6 +97,7 @@ namespace MVC.Areas.Identity.Pages.Account
             /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
+            [StringLength(65, ErrorMessage = "The {0} is not allowed to exceed {1} characters.")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
         }
@@ -125,7 +127,6 @@ namespace MVC.Areas.Identity.Pages.Account
 
                     await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                     await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
-                    user.EmailConfirmed = true;
 
                     var result = await _userManager.CreateAsync(user, Input.Password);
 

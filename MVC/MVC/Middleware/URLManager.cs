@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MVC.Models;
 using System.Net;
+using System.Security.Claims;
 
 namespace MVC.Middleware
 {
@@ -26,16 +27,16 @@ namespace MVC.Middleware
                 return;
             }
 
-            using var scope = serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var signInManager = scope.ServiceProvider.GetRequiredService<SignInManager<IdentityUser>>();
-
             if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
             {
-                var userId = userManager.GetUserId(user);
-                var existingUser = await userManager.FindByIdAsync(userId);
+                using var scope = serviceProvider.CreateScope();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var signInManager = scope.ServiceProvider.GetRequiredService<SignInManager<IdentityUser>>();
 
-                if (existingUser == null)
+                var userId = userManager.GetUserId(user);
+                var checkUser = await userManager.FindByIdAsync(userId);
+
+                if (checkUser == null)
                 {
                     await signInManager.SignOutAsync();
                     context.Response.Redirect("/Home/Index");

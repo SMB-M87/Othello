@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace MVC.Areas.Identity.Pages.Account
 {
@@ -110,7 +111,7 @@ namespace MVC.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Username, Regex.Replace(Input.Password.Trim(), @"\s+", " "), Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(Input.Username);
