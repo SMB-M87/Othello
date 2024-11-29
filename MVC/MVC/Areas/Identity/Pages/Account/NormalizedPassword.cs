@@ -19,9 +19,9 @@ namespace MVC.Areas.Identity.Pages.Account
 
             var normalizedPassword = Regex.Replace(password.Trim(), @"\s+", " ");
 
-            if (normalizedPassword.Length < 12)
+            if (normalizedPassword.Length < 16)
             {
-                return new ValidationResult("Password must be at least 12 characters long.");
+                return new ValidationResult("Password must be at least 16 characters long.");
             }
 
             if (PasswordBreach.IsPasswordBreached(password))

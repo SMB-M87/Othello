@@ -24,7 +24,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
             if (returnUrl != null)
             {
-                return LocalRedirect(returnUrl);
+                return RedirectToPage("/Home/Index");
             }
             else
             {

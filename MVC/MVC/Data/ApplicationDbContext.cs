@@ -38,7 +38,7 @@ namespace MVC.Data
             var adminUser = new IdentityUser
             {
                 Id = adminId,
-                UserName = adminRole,
+                UserName = "OthelloMaster",
                 NormalizedUserName = adminRole.ToUpper(),
                 Email = $"{adminRole}@othello.com",
                 NormalizedEmail = $"{adminRole.ToUpper()}@OTHELLO.COM",
@@ -49,7 +49,7 @@ namespace MVC.Data
             var mediatorUser = new IdentityUser
             {
                 Id = moderatorId,
-                UserName = modRole,
+                UserName = "OthelloMod",
                 NormalizedUserName = modRole.ToUpper(),
                 Email = $"{modRole}@othello.com",
                 NormalizedEmail = $"{modRole.ToUpper()}@OTHELLO.COM",

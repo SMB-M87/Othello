@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MVC.Areas.Identity.Pages.Account;
 using MVC.Data;
 using MVC.Middleware;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.Password.RequireNonAlphanumeric = false;
         options.Password.RequireUppercase = false;
         options.Password.RequireLowercase = false;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -91,6 +95,12 @@ builder.Services.AddHttpClient("ApiClient", client =>
     return handler;
 });
 
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 builder.Services.AddSingleton<IEmailSender, NullEmailSender>();
 
 builder.Services.AddRazorPages();
@@ -103,6 +113,8 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 });
 
 builder.Services.AddHostedService<InactivityLogoutService>();
+
+
 
 var app = builder.Build();
 

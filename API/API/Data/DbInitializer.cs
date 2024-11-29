@@ -34,8 +34,8 @@ namespace API.Data
             Player t19 = new("jason", "Jason", 1);
             Player t20 = new("jeffrey", "Jeffrey", 1);
             Player t21 = new("amy", "Amy", 1);
-            Player t23 = new("admin-133742069420135", "admin", 0);
-            Player t22 = new("mod-987456269420135", "mod", 0);
+            Player t23 = new("admin-133742069420135", "OthelloMaster", 0);
+            Player t22 = new("mod-987456269420135", "OthelloMod", 0);
             Player two = new("user-987456456198135", "OthelloWorld", 4);
             Player delete = new("deleted", "Deleted");
 
