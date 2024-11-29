@@ -1,8 +1,8 @@
 ﻿namespace MVC.Models
 {
-    public class HomePartial
+    public class UserPartial
     {
-        public HomePending Pending { get; set; } = null!;
+        public UserPending Pending { get; set; } = null!;
 
         public List<string> OnlinePlayers { get; set; } = null!;
         public List<string> PlayersInGame { get; set; } = null!;
@@ -20,7 +20,7 @@
         public List<string> JoinablePlayers => Pending.Games.Select(g => g.Username).ToList();
         public List<string> InvitablePlayers => OnlinePlayers.Except(Pending.Games.Select(g => g.Username)).Except(PlayersInGame).ToList();
 
-        public HomePartial()
+        public UserPartial()
         {
             Pending = new();
             OnlinePlayers = new List<string>();

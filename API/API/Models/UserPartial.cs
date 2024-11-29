@@ -1,8 +1,8 @@
 ﻿namespace API.Models
 {
-    public class HomePartial
+    public class UserPartial
     {
-        public HomePending Pending { get; set; } = null!;
+        public UserPending Pending { get; set; } = null!;
 
         public List<string> OnlinePlayers { get; set; } = null!;
         public List<string> PlayersInGame { get; set; } = null!;

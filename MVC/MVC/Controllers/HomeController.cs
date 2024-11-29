@@ -65,14 +65,14 @@ namespace MVC.Controllers
                 var session = HttpContext.Session.GetString("GameCreation");
                 var response = await GetView(token);
 
-                var model = new Home
+                var model = new User
                 {
                     Stats = response.Stats,
                     MatchHistory = response.MatchHistory,
 
-                    Partial = new HomePartial
+                    Partial = new UserPartial
                     {
-                        Pending = new HomePending()
+                        Pending = new UserPending()
                         {
                             Session = session ?? "false",
                             InGame = response.Partial.Pending.InGame,
@@ -181,31 +181,35 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Partial()
         {
-            var token = _userManager.GetUserId(User);
-            var session = HttpContext.Session.GetString("GameCreation");
-            var response = await GetPartial(token);
-
-            var model = new HomePartial
+            if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                Pending = new HomePending()
+                var token = _userManager.GetUserId(User);
+                var session = HttpContext.Session.GetString("GameCreation");
+                var response = await GetPartial(token);
+
+                var model = new UserPartial
                 {
-                    Session = session ?? "false",
-                    InGame = response.Pending.InGame,
-                    Status = response.Pending.Status,
-                    Games = response.Pending.Games
-                },
+                    Pending = new UserPending()
+                    {
+                        Session = session ?? "false",
+                        InGame = response.Pending.InGame,
+                        Status = response.Pending.Status,
+                        Games = response.Pending.Games
+                    },
 
-                OnlinePlayers = response.OnlinePlayers,
-                PlayersInGame = response.PlayersInGame,
-                Friends = response.Friends,
+                    OnlinePlayers = response.OnlinePlayers,
+                    PlayersInGame = response.PlayersInGame,
+                    Friends = response.Friends,
 
-                FriendRequests = response.FriendRequests,
-                GameRequests = response.GameRequests,
+                    FriendRequests = response.FriendRequests,
+                    GameRequests = response.GameRequests,
 
-                SentFriendRequests = response.SentFriendRequests,
-                SentGameRequests = response.SentGameRequests,
-            };
-            return PartialView("_Partial", model);
+                    SentFriendRequests = response.SentFriendRequests,
+                    SentGameRequests = response.SentGameRequests
+                };
+                return PartialView("_Partial", model);
+            }
+            return RedirectToAction("Index");
         }
 
         [Authorize(Roles = Roles.User)]
@@ -219,37 +223,6 @@ namespace MVC.Controllers
             {
                 PlayerToken = token,
                 Description = text.Body
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return Json(new { success = false, message = "Unable to create game." });
-            }
-
-            var game = await _httpClient.GetAsync($"api/game/{token}");
-
-            if (!game.IsSuccessStatusCode)
-            {
-                return Json(new { success = false, message = "Game creation failed." });
-            }
-            HttpContext.Session.SetString("GameCreation", "false");
-            return Json(new { success = true, message = "Game created." });
-        }
-
-        [Authorize(Roles = Roles.User)]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<JsonResult> RematchGame([FromBody] Text text)
-        {
-            var token = _userManager.GetUserId(User);
-
-            var createGameRequest = new
-            {
-                PlayerToken = token,
-                Description = $"Rematch against {text.Body}",
-                Rematch = text.Body
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
@@ -445,10 +418,10 @@ namespace MVC.Controllers
             return Json(new { success = true, message = "Game request declined." });
         }
 
-        private async Task<Home> GetView(string token)
+        private async Task<User> GetView(string token)
         {
-            var response = await _httpClient.GetAsync($"api/home/view/{token}");
-            Home result = new();
+            var response = await _httpClient.GetAsync($"api/user/view/{token}");
+            User result = new();
 
             if (response.IsSuccessStatusCode)
             {
@@ -458,7 +431,7 @@ namespace MVC.Controllers
                     Converters = { new ColorArrayConverter() }
                 };
 
-                var deserializedResult = await response.Content.ReadFromJsonAsync<Home>(options);
+                var deserializedResult = await response.Content.ReadFromJsonAsync<User>(options);
 
                 if (deserializedResult is not null)
                 {
@@ -468,10 +441,10 @@ namespace MVC.Controllers
             return result;
         }
 
-        private async Task<HomePartial> GetPartial(string token)
+        private async Task<UserPartial> GetPartial(string token)
         {
-            var response = await _httpClient.GetAsync($"api/home/partial/{token}");
-            HomePartial result = new();
+            var response = await _httpClient.GetAsync($"api/user/partial/{token}");
+            UserPartial result = new();
 
             if (response.IsSuccessStatusCode)
             {
@@ -481,7 +454,7 @@ namespace MVC.Controllers
                     Converters = { new ColorArrayConverter() }
                 };
 
-                var deserializedResult = await response.Content.ReadFromJsonAsync<HomePartial>(options);
+                var deserializedResult = await response.Content.ReadFromJsonAsync<UserPartial>(options);
 
                 if (deserializedResult is not null)
                 {
@@ -493,7 +466,7 @@ namespace MVC.Controllers
 
         private async Task<HomeProfile> GetProfile(string token)
         {
-            var response = await _httpClient.GetAsync($"api/home/profile/{token}");
+            var response = await _httpClient.GetAsync($"api/user/profile/{token}");
             HomeProfile result = new();
 
             if (response.IsSuccessStatusCode)

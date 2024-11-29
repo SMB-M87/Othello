@@ -16,7 +16,7 @@ namespace API.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult<HttpResponseMessage>> Create([FromBody] PlayerRequest player)
+        public async Task<ActionResult> Create([FromBody] PlayerRequest player)
         {
             bool response = await _repository.PlayerRepository.Create(new(player.ReceiverUsername, player.SenderToken));
 
@@ -25,14 +25,14 @@ namespace API.Controllers
                 await _repository.LogRepository.Create(
                     new("Anonymous", "Register/Create", $"Player {player.ReceiverUsername} with username {player.SenderToken} created in the player database within the register controller.")
                 );
-                return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
+                return Ok();
             }
             else
             {
                 await _repository.LogRepository.Create(
                     new("Anonymous", "FAIL:Register/Create", $"Failed to create player {player.ReceiverUsername} with username {player.SenderToken} in the player database within the register controller.")
                 );
-                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+                return BadRequest();
             }
         }
     }

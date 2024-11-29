@@ -16,7 +16,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly IHttpContextAccessor? _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public DeletePersonalDataModel(
             IConfiguration configuration,

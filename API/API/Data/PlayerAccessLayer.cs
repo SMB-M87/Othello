@@ -50,6 +50,23 @@ namespace API.Data
             return await _context.Players.AsNoTracking().ToListAsync();
         }
 
+        public async Task<List<string>> GetInactivePlayers()
+        {
+            var threshold = DateTime.UtcNow.AddMinutes(-5);
+
+            var players = await _context.Players.AsNoTracking().Where(p => p.LastActivity <= threshold && p.Bot == 0).ToListAsync();
+
+            List<string> result = new();
+
+            foreach(var player in players)
+            {
+                if (player.Username != "Deleted")
+                    result.Add(player.Username);
+            }
+
+            return result;
+        }
+
         public async Task<bool> Create(Player player)
         {
             if (!await TokenExists(player.Token) && !await UsernameExists(player.Username))

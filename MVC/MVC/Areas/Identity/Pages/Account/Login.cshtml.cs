@@ -10,13 +10,21 @@ namespace MVC.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
+        private readonly HttpClient _httpClient;
         private readonly ILogger<LoginModel> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public LoginModel(ILogger<LoginModel> logger, SignInManager<IdentityUser> signInManager)
+        public LoginModel(
+            ILogger<LoginModel> logger,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            _userManager = userManager;
             _signInManager = signInManager;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         /// <summary>
@@ -105,7 +113,18 @@ namespace MVC.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return LocalRedirect(returnUrl);
+                    var user = await _userManager.FindByNameAsync(Input.Username);
+                    if (user != null)
+                    {
+                        var userId = user.Id;
+                                                
+                        var login = await _httpClient.GetAsync($"api/login/{userId}");
+
+                        if (login.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            return LocalRedirect(returnUrl);
+                        }
+                    }
                 }
                 if (result.RequiresTwoFactor)
                 {

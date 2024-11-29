@@ -7,14 +7,11 @@ namespace MVC.Middleware
     public class URLManager
     {
         private readonly RequestDelegate _next;
-        private readonly IHttpClientFactory _httpClientFactory;
 
         public URLManager(
-            RequestDelegate next,
-            IHttpClientFactory httpClientFactory)
+            RequestDelegate next)
         {
             _next = next;
-            _httpClientFactory = httpClientFactory;
         }
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
@@ -49,8 +46,10 @@ namespace MVC.Middleware
                 {
                     var token = userManager.GetUserId(user);
 
-                    var httpClient = _httpClientFactory.CreateClient();
-                    var baseUrl = "https://localhost:7023/";
+                    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+                    var baseUrl = configuration["ApiSettings:BaseUrl"];
+
                     var handler = new HttpClientHandler
                     {
                         UseCookies = true,
@@ -63,8 +62,12 @@ namespace MVC.Middleware
                         handler.CookieContainer.Add(new Uri(baseUrl), new Cookie(".AspNet.SharedAuthCookie", cookieValue));
                     }
 
-                    var httpClientWithCookies = new HttpClient(handler) { BaseAddress = new Uri(baseUrl) };
-                    var response = await httpClientWithCookies.GetAsync($"api/game/{userId}");
+                    var httpClient = new HttpClient(handler)
+                    {
+                        BaseAddress = new Uri(baseUrl)
+                    };
+
+                    var response = await httpClient.GetAsync($"api/game/{userId}");
 
                     if (response.IsSuccessStatusCode)
                     {

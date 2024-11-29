@@ -1,6 +1,5 @@
 ﻿using API.Data;
 using API.Models;
-using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,17 +28,10 @@ namespace API.Controllers
 
             if (check == false)
             {
-                await _repository.LogRepository.Create(
-                new(name, "FAIL:Player/Rematch/Check", $"Failed to pass the check before player {parts[1]} fetched the rematch data from player {parts[0]} within the player controller.")
-                );
                 return BadRequest();
             }
 
             var response = await _repository.PlayerRepository.GetRematch(parts[0], parts[1]);
-
-            await _repository.LogRepository.Create(
-                new(name, "Player/Rematch", $"Player {parts[1]} {(response == null ? "didn't found" : "did found")} a rematch with player {parts[0]} within the player controller.")
-            );
 
             return Ok(response);
         }

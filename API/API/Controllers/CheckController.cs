@@ -1,5 +1,4 @@
 ﻿using API.Data;
-using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,23 +15,16 @@ namespace API.Controllers
         }
 
         [HttpGet("{username}")]
-        public async Task<ActionResult<Home>> Check(string username)
+        public async Task<ActionResult> Check(string username)
         {
             bool response = await _repository.PlayerRepository.UsernameExists(username);
 
             if (response == false)
             {
-                await _repository.LogRepository.Create(
-                    new("Anonymous", "FAIL:Check/Check", $"Failed to find player with username {username} from player database within the check controller.")
-                );
                 return NotFound();
             }
 
-            await _repository.LogRepository.Create(
-                new("Anonymous", "Check/Check", $"Found player with username {username} from player database within the check controller.")
-            );
-
-            return Ok(response);
+            return Ok();
         }
     }
 }

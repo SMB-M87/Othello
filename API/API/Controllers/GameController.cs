@@ -28,9 +28,6 @@ namespace API.Controllers
 
             if (check == false)
             {
-                await _repository.LogRepository.Create(
-                    new(name, "FAIL:Game/StatusByToken/Check", $"Failed to pass the check before game status from player {token} was fetched out of the game database within the game controller.")
-                );
                 return BadRequest();
             }
 
@@ -38,15 +35,8 @@ namespace API.Controllers
 
             if (response is null)
             {
-                await _repository.LogRepository.Create(
-                    new(name, "FAIL:Game/StatusByToken", $"Failed to fetch game status from player {token} out of the game database within the game controller.")
-                );
                 return NotFound();
             }
-
-            await _repository.LogRepository.Create(
-                new(name, "Game/StatusByToken", $"Fetched game status from player {token} with status {response} from the game database within the game controller.")
-            );
 
             return Ok(response);
         }
@@ -61,7 +51,7 @@ namespace API.Controllers
             if (check == false)
             {
                 await _repository.LogRepository.Create(
-                    new(name, "FAIL:Game/GetView/Check", $"Failed to pass the check before game view from player {token} was fetched out of the game database within the game controller.")
+                    new(name, "FAIL:Game/View/Check", $"Failed to pass the check before game view from player {token} was fetched out of the game database within the game controller.")
                 );
                 return BadRequest();
             }
@@ -71,13 +61,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(name, "FAIL:Game/GetView", $"Failed to fetch game view of player {token} from game database within the game controller.")
+                    new(name, "FAIL:Game/View", $"Failed to fetch game view of player {token} from game database within the game controller.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(name, "Game/GetView", $"Fetch game view from player {token} from the game database within the game controller.")
+                new(name, "Game/View", $"Fetch game view from player {token} from the game database within the game controller.")
             );
 
             return Ok(response);
@@ -92,9 +82,6 @@ namespace API.Controllers
 
             if (check == false)
             {
-                await _repository.LogRepository.Create(
-                    new(name, "FAIL:Game/Partial/Check", $"Failed to pass the check before game partial from player {token} was fetched out of the game database within the game controller.")
-                );
                 return BadRequest();
             }
 
@@ -102,15 +89,8 @@ namespace API.Controllers
 
             if (response is null)
             {
-                await _repository.LogRepository.Create(
-                    new(name, "FAIL:Game/GetPartial", $"Failed to fetch game partial of player {token} from game database within the game controller.")
-                );
                 return NotFound();
             }
-
-            await _repository.LogRepository.Create(
-                new(name, "Game/GetPartial", $"Fetch game partial from player {token} from game database within the game controller.")
-            );
 
             return Ok(response);
         }

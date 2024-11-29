@@ -1,6 +1,6 @@
 ﻿namespace API.Models
 {
-    public class HomePending
+    public class UserPending
     {
         public string Session { get; set; } = string.Empty;
         public bool InGame { get; set; }

@@ -24,6 +24,11 @@ namespace API.Controllers
 
             var response = await _repository.ResultRepository.Get(token);
 
+            var player = await _repository.PlayerRepository.GetByName(name);
+
+            if (player is not null)
+                await _repository.PlayerRepository.UpdateActivity(player.Token);
+
             if (response is null)
             {
                 await _repository.LogRepository.Create(
@@ -48,9 +53,6 @@ namespace API.Controllers
 
             if (check == false)
             {
-                await _repository.LogRepository.Create(
-                new(name, "FAIL:Result/GetLast/Check", $"Failed to pass the check before player {player_token} fetched the last result out of the result database within the player controller.")
-                );
                 return BadRequest();
             }
 
@@ -58,15 +60,8 @@ namespace API.Controllers
 
             if (response is null)
             {
-                await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Result/GetLast", $"Player {player_token} failed to fetch last game result data out of the result database within the result controller.")
-                );
                 return NotFound();
             }
-
-            await _repository.LogRepository.Create(
-                new(User?.Identity?.Name ?? "Anonymous", "Result/GetLast", $"Player {player_token} fetched data from the last game result {response.Token} ouf of the result database within the result controller.")
-            );
 
             return Ok(response);
         }

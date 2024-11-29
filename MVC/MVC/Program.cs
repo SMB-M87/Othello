@@ -91,6 +91,8 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
     options.ValidationInterval = TimeSpan.Zero;
 });
 
+builder.Services.AddHostedService<InactivityLogoutService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

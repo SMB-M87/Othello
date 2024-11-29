@@ -12,18 +12,18 @@ namespace API.Data
             _context = context;
         }
 
-        public async Task<Home> GetView(string token)
+        public async Task<User> GetView(string token)
         {
             var game = await GetPlayersGame(token);
             var username = await GetPlayersName(token);
 
-            var model = new Home
+            var model = new User
             {
                 Stats = string.IsNullOrEmpty(username) ? string.Empty : await GetPlayerStats(username),
                 MatchHistory = string.IsNullOrEmpty(username) ? new() : await GetPlayersMatchHistory(username),
-                Partial = new HomePartial()
+                Partial = new UserPartial()
                 {
-                    Pending = new HomePending()
+                    Pending = new UserPending()
                     {
                         Session = "false",
                         InGame = game != null,
@@ -46,13 +46,13 @@ namespace API.Data
             return model;
         }
 
-        public async Task<HomePartial> GetPartial(string token)
+        public async Task<UserPartial> GetPartial(string token)
         {
             var game = await _context.Games.FirstOrDefaultAsync(g => (g.First == token) || (g.Second != null && g.Second == token)); ;
 
-            var model = new HomePartial
+            var model = new UserPartial
             {
-                Pending = new HomePending()
+                Pending = new UserPending()
                 {
                     Session = "false",
                     InGame = game != null,

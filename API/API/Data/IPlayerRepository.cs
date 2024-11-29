@@ -10,6 +10,7 @@ namespace API.Data
         Task<bool> UsernameExists(string username);
         Task<bool> PlayerChecksOut(string token, string username);
         Task<List<Player>> GetPlayers();
+        Task<List<string>> GetInactivePlayers();
         Task<bool> Create(Player player);
         Task<bool> UpdateActivity(string token);
         Task<bool> FriendRequest(string receiver_username, string sender_token);
