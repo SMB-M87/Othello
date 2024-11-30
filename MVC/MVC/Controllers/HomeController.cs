@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MVC.Data;
 using MVC.Models;
 using System.Diagnostics;
 using System.Net;
@@ -11,13 +12,13 @@ namespace MVC.Controllers
     public class HomeController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor? _httpContextAccessor;
 
         public HomeController(
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory,
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;

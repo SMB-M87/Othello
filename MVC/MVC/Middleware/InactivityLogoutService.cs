@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MVC.Data;
 
 namespace MVC.Middleware
 {
@@ -23,7 +24,7 @@ namespace MVC.Middleware
         private async Task CheckInactiveUsersAsync()
         {
             using var scope = _serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
             var baseUrl = configuration["ApiSettings:BaseUrl"];

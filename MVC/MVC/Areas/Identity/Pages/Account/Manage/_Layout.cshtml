@@ -5,7 +5,6 @@
 <h1>Account Management</h1>
 <div class="container">
     <div class="row">
-        <!-- Left Navigation for Account Management -->
         <div class="col-md-3">
             <h4>Manage Account</h4>
             <ul class="list-group">
@@ -13,19 +12,7 @@
                     <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" asp-page="/Account/Manage/Index">Profile</a>
                 </li>
                 <li class="list-group-item">
-                    <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" asp-page="/Account/Manage/Email">Update Email</a>
-                </li>
-                <li class="list-group-item">
-                    <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" asp-page="/Account/Manage/ChangePassword">Change Password</a>
-                </li>
-                <li class="list-group-item">
                     <a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" asp-page="/Account/Manage/TwoFactorAuthentication">Two-Factor Authentication</a>
-                </li>
-                <li class="list-group-item">
-                    <a class="nav-link @ManageNavPages.DeletePersonalDataNavClass(ViewContext)" asp-page="/Account/Manage/DeletePersonalData">Delete Personal Data</a>
-                </li>
-                <li class="list-group-item">
-                    <a class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="/Account/Manage/ExternalLogins">External Logins</a>
                 </li>
                 <li class="list-group-item">
                     <a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" asp-page="/Account/Manage/PersonalData">View Personal Data</a>
@@ -33,7 +20,6 @@
             </ul>
         </div>
 
-        <!-- Right Content Section for Each Account Management Page -->
         <div class="col-md-9">
             @RenderBody()
         </div>

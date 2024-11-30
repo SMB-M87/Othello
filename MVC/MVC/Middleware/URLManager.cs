@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MVC.Data;
 using MVC.Models;
 using System.Net;
-using System.Security.Claims;
 
 namespace MVC.Middleware
 {
@@ -30,8 +30,8 @@ namespace MVC.Middleware
             if (user is not null && user.Identity is not null && user.Identity.IsAuthenticated)
             {
                 using var scope = serviceProvider.CreateScope();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                var signInManager = scope.ServiceProvider.GetRequiredService<SignInManager<IdentityUser>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var signInManager = scope.ServiceProvider.GetRequiredService<SignInManager<ApplicationUser>>();
 
                 var userId = userManager.GetUserId(user);
                 var checkUser = await userManager.FindByIdAsync(userId);
@@ -45,8 +45,6 @@ namespace MVC.Middleware
 
                 if (!isAjaxRequest)
                 {
-                    var token = userManager.GetUserId(user);
-
                     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
                     var baseUrl = configuration["ApiSettings:BaseUrl"];

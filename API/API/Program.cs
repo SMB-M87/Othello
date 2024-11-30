@@ -19,7 +19,6 @@ builder.Services
     .AddTransient<ILogRepository, LogAccessLayer>()
     .AddTransient<CheckController>()
     .AddTransient<RegisterController>()
-    .AddTransient<LoginController>()
     .AddTransient<MiddlewareController>()
     .AddTransient<PlayerController>()
     .AddTransient<GameController>()

@@ -4,28 +4,26 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MVC.Data;
 using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
 
 namespace MVC.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {
-        private readonly HttpClient _httpClient;
         private readonly ILogger<LoginModel> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public LoginModel(
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager,
-            IHttpClientFactory httpClientFactory)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager
+            )
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
         /// <summary>
@@ -65,6 +63,7 @@ namespace MVC.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
+            [StringLength(20)]
             [DataType(DataType.Text)]
             public string Username { get; set; }
 
@@ -73,6 +72,7 @@ namespace MVC.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
+            [StringLength(65)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
@@ -117,20 +117,13 @@ namespace MVC.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByNameAsync(Input.Username);
                     if (user != null)
                     {
-                        var userId = user.Id;
-                                                
-                        var login = await _httpClient.GetAsync($"api/login/{userId}");
-
                         if (PasswordBreach.IsPasswordBreached(Input.Password))
                         {
                             TempData["StatusMessage"] = "The password you entered has been found in a data breach. Please change your password immediately.";
                             return RedirectToPage("/Account/Manage/ChangePassword", new { area = "Identity" });
                         }
 
-                        if (login.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            return LocalRedirect(returnUrl);
-                        }
+                        return LocalRedirect(returnUrl);
                     }
                 }
                 if (result.RequiresTwoFactor)

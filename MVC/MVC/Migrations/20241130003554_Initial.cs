@@ -29,14 +29,9 @@ namespace MVC.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
@@ -156,34 +151,17 @@ namespace MVC.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[,]
-                {
-                    { "4f79496e-df06-4282-bb80-809c19c17a26", "8d5f1b2c-cf9a-4870-bf44-29e59378d93d", "admin", "ADMIN" },
-                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "074df94a-dd85-465a-ac97-53c0e2815168", "user", "USER" },
-                    { "c8741835-5f35-470c-97a1-6ede4f281953", "732ee2d6-1031-4d22-ad0a-74bbb0423ca2", "mod", "MOD" }
-                });
+                values: new object[] { "2a4ac7f2-6f7d-46b0-8323-8741c7b990a0", "ad299967-95e3-45fb-8928-25647244b3be", "admin", "ADMIN" });
 
             migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[,]
-                {
-                    { "admin-133742069420135", 0, "01aa152e-7697-4f1a-a243-a83a0d0c9783", "admin@othello.com", true, false, null, "ADMIN@OTHELLO.COM", "ADMIN", "AQAAAAEAACcQAAAAEOi7jEfmIhAi7ussmzbDRcVxudS/tvV1psg/MSB9IyaY0/KC3IuI29emknjUioWGMA==", null, false, "cdd37d07-8aa5-403d-b7fe-b7286a4cf831", false, "admin" },
-                    { "mod-987456269420135", 0, "b722e10a-0d08-4b7d-94d6-03a72d8ee773", "mod@othello.com", true, false, null, "MOD@OTHELLO.COM", "MOD", "AQAAAAEAACcQAAAAEO/OaXyD5oaICoivuGAFjhF3ninJhaefvdTvKdPE1pBoPSxRTWCUF5dwXUk64IFyrw==", null, false, "ed534a89-674a-4acb-bfd4-2e6be8eb81cb", false, "mod" },
-                    { "user-987456456198135", 0, "412833cc-e114-461a-be94-64cc78b30bee", "user-987456456198135@othello.com", true, false, null, "USER-987456456198135@OTHELLO.COM", "OTHELLOWORLD", "AQAAAAEAACcQAAAAENC6m8QAQX0Y8toO+ern2w3Xz9DsN/JgEGnFWn0CSYw8GVu3I+tZSW4t06XXquK3Hg==", null, false, "0a829fc2-be9a-4d86-a548-b4cf0ea3ecfb", false, "OthelloWorld" }
-                });
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "5888c26f-cd27-406b-8090-b77965a4d691", "c570f384-a852-489d-aa74-3fc9f00ebcd4", "user", "USER" });
 
             migrationBuilder.InsertData(
-                table: "AspNetUserRoles",
-                columns: new[] { "RoleId", "UserId" },
-                values: new object[,]
-                {
-                    { "4f79496e-df06-4282-bb80-809c19c17a26", "admin-133742069420135" },
-                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "admin-133742069420135" },
-                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "mod-987456269420135" },
-                    { "c8741835-5f35-470c-97a1-6ede4f281953", "mod-987456269420135" },
-                    { "a7a67848-a86a-484a-9fb1-fa046c05e699", "user-987456456198135" }
-                });
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "b9bde5fd-7e4f-4bf8-a355-ce6a0f1dcacf", "84906668-343a-4d8d-a176-40535fcfdee8", "mod", "MOD" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -211,11 +189,6 @@ namespace MVC.Migrations
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
