@@ -70,32 +70,34 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 throw new InvalidOperationException($"Cannot generate recovery codes for user as they do not have 2FA enabled.");
             }
 
-            var (PlainCodes, HashedCodesJson) = GenerateHashedRecoveryCodes(10);
-            RecoveryCodes = PlainCodes.ToArray();
+            var (plainCodes, hashedCodes) = GenerateHashedRecoveryCodes(10);
+            RecoveryCodes = plainCodes.ToArray();
+            var hashedCodesJson = System.Text.Json.JsonSerializer.Serialize(hashedCodes);
 
-            await _userManager.SetAuthenticationTokenAsync(user, "Default", "RecoveryCodes", HashedCodesJson);
+            await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes", hashedCodesJson);
 
             _logger.LogInformation("User with ID '{UserId}' has generated new 2FA recovery codes.", userId);
             StatusMessage = "You have generated new recovery codes.";
             return RedirectToPage("./ShowRecoveryCodes");
         }
 
-        private static (IEnumerable<string> PlainCodes, string HashedCodesJson) GenerateHashedRecoveryCodes(int count)
+        private static (IEnumerable<string> PlainCodes, IEnumerable<string> HashedCodes) GenerateHashedRecoveryCodes(int count)
         {
             var plainCodes = new List<string>();
-            var hashedCodes = new Dictionary<string, string>();
+            var hashedCodes = new List<string>();
 
             for (var i = 0; i < count; i++)
             {
                 var plainCode = GenerateSecureCode(20);
                 var salt = GenerateSalt();
                 var hashedCode = HashCodeWithSalt(plainCode, salt);
+                var storedCode = $"{Convert.ToBase64String(salt)}.{hashedCode}";
 
                 plainCodes.Add(plainCode);
-                hashedCodes[hashedCode] = Convert.ToBase64String(salt);
+                hashedCodes.Add(storedCode);
             }
 
-            return (plainCodes, System.Text.Json.JsonSerializer.Serialize(hashedCodes));
+            return (plainCodes, hashedCodes);
         }
 
         private static string GenerateSecureCode(int length)
@@ -103,7 +105,41 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             using var rng = RandomNumberGenerator.Create();
             var bytes = new byte[length];
             rng.GetBytes(bytes);
-            return Convert.ToBase64String(bytes)[..length].Replace("+", "").Replace("/", "").Replace("=", "");
+            return Base32Encode(bytes);
+        }
+
+        private static string Base32Encode(byte[] data)
+        {
+            const string base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            var result = new StringBuilder((data.Length * 8 + 4) / 5);
+
+            int buffer = data[0];
+            int next = 1;
+            int bitsLeft = 8;
+
+            while (bitsLeft > 0 || next < data.Length)
+            {
+                if (bitsLeft < 5)
+                {
+                    if (next < data.Length)
+                    {
+                        buffer <<= 8;
+                        buffer |= data[next++] & 0xff;
+                        bitsLeft += 8;
+                    }
+                    else
+                    {
+                        int pad = 5 - bitsLeft;
+                        buffer <<= pad;
+                        bitsLeft += pad;
+                    }
+                }
+                int index = (buffer >> (bitsLeft - 5)) & 0x1f;
+                bitsLeft -= 5;
+                result.Append(base32Chars[index]);
+            }
+
+            return result.ToString();
         }
 
         private static byte[] GenerateSalt()
