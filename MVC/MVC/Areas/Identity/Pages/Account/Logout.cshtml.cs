@@ -18,19 +18,13 @@ namespace MVC.Areas.Identity.Pages.Account
             _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> OnPost(string returnUrl = null)
+        public async Task<IActionResult> OnPost()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
 
-            if (returnUrl != null)
-            {
-                return RedirectToPage("/Home/Index");
-            }
-            else
-            {
-                return RedirectToPage();
-            }
+           
+            return RedirectToPage("/Home/Index");
         }
     }
 }

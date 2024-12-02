@@ -25,30 +25,30 @@
 </style>
 
 
-<div class="d-flex align-items-center justify-content-center" style="margin-top: 200px">
-    <div class="col-md-4">
+<div class="d-flex align-items-center justify-content-center vh-100 text-white text-center" style="background: url('https://www.wikihow.com/images/6/6d/Play-Othello-Step-13-Version-2.jpg') no-repeat center; background-size: cover;">
+    <div class="bg-dark bg-opacity-75 p-5 rounded col-md-4">
         <h1>@ViewData["Title"]</h1>
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
-                <input asp-for="Input.Username" class="form-control" autocomplete="username" />
-                <label asp-for="Input.Username"></label>
-                <span asp-validation-for="Input.Username" class="text-danger"></span>
+            <label asp-for="Input.Username"></label>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Username" class="form-control text-center" autocomplete="username" style="padding: 0;" />
+                <span asp-validation-for="Input.Username" class="text-white"></span>
             </div>
-            <div class="form-floating">
-                <input id="Input_Password" asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.Password"></label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <label asp-for="Input.Password"></label>
+            <div class="form-floating mb-3">
+                <input id="Input_Password" asp-for="Input.Password" class="form-control text-center" autocomplete="new-password" aria-required="true" style="padding: 0;" />
+                <span asp-validation-for="Input.Password" class="text-white"></span>
                 <div id="password-strength-meter" style="margin-top: 10px; height: 10px; background-color: #ddd; border-radius: 5px; overflow: hidden;">
                     <span class="strength-bar" id="strength-bar" style="display: block; height: 100%; transition: width 0.3s;"></span>
                 </div>
                 <span id="password-strength-text" style="margin-top: 5px; display: block;"></span>
             </div>
-            <div class="form-floating">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
-                <label asp-for="Input.ConfirmPassword"></label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            <label asp-for="Input.ConfirmPassword"></label>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ConfirmPassword" class="form-control text-center" autocomplete="new-password" aria-required="true" style="padding: 0;" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-white"></span>
             </div>
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>

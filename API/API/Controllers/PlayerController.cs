@@ -287,14 +287,14 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Player/DeleteFriend", $"Player {id.Token} deleted the account within the player controller.")
+                    new(User?.Identity?.Name ?? "Anonymous", "Player/Delete", $"Player {id.Token} deleted the account within the player controller.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Player/DeleteFriend", $"Player {id.Token} failed to delete the account within the player controller.")
+                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Player/Delete", $"Player {id.Token} failed to delete the account within the player controller.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }
