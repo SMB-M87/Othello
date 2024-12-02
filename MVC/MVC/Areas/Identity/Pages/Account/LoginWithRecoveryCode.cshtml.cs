@@ -61,6 +61,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
             if (isRecoveryCodeValid)
             {
+                await _userManager.ResetAccessFailedCountAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
                 return RedirectToPage("/Home/Index");
@@ -95,7 +96,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
                 var salt = Convert.FromBase64String(parts[0]);
                 var storedHash = Convert.FromBase64String(parts[1]);
-                var hash = RecoveryEncryption.Hash(code, salt);
+                var hash = Encryption.Hash(code, salt);
 
                 if (hash.SequenceEqual(storedHash))
                 {
