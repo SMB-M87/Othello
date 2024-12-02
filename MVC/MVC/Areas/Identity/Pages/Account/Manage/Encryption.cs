@@ -3,16 +3,23 @@ using System.Text;
 
 namespace MVC.Areas.Identity.Pages.Account.Manage
 {
-    public static class RecoveryEncryption
+    public static class Encryption
     {
-        public static (IEnumerable<string> PlainCodes, IEnumerable<string> HashedCodes) GenerateHashedRecoveryCodes(int count)
+        public static string GenerateHashedCode(int length)
+        {
+            var plainCode = GenerateSecureCode(length);
+
+            return plainCode;
+        }
+
+        public static (IEnumerable<string> PlainCodes, IEnumerable<string> HashedCodes) GenerateHashedCodes(int count, int length)
         {
             var plainCodes = new List<string>();
             var hashedCodes = new List<string>();
 
             for (var i = 0; i < count; i++)
             {
-                var plainCode = GenerateSecureCode(20);
+                var plainCode = GenerateSecureCode(length);
                 var salt = GenerateSalt();
                 var hashedCode = HashCodeWithSalt(plainCode, salt);
                 var storedCode = $"{Convert.ToBase64String(salt)}.{hashedCode}";

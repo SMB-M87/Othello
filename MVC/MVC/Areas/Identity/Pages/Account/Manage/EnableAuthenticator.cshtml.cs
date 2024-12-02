@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 
@@ -71,22 +72,17 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             {
                 return RedirectToPage("/Home/Index");
             }
-
-            if (!ModelState.IsValid)
-            {
-                await LoadSharedKeyAndQrCodeUriAsync(user);
-                return Page();
-            }
+            await LoadSharedKeyAndQrCodeUriAsync(user);
 
             var verificationCode = Input.Code.Replace(" ", string.Empty).Replace("-", string.Empty);
 
-            var is2faTokenValid = await _userManager.VerifyTwoFactorTokenAsync(
-                user, _userManager.Options.Tokens.AuthenticatorTokenProvider, verificationCode);
+            var encryptedKey = await _userManager.GetAuthenticatorKeyAsync(user);
 
-            if (!is2faTokenValid)
+            var plainKey = SymmetricEncryption.Decrypt(encryptedKey);
+
+            if (!VerifyAuthenticatorCode(plainKey, verificationCode))
             {
                 ModelState.AddModelError("Input.Code", "Verification code is invalid.");
-                await LoadSharedKeyAndQrCodeUriAsync(user);
                 return Page();
             }
 
@@ -96,10 +92,12 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
             StatusMessage = "Your authenticator app has been verified.";
 
-            if (await _userManager.CountRecoveryCodesAsync(user) == 0)
+            if (await CountRecoveryCodes(user) <= 9)
             {
-                var recoveryCodes = await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, 10);
-                RecoveryCodes = recoveryCodes.ToArray();
+                var (plainCodes, hashedCodes) = Encryption.GenerateHashedCodes(10, 20);
+                RecoveryCodes = plainCodes.ToArray();
+                var hashedCodesJson = System.Text.Json.JsonSerializer.Serialize(hashedCodes);
+                await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes", hashedCodesJson);
                 return RedirectToPage("./ShowRecoveryCodes");
             }
             else
@@ -110,17 +108,29 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadSharedKeyAndQrCodeUriAsync(ApplicationUser user)
         {
-            var unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
-            if (string.IsNullOrEmpty(unformattedKey))
+            var encryptedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+            string unformattedKey;
+
+            if (string.IsNullOrEmpty(encryptedKey))
             {
-                await _userManager.ResetAuthenticatorKeyAsync(user);
-                unformattedKey = await _userManager.GetAuthenticatorKeyAsync(user);
+                unformattedKey = await ResetAuthenticatorKeyEncryptedAsync(user);
+            }
+            else
+            {
+                unformattedKey = SymmetricEncryption.Decrypt(encryptedKey);
             }
 
             SharedKey = FormatKey(unformattedKey);
-
             var identifier = await _userManager.GetUserNameAsync(user);
             AuthenticatorUri = GenerateQrCodeUri(identifier, unformattedKey);
+        }
+
+        private async Task<string> ResetAuthenticatorKeyEncryptedAsync(ApplicationUser user)
+        {
+            var plainCode = Encryption.GenerateHashedCode(30);
+            var encryptedKey = SymmetricEncryption.Encrypt(plainCode);
+            await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "AuthenticatorKey", encryptedKey);
+            return plainCode;
         }
 
         private static string FormatKey(string unformattedKey)
@@ -148,6 +158,86 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 _urlEncoder.Encode("Othello"),
                 _urlEncoder.Encode(identifier),
                 unformattedKey);
+        }
+
+        private static bool VerifyAuthenticatorCode(string key, string providedCode)
+        {
+            var decodedKey = Base32Decode(key);
+            long timeStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 30;
+
+            for (int offset = -1; offset <= 1; offset++)
+            {
+                var expectedCode = GenerateTotp(decodedKey, timeStep + offset);
+                if (expectedCode == providedCode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static string GenerateTotp(byte[] key, long timeStep)
+        {
+            using var hmac = new HMACSHA1(key);
+            var timeBytes = BitConverter.GetBytes(timeStep);
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(timeBytes);
+            }
+
+            var hash = hmac.ComputeHash(timeBytes);
+            int offset = hash[^1] & 0x0F;
+            int binaryCode = (hash[offset] & 0x7F) << 24 |
+                             (hash[offset + 1] & 0xFF) << 16 |
+                             (hash[offset + 2] & 0xFF) << 8 |
+                             (hash[offset + 3] & 0xFF);
+
+            return (binaryCode % 1_000_000).ToString("D6");
+        }
+
+        private static byte[] Base32Decode(string base32)
+        {
+            if (string.IsNullOrWhiteSpace(base32))
+            {
+                throw new ArgumentException("Base32 string is null or empty.", nameof(base32));
+            }
+
+            const string base32Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            var output = new List<byte>();
+            int buffer = 0, bitsLeft = 0;
+
+            foreach (char c in base32.ToUpperInvariant().Where(base32Chars.Contains))
+            {
+                buffer <<= 5;
+                buffer |= base32Chars.IndexOf(c) & 31;
+                bitsLeft += 5;
+
+                if (bitsLeft >= 8)
+                {
+                    output.Add((byte)(buffer >> (bitsLeft - 8)));
+                    bitsLeft -= 8;
+                }
+            }
+
+            if (bitsLeft > 0)
+            {
+                output.Add((byte)(buffer << (8 - bitsLeft)));
+            }
+
+            return output.ToArray();
+        }
+
+        private async Task<int> CountRecoveryCodes(ApplicationUser user)
+        {
+            var hashedCodesJson = await _userManager.GetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes");
+            if (string.IsNullOrEmpty(hashedCodesJson))
+            {
+                return 0;
+            }
+
+            var hashedCodes = System.Text.Json.JsonSerializer.Deserialize<List<string>>(hashedCodesJson);
+            return hashedCodes.Count;
         }
     }
 }

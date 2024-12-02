@@ -61,7 +61,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     //options.Cookie.Domain = "othello.hbo-ict.org";
     options.Cookie.Path = "/";
     options.LoginPath = "/Identity/Account/Login";
-    options.LogoutPath = "/Identity/Account/Logout";
+    options.LogoutPath = "/Home/Index";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 
     options.Events.OnRedirectToLogin = context =>

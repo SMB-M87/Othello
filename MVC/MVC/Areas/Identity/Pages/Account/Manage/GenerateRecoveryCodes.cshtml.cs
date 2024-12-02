@@ -1,13 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
+﻿#nullable disable
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace MVC.Areas.Identity.Pages.Account.Manage
 {
@@ -24,17 +20,9 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             _logger = logger;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string[] RecoveryCodes { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
@@ -70,7 +58,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 throw new InvalidOperationException($"Cannot generate recovery codes for user as they do not have 2FA enabled.");
             }
 
-            var (plainCodes, hashedCodes) = RecoveryEncryption.GenerateHashedRecoveryCodes(10);
+            var (plainCodes, hashedCodes) = Encryption.GenerateHashedCodes(10, 20);
             RecoveryCodes = plainCodes.ToArray();
             var hashedCodesJson = System.Text.Json.JsonSerializer.Serialize(hashedCodes);
 

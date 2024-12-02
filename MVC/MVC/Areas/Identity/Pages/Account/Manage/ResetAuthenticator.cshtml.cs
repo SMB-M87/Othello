@@ -1,9 +1,11 @@
 ﻿#nullable disable
 
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
+using System.Security.Cryptography;
 
 namespace MVC.Areas.Identity.Pages.Account.Manage
 {
@@ -46,7 +48,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             }
 
             await _userManager.SetTwoFactorEnabledAsync(user, false);
-            await _userManager.ResetAuthenticatorKeyAsync(user);
+            await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "AuthenticatorKey", null);
             _logger.LogInformation("User with ID '{UserId}' has reset their authentication app key.", user.Id);
 
             await _signInManager.RefreshSignInAsync(user);

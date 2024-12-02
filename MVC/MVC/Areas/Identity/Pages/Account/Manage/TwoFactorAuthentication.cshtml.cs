@@ -41,7 +41,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 return RedirectToPage("/Home/Index");
             }
 
-            HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
+            HasAuthenticator = await _userManager.GetTwoFactorEnabledAsync(user);
             Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
             IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user);
             RecoveryCodesLeft = await CountRecoveryCodes(user);
