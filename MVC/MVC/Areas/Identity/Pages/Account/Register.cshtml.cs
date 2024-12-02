@@ -95,7 +95,7 @@ namespace MVC.Areas.Identity.Pages.Account
                         }
                         else if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.OK)
                         {
-                            await _userManager.GetUserIdAsync(user);
+                            await _signInManager.SignInAsync(user, isPersistent: false);
                             return RedirectToPage("/Home/Index");
                         }
                         else
