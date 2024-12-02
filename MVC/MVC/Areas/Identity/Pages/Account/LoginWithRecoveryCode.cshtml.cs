@@ -3,6 +3,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MVC.Areas.Identity.Pages.Account.Manage;
 using MVC.Data;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
@@ -94,10 +95,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
                 var salt = Convert.FromBase64String(parts[0]);
                 var storedHash = Convert.FromBase64String(parts[1]);
-
-                using var hmac = new HMACSHA256(salt);
-                var codeBytes = Encoding.UTF8.GetBytes(code);
-                var hash = hmac.ComputeHash(codeBytes);
+                var hash = RecoveryEncryption.Hash(code, salt);
 
                 if (hash.SequenceEqual(storedHash))
                 {

@@ -44,7 +44,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null;
             Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
             IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user);
-            RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user);
+            RecoveryCodesLeft = await CountRecoveryCodes(user);
 
             return Page();
         }
@@ -60,6 +60,18 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             await _signInManager.ForgetTwoFactorClientAsync();
             StatusMessage = "The current browser has been forgotten. When you login again from this browser you will be prompted for your 2fa code.";
             return RedirectToPage();
+        }
+
+        private async Task<int> CountRecoveryCodes(ApplicationUser user)
+        {
+            var hashedCodesJson = await _userManager.GetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes");
+            if (string.IsNullOrEmpty(hashedCodesJson))
+            {
+                return 0;
+            }
+
+            var hashedCodes = System.Text.Json.JsonSerializer.Deserialize<List<string>>(hashedCodesJson);
+            return hashedCodes.Count;
         }
     }
 }
