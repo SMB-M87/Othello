@@ -91,6 +91,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            await _userManager.UpdateSecurityStampAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your password has been changed.";
 

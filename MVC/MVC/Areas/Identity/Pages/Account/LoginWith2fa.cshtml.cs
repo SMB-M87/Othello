@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,7 +7,6 @@ using MVC.Areas.Identity.Pages.Account.Manage;
 using MVC.Data;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace MVC.Areas.Identity.Pages.Account
 {
@@ -79,6 +77,7 @@ namespace MVC.Areas.Identity.Pages.Account
             if (await VerifyAuthenticatorCode(user, plainKey, authenticatorCode))
             {
                 await _userManager.ResetAccessFailedCountAsync(user);
+                await _userManager.UpdateSecurityStampAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: rememberMe);
                 return RedirectToPage("/Home/Index");
             }

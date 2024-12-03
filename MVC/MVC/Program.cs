@@ -1,5 +1,7 @@
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +82,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
     //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello/SharedKeys"))
-    .SetApplicationName("Othello");
+    .SetApplicationName("Othello")
+    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
 
 builder.Services.AddControllersWithViews(options =>
 {

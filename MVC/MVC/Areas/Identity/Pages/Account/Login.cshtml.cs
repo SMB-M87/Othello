@@ -82,6 +82,8 @@ namespace MVC.Areas.Identity.Pages.Account
                     var user = await _userManager.FindByNameAsync(Input.Username);
                     if (user != null)
                     {
+                        await _userManager.UpdateSecurityStampAsync(user);
+
                         if (PasswordBreach.IsPasswordBreached(Input.Password))
                         {
                             TempData["StatusMessage"] = "The password you entered has been found in a data breach. Please change your password immediately.";

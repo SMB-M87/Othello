@@ -100,6 +100,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 RecoveryCodes = plainCodes.ToArray();
                 var hashedCodesJson = System.Text.Json.JsonSerializer.Serialize(hashedCodes);
                 await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes", hashedCodesJson);
+
                 await _userManager.UpdateSecurityStampAsync(user);
                 await _signInManager.RefreshSignInAsync(user);
                 return RedirectToPage("./ShowRecoveryCodes");
