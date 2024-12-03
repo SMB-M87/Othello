@@ -73,10 +73,10 @@ namespace MVC.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
                 return Page();
             }
-
+            
             var plainKey = SymmetricEncryption.Decrypt(encryptedKey);
 
-            if (VerifyAuthenticatorCode(plainKey, authenticatorCode))
+            if (await VerifyAuthenticatorCode(user, plainKey, authenticatorCode))
             {
                 await _userManager.ResetAccessFailedCountAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: rememberMe);
@@ -89,18 +89,31 @@ namespace MVC.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private static bool VerifyAuthenticatorCode(string key, string providedCode)
+        private async Task<bool> VerifyAuthenticatorCode(ApplicationUser user, string key, string providedCode)
         {
             var decodedKey = Base32Decode(key);
             long timeStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 30;
 
-            for (int offset = -1; offset <= 1; offset++)
+            var expectedCode = GenerateTotp(decodedKey, timeStep);
+            var storedCode = await _userManager.GetAuthenticationTokenAsync(user, "[AspNetUserStore]", "Code");
+            bool pass;
+
+            if (string.IsNullOrEmpty(storedCode))
+                pass = true;
+            else
             {
-                var expectedCode = GenerateTotp(decodedKey, timeStep + offset);
-                if (expectedCode == providedCode)
-                {
-                    return true;
-                }
+                var parts = storedCode.Split('.');
+                var salt = Convert.FromBase64String(parts[0]);
+                var storedHash = Convert.FromBase64String(parts[1]);
+                var hash = Encryption.Hash(providedCode, salt);
+                pass = !hash.SequenceEqual(storedHash);
+            }
+
+            if (expectedCode == providedCode && pass)
+            {
+                var hashedCode = Encryption.GenerateHashedCode(providedCode);
+                await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "Code", hashedCode);
+                return true;
             }
 
             return false;

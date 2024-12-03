@@ -5,14 +5,23 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 {
     public static class Encryption
     {
-        public static string GenerateHashedCode(int length)
+        public static string GenerateHashedCode(int length = 23)
         {
             var plainCode = GenerateSecureCode(length);
 
             return plainCode;
         }
 
-        public static (IEnumerable<string> PlainCodes, IEnumerable<string> HashedCodes) GenerateHashedCodes(int count, int length)
+        public static string GenerateHashedCode(string code)
+        {
+            var salt = GenerateSalt();
+            var hashedCode = HashCodeWithSalt(code, salt);
+            var storedCode = $"{Convert.ToBase64String(salt)}.{hashedCode}";
+
+            return storedCode;
+        }
+
+        public static (IEnumerable<string> PlainCodes, IEnumerable<string> HashedCodes) GenerateHashedCodes(int count, int length = 23)
         {
             var plainCodes = new List<string>();
             var hashedCodes = new List<string>();
@@ -38,7 +47,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             return hmac.ComputeHash(codeBytes);
         }
 
-        private static string GenerateSecureCode(int length)
+        private static string GenerateSecureCode(int length = 14)
         {
             using var rng = RandomNumberGenerator.Create();
             var bytes = new byte[length];

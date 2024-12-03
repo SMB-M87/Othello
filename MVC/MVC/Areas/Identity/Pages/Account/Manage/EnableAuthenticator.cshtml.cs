@@ -14,6 +14,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
     {
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<EnableAuthenticatorModel> _logger;
         private readonly UrlEncoder _urlEncoder;
@@ -21,10 +22,12 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
         public EnableAuthenticatorModel(
+            SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             ILogger<EnableAuthenticatorModel> logger,
             UrlEncoder urlEncoder)
         {
+            _signInManager = signInManager;
             _userManager = userManager;
             _logger = logger;
             _urlEncoder = urlEncoder;
@@ -80,29 +83,26 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
             var plainKey = SymmetricEncryption.Decrypt(encryptedKey);
 
-            if (!VerifyAuthenticatorCode(plainKey, verificationCode))
+            if (!await VerifyAuthenticatorCode(user, plainKey, verificationCode))
             {
                 ModelState.AddModelError("Input.Code", "Verification code is invalid.");
                 return Page();
             }
-
-            await _userManager.SetTwoFactorEnabledAsync(user, true);
-            var userId = await _userManager.GetUserIdAsync(user);
-            _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
-
-            StatusMessage = "Your authenticator app has been verified.";
-
-            if (await CountRecoveryCodes(user) <= 9)
+            else
             {
-                var (plainCodes, hashedCodes) = Encryption.GenerateHashedCodes(10, 20);
+                await _userManager.SetTwoFactorEnabledAsync(user, true);
+                var userId = await _userManager.GetUserIdAsync(user);
+                _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
+
+                StatusMessage = "Your authenticator app has been verified.";
+
+                var (plainCodes, hashedCodes) = Encryption.GenerateHashedCodes(10, 23);
                 RecoveryCodes = plainCodes.ToArray();
                 var hashedCodesJson = System.Text.Json.JsonSerializer.Serialize(hashedCodes);
                 await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes", hashedCodesJson);
+                await _userManager.UpdateSecurityStampAsync(user);
+                await _signInManager.RefreshSignInAsync(user);
                 return RedirectToPage("./ShowRecoveryCodes");
-            }
-            else
-            {
-                return RedirectToPage("./TwoFactorAuthentication");
             }
         }
 
@@ -160,18 +160,31 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 unformattedKey);
         }
 
-        private static bool VerifyAuthenticatorCode(string key, string providedCode)
+        private async Task<bool> VerifyAuthenticatorCode(ApplicationUser user, string key, string providedCode)
         {
             var decodedKey = Base32Decode(key);
             long timeStep = DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 30;
 
-            for (int offset = -1; offset <= 1; offset++)
+            var expectedCode = GenerateTotp(decodedKey, timeStep);
+            var storedCode = await _userManager.GetAuthenticationTokenAsync(user, "[AspNetUserStore]", "Code");
+            bool pass;
+
+            if (string.IsNullOrEmpty(storedCode))
+                pass = true;
+            else
             {
-                var expectedCode = GenerateTotp(decodedKey, timeStep + offset);
-                if (expectedCode == providedCode)
-                {
-                    return true;
-                }
+                var parts = storedCode.Split('.');
+                var salt = Convert.FromBase64String(parts[0]);
+                var storedHash = Convert.FromBase64String(parts[1]);
+                var hash = Encryption.Hash(providedCode, salt);
+                pass = !hash.SequenceEqual(storedHash);
+            }
+
+            if (expectedCode == providedCode && pass)
+            {
+                var hashedCode = Encryption.GenerateHashedCode(providedCode);
+                await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "Code", hashedCode);
+                return true;
             }
 
             return false;
@@ -226,18 +239,6 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             }
 
             return output.ToArray();
-        }
-
-        private async Task<int> CountRecoveryCodes(ApplicationUser user)
-        {
-            var hashedCodesJson = await _userManager.GetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes");
-            if (string.IsNullOrEmpty(hashedCodesJson))
-            {
-                return 0;
-            }
-
-            var hashedCodes = System.Text.Json.JsonSerializer.Deserialize<List<string>>(hashedCodesJson);
-            return hashedCodes.Count;
         }
     }
 }

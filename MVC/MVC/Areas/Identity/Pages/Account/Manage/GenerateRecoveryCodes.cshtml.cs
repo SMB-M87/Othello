@@ -58,7 +58,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 throw new InvalidOperationException($"Cannot generate recovery codes for user as they do not have 2FA enabled.");
             }
 
-            var (plainCodes, hashedCodes) = Encryption.GenerateHashedCodes(10, 20);
+            var (plainCodes, hashedCodes) = Encryption.GenerateHashedCodes(10, 23);
             RecoveryCodes = plainCodes.ToArray();
             var hashedCodesJson = System.Text.Json.JsonSerializer.Serialize(hashedCodes);
 
