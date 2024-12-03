@@ -3,7 +3,7 @@
     public class BotGameService : BackgroundService
     {
         private readonly IServiceProvider _services;
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(5);
 
         public BotGameService(IServiceProvider services)
         {

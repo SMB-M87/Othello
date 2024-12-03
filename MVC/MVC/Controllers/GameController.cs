@@ -37,7 +37,7 @@ namespace MVC.Controllers
             {
                 foreach (var cookie in cookies)
                 {
-                    if (cookie.Key == ".AspNet.SharedAuthCookie")
+                    if (cookie.Key == "__Host-SharedAuthCookie")
                     {
                         handler.CookieContainer.Add(
                             new Uri(baseUrl),

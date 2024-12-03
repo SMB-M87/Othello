@@ -3,6 +3,8 @@ using API.Data;
 using API.Models;
 using API.Service;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,7 +41,8 @@ builder.Services
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
-        options.Cookie.Name = ".AspNet.SharedAuthCookie";
+        //options.Cookie.Name = ".AspNet.SharedAuthCookie";
+        options.Cookie.Name = "__Host-SharedAuthCookie";
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         options.Cookie.SameSite = SameSiteMode.Lax;
@@ -53,7 +56,20 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
     //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello/SharedKeys"))
-    .SetApplicationName("Othello");
+    .SetApplicationName("Othello")
+    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
+
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "__Host-Antiforgery";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
 
 builder.Services.AddScoped<BotService>();
 builder.Services.AddHostedService<BotGameService>();
@@ -65,9 +81,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder
-                //.AllowAnyOrigin()
-               .WithOrigins("https://localhost:7269")
+        builder.WithOrigins("https://localhost:7269")
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();

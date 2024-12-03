@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
+using MVC.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVC.Areas.Identity.Pages.Account
@@ -83,6 +84,8 @@ namespace MVC.Areas.Identity.Pages.Account
                     if (user != null)
                     {
                         await _userManager.UpdateSecurityStampAsync(user);
+                        var name = await _userManager.FindByNameAsync(Input.Username);
+                        await _signInManager.SignInAsync(name, Input.RememberMe);
 
                         if (PasswordBreach.IsPasswordBreached(Input.Password))
                         {

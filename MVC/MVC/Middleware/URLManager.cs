@@ -56,9 +56,9 @@ namespace MVC.Middleware
                     };
 
                     var cookies = context.Request.Cookies;
-                    if (cookies.TryGetValue(".AspNet.SharedAuthCookie", out var cookieValue))
+                    if (cookies.TryGetValue("__Host-SharedAuthCookie", out var cookieValue))
                     {
-                        handler.CookieContainer.Add(new Uri(baseUrl), new Cookie(".AspNet.SharedAuthCookie", cookieValue));
+                        handler.CookieContainer.Add(new Uri(baseUrl), new Cookie("__Host-SharedAuthCookie", cookieValue));
                     }
 
                     var httpClient = new HttpClient(handler)
