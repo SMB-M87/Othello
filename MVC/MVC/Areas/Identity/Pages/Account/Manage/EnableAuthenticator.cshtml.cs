@@ -131,6 +131,8 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             var plainCode = Encryption.GenerateHashedCode(30);
             var encryptedKey = SymmetricEncryption.Encrypt(plainCode);
             await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "AuthenticatorKey", encryptedKey);
+            await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes", null);
+            await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "Code", null);
             return plainCode;
         }
 

@@ -5,6 +5,8 @@ using MVC.Data;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
+#nullable disable
+
 namespace MVC.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
@@ -13,7 +15,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IHttpContextAccessor? _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public PersonalDataModel(
             IConfiguration configuration,
@@ -64,13 +66,13 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         }
 
         [BindProperty]
-        public InputModel? Input { get; set; }
+        public InputModel Input { get; set; }
 
         public class InputModel
         {
             [Required]
             [DataType(DataType.Password)]
-            public string? Password { get; set; }
+            public string Password { get; set; }
         }
 
         public bool RequirePassword { get; set; }

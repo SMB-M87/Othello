@@ -5,15 +5,22 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 {
     public static class SymmetricEncryption
     {
-        private static readonly Lazy<string> EncryptionKey = new(() =>
-            Environment.GetEnvironmentVariable("ENCRYPTION_KEY") ??
-            throw new InvalidOperationException("Encryption key is not set in the environment variables.")
-        );
+        private static string GetEncryptionKey()
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            return configuration["ENCRYPTION_KEY"] ??
+                   throw new InvalidOperationException("Encryption key is not set in the configuration.");
+        }
 
         public static string Encrypt(string plainText)
         {
+            string encryptionKey = GetEncryptionKey();
+
             using var aes = Aes.Create();
-            var key = Encoding.UTF8.GetBytes(EncryptionKey.Value);
+            var key = Encoding.UTF8.GetBytes(encryptionKey);
             aes.Key = key.Take(32).ToArray();
             aes.IV = key.Take(16).ToArray();
 
@@ -29,8 +36,10 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
         public static string Decrypt(string cipherText)
         {
+            string encryptionKey = GetEncryptionKey();
+
             using var aes = Aes.Create();
-            var key = Encoding.UTF8.GetBytes(EncryptionKey.Value);
+            var key = Encoding.UTF8.GetBytes(encryptionKey);
             aes.Key = key.Take(32).ToArray();
             aes.IV = key.Take(16).ToArray();
 

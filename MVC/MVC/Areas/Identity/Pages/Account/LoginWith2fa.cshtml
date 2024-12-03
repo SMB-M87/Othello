@@ -4,14 +4,13 @@
     ViewData["Title"] = "Two-factor authentication";
 }
 
-
 <div class="d-flex align-items-center justify-content-center vh-100 text-white text-center" style="background: url('https://www.wikihow.com/images/6/6d/Play-Othello-Step-13-Version-2.jpg') no-repeat center; background-size: cover;">
     <div class="bg-dark bg-opacity-75 p-5 rounded col-md-4">
         <h1>@ViewData["Title"]</h1>
         <hr />
         <p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
-        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
-            <input asp-for="RememberMe" type="hidden" />
+        <form method="post">
+            <input asp-for="Breached" type="hidden" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <label asp-for="Input.TwoFactorCode"></label>
             <div class="form-floating mb-3">
@@ -32,7 +31,7 @@
         </form>
         <p>
             Don't have access to your authenticator device? You can
-            <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+            <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-breached="@Model.Breached">log in with a recovery code</a>.
         </p>
     </div>
 </div>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MVC.Data;
+using System.Net.Http;
 
 namespace MVC.Middleware
 {
@@ -33,6 +34,9 @@ namespace MVC.Middleware
             {
                 BaseAddress = new Uri(baseUrl)
             };
+
+            var apiKey = configuration["ApiSettings:KEY"];
+            httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
 
             var response = await httpClient.GetAsync($"api/middleware");
 

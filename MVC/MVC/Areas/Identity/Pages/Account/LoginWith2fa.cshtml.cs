@@ -31,7 +31,8 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public bool RememberMe { get; set; }
 
-        public string ReturnUrl { get; set; }
+        [BindProperty]
+        public bool Breached { get; set; }
 
         public class InputModel
         {
@@ -45,16 +46,16 @@ namespace MVC.Areas.Identity.Pages.Account
             public bool RememberMachine { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(bool rememberMe, string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(bool RememberMe, bool breached)
         {
             _ = await _signInManager.GetTwoFactorAuthenticationUserAsync() ?? throw new InvalidOperationException($"Unable to load two-factor authentication user.");
-            ReturnUrl = returnUrl;
-            RememberMe = rememberMe;
+            this.RememberMe = RememberMe;
+            Breached = breached;
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(bool rememberMe)
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
@@ -78,7 +79,14 @@ namespace MVC.Areas.Identity.Pages.Account
             {
                 await _userManager.ResetAccessFailedCountAsync(user);
                 await _userManager.UpdateSecurityStampAsync(user);
-                await _signInManager.SignInAsync(user, isPersistent: rememberMe);
+                await _signInManager.SignInAsync(user, isPersistent: Input.RememberMachine);
+
+                if (Breached)
+                {
+                    TempData["StatusMessage"] = "Error: The password you entered has been found in a data breach. Please change your password immediately.";
+                    return RedirectToPage("/Account/Manage/Index", new { area = "Identity" });
+                }
+
                 return RedirectToPage("/Home/Index");
             }
 

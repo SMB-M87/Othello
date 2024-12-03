@@ -19,7 +19,6 @@ builder.Services
     .AddTransient<IPlayerRepository, PlayerAccessLayer>()
     .AddTransient<IUserRepository, UserAccessLayer>()
     .AddTransient<ILogRepository, LogAccessLayer>()
-    .AddTransient<CheckController>()
     .AddTransient<RegisterController>()
     .AddTransient<MiddlewareController>()
     .AddTransient<PlayerController>()
@@ -41,7 +40,6 @@ builder.Services
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
     .AddCookie(IdentityConstants.ApplicationScheme, options =>
     {
-        //options.Cookie.Name = ".AspNet.SharedAuthCookie";
         options.Cookie.Name = "__Host-SharedAuthCookie";
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;

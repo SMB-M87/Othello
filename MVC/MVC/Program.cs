@@ -60,14 +60,12 @@ builder.Services.AddHttpClient();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    //options.Cookie.Name = ".AspNet.SharedAuthCookie";
     options.Cookie.Name = "__Host-SharedAuthCookie";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
-    //options.Cookie.Domain = "localhost";
     //options.Cookie.Domain = "othello.hbo-ict.org";
     options.Cookie.Path = "/";
     options.LoginPath = "/Identity/Account/Login";

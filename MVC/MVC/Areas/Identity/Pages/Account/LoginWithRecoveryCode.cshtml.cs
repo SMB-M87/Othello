@@ -29,7 +29,8 @@ namespace MVC.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public string ReturnUrl { get; set; }
+        [BindProperty]
+        public bool Breached { get; set; }
 
         public class InputModel
         {
@@ -40,10 +41,10 @@ namespace MVC.Areas.Identity.Pages.Account
             public string RecoveryCode { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(string returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(bool breached)
         {
             _ = await _signInManager.GetTwoFactorAuthenticationUserAsync() ?? throw new InvalidOperationException($"Unable to load two-factor authentication user.");
-            ReturnUrl = returnUrl;
+            Breached = breached;
 
             return Page();
         }
@@ -65,6 +66,13 @@ namespace MVC.Areas.Identity.Pages.Account
                 await _userManager.UpdateSecurityStampAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
+
+                if (Breached)
+                {
+                    TempData["StatusMessage"] = "Error: The password you entered has been found in a data breach. Please change your password immediately.";
+                    return RedirectToPage("/Account/Manage/Index", new { area = "Identity" });
+                }
+
                 return RedirectToPage("/Home/Index");
             }
             else

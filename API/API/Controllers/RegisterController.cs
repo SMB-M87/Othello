@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [ApiKeyAuthorize]
     [Route("api/register")]
     [ApiController]
     public class RegisterController : ControllerBase
@@ -13,6 +14,19 @@ namespace API.Controllers
         public RegisterController(IRepository repository)
         {
             _repository = repository;
+        }
+
+        [HttpGet("{username}")]
+        public async Task<ActionResult> Check(string username)
+        {
+            bool response = await _repository.PlayerRepository.UsernameExists(username);
+
+            if (response == false)
+            {
+                return NotFound();
+            }
+
+            return Ok();
         }
 
         [HttpPost()]

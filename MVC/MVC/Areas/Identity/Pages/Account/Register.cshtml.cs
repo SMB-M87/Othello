@@ -17,6 +17,7 @@ namespace MVC.Areas.Identity.Pages.Account
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public RegisterModel(
+            IConfiguration configuration,
             ILogger<RegisterModel> logger,
             IUserStore<ApplicationUser> userStore,
             IHttpClientFactory httpClientFactory,
@@ -29,6 +30,8 @@ namespace MVC.Areas.Identity.Pages.Account
             _userManager = userManager;
             _signInManager = signInManager;
             _httpClient = httpClientFactory.CreateClient("ApiClient");
+            var apiKey = configuration["ApiSettings:KEY"];
+            _httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
         }
 
         [BindProperty]
@@ -60,7 +63,7 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var response = await _httpClient.GetAsync($"api/check/{Input.Username}");
+            var response = await _httpClient.GetAsync($"api/register/{Input.Username}");
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {

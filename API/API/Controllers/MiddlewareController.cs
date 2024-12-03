@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [ApiKeyAuthorize]
     [Route("api/middleware")]
     [ApiController]
     public class MiddlewareController : ControllerBase
