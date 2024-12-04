@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 namespace MVC.Controllers
 {
     [Authorize(Roles = Roles.Admin)]
+    [TypeFilter(typeof(Is2FAEnabled))]
     public class AdminController : Controller
     {
         private readonly HttpClient _httpClient;

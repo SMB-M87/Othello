@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using MVC.Areas.Identity.Pages.Account;
 using MVC.Data;
 using MVC.Middleware;
+using MVC.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,6 +122,7 @@ builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
 builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+builder.Services.AddScoped<Is2FAEnabled>();
 
 builder.Services.AddRazorPages();
 

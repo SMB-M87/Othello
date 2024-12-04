@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace MVC.Areas.Identity.Pages.Account
@@ -63,57 +64,63 @@ namespace MVC.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var response = await _httpClient.GetAsync($"api/register/{Input.Username}");
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/register/{Input.Username}");
 
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                ModelState.AddModelError(string.Empty, "Username is already taken.");
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                if (ModelState.IsValid)
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var user = CreateUser();
-
-                    await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
-
-                    var result = await _userManager.CreateAsync(user, Input.Password);
-
-                    if (result.Succeeded)
+                    ModelState.AddModelError(string.Empty, "Username is already taken.");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    if (ModelState.IsValid)
                     {
-                        _logger.LogInformation("User created a new account with password.");
-                        await _userManager.AddToRoleAsync(user, "user");
+                        var user = CreateUser();
 
-                        var playerCreation = new
-                        {
-                            ReceiverUsername = user.Id,
-                            SenderToken = Input.Username
-                        };
+                        await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
 
-                        var createPlayerResponse = await _httpClient.PostAsJsonAsync("api/register", playerCreation);
-                        if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                        var result = await _userManager.CreateAsync(user, Input.Password);
+
+                        if (result.Succeeded)
                         {
-                            ModelState.AddModelError(string.Empty, "An error occurred while creating the player in the API.");
-                            await _userManager.DeleteAsync(user);
+                            _logger.LogInformation("User created a new account with password.");
+                            await _userManager.AddToRoleAsync(user, "user");
+
+                            var playerCreation = new
+                            {
+                                ReceiverUsername = user.Id,
+                                SenderToken = Input.Username
+                            };
+
+                            var createPlayerResponse = await _httpClient.PostAsJsonAsync("api/register", playerCreation);
+                            if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                            {
+                                ModelState.AddModelError(string.Empty, "An error occurred while creating the player in the API.");
+                                await _userManager.DeleteAsync(user);
+                            }
+                            else if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                            {
+                                await _signInManager.SignInAsync(user, isPersistent: false);
+                                return RedirectToPage("/Home/Index");
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "An error occurred while creating the player.");
+                                await _userManager.DeleteAsync(user);
+                            }
                         }
-                        else if (createPlayerResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                        foreach (var error in result.Errors)
                         {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return RedirectToPage("/Home/Index");
+                            ModelState.AddModelError(string.Empty, error.Description);
                         }
-                        else
-                        {
-                            ModelState.AddModelError(string.Empty, "An error occurred while creating the player.");
-                            await _userManager.DeleteAsync(user);
-                        }
-                    }
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return Page();
         }
 
