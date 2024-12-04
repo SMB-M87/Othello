@@ -160,140 +160,180 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> SuspendPlayer([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
-                return Json(new { success = false, message = "User not found in Identity database." });
-            }
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
 
-            var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
-            if (!suspend.Succeeded)
+                var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
+                if (!suspend.Succeeded)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
+                    return Json(new { success = false, message = "Failed to suspend user." });
+                }
+
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/SuspendPlayer", $"Suspended player {text.Body} for a month."));
+                return Json(new { success = true, message = "User suspended for a month." });
+            }
+            catch (Exception ex)
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Failed to suspend user." });
             }
-
-            await _userManager.UpdateSecurityStampAsync(user);
-
-            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/SuspendPlayer", $"Suspended player {text.Body} for a month."));
-            return Json(new { success = true, message = "User suspended for a month." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> UnsuspendPlayer([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
-                return Json(new { success = false, message = "User not found in Identity database." });
-            }
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
 
-            var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
-            if (!suspend.Succeeded)
+                var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                if (!suspend.Succeeded)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
+                    return Json(new { success = false, message = "Failed to unsuspend user." });
+                }
+
+                user.AccessFailedCount = 0;
+                await _userManager.UpdateAsync(user);
+
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
+                return Json(new { success = true, message = "User unsuspended immediatly." });
+            }
+            catch (Exception ex)
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Admin/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Failed to unsuspend user." });
             }
-
-            user.AccessFailedCount = 0;
-            await _userManager.UpdateAsync(user);
-
-            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
-            return Json(new { success = true, message = "User unsuspended immediatly." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> ElevatePlayer([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, but couldn't find the player."));
-                return Json(new { success = false, message = "User not found in Identity database." });
-            }
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, but couldn't find the player."));
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
 
-            var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
-            if (isModerator)
-            {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, but the player is already moderator."));
-                return Json(new { success = false, message = "User is already a moderator." });
-            }
+                var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
+                if (isModerator)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, but the player is already moderator."));
+                    return Json(new { success = false, message = "User is already a moderator." });
+                }
 
-            var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.Mod);
-            if (!addRoleResult.Succeeded)
+                var addRoleResult = await _userManager.AddToRoleAsync(user, Roles.Mod);
+                if (!addRoleResult.Succeeded)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, to no avail."));
+                    return Json(new { success = false, message = "Failed to elevate user to moderator role." });
+                }
+
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Elevated player {text.Body} to moderator."));
+                return Json(new { success = true, message = "User elevated to moderator role." });
+            }
+            catch (Exception ex)
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Tryed to elevated player {text.Body} to moderator, to no avail."));
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Failed to elevate user to moderator role." });
             }
-
-            await _userManager.UpdateSecurityStampAsync(user);
-
-            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/ElevatePlayer", $"Elevated player {text.Body} to moderator."));
-            return Json(new { success = true, message = "User elevated to moderator role." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DelevatePlayer([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, but couldn't find the player."));
-                return Json(new { success = false, message = "User not found in Identity database." });
-            }
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, but couldn't find the player."));
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
 
-            var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
-            if (!isModerator)
-            {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, but the player is not moderator."));
-                return Json(new { success = false, message = "User is not a moderator." });
-            }
+                var isModerator = await _userManager.IsInRoleAsync(user, Roles.Mod);
+                if (!isModerator)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, but the player is not moderator."));
+                    return Json(new { success = false, message = "User is not a moderator." });
+                }
 
-            var removeRoleResult = await _userManager.RemoveFromRoleAsync(user, Roles.Mod);
-            if (!removeRoleResult.Succeeded)
+                var removeRoleResult = await _userManager.RemoveFromRoleAsync(user, Roles.Mod);
+                if (!removeRoleResult.Succeeded)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, to no avail."));
+                    return Json(new { success = false, message = "Failed to remove moderator role from user." });
+                }
+
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Downgraded player {text.Body} to simple user."));
+                return Json(new { success = true, message = "Moderator role removed from user." });
+            }
+            catch (Exception ex)
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Tryed to downgrade player {text.Body} to simple user, to no avail."));
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Failed to remove moderator role from user." });
             }
-
-            await _userManager.UpdateSecurityStampAsync(user);
-
-            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Admin/DelevatePlayer", $"Downgraded player {text.Body} to simple user."));
-            return Json(new { success = true, message = "Moderator role removed from user." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> PlayerDelete([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                return Json(new { success = false, message = "User not found in Identity database." });
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
+                else
+                {
+                    var response = await _httpClient.PostAsJsonAsync("api/admin/player/delete", new { Token = text.Body });
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        return Json(new { success = false, message = "Unable to delete player." });
+                    }
+
+                    var identityResult = await _userManager.DeleteAsync(user);
+                    if (!identityResult.Succeeded)
+                    {
+                        return Json(new { success = false, message = "Failed to delete user from Identity database." });
+                    }
+
+                    await _userManager.UpdateSecurityStampAsync(user);
+
+                    return Json(new { success = true, message = "Player and associated Identity user deleted successfully." });
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var response = await _httpClient.PostAsJsonAsync("api/admin/player/delete", new { Token = text.Body });
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return Json(new { success = false, message = "Unable to delete player." });
-                }
-
-                var identityResult = await _userManager.DeleteAsync(user);
-                if (!identityResult.Succeeded)
-                {
-                    return Json(new { success = false, message = "Failed to delete user from Identity database." });
-                }
-
-                await _userManager.UpdateSecurityStampAsync(user);
-
-                return Json(new { success = true, message = "Player and associated Identity user deleted successfully." });
+                Console.WriteLine(ex.Message);
+                return Json(new { success = false, message = "Unable to delete player." });
             }
         }
 
@@ -301,184 +341,271 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> GameDelete([FromBody] Text text)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/game/delete", new { Token = text.Body });
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
+                var response = await _httpClient.PostAsJsonAsync("api/admin/game/delete", new { Token = text.Body });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to delete game." });
+                }
+                return Json(new { success = true, message = "Game deleted." });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to delete game." });
             }
-            return Json(new { success = true, message = "Game deleted." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> ResultDelete([FromBody] Text text)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/admin/result/delete", new { Token = text.Body });
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
+                var response = await _httpClient.PostAsJsonAsync("api/admin/result/delete", new { Token = text.Body });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to delete result." });
+                }
+                return Json(new { success = true, message = "Result deleted." });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to delete result." });
             }
-            return Json(new { success = true, message = "Result deleted." });
         }
 
         private async Task<List<PlayerView>> GetPlayers()
         {
-            var response = await _httpClient.GetAsync("api/admin/player");
             List<PlayerView> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var results = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
+                var response = await _httpClient.GetAsync("api/admin/player");
 
-                foreach (var player in results)
+                if (response.IsSuccessStatusCode)
                 {
-                    PlayerView temp = new()
-                    {
-                        Token = player.Token,
-                        Username = player.Username,
-                        LastActivity = player.LastActivity,
-                        Friends = player.Friends,
-                        Requests = player.Requests,
-                        Bot = player.Bot,
-                        Roles = new List<string>()
-                    };
+                    var results = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
 
-                    var identityUser = await _userManager.FindByIdAsync(player.Token);
-                    if (identityUser != null)
+                    foreach (var player in results)
                     {
-                        var roles = await _userManager.GetRolesAsync(identityUser);
-                        temp.Roles = roles;
+                        PlayerView temp = new()
+                        {
+                            Token = player.Token,
+                            Username = player.Username,
+                            LastActivity = player.LastActivity,
+                            Friends = player.Friends,
+                            Requests = player.Requests,
+                            Bot = player.Bot,
+                            Roles = new List<string>()
+                        };
+
+                        var identityUser = await _userManager.FindByIdAsync(player.Token);
+                        if (identityUser != null)
+                        {
+                            var roles = await _userManager.GetRolesAsync(identityUser);
+                            temp.Roles = roles;
+                        }
+
+                        result.Add(temp);
                     }
-
-                    result.Add(temp);
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<Player?> GetPlayer(string token)
         {
-            var response = await _httpClient.GetAsync($"api/admin/player/{token}");
             Player result = new();
 
-            if (!response.IsSuccessStatusCode)
-                response = await _httpClient.GetAsync($"api/admin/player/name/{token}");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
+                var response = await _httpClient.GetAsync($"api/admin/player/{token}");
+
+                if (!response.IsSuccessStatusCode)
+                    response = await _httpClient.GetAsync($"api/admin/player/name/{token}");
+
+                if (response.IsSuccessStatusCode)
                 {
-                    PropertyNameCaseInsensitive = true,
-                    Converters =
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters =
                     {
                         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                     }
-                };
-                var resultList = await response.Content.ReadFromJsonAsync<List<Player>>(options);
-                result = resultList?.FirstOrDefault() ?? new();
+                    };
+                    var resultList = await response.Content.ReadFromJsonAsync<List<Player>>(options);
+                    result = resultList?.FirstOrDefault() ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<List<Game>> GetGames()
         {
-            var response = await _httpClient.GetAsync("api/admin/game");
             List<Game> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync("api/admin/game");
 
-                result = await response.Content.ReadFromJsonAsync<List<Game>>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<List<Game>>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<Game> GetGame(string token)
         {
-            var response = await _httpClient.GetAsync($"api/admin/game/{token}");
             Game result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/admin/game/{token}");
 
-                result = await response.Content.ReadFromJsonAsync<Game>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<Game>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<List<GameResult>> GetResults()
         {
-            var response = await _httpClient.GetAsync("api/admin/result");
             List<GameResult> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync("api/admin/result");
 
-                result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<GameResult> GetResult(string token)
         {
-            var response = await _httpClient.GetAsync($"api/result/{token}");
             GameResult result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/result/{token}");
 
-                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task LogIt(PlayerLog log)
         {
-            await _httpClient.PostAsJsonAsync($"api/admin/log", log);
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"api/admin/log", log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private async Task<List<PlayerLog>> GetLogs(string token)
         {
-            var response = await _httpClient.GetAsync($"api/admin/logs/{token}");
             List<PlayerLog> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                result = await response.Content.ReadFromJsonAsync<List<PlayerLog>>() ?? new();
+                var response = await _httpClient.GetAsync($"api/admin/logs/{token}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadFromJsonAsync<List<PlayerLog>>() ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<PlayerLog> GetLog(string token)
         {
-            var response = await _httpClient.GetAsync($"api/admin/log/{token}");
             PlayerLog result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                result = await response.Content.ReadFromJsonAsync<PlayerLog>() ?? new();
+                var response = await _httpClient.GetAsync($"api/admin/log/{token}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadFromJsonAsync<PlayerLog>() ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }

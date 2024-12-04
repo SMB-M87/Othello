@@ -38,24 +38,31 @@ namespace MVC.Middleware
             var apiKey = configuration["ApiSettings:KEY"];
             httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
 
-            var response = await httpClient.GetAsync($"api/middleware");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var players = await response.Content.ReadFromJsonAsync<List<string>>();
+                var response = await httpClient.GetAsync($"api/middleware");
 
-                if (players is not null)
+                if (response.IsSuccessStatusCode)
                 {
-                    foreach (var player in players)
+                    var players = await response.Content.ReadFromJsonAsync<List<string>>();
+
+                    if (players is not null)
                     {
-                        var user = await userManager.FindByNameAsync(player);
-                        if (user != null)
+                        foreach (var player in players)
                         {
-                            await userManager.UpdateSecurityStampAsync(user);
+                            var user = await userManager.FindByNameAsync(player);
+                            if (user != null)
+                            {
+                                await userManager.UpdateSecurityStampAsync(user);
+                            }
                         }
                     }
-                }
 
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
         }
     }

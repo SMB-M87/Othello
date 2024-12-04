@@ -160,89 +160,104 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> SuspendPlayer([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
-                return Json(new { success = false, message = "User not found in Identity database." });
-            }
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
 
-            var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
-            if (!suspend.Succeeded)
+                var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
+                if (!suspend.Succeeded)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
+                    return Json(new { success = false, message = "Failed to suspend user." });
+                }
+
+                await _userManager.UpdateSecurityStampAsync(user);
+
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/SuspendPlayer", $"Suspended player {text.Body} for a month."));
+                return Json(new { success = true, message = "User suspended for a month." });
+            }
+            catch (Exception ex)
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Failed to suspend user." });
             }
-
-            await _userManager.UpdateSecurityStampAsync(user);
-
-            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/SuspendPlayer", $"Suspended player {text.Body} for a month."));
-            return Json(new { success = true, message = "User suspended for a month." });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> UnsuspendPlayer([FromBody] Text text)
         {
-            var user = await _userManager.FindByIdAsync(text.Body);
-            if (user == null)
+            try
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
-                return Json(new { success = false, message = "User not found in Identity database." });
-            }
+                var user = await _userManager.FindByIdAsync(text.Body);
+                if (user == null)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
+                    return Json(new { success = false, message = "User not found in Identity database." });
+                }
 
-            var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
-            if (!suspend.Succeeded)
+                var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                if (!suspend.Succeeded)
+                {
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
+                    return Json(new { success = false, message = "Failed to unsuspend user." });
+                }
+
+                user.AccessFailedCount = 0;
+                await _userManager.UpdateAsync(user);
+
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
+                return Json(new { success = true, message = "User unsuspended immediatly." });
+            }
+            catch (Exception ex)
             {
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Failed to unsuspend user." });
             }
-
-            user.AccessFailedCount = 0;
-            await _userManager.UpdateAsync(user);
-
-            await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
-            return Json(new { success = true, message = "User unsuspended immediatly." });
         }
 
         private async Task<List<Player>> GetPlayers()
         {
-            var response = await _httpClient.GetAsync("api/mod/player");
             List<Player> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var results = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
+                var response = await _httpClient.GetAsync("api/mod/player");
 
-                foreach (var player in results)
+                if (response.IsSuccessStatusCode)
                 {
-                    var identityUser = await _userManager.FindByIdAsync(player.Token);
-                    if (identityUser != null && player.Bot == 0)
-                    {
-                        var roles = await _userManager.GetRolesAsync(identityUser);
+                    var results = await response.Content.ReadFromJsonAsync<List<Player>>() ?? new();
 
-                        if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
-                            result.Add(player);
+                    foreach (var player in results)
+                    {
+                        var identityUser = await _userManager.FindByIdAsync(player.Token);
+                        if (identityUser != null && player.Bot == 0)
+                        {
+                            var roles = await _userManager.GetRolesAsync(identityUser);
+
+                            if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
+                                result.Add(player);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<Player?> GetPlayer(string token)
         {
-            var identityUser = await _userManager.FindByIdAsync(token);
-
-            if (identityUser != null)
+            try
             {
-                var roles = await _userManager.GetRolesAsync(identityUser);
-
-                if (roles.Contains(Roles.Admin) || roles.Contains(Roles.Mod))
-                    return null;
-            }
-            else
-            {
-                identityUser = await _userManager.FindByNameAsync(token);
+                var identityUser = await _userManager.FindByIdAsync(token);
 
                 if (identityUser != null)
                 {
@@ -251,150 +266,220 @@ namespace MVC.Controllers
                     if (roles.Contains(Roles.Admin) || roles.Contains(Roles.Mod))
                         return null;
                 }
-            }
-
-            var response = await _httpClient.GetAsync($"api/mod/player/{token}");
-
-            if (!response.IsSuccessStatusCode)
-                response = await _httpClient.GetAsync($"api/mod/player/name/{token}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var options = new JsonSerializerOptions
+                else
                 {
-                    PropertyNameCaseInsensitive = true,
-                    Converters =
+                    identityUser = await _userManager.FindByNameAsync(token);
+
+                    if (identityUser != null)
+                    {
+                        var roles = await _userManager.GetRolesAsync(identityUser);
+
+                        if (roles.Contains(Roles.Admin) || roles.Contains(Roles.Mod))
+                            return null;
+                    }
+                }
+
+                var response = await _httpClient.GetAsync($"api/mod/player/{token}");
+
+                if (!response.IsSuccessStatusCode)
+                    response = await _httpClient.GetAsync($"api/mod/player/name/{token}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters =
                     {
                         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
                     }
-                };
-                var resultList = await response.Content.ReadFromJsonAsync<List<Player>>(options);
+                    };
+                    var resultList = await response.Content.ReadFromJsonAsync<List<Player>>(options);
 
-                if (resultList?.FirstOrDefault()?.Bot == 0)
-                    return resultList?.FirstOrDefault() ?? new();
+                    if (resultList?.FirstOrDefault()?.Bot == 0)
+                        return resultList?.FirstOrDefault() ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return null;
         }
 
         private async Task<List<Game>> GetGames()
         {
-            var response = await _httpClient.GetAsync("api/mod/game");
             List<Game> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync("api/mod/game");
 
-                result = await response.Content.ReadFromJsonAsync<List<Game>>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<List<Game>>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<Game> GetGame(string token)
         {
-            var response = await _httpClient.GetAsync($"api/mod/game/{token}");
             Game result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/mod/game/{token}");
 
-                result = await response.Content.ReadFromJsonAsync<Game>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<Game>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<List<GameResult>> GetResults()
         {
-            var response = await _httpClient.GetAsync("api/mod/result");
             List<GameResult> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync("api/mod/result");
 
-                result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<List<GameResult>>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<GameResult> GetResult(string token)
         {
-            var response = await _httpClient.GetAsync($"api/result/{token}");
             GameResult result = new();
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/result/{token}");
 
-                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task LogIt(PlayerLog log)
         {
-            await _httpClient.PostAsJsonAsync($"api/mod/log", log);
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"api/mod/log", log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private async Task<List<PlayerLog>> GetLogs(string token)
         {
-            var response = await _httpClient.GetAsync($"api/mod/logs/{token}");
             List<PlayerLog> result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var results = await response.Content.ReadFromJsonAsync<List<PlayerLog>>() ?? new();
+                var response = await _httpClient.GetAsync($"api/mod/logs/{token}");
 
-                foreach (var log in results)
+                if (response.IsSuccessStatusCode)
                 {
-                    var identityUser = await _userManager.FindByNameAsync(log.Username);
-                    if (identityUser != null)
-                    {
-                        var roles = await _userManager.GetRolesAsync(identityUser);
+                    var results = await response.Content.ReadFromJsonAsync<List<PlayerLog>>() ?? new();
 
-                        if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
-                            result.Add(log);
+                    foreach (var log in results)
+                    {
+                        var identityUser = await _userManager.FindByNameAsync(log.Username);
+                        if (identityUser != null)
+                        {
+                            var roles = await _userManager.GetRolesAsync(identityUser);
+
+                            if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
+                                result.Add(log);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }
 
         private async Task<PlayerLog> GetLog(string token)
         {
-            var response = await _httpClient.GetAsync($"api/mod/log/{token}");
             PlayerLog result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var results = await response.Content.ReadFromJsonAsync<PlayerLog>() ?? new();
+                var response = await _httpClient.GetAsync($"api/mod/log/{token}");
 
-                var identityUser = await _userManager.FindByNameAsync(result.Username);
-
-                if (identityUser != null)
+                if (response.IsSuccessStatusCode)
                 {
-                    var roles = await _userManager.GetRolesAsync(identityUser);
+                    var results = await response.Content.ReadFromJsonAsync<PlayerLog>() ?? new();
 
-                    if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
-                        return results;
+                    var identityUser = await _userManager.FindByNameAsync(result.Username);
+
+                    if (identityUser != null)
+                    {
+                        var roles = await _userManager.GetRolesAsync(identityUser);
+
+                        if (!roles.Contains(Roles.Admin) && !roles.Contains(Roles.Mod))
+                            return results;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return result;
         }

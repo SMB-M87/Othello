@@ -218,29 +218,37 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> CreateGame([FromBody] Text text)
         {
-            var token = _userManager.GetUserId(User);
-
-            var createGameRequest = new
+            try
             {
-                PlayerToken = token,
-                Description = text.Body
-            };
+                var token = _userManager.GetUserId(User);
 
-            var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
+                var createGameRequest = new
+                {
+                    PlayerToken = token,
+                    Description = text.Body
+                };
 
-            if (!response.IsSuccessStatusCode)
+                var response = await _httpClient.PostAsJsonAsync("api/game/create", createGameRequest);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to create game." });
+                }
+
+                var game = await _httpClient.GetAsync($"api/game/{token}");
+
+                if (!game.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Game creation failed." });
+                }
+                HttpContext.Session.SetString("GameCreation", "false");
+                return Json(new { success = true, message = "Game created." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to create game." });
             }
-
-            var game = await _httpClient.GetAsync($"api/game/{token}");
-
-            if (!game.IsSuccessStatusCode)
-            {
-                return Json(new { success = false, message = "Game creation failed." });
-            }
-            HttpContext.Session.SetString("GameCreation", "false");
-            return Json(new { success = true, message = "Game created." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -248,15 +256,23 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeleteGame()
         {
-            var token = _userManager.GetUserId(User);
-            var response = await _httpClient.PostAsJsonAsync("api/game/delete", new { Token = token });
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
+                var token = _userManager.GetUserId(User);
+                var response = await _httpClient.PostAsJsonAsync("api/game/delete", new { Token = token });
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to delete game." });
+                }
+                HttpContext.Session.SetString("GameCreation", "false");
+                return Json(new { success = true, message = "Game deleted." });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to delete game." });
             }
-            HttpContext.Session.SetString("GameCreation", "false");
-            return Json(new { success = true, message = "Game deleted." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -264,19 +280,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> JoinGame([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/game/join", request);
+                var response = await _httpClient.PostAsJsonAsync("api/game/join", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to join game." });
+                }
+                return Json(new { success = true, message = "Game joined." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to join game." });
             }
-            return Json(new { success = true, message = "Game joined." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -284,19 +308,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> SendFriendRequest([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/request/friend", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to send friend request." });
+                }
+                return Json(new { success = true, message = "Friend request sent." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to send friend request." });
             }
-            return Json(new { success = true, message = "Friend request sent." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -304,19 +336,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> AcceptFriendRequest([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/accept", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/accept", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to accept friend request." });
+                }
+                return Json(new { success = true, message = "Friend request accepted." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to accept friend request." });
             }
-            return Json(new { success = true, message = "Friend request accepted." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -324,19 +364,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeclineFriendRequest([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/decline", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/request/friend/decline", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to decline friend request." });
+                }
+                return Json(new { success = true, message = "Friend request declined." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to decline friend request." });
             }
-            return Json(new { success = true, message = "Friend request declined." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -344,19 +392,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeleteFriend([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/friend/delete", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/friend/delete", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to delete friend." });
+                }
+                return Json(new { success = true, message = "Friend deleted." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to delete friend." });
             }
-            return Json(new { success = true, message = "Friend deleted." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -364,19 +420,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> SendGameRequest([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/game", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/request/game", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to send game request." });
+                }
+                return Json(new { success = true, message = "Game request sent." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to send game request." });
             }
-            return Json(new { success = true, message = "Game request sent." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -384,19 +448,27 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> AcceptGameRequest([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/game/accept", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/request/game/accept", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to accept game request." });
+                }
+                return Json(new { success = true, message = "Game request accepted." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to accept game request." });
             }
-            return Json(new { success = true, message = "Game request accepted." });
         }
 
         [Authorize(Roles = Roles.User)]
@@ -404,106 +476,147 @@ namespace MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> DeclineGameRequest([FromBody] Text player)
         {
-            var request = new
+            try
             {
-                ReceiverUsername = player.Body,
-                SenderToken = _userManager.GetUserId(User)
-            };
+                var request = new
+                {
+                    ReceiverUsername = player.Body,
+                    SenderToken = _userManager.GetUserId(User)
+                };
 
-            var response = await _httpClient.PostAsJsonAsync("api/player/request/game/decline", request);
+                var response = await _httpClient.PostAsJsonAsync("api/player/request/game/decline", request);
 
-            if (!response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Unable to decline game request." });
+                }
+                return Json(new { success = true, message = "Game request declined." });
+            }
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return Json(new { success = false, message = "Unable to decline game request." });
             }
-            return Json(new { success = true, message = "Game request declined." });
         }
 
         private async Task<User> GetView(string token)
         {
-            var response = await _httpClient.GetAsync($"api/user/view/{token}");
             User result = new();
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/user/view/{token}");
 
-                var deserializedResult = await response.Content.ReadFromJsonAsync<User>(options);
-
-                if (deserializedResult is not null)
+                if (response.IsSuccessStatusCode)
                 {
-                    result = deserializedResult;
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    var deserializedResult = await response.Content.ReadFromJsonAsync<User>(options);
+
+                    if (deserializedResult is not null)
+                    {
+                        result = deserializedResult;
+                    }
                 }
+                return result;
             }
-            return result;
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return result;
+            }
         }
 
         private async Task<UserPartial> GetPartial(string token)
         {
-            var response = await _httpClient.GetAsync($"api/user/partial/{token}");
             UserPartial result = new();
 
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/user/partial/{token}");
 
-                var deserializedResult = await response.Content.ReadFromJsonAsync<UserPartial>(options);
-
-                if (deserializedResult is not null)
+                if (response.IsSuccessStatusCode)
                 {
-                    result = deserializedResult;
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    var deserializedResult = await response.Content.ReadFromJsonAsync<UserPartial>(options);
+
+                    if (deserializedResult is not null)
+                    {
+                        result = deserializedResult;
+                    }
                 }
+                return result;
             }
-            return result;
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return result;
+            }
         }
 
         private async Task<HomeProfile> GetProfile(string token)
         {
-            var response = await _httpClient.GetAsync($"api/user/profile/{token}");
             HomeProfile result = new();
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/user/profile/{token}");
 
-                var deserializedResult = await response.Content.ReadFromJsonAsync<HomeProfile>(options);
-
-                if (deserializedResult is not null)
+                if (response.IsSuccessStatusCode)
                 {
-                    result = deserializedResult;
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    var deserializedResult = await response.Content.ReadFromJsonAsync<HomeProfile>(options);
+
+                    if (deserializedResult is not null)
+                    {
+                        result = deserializedResult;
+                    }
                 }
+                return result;
             }
-            return result;
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return result;
+            }
         }
 
         private async Task<GameResult?> GetResult(string token)
         {
-            var response = await _httpClient.GetAsync($"api/result/{token}");
             GameResult result = new();
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    Converters = { new ColorArrayConverter() }
-                };
+                var response = await _httpClient.GetAsync($"api/result/{token}");
 
-                result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+                if (response.IsSuccessStatusCode)
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new ColorArrayConverter() }
+                    };
+
+                    result = await response.Content.ReadFromJsonAsync<GameResult>(options) ?? new();
+                }
+                return result;
             }
-            return result;
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return result;
+            }
         }
     }
 }

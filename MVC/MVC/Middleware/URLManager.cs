@@ -2,6 +2,7 @@
 using MVC.Data;
 using MVC.Models;
 using System.Net;
+using System.Security.Claims;
 
 namespace MVC.Middleware
 {
@@ -66,43 +67,50 @@ namespace MVC.Middleware
                         BaseAddress = new Uri(baseUrl)
                     };
 
-                    var response = await httpClient.GetAsync($"api/game/{userId}");
-
-                    if (response.IsSuccessStatusCode)
+                    try
                     {
-                        var result = await response.Content.ReadAsStringAsync();
+                        var response = await httpClient.GetAsync($"api/game/{userId}");
 
-                        if (result == "1" && currentPath is not null && !PlayingAllowedPath(currentPath))
+                        if (response.IsSuccessStatusCode)
                         {
-                            context.Response.Redirect("/Game/Play");
-                            return;
+                            var result = await response.Content.ReadAsStringAsync();
+
+                            if (result == "1" && currentPath is not null && !PlayingAllowedPath(currentPath))
+                            {
+                                context.Response.Redirect("/Game/Play");
+                                return;
+                            }
+                            else if (result == "0" && currentPath is not null && !PendingAllowedPath(currentPath))
+                            {
+                                context.Response.Redirect($"/Home/Index");
+                                return;
+                            }
                         }
-                        else if (result == "0" && currentPath is not null && !PendingAllowedPath(currentPath))
+                        else
                         {
-                            context.Response.Redirect($"/Home/Index");
-                            return;
+                            if (user.IsInRole(Roles.Admin) && currentPath is not null &&
+                               !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/admin"))
+                            {
+                                context.Response.Redirect($"/Home/Index");
+                            }
+                            else if (user.IsInRole(Roles.Mod) && currentPath is not null &&
+                                !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mod"))
+                            {
+                                context.Response.Redirect($"/Home/Index");
+                            }
+                            else if (user.IsInRole(Roles.User) && !user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.Mod) &&
+                                currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
+                            {
+                                context.Response.Redirect($"/Home/Index");
+                            }
                         }
                     }
-                    else
+                    catch (HttpRequestException ex)
                     {
-                        if (user.IsInRole(Roles.Admin) && currentPath is not null &&
-                           !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/admin"))
-                        {
-                            context.Response.Redirect($"/Home/Index");
-                            return;
-                        }
-                        else if (user.IsInRole(Roles.Mod) && currentPath is not null &&
-                            !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mod"))
-                        {
-                            context.Response.Redirect($"/Home/Index");
-                            return;
-                        }
-                        else if (user.IsInRole(Roles.User) && !user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.Mod) &&
-                            currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
-                        {
-                            context.Response.Redirect($"/Home/Index");
-                            return;
-                        }
+                        Console.WriteLine(ex.Message);
+                        await signInManager.SignOutAsync();
+                        context.Response.Redirect($"/Home/Index");
+                        return;
                     }
                 }
             }
