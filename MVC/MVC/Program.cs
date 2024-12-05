@@ -1,15 +1,15 @@
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC.Areas.Identity.Pages.Account;
+using MVC.Controllers;
 using MVC.Data;
 using MVC.Middleware;
-using MVC.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 

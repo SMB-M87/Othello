@@ -3,8 +3,8 @@ using API.Data;
 using API.Models;
 using API.Service;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +21,7 @@ builder.Services
     .AddTransient<ILogRepository, LogAccessLayer>()
     .AddTransient<RegisterController>()
     .AddTransient<MiddlewareController>()
+    .AddTransient<LogController>()
     .AddTransient<PlayerController>()
     .AddTransient<GameController>()
     .AddTransient<ResultController>()

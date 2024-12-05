@@ -53,12 +53,13 @@ namespace API.Data
         public async Task<List<string>> GetInactivePlayers()
         {
             var threshold = DateTime.UtcNow.AddMinutes(-5);
+            var maxThreshold = DateTime.UtcNow.AddMinutes(-8);
 
-            var players = await _context.Players.AsNoTracking().Where(p => p.LastActivity <= threshold && p.Bot == 0).ToListAsync();
+            var players = await _context.Players.AsNoTracking().Where(p => p.LastActivity >= maxThreshold && p.LastActivity <= threshold && p.Bot == 0).ToListAsync();
 
             List<string> result = new();
 
-            foreach(var player in players)
+            foreach (var player in players)
             {
                 if (player.Username != "Deleted")
                     result.Add(player.Username);

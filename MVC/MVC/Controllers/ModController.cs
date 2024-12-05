@@ -166,20 +166,20 @@ namespace MVC.Controllers
                 var user = await _userManager.FindByIdAsync(text.Body);
                 if (user == null)
                 {
-                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous Entity", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} but couldn't find the player."));
                     return Json(new { success = false, message = "User not found in Identity database." });
                 }
 
                 var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddDays(30));
                 if (!suspend.Succeeded)
                 {
-                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous Entity", "FAIL:Mod/SuspendPlayer", $"Tryed to suspend player {text.Body} to no avail."));
                     return Json(new { success = false, message = "Failed to suspend user." });
                 }
 
                 await _userManager.UpdateSecurityStampAsync(user);
 
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/SuspendPlayer", $"Suspended player {text.Body} for a month."));
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous Entity", "Mod/SuspendPlayer", $"Suspended player {text.Body} for a month."));
                 return Json(new { success = true, message = "User suspended for a month." });
             }
             catch (Exception ex)
@@ -198,21 +198,21 @@ namespace MVC.Controllers
                 var user = await _userManager.FindByIdAsync(text.Body);
                 if (user == null)
                 {
-                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous Entity", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} but couldn't find the player."));
                     return Json(new { success = false, message = "User not found in Identity database." });
                 }
 
                 var suspend = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
                 if (!suspend.Succeeded)
                 {
-                    await LogIt(new(User?.Identity?.Name ?? "Anonymous", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
+                    await LogIt(new(User?.Identity?.Name ?? "Anonymous Entity", "FAIL:Mod/UnsuspendPlayer", $"Tryed to unsuspend player {text.Body} to no avail."));
                     return Json(new { success = false, message = "Failed to unsuspend user." });
                 }
 
                 user.AccessFailedCount = 0;
                 await _userManager.UpdateAsync(user);
 
-                await LogIt(new(User?.Identity?.Name ?? "Anonymous", "Mod/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
+                await LogIt(new(User?.Identity?.Name ?? "Anonymous Entity", "Mod/UnsuspendPlayer", $"Unsuspended player {text.Body} immediatly."));
                 return Json(new { success = true, message = "User unsuspended immediatly." });
             }
             catch (Exception ex)

@@ -1,9 +1,7 @@
 ﻿using API.Data;
 using API.Models;
-using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace API.Controllers
 {
@@ -22,7 +20,7 @@ namespace API.Controllers
         [HttpGet("{token}")]
         public async Task<ActionResult<Status>> StatusByToken(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(token, name);
 
@@ -44,7 +42,7 @@ namespace API.Controllers
         [HttpGet("view/{token}")]
         public async Task<ActionResult<GamePlay>> View(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(token, name);
 
@@ -76,7 +74,7 @@ namespace API.Controllers
         [HttpGet("partial/{token}")]
         public async Task<ActionResult<GamePartial>> Partial(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(token, name);
 
@@ -98,7 +96,7 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<HttpResponseMessage>> Create([FromBody] GameCreation game)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(game.PlayerToken, name);
 
@@ -132,7 +130,7 @@ namespace API.Controllers
         [HttpPost("join")]
         public async Task<ActionResult<HttpResponseMessage>> Join([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -169,7 +167,7 @@ namespace API.Controllers
         [HttpPost("move")]
         public async Task<ActionResult<HttpResponseMessage>> Move([FromBody] GameMove action)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(action.PlayerToken, name);
 
@@ -187,14 +185,14 @@ namespace API.Controllers
             {
                 await _repository.PlayerRepository.UpdateActivity(action.PlayerToken);
                 await _repository.LogRepository.Create(
-                    new(name ?? "Anonymous", "Game/Move", $"Player {action.PlayerToken} made move ({action.Row},{action.Column}) from within game controller.")
+                    new(name ?? "Anonymous Entity", "Game/Move", $"Player {action.PlayerToken} made move ({action.Row},{action.Column}) from within game controller.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
             {
                 await _repository.LogRepository.Create(
-                    new(name ?? "Anonymous", "FAIL:Game/Move", $"Player {action.PlayerToken} failed to make move ({action.Row},{action.Column}) from within the game controller.")
+                    new(name ?? "Anonymous Entity", "FAIL:Game/Move", $"Player {action.PlayerToken} failed to make move ({action.Row},{action.Column}) from within the game controller.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
@@ -206,7 +204,7 @@ namespace API.Controllers
         [HttpPost("pass")]
         public async Task<ActionResult<HttpResponseMessage>> Pass([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(id.Token, name);
 
@@ -232,7 +230,7 @@ namespace API.Controllers
             {
                 await _repository.LogRepository.Create(
                     new(name, "FAIL:Game/Pass", $"Player {id.Token} passed his turn from within the game controller.")
-                ); 
+                );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
                 {
                     Content = new StringContent(error ?? "Pass not possible.")
@@ -243,7 +241,7 @@ namespace API.Controllers
         [HttpPost("forfeit")]
         public async Task<ActionResult<HttpResponseMessage>> Forfeit([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(id.Token, name);
 
@@ -277,7 +275,7 @@ namespace API.Controllers
         [HttpPost("delete")]
         public async Task<ActionResult<HttpResponseMessage>> Delete([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(id.Token, name);
 

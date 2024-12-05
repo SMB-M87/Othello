@@ -20,8 +20,8 @@ namespace MVC.Areas.Identity.Pages.Account
         public RegisterModel(
             IConfiguration configuration,
             ILogger<RegisterModel> logger,
-            IUserStore<ApplicationUser> userStore,
             IHttpClientFactory httpClientFactory,
+            IUserStore<ApplicationUser> userStore,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager
             )

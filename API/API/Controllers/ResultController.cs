@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet("{token}")]
         public async Task<ActionResult<GameResult>> Get(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.ResultRepository.Get(token);
 
@@ -47,7 +47,7 @@ namespace API.Controllers
         [HttpGet("last/{player_token}")]
         public async Task<ActionResult<GameResult>> GetLast(string player_token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(player_token, name);
 

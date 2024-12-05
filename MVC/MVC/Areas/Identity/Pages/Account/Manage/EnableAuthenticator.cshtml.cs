@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
+using MVC.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -14,23 +16,61 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<EnableAuthenticatorModel> _logger;
+        private readonly HttpClient _httpClient;
         private readonly UrlEncoder _urlEncoder;
+        private readonly ILogger<EnableAuthenticatorModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
 
         public EnableAuthenticatorModel(
-            SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager,
+            UrlEncoder urlEncoder,
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             ILogger<EnableAuthenticatorModel> logger,
-            UrlEncoder urlEncoder)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager
+            )
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _userManager = userManager;
+            _signInManager = signInManager;
+
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new Exception("BaseUrl setting is missing in configuration.");
+
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
+
+            var cookies = httpContextAccessor?.HttpContext?.Request.Cookies;
+
+            if (cookies is not null)
+            {
+                foreach (var cookie in cookies)
+                {
+                    if (cookie.Key == "__Host-SharedAuthCookie")
+                    {
+                        handler.CookieContainer.Add(
+                            new Uri(baseUrl),
+                            new Cookie(cookie.Key, cookie.Value)
+                        );
+                    }
+                }
+
+                _httpClient = new HttpClient(handler)
+                {
+                    BaseAddress = new Uri(baseUrl)
+                };
+            }
+            else
+            {
+                _httpClient = httpClientFactory.CreateClient("ApiClient");
+            }
         }
 
         public string SharedKey { get; set; }
@@ -65,6 +105,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
             await LoadSharedKeyAndQrCodeUriAsync(user);
 
+            await LogIt(new(user.UserName, "Identity/EnableAuthenticator", $"Player {user.UserName} fetched enable authenticator data from the identity user tokens and users database."));
             return Page();
         }
 
@@ -86,6 +127,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             if (!await VerifyAuthenticatorCode(user, plainKey, verificationCode))
             {
                 ModelState.AddModelError("Input.Code", "Verification code is invalid.");
+                await LogIt(new(user.UserName, "FAIL:Identity/EnableAuthenticator", $"Player {user.UserName} verification code is invalid."));
                 return Page();
             }
             else
@@ -93,6 +135,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 await _userManager.SetTwoFactorEnabledAsync(user, true);
                 var userId = await _userManager.GetUserIdAsync(user);
                 _logger.LogInformation("User with ID '{UserId}' has enabled 2FA with an authenticator app.", userId);
+                await LogIt(new(user.UserName, "Identity/EnableAuthenticator", $"Player {user.UserName} has enabled 2FA with an authenticator app."));
 
                 StatusMessage = "Your authenticator app has been verified.";
 
@@ -190,6 +233,11 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 return true;
             }
 
+            if (!pass)
+            {
+                await LogIt(new(user.UserName, "TEMPERING:Identity/EnableAuthenticator", $"Someone tryed to validate player's {user.UserName} 2FA using an used code!!!"));
+            }
+
             return false;
         }
 
@@ -242,6 +290,18 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
             }
 
             return output.ToArray();
+        }
+
+        private async Task LogIt(PlayerLog log)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"api/player/log", log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

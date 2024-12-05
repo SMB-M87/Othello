@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet("player")]
         public async Task<ActionResult<List<Player>>> GetPlayers()
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.PlayerRepository.GetPlayers();
 
@@ -47,7 +47,7 @@ namespace API.Controllers
         [HttpGet("player/{token}")]
         public async Task<ActionResult<List<Player>>> GetPlayer(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.PlayerRepository.Get(token);
 
@@ -79,7 +79,7 @@ namespace API.Controllers
         [HttpGet("player/name/{username}")]
         public async Task<ActionResult<List<Player>>> GetPlayerByName(string username)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.PlayerRepository.GetByName(username);
 
@@ -111,7 +111,7 @@ namespace API.Controllers
         [HttpPost("player/delete")]
         public async Task<ActionResult<HttpResponseMessage>> DeletePlayer([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.PlayerRepository.Delete(id.Token);
 
@@ -139,7 +139,7 @@ namespace API.Controllers
         [HttpGet("game/{token}")]
         public async Task<ActionResult<List<Game>>> GetGame(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.GameRepository.Get(token);
 
@@ -166,7 +166,7 @@ namespace API.Controllers
         [HttpGet("game")]
         public async Task<ActionResult<List<Game>>> GetGames()
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.GameRepository.GetGames();
 
@@ -193,7 +193,7 @@ namespace API.Controllers
         [HttpPost("game/delete")]
         public async Task<ActionResult<HttpResponseMessage>> DeleteGame([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.GameRepository.PermDelete(id.Token);
 
@@ -221,7 +221,7 @@ namespace API.Controllers
         [HttpGet("result")]
         public async Task<ActionResult<List<GameResult>>> GetResults()
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.ResultRepository.GetResults();
 
@@ -248,7 +248,7 @@ namespace API.Controllers
         [HttpPost("result/delete")]
         public async Task<ActionResult<HttpResponseMessage>> DeleteResult([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.ResultRepository.Delete(id.Token);
 
@@ -276,19 +276,21 @@ namespace API.Controllers
         [HttpPost("log")]
         public async Task Log([FromBody] PlayerLog log)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var player = await _repository.PlayerRepository.GetByName(name);
 
-            if (player is not null)
+            if (player is not null && player.Username == log.Username)
+            {
                 await _repository.PlayerRepository.UpdateActivity(player.Token);
-            await _repository.LogRepository.Create(log);
+                await _repository.LogRepository.Create(log);
+            }
         }
 
         [HttpGet("logs/{token}")]
         public async Task<ActionResult<List<PlayerLog>>> GetLogs(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.LogRepository.GetLogs(token);
 
@@ -315,7 +317,7 @@ namespace API.Controllers
         [HttpGet("log/{token}")]
         public async Task<ActionResult<PlayerLog?>> GetLog(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var response = await _repository.LogRepository.Get(token);
 

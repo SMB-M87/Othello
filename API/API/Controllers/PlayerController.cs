@@ -17,12 +17,26 @@ namespace API.Controllers
             _repository = repository;
         }
 
+        [HttpPost("log")]
+        public async Task Log([FromBody] PlayerLog log)
+        {
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
+
+            var player = await _repository.PlayerRepository.GetByName(name);
+
+            if (player is not null && player.Username == log.Username)
+            {
+                await _repository.PlayerRepository.UpdateActivity(player.Token);
+                await _repository.LogRepository.Create(log);
+            }
+        }
+
         [HttpGet("rematch/{token}")]
         public async Task<ActionResult<string?>> Rematch(string token)
         {
             string[] parts = token.Split(' ');
 
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(parts[1], name);
 
@@ -39,7 +53,7 @@ namespace API.Controllers
         [HttpPost("request/friend")]
         public async Task<ActionResult<HttpResponseMessage>> FriendRequest([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -72,7 +86,7 @@ namespace API.Controllers
         [HttpPost("request/friend/accept")]
         public async Task<ActionResult<HttpResponseMessage>> AcceptFriendRequest([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -105,7 +119,7 @@ namespace API.Controllers
         [HttpPost("request/friend/decline")]
         public async Task<ActionResult<HttpResponseMessage>> DeclineFriendRequest([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -138,7 +152,7 @@ namespace API.Controllers
         [HttpPost("request/game")]
         public async Task<ActionResult<HttpResponseMessage>> GameRequest([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -171,7 +185,7 @@ namespace API.Controllers
         [HttpPost("request/game/accept")]
         public async Task<ActionResult<HttpResponseMessage>> AcceptGameRequest([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -204,7 +218,7 @@ namespace API.Controllers
         [HttpPost("request/game/decline")]
         public async Task<ActionResult<HttpResponseMessage>> DeclineGameRequest([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -237,7 +251,7 @@ namespace API.Controllers
         [HttpPost("friend/delete")]
         public async Task<ActionResult<HttpResponseMessage>> DeleteFriend([FromBody] PlayerRequest request)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(request.SenderToken, name);
 
@@ -270,7 +284,7 @@ namespace API.Controllers
         [HttpPost("delete")]
         public async Task<ActionResult<HttpResponseMessage>> Delete([FromBody] ID id)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(id.Token, name);
 
@@ -287,14 +301,14 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "Player/Delete", $"Player {id.Token} deleted the account within the player controller.")
+                    new(User?.Identity?.Name ?? "Anonymous Entity", "Player/Delete", $"Player {id.Token} deleted the account within the player controller.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
             }
             else
             {
                 await _repository.LogRepository.Create(
-                    new(User?.Identity?.Name ?? "Anonymous", "FAIL:Player/Delete", $"Player {id.Token} failed to delete the account within the player controller.")
+                    new(User?.Identity?.Name ?? "Anonymous Entity", "FAIL:Player/Delete", $"Player {id.Token} failed to delete the account within the player controller.")
                 );
                 return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }

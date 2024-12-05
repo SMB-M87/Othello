@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet("view/{token}")]
         public async Task<ActionResult<User>> View(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             await _repository.PlayerRepository.UpdateActivity(token);
             var check = await _repository.PlayerRepository.PlayerChecksOut(token, name);
@@ -38,13 +38,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(name ?? "Anonymous", "FAIL:User/View", $"Player {token} failed to fetch view from database within the user controller.")
+                    new(name ?? "Anonymous Entity", "FAIL:User/View", $"Player {token} failed to fetch view from database within the user controller.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(name ?? "Anonymous", "User/View", $"Player {token} fetched view from player database within the user controller.")
+                new(name ?? "Anonymous Entity", "User/View", $"Player {token} fetched view from player database within the user controller.")
             );
 
             return Ok(response);
@@ -53,7 +53,7 @@ namespace API.Controllers
         [HttpGet("partial/{token}")]
         public async Task<ActionResult<UserPartial>> Partial(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             var check = await _repository.PlayerRepository.PlayerChecksOut(token, name);
 
@@ -75,7 +75,7 @@ namespace API.Controllers
         [HttpGet("profile/{token}")]
         public async Task<ActionResult<HomeProfile>> Profile(string token)
         {
-            var name = User?.Identity?.Name ?? "Anonymous";
+            var name = User?.Identity?.Name ?? "Anonymous Entity";
 
             string[] parts = token.Split(' ');
             await _repository.PlayerRepository.UpdateActivity(parts[1]);
@@ -95,13 +95,13 @@ namespace API.Controllers
             if (response is null)
             {
                 await _repository.LogRepository.Create(
-                    new(name ?? "Anonymous", "FAIL:User/Profile", $"Player {parts[1]} failed to fetch profile from player {parts[0]} within the user controller.")
+                    new(name ?? "Anonymous Entity", "FAIL:User/Profile", $"Player {parts[1]} failed to fetch profile from player {parts[0]} within the user controller.")
                 );
                 return NotFound();
             }
 
             await _repository.LogRepository.Create(
-                new(name ?? "Anonymous", "User/Profile", $"Player {parts[1]} fetched profile from player {parts[0]} within the user controller.")
+                new(name ?? "Anonymous Entity", "User/Profile", $"Player {parts[1]} fetched profile from player {parts[0]} within the user controller.")
             );
 
             return Ok(response);

@@ -37,14 +37,14 @@ namespace API.Controllers
             if (response == true)
             {
                 await _repository.LogRepository.Create(
-                    new("Anonymous", "Register/Create", $"Player {player.ReceiverUsername} with username {player.SenderToken} created in the player database within the register controller.")
+                    new(player.SenderToken, "Register/Create", $"Player {player.ReceiverUsername} with username {player.SenderToken} created in the player database within the register controller.")
                 );
                 return Ok();
             }
             else
             {
                 await _repository.LogRepository.Create(
-                    new("Anonymous", "FAIL:Register/Create", $"Failed to create player {player.ReceiverUsername} with username {player.SenderToken} in the player database within the register controller.")
+                    new("Application", "FAIL:Register/Create", $"Failed to create player {player.ReceiverUsername} with username {player.SenderToken} in the player database within the register controller.")
                 );
                 return BadRequest();
             }

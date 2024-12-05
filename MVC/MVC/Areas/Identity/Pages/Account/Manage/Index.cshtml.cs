@@ -4,22 +4,62 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Data;
+using MVC.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace MVC.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
+        private readonly HttpClient _httpClient;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public IndexModel(
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new Exception("BaseUrl setting is missing in configuration.");
+
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
+
+            var cookies = httpContextAccessor?.HttpContext?.Request.Cookies;
+
+            if (cookies is not null)
+            {
+                foreach (var cookie in cookies)
+                {
+                    if (cookie.Key == "__Host-SharedAuthCookie")
+                    {
+                        handler.CookieContainer.Add(
+                            new Uri(baseUrl),
+                            new Cookie(cookie.Key, cookie.Value)
+                        );
+                    }
+                }
+
+                _httpClient = new HttpClient(handler)
+                {
+                    BaseAddress = new Uri(baseUrl)
+                };
+            }
+            else
+            {
+                _httpClient = httpClientFactory.CreateClient("ApiClient");
+            }
         }
+
         public string Username { get; set; }
 
         [TempData]
@@ -64,6 +104,7 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 return RedirectToPage("/Home/Index");
             }
 
+            await LogIt(new(user.UserName, "Identity/Index", $"Player {user.UserName} fetched data from the identity user database."));
             await LoadAsync(user);
             return Page();
         }
@@ -88,14 +129,28 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                await LogIt(new(user.UserName, "FAIL:Identity/Index/Password", $"Player {user.UserName} failed to change the account's password."));
                 return Page();
             }
 
             await _userManager.UpdateSecurityStampAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your password has been changed.";
+            await LogIt(new(user.UserName, "Identity/Index/Password", $"Player {user.UserName} changed the account's password."));
 
             return RedirectToPage();
+        }
+
+        private async Task LogIt(PlayerLog log)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"api/player/log", log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

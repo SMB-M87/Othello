@@ -5,25 +5,31 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Areas.Identity.Pages.Account.Manage;
 using MVC.Data;
+using MVC.Models;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using System.Text;
 namespace MVC.Areas.Identity.Pages.Account
 {
     public class LoginWithRecoveryCodeModel : PageModel
     {
+        private readonly HttpClient _httpClient;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginWithRecoveryCodeModel> _logger;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public LoginWithRecoveryCodeModel(
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            ILogger<LoginWithRecoveryCodeModel> logger)
+            ILogger<LoginWithRecoveryCodeModel> logger,
+            SignInManager<ApplicationUser> signInManager
+            )
         {
+            _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            _logger = logger;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            var apiKey = configuration["ApiSettings:KEY"];
+            _httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
         }
 
         [BindProperty]
@@ -66,6 +72,7 @@ namespace MVC.Areas.Identity.Pages.Account
                 await _userManager.UpdateSecurityStampAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 _logger.LogInformation("User with ID '{UserId}' logged in with a recovery code.", user.Id);
+                await LogIt(new(user.UserName, "Identity/LoginWithRecoveryCode", $"Player {user.UserName} logged in with a valid recovery code."));
 
                 if (Breached)
                 {
@@ -77,6 +84,7 @@ namespace MVC.Areas.Identity.Pages.Account
             }
             else
             {
+                await LogIt(new(user.UserName, "FAIL:Identity/LoginWithRecoveryCode", $"Player {user.UserName} entered an invalid recovery code."));
                 _logger.LogWarning("Invalid recovery code entered for user with ID '{UserId}'.", user.Id);
                 ModelState.AddModelError(string.Empty, "Invalid recovery code entered.");
                 return Page();
@@ -124,6 +132,18 @@ namespace MVC.Areas.Identity.Pages.Account
             }
 
             return false;
+        }
+
+        private async Task LogIt(PlayerLog log)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"api/log", log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

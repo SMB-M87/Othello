@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using MVC.Areas.Identity.Pages.Account.Manage;
 using MVC.Data;
+using MVC.Models;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 
@@ -12,18 +13,24 @@ namespace MVC.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<LoginWith2faModel> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public LoginWith2faModel(
-            SignInManager<ApplicationUser> signInManager,
+            IConfiguration configuration,
+            ILogger<LoginWith2faModel> logger,
+            IHttpClientFactory httpClientFactory,
             UserManager<ApplicationUser> userManager,
-            ILogger<LoginWith2faModel> logger)
+            SignInManager<ApplicationUser> signInManager)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
             _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            var apiKey = configuration["ApiSettings:KEY"];
+            _httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
         }
 
         [BindProperty]
@@ -68,11 +75,12 @@ namespace MVC.Areas.Identity.Pages.Account
             var encryptedKey = await _userManager.GetAuthenticatorKeyAsync(user);
             if (string.IsNullOrEmpty(encryptedKey))
             {
+                await LogIt(new(user.UserName, "FAIL:Identity/LoginWith2fa", $"Authenticator key is missing for player {user.UserName}."));
                 _logger.LogWarning("Authenticator key is missing for user with ID '{UserId}'.", user.Id);
                 ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
                 return Page();
             }
-            
+
             var plainKey = SymmetricEncryption.Decrypt(encryptedKey);
 
             if (await VerifyAuthenticatorCode(user, plainKey, authenticatorCode))
@@ -80,6 +88,7 @@ namespace MVC.Areas.Identity.Pages.Account
                 await _userManager.ResetAccessFailedCountAsync(user);
                 await _userManager.UpdateSecurityStampAsync(user);
                 await _signInManager.SignInAsync(user, isPersistent: Input.RememberMachine);
+                await LogIt(new(user.UserName, "Identity/LoginWith2fa", $"Player {user.UserName} logged in with 2FA."));
 
                 if (Breached)
                 {
@@ -90,6 +99,7 @@ namespace MVC.Areas.Identity.Pages.Account
                 return RedirectToPage("/Home/Index");
             }
 
+            await LogIt(new(user.UserName, "FAIL:Identity/LoginWith2fa", $"Player {user.UserName} entered invalid 2FA code."));
             _logger.LogWarning("Invalid authenticator code entered for user with ID '{UserId}'.", user.Id);
             await _userManager.AccessFailedAsync(user);
             ModelState.AddModelError(string.Empty, "Invalid authenticator code.");
@@ -121,6 +131,11 @@ namespace MVC.Areas.Identity.Pages.Account
                 var hashedCode = Encryption.GenerateHashedCode(providedCode);
                 await _userManager.SetAuthenticationTokenAsync(user, "[AspNetUserStore]", "Code", hashedCode);
                 return true;
+            }
+
+            if (!pass)
+            {
+                await LogIt(new(user.UserName, "TEMPERING:Identity/LoginWith2fa", $"Someone tryed to loging on player's {user.UserName} account using an used 2FA code!!!"));
             }
 
             return false;
@@ -175,6 +190,18 @@ namespace MVC.Areas.Identity.Pages.Account
             }
 
             return output.ToArray();
+        }
+
+        private async Task LogIt(PlayerLog log)
+        {
+            try
+            {
+                await _httpClient.PostAsJsonAsync($"api/log", log);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

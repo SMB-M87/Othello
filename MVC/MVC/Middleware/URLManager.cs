@@ -2,7 +2,6 @@
 using MVC.Data;
 using MVC.Models;
 using System.Net;
-using System.Security.Claims;
 
 namespace MVC.Middleware
 {

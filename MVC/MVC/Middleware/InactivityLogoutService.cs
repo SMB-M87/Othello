@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MVC.Data;
+using MVC.Models;
 using System.Net.Http;
+using System.Numerics;
 
 namespace MVC.Middleware
 {
@@ -48,16 +50,35 @@ namespace MVC.Middleware
 
                     if (players is not null)
                     {
-                        foreach (var player in players)
+                        if (players.Count > 1)
                         {
-                            var user = await userManager.FindByNameAsync(player);
-                            if (user != null)
+                            foreach (var player in players)
                             {
-                                await userManager.UpdateSecurityStampAsync(user);
+                                var user = await userManager.FindByNameAsync(player);
+                                if (user != null)
+                                {
+                                    await userManager.UpdateSecurityStampAsync(user);
+                                }
+                            }
+                            string formattedPlayers = string.Join(", ", players);
+                            PlayerLog log = new("Inactivity Middleware", "Middleware/Inactivity", $"Players {formattedPlayers} are logged out.");
+                            await httpClient.PostAsJsonAsync($"api/log", log);
+                        }
+                        else
+                        {
+                            string? player = players.FirstOrDefault();
+                            if (player != null)
+                            {
+                                var user = await userManager.FindByNameAsync(player);
+                                if (user != null)
+                                {
+                                    await userManager.UpdateSecurityStampAsync(user);
+                                }
+                                PlayerLog log = new("Inactivity Middleware", "Middleware/Inactivity", $"Player {player} is logged out.");
+                                await httpClient.PostAsJsonAsync($"api/log", log);
                             }
                         }
                     }
-
                 }
             }
             catch (HttpRequestException ex)
