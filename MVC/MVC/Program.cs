@@ -143,12 +143,6 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 
 builder.Services.AddHostedService<InactivityLogoutService>();
 
-/*builder.Services.AddHttpsRedirection(options =>
-{
-    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-    options.HttpsPort = 443;
-});*/
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
