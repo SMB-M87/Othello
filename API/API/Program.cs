@@ -54,7 +54,7 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
 
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
-    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello/SharedKeys"))
+    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello"))
     .SetApplicationName("Othello")
     .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
     {

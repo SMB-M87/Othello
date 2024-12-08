@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,12 @@ using MVC.Data;
 using MVC.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
 
 PasswordBreach.Initialize(builder.Environment.ContentRootPath);
 
@@ -54,6 +61,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.Path = "/";
 });
 
@@ -64,10 +72,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = "__Host-SharedAuthCookie";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SameSite = SameSiteMode.Strict; // Lax
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
-    //options.Cookie.Domain = "othello.hbo-ict.org";
+    options.Cookie.Domain = "othello.hbo-ict.org";
     options.Cookie.Path = "/";
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Home/Index";
@@ -82,8 +90,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
-    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello/SharedKeys"))
+    //.PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
+    .PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello"))
     .SetApplicationName("Othello")
     .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
     {
@@ -135,6 +143,12 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 
 builder.Services.AddHostedService<InactivityLogoutService>();
 
+/*builder.Services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+    options.HttpsPort = 443;
+});*/
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -154,6 +168,11 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+});
 
 app.UseExceptionHandler(errorApp =>
 {
@@ -176,7 +195,7 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
