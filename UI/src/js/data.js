@@ -1,7 +1,7 @@
 Game.Data = (function () {
   let configMap = {
     apiUrl: null,
-    apiKey: null,
+    apiToken: null,
     mock: [
       {
         url: null,
@@ -15,14 +15,14 @@ Game.Data = (function () {
   };
 
   // private functions
-  const _init = function (url, key, environment) {
+  const _init = function (url, token, environment) {
     if (environment == "production") {
       configMap.apiUrl = url;
-      configMap.apiKey = key;
+      configMap.apiToken = token;
       stateMap.environment = environment;
     } else if (environment == "development") {
       configMap.mock.url = url;
-      configMap.mock.key = key;
+      configMap.mock.key = token;
       stateMap.environment = environment;
     } else {
       throw new Error("This environment is unknown.");
@@ -32,7 +32,7 @@ Game.Data = (function () {
   const _get = function () {
     if (stateMap.environment == "production") {
       return $.ajax({
-        url: configMap.apiUrl + "game/view/" + configMap.apiKey,
+        url: configMap.apiUrl + "game/view/" + configMap.apiToken,
         method: "GET",
         crossDomain: true,
         xhrFields: {
@@ -55,7 +55,7 @@ Game.Data = (function () {
   const _getPartial = function () {
     if (stateMap.environment == "production") {
       return $.ajax({
-        url: configMap.apiUrl + "game/partial/" + configMap.apiKey,
+        url: configMap.apiUrl + "game/partial/" + configMap.apiToken,
         method: "GET",
         crossDomain: true,
         xhrFields: {
@@ -80,7 +80,7 @@ Game.Data = (function () {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           $.ajax({
-            url: configMap.apiUrl + "result/last/" + configMap.apiKey,
+            url: configMap.apiUrl + "result/last/" + configMap.apiToken,
             method: "GET",
             crossDomain: true,
             xhrFields: {
@@ -104,7 +104,7 @@ Game.Data = (function () {
   const _getRematch = function () {
     const username = Game.Model.getOpponent();
 
-    const config = `${username} ${configMap.apiKey}`;
+    const config = `${username} ${configMap.apiToken}`;
 
     const encoded = encodeURIComponent(config);
 
@@ -129,7 +129,7 @@ Game.Data = (function () {
   };
 
   const _sendMove = function (row, col) {
-    const token = configMap.apiKey;
+    const token = configMap.apiToken;
 
     const moveData = {
       playerToken: token,
@@ -152,7 +152,7 @@ Game.Data = (function () {
   };
 
   const _passGame = function () {
-    const token = configMap.apiKey;
+    const token = configMap.apiToken;
 
     return $.ajax({
       url: configMap.apiUrl + "game/pass",
@@ -169,7 +169,7 @@ Game.Data = (function () {
   };
 
   const _forfeitGame = function () {
-    const token = configMap.apiKey;
+    const token = configMap.apiToken;
 
     return $.ajax({
       url: configMap.apiUrl + "game/forfeit",
@@ -189,7 +189,7 @@ Game.Data = (function () {
     const username = Game.Model.getOpponent();
 
     const config = {
-      PlayerToken: configMap.apiKey,
+      PlayerToken: configMap.apiToken,
       Description: `Rematch against ${username}`,
       Rematch: username,
     };
@@ -211,7 +211,7 @@ Game.Data = (function () {
 
     const config = {
       ReceiverUsername: username,
-      SenderToken: configMap.apiKey,
+      SenderToken: configMap.apiToken,
     };
 
     return $.ajax({
@@ -231,7 +231,7 @@ Game.Data = (function () {
 
     const config = {
       ReceiverUsername: username,
-      SenderToken: configMap.apiKey,
+      SenderToken: configMap.apiToken,
     };
 
     return $.ajax({
@@ -259,8 +259,8 @@ Game.Data = (function () {
   };
 
   // public functions
-  const init = (url, key, environment) => {
-    _init(url, key, environment);
+  const init = (url, token, environment) => {
+    _init(url, token, environment);
   };
 
   const get = () => {

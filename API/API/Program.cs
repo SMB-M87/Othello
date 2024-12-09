@@ -47,15 +47,14 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
         options.Cookie.Name = "__Host-SharedAuthCookie";
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SameSite = SameSiteMode.Strict;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
         options.Cookie.Path = "/";
     });
 
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
-    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello"))
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"/*@"/var/othello"*/))
     .SetApplicationName("Othello")
     .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
     {
@@ -68,7 +67,7 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.Name = "__Host-Antiforgery";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 builder.Services.AddScoped<BotService>();
@@ -83,7 +82,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("https://localhost:7269", "https://othello.hbo-ict.org")
+        builder.WithOrigins("https://localhost:7269"/*"https://othello.hbo-ict.org"*/)
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();

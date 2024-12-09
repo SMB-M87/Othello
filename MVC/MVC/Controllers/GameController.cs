@@ -50,6 +50,17 @@ namespace MVC.Controllers
                 {
                     BaseAddress = new Uri(baseUrl)
                 };
+
+                var apiKey = configuration["ApiSettings:KEY"];
+                if (string.IsNullOrEmpty(apiKey))
+                {
+                    throw new Exception("API key is missing in configuration.");
+                }
+
+                if (!_httpClient.DefaultRequestHeaders.Contains("X-API-KEY"))
+                {
+                    _httpClient.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
+                }
             }
             else
             {

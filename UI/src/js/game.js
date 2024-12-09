@@ -7,7 +7,7 @@ const Game = (function (config) {
 
   let configMap = {
     apiUrl: config.apiUrl,
-    apiKey: config.userToken
+    apiToken: config.userToken
   };
 
   // private functions
@@ -15,7 +15,7 @@ const Game = (function (config) {
     Game.Handlebar.renderBody();
     Game.Handlebar.renderBoard(null, null, null);
     Game.Handlebar.attachEventListeners();
-    Game.Data.init(configMap.apiUrl, configMap.apiKey, "production");
+    Game.Data.init(configMap.apiUrl, configMap.apiToken, "production");
     Game.Api.init();
     Game.Stat.init("stats-chart");
   };

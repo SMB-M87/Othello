@@ -61,7 +61,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.Cookie.Path = "/";
 });
 
@@ -72,7 +72,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = "__Host-SharedAuthCookie";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
     options.Cookie.Path = "/";
@@ -89,8 +89,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
-    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello"))
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"/*@"/var/othello"*/))
     .SetApplicationName("Othello")
     .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
     {
@@ -103,7 +102,7 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.Name = "__Host-Antiforgery";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SameSite = SameSiteMode.Strict;
 });
 
 builder.Services.AddControllersWithViews(options =>
