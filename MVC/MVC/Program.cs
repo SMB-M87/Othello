@@ -61,7 +61,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.Path = "/";
 });
 
@@ -72,10 +72,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.Name = "__Host-SharedAuthCookie";
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict; // Lax
+    options.Cookie.SameSite = SameSiteMode.Lax;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
-    options.Cookie.Domain = "othello.hbo-ict.org";
     options.Cookie.Path = "/";
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Home/Index";
@@ -90,8 +89,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddDataProtection()
-    //.PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
-    .PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello"))
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\SharedKeys"))
+    //.PersistKeysToFileSystem(new DirectoryInfo(@"/var/othello"))
     .SetApplicationName("Othello")
     .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
     {
@@ -189,7 +188,7 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 

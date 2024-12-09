@@ -5,6 +5,7 @@ using API.Service;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,8 +48,6 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
-        options.Cookie.Domain = "localhost";
-        //options.Cookie.Domain = "othello.hbo-ict.org";
         options.Cookie.Path = "/";
     });
 
@@ -81,11 +80,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
         builder.WithOrigins("https://localhost:7269")
+               //.WithOrigins("https://othello.hbo-ict.org", "http://127.0.0.1", "http://192.168.1.100")
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();
     });
 });
+
+builder.WebHost.UseUrls("http://127.0.0.1:7023");
 
 var app = builder.Build();
 
@@ -106,6 +108,11 @@ else
         await next();
     });
 }
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+});
 
 app.UseHttpsRedirection();
 
