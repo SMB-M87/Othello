@@ -32,7 +32,7 @@ namespace API.Controllers
         }
 
         [HttpGet("rematch/{token}")]
-        public async Task<ActionResult<string?>> Rematch(string token)
+        public async Task<ActionResult<HttpResponseMessage>> Rematch(string token)
         {
             string[] parts = token.Split(' ');
 
@@ -42,12 +42,17 @@ namespace API.Controllers
 
             if (check == false)
             {
-                return BadRequest();
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
             }
 
             var response = await _repository.PlayerRepository.GetRematch(parts[0], parts[1]);
 
-            return Ok(response);
+            if (response == false)
+            {
+                return new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
+            }
+
+            return new HttpResponseMessage(System.Net.HttpStatusCode.OK);
         }
 
         [HttpPost("request/friend")]

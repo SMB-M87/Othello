@@ -6,7 +6,7 @@ namespace API.Data
     {
         Task<Player?> Get(string token);
         Task<Player?> GetByName(string username);
-        Task<string?> GetRematch(string receiver_username, string sender_token);
+        Task<bool> GetRematch(string receiver_username, string sender_token);
         Task<bool> UsernameExists(string username);
         Task<bool> PlayerChecksOut(string token, string username);
         Task<List<Player>> GetPlayers();

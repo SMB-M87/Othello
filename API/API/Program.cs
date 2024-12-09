@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationM
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services
     .AddTransient<IPlayerRepository, PlayerAccessLayer>()
     .AddTransient<IUserRepository, UserAccessLayer>()
     .AddTransient<ILogRepository, LogAccessLayer>()
+    .AddTransient<CheckController>()
     .AddTransient<RegisterController>()
     .AddTransient<MiddlewareController>()
     .AddTransient<LogController>()
@@ -75,19 +77,18 @@ builder.Services.AddHostedService<BotBackgroundService>();
 builder.Services.AddHostedService<CleanUpService>();
 builder.Services.AddHostedService<GameService>();
 
+builder.WebHost.UseUrls("http://127.0.0.1:7023");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("https://localhost:7269")
-               //.WithOrigins("https://othello.hbo-ict.org", "http://127.0.0.1", "http://192.168.1.100")
+        builder.WithOrigins("https://localhost:7269", "https://othello.hbo-ict.org")
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();
     });
 });
-
-builder.WebHost.UseUrls("http://127.0.0.1:7023");
 
 var app = builder.Build();
 
@@ -113,6 +114,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
 });
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 

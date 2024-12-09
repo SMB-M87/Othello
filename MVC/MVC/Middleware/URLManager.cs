@@ -1,18 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using MVC.Data;
 using MVC.Models;
 using System.Net;
+using System.Net.Http;
 
 namespace MVC.Middleware
 {
     public class URLManager
     {
         private readonly RequestDelegate _next;
+        private readonly HttpClient _httpClient;
 
         public URLManager(
-            RequestDelegate next)
+            RequestDelegate next,
+            IHttpClientFactory httpClientFactory
+            )
         {
             _next = next;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
@@ -20,6 +26,12 @@ namespace MVC.Middleware
             var user = context.User;
             var currentPath = context.Request.Path.Value?.ToLower();
             var isAjaxRequest = context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+
+            if (currentPath != null && currentPath.StartsWith("/api/"))
+            {
+                await ProxyApiRequest(context);
+                return;
+            }
 
             if (context.GetEndpoint() == null)
             {
@@ -114,6 +126,51 @@ namespace MVC.Middleware
                 }
             }
             await _next(context);
+        }
+
+        private async Task ProxyApiRequest(HttpContext context)
+        {
+            var configuration = context.RequestServices.GetRequiredService<IConfiguration>();
+            var apiBaseUrl = configuration["ApiSettings:BaseUrl"];
+
+            var targetUrl = $"{apiBaseUrl.TrimEnd('/')}{context.Request.Path}{context.Request.QueryString}";
+
+            var requestMessage = new HttpRequestMessage
+            {
+                Method = new HttpMethod(context.Request.Method),
+                RequestUri = new Uri(targetUrl)
+            };
+
+            foreach (var header in context.Request.Headers)
+            {
+                if (!requestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray()))
+                {
+                    requestMessage.Content?.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+                }
+            }
+
+            if (context.Request.ContentType != null && context.Request.ContentLength > 0)
+            {
+                requestMessage.Content = new StreamContent(context.Request.Body);
+                requestMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(context.Request.ContentType);
+            }
+
+            var responseMessage = await _httpClient.SendAsync(requestMessage);
+
+            context.Response.StatusCode = (int)responseMessage.StatusCode;
+            foreach (var header in responseMessage.Headers)
+            {
+                context.Response.Headers[header.Key] = header.Value.ToArray();
+            }
+
+            foreach (var header in responseMessage.Content.Headers)
+            {
+                context.Response.Headers[header.Key] = header.Value.ToArray();
+            }
+
+            context.Response.Headers.Remove("transfer-encoding");
+
+            await responseMessage.Content.CopyToAsync(context.Response.Body);
         }
 
         private static bool PlayingAllowedPath(string path)

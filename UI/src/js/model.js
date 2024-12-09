@@ -25,7 +25,7 @@ Game.Model = (function () {
       .then((data) => {
         // Rematch
         if (!stateMap.endLoad) {
-          if (data === stateMap.opponent && stateMap.rematchLoad) {
+          if (data && stateMap.rematchLoad) {
             const feedbackWidget = FeedbackSingleton.getInstance();
 
             feedbackWidget.show(

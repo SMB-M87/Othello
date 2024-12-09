@@ -116,15 +116,15 @@ Game.Data = (function () {
         withCredentials: true,
       },
     })
-      .then((response) => {
-        if (response) {
-          return response;
+      .then((jqXHR) => {
+        if (jqXHR.status === 200) {
+          return true;
         } else {
-          return null;
+          return false;
         }
       })
       .catch((error) => {
-        return null;
+        return false;
       });
   };
 
@@ -264,43 +264,83 @@ Game.Data = (function () {
   };
 
   const get = () => {
-    return _get();
+    try {
+      return _get();
+    } catch (e) {
+      return null;
+    }
   };
 
   const getPartial = () => {
-    return _getPartial();
+    try {
+      return _getPartial();
+    } catch (e) {
+      return null;
+    }
   };
 
   const getResult = (delay = 50) => {
-    return _getResult(delay);
+    try {
+      return _getResult(delay);
+    } catch (e) {
+      return null;
+    }
   };
 
   const getRematch = () => {
-    return _getRematch();
+    try {
+      return _getRematch();
+    } catch (e) {
+      return null;
+    }
   };
 
   const sendMove = function (row, col) {
-    return _sendMove(row, col);
+    try {
+      return _sendMove(row, col);
+    } catch (e) {
+      return null;
+    }
   };
 
   const passGame = function () {
-    return _passGame();
+    try {
+      return _passGame();
+    } catch (e) {
+      return null;
+    }
   };
 
   const forfeitGame = function () {
-    return _forfeitGame();
+    try {
+      return _forfeitGame();
+    } catch (e) {
+      return null;
+    }
   };
 
   const rematchGame = function () {
-    return _rematchGame();
+    try {
+      return _rematchGame();
+    } catch (e) {
+      return null;
+    }
   };
 
   const acceptGame = function () {
-    return _acceptGame();
+    try {
+      return _acceptGame();
+    } catch (e) {
+      return null;
+    }
   };
 
   const declineGame = function () {
-    return _declineGame();
+    try {
+      return _declineGame();
+    } catch (e) {
+      return null;
+    }
   };
 
   const setMockData = (mockData) => {

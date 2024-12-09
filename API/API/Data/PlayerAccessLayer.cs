@@ -22,17 +22,17 @@ namespace API.Data
             return await _context.Players.AsNoTracking().FirstOrDefaultAsync(s => s.Username.Equals(username));
         }
 
-        public async Task<string?> GetRematch(string receiver_username, string sender_token)
+        public async Task<bool> GetRematch(string receiver_username, string sender_token)
         {
             var player = await Get(sender_token);
 
-            if (player == null) return null;
+            if (player == null) return false;
 
             var request = player.Requests.FirstOrDefault(r => r.Type == Inquiry.Game && r.Username == receiver_username);
 
-            if (request == null) return null;
+            if (request == null) return false;
 
-            return request.Username;
+            return true;
         }
 
         public async Task<bool> UsernameExists(string username)
