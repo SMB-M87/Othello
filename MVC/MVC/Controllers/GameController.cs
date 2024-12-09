@@ -63,11 +63,9 @@ namespace MVC.Controllers
             {
                 var api = _httpClient.BaseAddress + "api/";
                 var token = _userManager.GetUserId(User);
-                var redirect = "https://localhost:7269/";
 
                 ViewBag.ApiUrl = api;
                 ViewBag.Token = token;
-                ViewBag.RedirectUrl = redirect;
 
                 return View();
             }

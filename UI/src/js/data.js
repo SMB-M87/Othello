@@ -258,10 +258,6 @@ Game.Data = (function () {
     });
   };
 
-  const _redirectHome = () => {
-    window.location.href = `${configMap.redirectUrl}Home/Index`;
-  };
-
   // public functions
   const init = (url, key, environment) => {
     _init(url, key, environment);
@@ -311,10 +307,6 @@ Game.Data = (function () {
     _setMockData(mockData);
   };
 
-  const redirectHome = () => {
-    _redirectHome();
-  };
-
   // return object
   return {
     init: init,
@@ -328,7 +320,6 @@ Game.Data = (function () {
     rematchGame: rematchGame,
     acceptGame: acceptGame,
     declineGame: declineGame,
-    redirectHome: redirectHome,
     setMockData: setMockData,
   };
 })();

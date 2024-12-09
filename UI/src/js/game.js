@@ -1,5 +1,5 @@
 const Game = (function (config) {
-  if (!config || !config.apiUrl || !config.userToken || !config.redirectUrl) {
+  if (!config || !config.apiUrl || !config.userToken) {
     throw new Error(
       "Game module initialization failed: Missing config properties."
     );
@@ -7,8 +7,7 @@ const Game = (function (config) {
 
   let configMap = {
     apiUrl: config.apiUrl,
-    apiKey: config.userToken,
-    redirectUrl: config.redirectUrl,
+    apiKey: config.userToken
   };
 
   // private functions
