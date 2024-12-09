@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using MVC.Data;
 using MVC.Models;
 using System.Net;
-using System.Net.Http;
 
 namespace MVC.Middleware
 {
@@ -100,17 +98,17 @@ namespace MVC.Middleware
                         else
                         {
                             if (user.IsInRole(Roles.Admin) && currentPath is not null &&
-                               !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/admin"))
+                               !currentPath.Contains("/home") && !currentPath.Contains("/manage") && !currentPath.Contains("/admin"))
                             {
                                 context.Response.Redirect($"/Home/Index");
                             }
                             else if (user.IsInRole(Roles.Mod) && currentPath is not null &&
-                                !currentPath.Contains("/home") && !currentPath.Contains("/account") && !currentPath.Contains("/mod"))
+                                !currentPath.Contains("/home") && !currentPath.Contains("/manage") && !currentPath.Contains("/mod"))
                             {
                                 context.Response.Redirect($"/Home/Index");
                             }
                             else if (user.IsInRole(Roles.User) && !user.IsInRole(Roles.Admin) && !user.IsInRole(Roles.Mod) &&
-                                currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/account"))
+                                currentPath is not null && !currentPath.Contains("/home") && !currentPath.Contains("/manage"))
                             {
                                 context.Response.Redirect($"/Home/Index");
                             }
