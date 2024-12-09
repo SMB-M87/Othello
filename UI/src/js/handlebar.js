@@ -167,7 +167,7 @@ Game.Handlebar = (function () {
           Game.Data.rematchGame()
             .then(() => {
               FeedbackSingleton.getInstance().removeLog();
-              location.reload();
+              window.location.reload();
             })
             .catch((error) => {
               FeedbackSingleton.getInstance().log({
