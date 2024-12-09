@@ -61,7 +61,7 @@ namespace MVC.Controllers
         {
             if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
             {
-                var api = /*_httpClient.BaseAddress*/ "https://localhost:7269/" + "api/";
+                var api = /*"https://othello.hbo-ict.org/"*/ "https://localhost:7269/" + "api/";
                 var token = _userManager.GetUserId(User);
 
                 ViewBag.ApiUrl = api;
