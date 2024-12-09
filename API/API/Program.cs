@@ -20,7 +20,6 @@ builder.Services
     .AddTransient<IPlayerRepository, PlayerAccessLayer>()
     .AddTransient<IUserRepository, UserAccessLayer>()
     .AddTransient<ILogRepository, LogAccessLayer>()
-    .AddTransient<CheckController>()
     .AddTransient<RegisterController>()
     .AddTransient<MiddlewareController>()
     .AddTransient<LogController>()

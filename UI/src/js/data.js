@@ -116,14 +116,14 @@ Game.Data = (function () {
         withCredentials: true,
       },
     })
-      .then((jqXHR) => {
-        if (jqXHR.status === 200) {
+      .then((response) => {
+        if (response.statusCode === 200) {
           return true;
         } else {
           return false;
         }
       })
-      .catch((error) => {
+      .catch(() => {
         return false;
       });
   };
