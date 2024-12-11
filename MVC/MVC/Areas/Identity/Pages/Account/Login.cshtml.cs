@@ -50,9 +50,6 @@ namespace MVC.Areas.Identity.Pages.Account
             [StringLength(65)]
             [DataType(DataType.Password)]
             public string Password { get; set; }
-
-            [Display(Name = "Remember me?")]
-            public bool RememberMe { get; set; }
         }
 
         public async Task OnGetAsync()
@@ -69,7 +66,7 @@ namespace MVC.Areas.Identity.Pages.Account
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(Input.Username, Input.Password, false, lockoutOnFailure: true);
                 bool breached = PasswordBreach.IsPasswordBreached(Input.Password);
 
                 if (result.Succeeded)
@@ -79,7 +76,7 @@ namespace MVC.Areas.Identity.Pages.Account
                     {
                         await _userManager.UpdateSecurityStampAsync(user);
                         var name = await _userManager.FindByNameAsync(Input.Username);
-                        await _signInManager.SignInAsync(name, Input.RememberMe);
+                        await _signInManager.SignInAsync(name, false);
                         await LogIt(new(Input.Username, "Identity/Login", $"Player {user.UserName} logged in."));
 
                         if (breached)
@@ -93,7 +90,7 @@ namespace MVC.Areas.Identity.Pages.Account
                 }
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { Input.RememberMe, breached });
+                    return RedirectToPage("./LoginWith2fa", new { breached });
                 }
                 if (result.IsLockedOut)
                 {

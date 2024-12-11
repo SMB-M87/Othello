@@ -52,8 +52,14 @@ namespace API.Service
                     var game = new Game(bot.Token, GameDescriptions[_random.Next(GameDescriptions.Count)]);
                     await _context.Games.AddAsync(game);
                 }
-                bot.LastActivity = DateTime.UtcNow;
-                _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
+
+                double timer = (DateTime.UtcNow - bot.LastActivity).TotalSeconds;
+
+                if (timer >= 240)
+                {
+                    bot.LastActivity = DateTime.UtcNow;
+                    _context.Entry(bot).Property(p => p.LastActivity).IsModified = true;
+                }
             }
             await _context.SaveChangesAsync();
         }

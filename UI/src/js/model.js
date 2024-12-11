@@ -24,7 +24,7 @@ Game.Model = (function () {
     return dataPromise
       .then((data) => {
         // Rematch
-        if (!stateMap.endLoad) {
+        if (stateMap.endLoad >= 3) {
           if (data && stateMap.rematchLoad) {
             const feedbackWidget = FeedbackSingleton.getInstance();
 

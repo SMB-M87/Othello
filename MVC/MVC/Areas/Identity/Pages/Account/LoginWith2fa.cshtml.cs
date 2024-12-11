@@ -36,8 +36,6 @@ namespace MVC.Areas.Identity.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public bool RememberMe { get; set; }
-
         [BindProperty]
         public bool Breached { get; set; }
 
@@ -48,15 +46,11 @@ namespace MVC.Areas.Identity.Pages.Account
             [DataType(DataType.Text)]
             [Display(Name = "Authenticator code")]
             public string TwoFactorCode { get; set; }
-
-            [Display(Name = "Remember this machine")]
-            public bool RememberMachine { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync(bool RememberMe, bool breached)
+        public async Task<IActionResult> OnGetAsync(bool breached)
         {
             _ = await _signInManager.GetTwoFactorAuthenticationUserAsync() ?? throw new InvalidOperationException($"Unable to load two-factor authentication user.");
-            this.RememberMe = RememberMe;
             Breached = breached;
 
             return Page();
@@ -87,7 +81,7 @@ namespace MVC.Areas.Identity.Pages.Account
             {
                 await _userManager.ResetAccessFailedCountAsync(user);
                 await _userManager.UpdateSecurityStampAsync(user);
-                await _signInManager.SignInAsync(user, isPersistent: Input.RememberMachine);
+                await _signInManager.SignInAsync(user, isPersistent: false);
                 await LogIt(new(user.UserName, "Identity/LoginWith2fa", $"Player {user.UserName} logged in with 2FA."));
 
                 if (Breached)

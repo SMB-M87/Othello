@@ -128,7 +128,7 @@ namespace API.Data
             else if (game.Rematch != null && player_exists && player_not_in_game)
             {
                 var player = await _context.Players.FirstOrDefaultAsync(s => s.Token == game.PlayerToken);
-                var opponent = await _context.Players.FirstOrDefaultAsync(s => s.Token == game.Rematch);
+                var opponent = await _context.Players.FirstOrDefaultAsync(s => s.Username == game.Rematch);
 
                 if (player is not null && opponent is not null)
                 {

@@ -18,14 +18,6 @@
                 <span asp-validation-for="Input.TwoFactorCode" class="text-white"></span>
             </div>
             <div>
-                <div class="checkbox">
-                    <label asp-for="Input.RememberMachine" class="form-label">
-                        <input asp-for="Input.RememberMachine" />
-                        @Html.DisplayNameFor(m => m.Input.RememberMachine)
-                    </label>
-                </div>
-            </div>
-            <div>
                 <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
             </div>
         </form>

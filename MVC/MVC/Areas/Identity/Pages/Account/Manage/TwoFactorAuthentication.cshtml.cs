@@ -67,8 +67,6 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
         [BindProperty]
         public bool Is2faEnabled { get; set; }
 
-        public bool IsMachineRemembered { get; set; }
-
         [TempData]
         public string StatusMessage { get; set; }
 
@@ -82,7 +80,6 @@ namespace MVC.Areas.Identity.Pages.Account.Manage
 
             HasAuthenticator = await _userManager.GetTwoFactorEnabledAsync(user);
             Is2faEnabled = await _userManager.GetTwoFactorEnabledAsync(user);
-            IsMachineRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user);
             RecoveryCodesLeft = await CountRecoveryCodes(user);
 
             await LogIt(new(user.UserName, "Identity/TwoFactorAuthentication", $"Player {user.UserName} fetched data from the identity user tokens and user database."));
