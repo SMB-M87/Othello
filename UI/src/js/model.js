@@ -146,7 +146,7 @@ Game.Model = (function () {
     );
     _toggleButtons(
       playerColor,
-      board ? board.some((row) => row.includes(3)) : false,
+      stateMap.board ? stateMap.board.some((row) => row.includes(3)) : false,
       playersTurn
     );
     if (playersTurn !== playerColor)
@@ -226,7 +226,7 @@ Game.Model = (function () {
       const rematchButton = document.getElementById("rematch-button");
 
       passButton.classList.add("fade-out");
-      passButton.classList.remove("fade-in-wobble");
+      passButton.classList.remove("fade-in");
 
       forfeitButton.classList.add("fade-out");
       forfeitButton.classList.remove("inline-block", "fade-in");
@@ -236,18 +236,18 @@ Game.Model = (function () {
     } else {
       if (playerColor === playersTurn) {
         if (!possibleMove) {
-          passButton.classList.add("fade-in-wobble");
+          passButton.classList.add("fade-in");
           passButton.classList.remove("fade-out");
         } else {
           passButton.classList.add("fade-out");
-          passButton.classList.remove("fade-in-wobble");
+          passButton.classList.remove("fade-in");
         }
 
         forfeitButton.classList.add("fade-in");
         forfeitButton.classList.remove("fade-out");
       } else {
         passButton.classList.add("fade-out");
-        passButton.classList.remove("fade-in-wobble");
+        passButton.classList.remove("fade-in");
 
         forfeitButton.classList.add("fade-out");
         forfeitButton.classList.remove("fade-in");
