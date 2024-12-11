@@ -4,7 +4,7 @@ Game.Model = (function () {
     firstLoad: true,
     turnReload: true,
     lastLoad: true,
-    endLoad: true,
+    endLoad: 0,
     rematchLoad: true,
     opponent: "",
     playerColor: "",
@@ -13,7 +13,7 @@ Game.Model = (function () {
 
   // private functions
   const _getGameState = function () {
-    let dataPromise = !stateMap.endLoad
+    let dataPromise = stateMap.endLoad >= 3
       ? Game.Data.getRematch()
       : !stateMap.lastLoad 
       ? Game.Data.getResult()
@@ -57,9 +57,9 @@ Game.Model = (function () {
           }
 
           // Game Finished
-        } else if (!stateMap.lastLoad && stateMap.endLoad) {
+        } else if (!stateMap.lastLoad && stateMap.endLoad < 3) {
           _renderResult(data);
-          stateMap.endLoad = false;
+          stateMap.endLoad++;
 
           // Get View
         } else if (stateMap.firstLoad) {
