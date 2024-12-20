@@ -1,5 +1,5 @@
 # Othello MVC API Application
-This is a backend-driven web application for a multiplayer Othello (Reversi) game built using ASP.NET Core MVC. The application consists of a REST API and an MVC client. The gameplay is developed in vanilla JavaScript. There are bots to populate the server and they make use of minmax algorithms.
+This is a backend-driven web application for a multiplayer Othello (Reversi) game built using ASP.NET Core MVC. The application consists of a REST API and an MVC client. The gameplay is developed in vanilla JavaScript and uses a Single Page Application. To populate the server there are bots that make use of minmax algorithms of different diffilculties.
 
 # Table of Contents
 - [Project Overview](#ProjectOverview)  
