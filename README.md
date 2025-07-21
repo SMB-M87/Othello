@@ -100,23 +100,3 @@ The MVC side of the project is responsible for rendering views and handling user
 3. Create/Join Game: Players can create a new game or join a pending game.
 4. Gameplay: The game board is updated in real-time using AJAX (or SignalR in the future).
 5. Game Completion: Once the game is over, players are free to start or join another game.
-
-
-#Installation and Setup
-1. Clone the repository:
-    - git clone https://github.com/your-repository/othello-game.git
-    - cd othello-game
-
-2. Setup the database:
-    - Ensure SQL Server is running.
-    - Update the connection string in appsettings.json.
-    - Run migrations to create the database schema:
-         - dotnet ef migrations add InitialCreate
-         - dotnet ef database update
-  
-3. Run the application:
-    - Run both the MVC and API projects via Visual Studio or CLI:
-         - dotnet run
-
-4. Access the app:
-    - Go to https://localhost:{port} to start the game.
